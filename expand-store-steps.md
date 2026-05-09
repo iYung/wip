@@ -58,3 +58,15 @@ Goal: the PC shop sells two things — a plant and a slot expansion. The player 
 - [ ] Drain currency to 0, confirm no buy option fires
 - [ ] Press E in shop — returns to store with no change
 - [ ] Graft a stage-3 plant, walk to sell bin, press F — loaded plant sold, grafter emptied
+
+---
+
+## Step 5 — Wall Backdrop
+
+Draw a wall rect in `Store:draw()` before the slot loop. The store already knows its total width so it automatically covers new slots when `grow()` is called.
+
+- [ ] In `lua/game/store.lua` `Store:draw()`, before the slot loop:
+  - Draw a filled rect: `x=0`, `y=0`, `width=self:width()`, `height=SLOT_Y + SLOT_HEIGHT` (= 800)
+  - Color: `{0.15, 0.12, 0.10, 1}` (dark neutral, distinct from slot border brown)
+
+**Future image support:** replace the single rect with a per-slot `wall` Sprite inside `Slot.new()` — each slot draws its own wall panel before its border/bg. Tiles naturally with no store-level changes needed.
