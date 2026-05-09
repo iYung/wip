@@ -58,8 +58,11 @@ The player can increase the number of slots. Adding a slot expands the store wid
 
 ### Grafter
 
-- Can be picked up and used on a slot
-- Clones the plant in that slot into the held item slot (TBD — exact mechanic to define)
+- Can be picked up and carried
+- Has two states: **empty** and **loaded**
+- Using it (F) on a slot with a plant: resets the original plant to stage 1, stores a clone inside the grafter (loaded state)
+- Putting it down (E) over an empty slot while loaded: places the clone into that slot; grafter empties and stays in the player's hand
+- Does nothing if already loaded, or if the target slot has no plant
 
 ### PC Store
 
@@ -106,7 +109,6 @@ When a plant is ready, a speech bubble appears above it as a visual indicator.
 ## Open Questions
 
 - Which end does the store expand from — left or right?
-- What does the grafter produce — a copy of the plant, or a cutting to plant elsewhere?
 - How many waterings per growth stage?
 - What happens when a plant reaches Done — is it harvested for currency?
 - What are the 6 plant types?
