@@ -3,37 +3,42 @@ local Plant       = require("lua/game/items/plant")
 local WateringCan = require("lua/game/items/watering_can")
 local Grafter     = require("lua/game/items/grafter")
 local config      = require("lua/game/config")
+local PLANT_DATA  = require("lua/game/data/plant_data")
 
-local CATALOGUE = {
-    {
-        label       = "Plant",
-        description = "A seedling ready to grow.\nWater it twice to reach stage 3.",
-        cost        = config.PLANT_COST,
+local CATALOGUE = {}
+
+for i = 1, #PLANT_DATA do
+    local pd = PLANT_DATA[i]
+    CATALOGUE[#CATALOGUE + 1] = {
+        label       = pd.name,
+        description = pd.description,
+        cost        = pd.cost,
         kind        = "plant",
-        plant_type  = 1,
-        color       = {0.4, 0.85, 0.4, 1},
-    },
-    {
-        label       = "Watering Can",
-        description = "Waters the plant in your\ncurrent slot when you press F.",
-        cost        = 0,
-        kind        = "tool_watering_can",
-        color       = {0.3, 0.6, 1.0, 1},
-    },
-    {
-        label       = "Grafter",
-        description = "Clones a stage-3 plant.\nPress F to load, E to place clone.",
-        cost        = 0,
-        kind        = "tool_grafter",
-        color       = {1.0, 0.5, 0.0, 1},
-    },
-    {
-        label       = "Expand Slot",
-        description = "Adds one new slot to the\nright end of the store.",
-        cost        = config.SLOT_COST,
-        kind        = "expand",
-        color       = {0.8, 0.8, 0.8, 1},
-    },
+        plant_type  = i,
+        color       = pd.colors[1],
+    }
+end
+
+CATALOGUE[#CATALOGUE + 1] = {
+    label       = "Watering Can",
+    description = "Waters the plant in your\ncurrent slot when you press F.",
+    cost        = 0,
+    kind        = "tool_watering_can",
+    color       = {0.3, 0.6, 1.0, 1},
+}
+CATALOGUE[#CATALOGUE + 1] = {
+    label       = "Grafter",
+    description = "Clones a stage-3 plant.\nPress F to load, E to place clone.",
+    cost        = 0,
+    kind        = "tool_grafter",
+    color       = {1.0, 0.5, 0.0, 1},
+}
+CATALOGUE[#CATALOGUE + 1] = {
+    label       = "Expand Slot",
+    description = "Adds one new slot to the\nright end of the store.",
+    cost        = config.SLOT_COST,
+    kind        = "expand",
+    color       = {0.8, 0.8, 0.8, 1},
 }
 
 local PREVIEW_SIZE = 120

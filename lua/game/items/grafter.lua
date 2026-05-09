@@ -1,8 +1,8 @@
-local Item            = require("lua/game/items/item")
-local Plant           = require("lua/game/items/plant")
-local Sprite          = require("lua/core/sprite")
-local PLANT_COOLDOWNS = require("lua/game/data/plant_cooldowns")
-local U               = require("lua/game/config").U
+local Item       = require("lua/game/items/item")
+local Plant      = require("lua/game/items/plant")
+local Sprite     = require("lua/core/sprite")
+local PLANT_DATA = require("lua/game/data/plant_data")
+local U          = require("lua/game/config").U
 
 local Grafter = setmetatable({}, { __index = Item })
 Grafter.__index = Grafter
@@ -30,7 +30,7 @@ function Grafter:interact(player, store, scene_manager)
 
     local plant          = slot.item
     plant.stage          = 1
-    plant.cooldown       = PLANT_COOLDOWNS[plant.plant_type][1]
+    plant.cooldown       = PLANT_DATA[plant.plant_type].cooldowns[1]
     plant.ready          = false
     plant.bubble.visible = false
     plant.sprite:set("1")

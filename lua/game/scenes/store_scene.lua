@@ -4,9 +4,13 @@ local PCStore      = require("lua/game/items/pc_store")
 local Grafter      = require("lua/game/items/grafter")
 local SellBin      = require("lua/game/items/sell_bin")
 local BuyScene     = require("lua/game/scenes/buy_scene")
-local config       = require("lua/game/config")
+local PLANT_DATA   = require("lua/game/data/plant_data")
 
-local SELL_VALUE = config.SELL_VALUE
+local function plant_sell_value(plant)
+    if plant.stage ~= 3 then return 1 end
+    local pd = PLANT_DATA[plant.plant_type]
+    return pd and pd.sell or 5
+end
 
 local CAMERA_Y    = 500  -- fixed world y the camera locks to
 local CAMERA_LERP = 0.85 -- smoothing: 0=instant, 1=no movement; 0.85 = smooth lag
@@ -115,15 +119,11 @@ function StoreScene:_handle_interact()
         local held = player.held_item
         if held.loaded_plant then
             -- sell the loaded plant, keep grafter in hand
-            local value = held.loaded_plant.stage == 3 and SELL_VALUE or 1
-            self.game_state.currency  = self.game_state.currency + value
+            self.game_state.currency  = self.game_state.currency + plant_sell_value(held.loaded_plant)
             held.loaded_plant         = nil
             held.sprite.color         = {1.0, 0.5, 0.0, 1}
         else
-            local value = 0
-            if held.stage then
-                value = held.stage == 3 and SELL_VALUE or 1
-            end
+            local value = held.stage and plant_sell_value(held) or 0
             self.game_state.currency = self.game_state.currency + value
             player.held_item = nil
         end
