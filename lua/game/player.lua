@@ -1,6 +1,8 @@
 local SpriteSet = require("lua/core/spriteset")
 local Sprite    = require("lua/core/sprite")
-local U         = require("lua/game/config").U
+local CONFIG     = require("lua/game/config")
+local U          = CONFIG.U
+local ZONE_WIDTH = CONFIG.ZONE_WIDTH
 
 local SPEED    = 220
 local W        = 6 * U   -- 120
@@ -44,7 +46,7 @@ function Player:update(dt, input, store)
     end
 
     if store then
-        self.x = math.max(W / 2, math.min(store:width() - W / 2, self.x))
+        self.x = math.max(-ZONE_WIDTH + W / 2, math.min(store:width() - W / 2, self.x))
     end
 
     if moving then

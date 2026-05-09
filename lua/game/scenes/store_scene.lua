@@ -5,6 +5,8 @@ local Grafter      = require("lua/game/items/grafter")
 local SellBin      = require("lua/game/items/sell_bin")
 local BuyScene     = require("lua/game/scenes/buy_scene")
 local PLANT_DATA   = require("lua/game/data/plant_data")
+local Customer     = require("lua/game/customer")
+local ZONE_WIDTH   = require("lua/game/config").ZONE_WIDTH
 
 local function plant_sell_value(plant)
     if plant.stage ~= 3 then return 1 end
@@ -37,8 +39,9 @@ function StoreScene:on_enter()
     end
 
     self.drawer:clear()
-    self.drawer:add(gs.store,  0)
-    self.drawer:add(gs.player, 2)
+    self.drawer:add(gs.store,       0)
+    self.drawer:add(self._customer, 1)
+    self.drawer:add(gs.player,      2)
 
     self.camera.x = gs.player.x
     self.camera.y = CAMERA_Y
@@ -58,6 +61,12 @@ function StoreScene:_setup_store()
         local slot = gs.player:active_slot(store)
         return BuyScene.new(gs, self_ref.input, self_ref.scene_manager, self_ref, slot)
     end)
+
+    local target_x   = -ZONE_WIDTH / 2
+    local exit_x     = -(ZONE_WIDTH + 200)
+    local customer_y = 620  -- same world y as player center (31 * U)
+    self._customer    = Customer.new(target_x, exit_x, customer_y)
+    self._spawn_timer = math.random(3, 6)
 end
 
 function StoreScene:on_exit()
@@ -70,6 +79,15 @@ function StoreScene:update(dt)
 
     gs.store:update(dt)
     gs.player:update(dt, input, gs.store)
+    self._customer:update(dt)
+
+    if not self._customer:active() then
+        self._spawn_timer = self._spawn_timer - dt
+        if self._spawn_timer <= 0 then
+            self._customer:show(1)
+            self._spawn_timer = math.random(3, 6)
+        end
+    end
 
     self.camera:follow(gs.player, CAMERA_LERP)
     self.camera.y = CAMERA_Y
@@ -114,6 +132,15 @@ function StoreScene:_handle_interact()
     local store  = self.game_state.store
     local slot   = player:active_slot(store)
 
+    -- cashier zone sale (2× value)
+    if player.x < 0 and self._customer:arrived() and player.held_item and player.held_item.plant_type == self._customer.plant_type and player.held_item.stage == 3 then
+        local value = plant_sell_value(player.held_item) * 2
+        self.game_state.currency = self.game_state.currency + value
+        player.held_item = nil
+        self._customer:serve()
+        return
+    end
+
     -- held item + sell bin → sell (plants: stage 3 = SELL_VALUE, others = 1; tools = 0)
     if player.held_item and player.held_item.sellable ~= false and slot and slot.item and slot.item.is_sell_bin then
         local held = player.held_item
@@ -155,7 +182,9 @@ function StoreScene:_hud_labels()
     end
 
     local f_label
-    if not held and slot_item and slot_item.buy_scene_factory then
+    if player.x < 0 and self._customer and self._customer:arrived() and held and held.plant_type == self._customer.plant_type and held.stage == 3 then
+        f_label = "F: SELL TO CUSTOMER ($" .. plant_sell_value(held) * 2 .. ")"
+    elseif not held and slot_item and slot_item.buy_scene_factory then
         f_label = "F: OPEN SHOP"
     elseif held and held.name == "Watering Can" and slot_item and slot_item.plant_type then
         f_label = "F: WATER"
@@ -176,6 +205,14 @@ end
 
 function StoreScene:draw()
     self.camera:attach()
+
+    -- zone floor
+    local SLOT_Y = 30 * 20  -- 600
+    love.graphics.setColor(0.10, 0.09, 0.14, 1)
+    love.graphics.rectangle("fill", -ZONE_WIDTH, 0, ZONE_WIDTH, 800)
+    love.graphics.setColor(0.28, 0.20, 0.32, 1)
+    love.graphics.rectangle("fill", -ZONE_WIDTH, SLOT_Y, ZONE_WIDTH, 200)
+
     self.drawer:draw()
     self.camera:detach()
 
