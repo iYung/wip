@@ -4,6 +4,8 @@
 
 All MVP steps are implemented and running. Expand Store feature complete (Steps 1–3).
 
+Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `grafter-steps.md`.
+
 ---
 
 ### Core (`lua/core/`)
