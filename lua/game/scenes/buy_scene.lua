@@ -1,5 +1,5 @@
 local Scene = require("lua/core/scene")
-local Plant = require("lua/game/plant")
+local Plant = require("lua/game/items/plant")
 
 local BuyScene = setmetatable({}, { __index = Scene })
 BuyScene.__index = BuyScene

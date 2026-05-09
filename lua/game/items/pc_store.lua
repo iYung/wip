@@ -1,5 +1,6 @@
-local Item   = require("lua/game/item")
+local Item   = require("lua/game/items/item")
 local Sprite = require("lua/core/sprite")
+local U      = require("lua/game/config").U
 
 local PCStore = setmetatable({}, { __index = Item })
 PCStore.__index = PCStore
@@ -7,7 +8,7 @@ PCStore.__index = PCStore
 function PCStore.new(buy_scene_factory)
     local self             = Item.new()
     setmetatable(self, PCStore)
-    self.sprite            = Sprite.new(0, 0, 100, 80)
+    self.sprite            = Sprite.new(0, 0, 6 * U, 6 * U)
     self.sprite.color      = {0.7, 0.75, 0.9, 1}
     self.carriable         = true
     self.buy_scene_factory = buy_scene_factory

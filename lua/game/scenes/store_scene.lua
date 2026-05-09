@@ -1,6 +1,6 @@
 local Scene        = require("lua/core/scene")
-local WateringCan  = require("lua/game/watering_can")
-local PCStore      = require("lua/game/pc_store")
+local WateringCan  = require("lua/game/items/watering_can")
+local PCStore      = require("lua/game/items/pc_store")
 local BuyScene     = require("lua/game/scenes/buy_scene")
 
 local CAMERA_Y    = 500  -- fixed world y the camera locks to

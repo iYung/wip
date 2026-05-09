@@ -1,10 +1,11 @@
 local SpriteSet = require("lua/core/spriteset")
 local Sprite    = require("lua/core/sprite")
+local U         = require("lua/game/config").U
 
 local SPEED    = 220
-local W        = 120
-local H        = 240
-local INIT_Y   = 620  -- player center y in world
+local W        = 6 * U   -- 120
+local H        = 12 * U  -- 240
+local INIT_Y   = 31 * U  -- 620  player center y in world
 
 local Player = {}
 Player.__index = Player
@@ -64,8 +65,11 @@ function Player:update(dt, input, store)
     if self.held_item then
         local spr = self.held_item.sprite
         if spr then
-            spr.x = self.x - 50
-            spr.y = self.y - H / 4
+            local active = spr._active and spr:_active() or spr
+            local iw = active and active.width  or 4 * U
+            local ih = active and active.height or 4 * U
+            spr.x = self.x - iw / 2
+            spr.y = self.y - H / 2 - ih
         end
     end
 end

@@ -1,5 +1,6 @@
-local Item   = require("lua/game/item")
+local Item   = require("lua/game/items/item")
 local Sprite = require("lua/core/sprite")
+local U      = require("lua/game/config").U
 
 local WateringCan = setmetatable({}, { __index = Item })
 WateringCan.__index = WateringCan
@@ -7,7 +8,7 @@ WateringCan.__index = WateringCan
 function WateringCan.new()
     local self        = Item.new()
     setmetatable(self, WateringCan)
-    self.sprite       = Sprite.new(0, 0, 80, 60)
+    self.sprite       = Sprite.new(0, 0, 6 * U, 6 * U)
     self.sprite.color = {0.3, 0.6, 1.0, 1}
     self.carriable    = true
     return self
