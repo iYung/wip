@@ -14,9 +14,9 @@ function PCStore.new(buy_scene_factory)
     return self
 end
 
--- only interactable when placed in a slot, not while held
+-- only interactable when placed in a slot and player has empty hands
 function PCStore:interact(player, store, scene_manager)
-    if player.held_item == self then return end
+    if player.held_item then return end
     if scene_manager and self.buy_scene_factory then
         scene_manager:switch(self.buy_scene_factory())
     end

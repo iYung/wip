@@ -30,17 +30,7 @@ end
 
 function BuyScene:_buy_plant()
     local plant = Plant.new(1)
-    local slot  = self.target_slot
-    if slot and not slot.item then
-        slot.item = plant
-        return
-    end
-    for _, s in ipairs(self.game_state.store.slots) do
-        if not s.item then
-            s.item = plant
-            return
-        end
-    end
+    self.game_state.player.held_item = plant
 end
 
 function BuyScene:draw()

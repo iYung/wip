@@ -32,8 +32,8 @@ function Plant.new(plant_type)
     ss:set("1")
     self.sprite = ss
 
-    self.bubble         = Sprite.new(0, 0, 18, 18)
-    self.bubble.color   = {1.0, 0.95, 0.2, 0.9}
+    self.bubble         = Sprite.new(0, 0, 28, 28)
+    self.bubble.color   = {1.0, 1.0, 0.0, 1.0}
     self.bubble.visible = false
 
     return self
@@ -68,8 +68,8 @@ function Plant:draw()
     if self.bubble.visible then
         local active = self.sprite:_active()
         if active then
-            self.bubble.x = active.x + active.width / 2 - 9
-            self.bubble.y = active.y - 24
+            self.bubble.x = active.x + active.width / 2 - 14
+            self.bubble.y = active.y - 40  -- above slot top
         end
         self.bubble:draw()
     end
