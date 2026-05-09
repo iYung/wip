@@ -88,7 +88,9 @@ Plant types (names TBD):
 | 5 | TBD  |
 | 6 | TBD  |
 
-Plants advance stages when watered. Each stage likely requires a set number of waterings (to define).
+Each growth stage has a cooldown timer. When the timer reaches zero the plant is ready to be watered. Watering a ready plant advances it to the next stage and resets the timer for the new stage. Watering a plant that is not ready does nothing.
+
+When a plant is ready, a speech bubble appears above it as a visual indicator.
 
 ---
 

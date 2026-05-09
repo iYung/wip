@@ -207,17 +207,25 @@ Base class for all carriable/interactable objects in the store.
 
 ### Plant
 
-An Item subclass. Tracks growth state.
+An Item subclass. Tracks growth state via a cooldown timer.
 
 **Properties**
 - `plant_type` — integer 1–6
 - `stage` — integer 1–3 (baby, growing, done)
-- `water_count` — waterings received at current stage
+- `cooldown` — seconds remaining until ready for water
+- `ready` — bool, true when `cooldown <= 0`
 - `sprite` — SpriteSet keyed by stage
+- `bubble` — Sprite positioned above the plant; `visible` toggled by `ready`
 
 **Methods**
-- `water()` — increment `water_count`; advance stage when threshold reached
-- `draw()` — delegates to sprite
+- `update(dt)` — count down `cooldown`; flips `ready` and `bubble.visible` when it hits zero
+- `water()` — if `ready`, advance stage, reset `cooldown` from `PLANT_COOLDOWNS[plant_type][stage]`, hide bubble; otherwise no-op
+- `draw()` — renders `sprite`, then renders `bubble` offset above if visible
+
+**Notes**
+- Plant owns and draws both sprites — no Drawer involvement for the bubble
+- Bubble position is derived each draw from the plant's own x/y plus a fixed upward offset
+- `PLANT_COOLDOWNS` is a data table `[plant_type][stage] -> seconds`, defined in config
 
 ---
 
