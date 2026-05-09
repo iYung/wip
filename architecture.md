@@ -63,14 +63,46 @@ Controls the viewport — what portion of the world is visible.
 
 ---
 
+### Scene
+
+A self-contained game state. Owns its Drawer and Camera.
+
+**Properties**
+- `drawer` — Drawer instance for this scene
+- `camera` — Camera instance for this scene
+
+**Methods**
+- `new()` — constructor
+- `update(dt)` — per-frame logic
+- `draw()` — calls `camera:attach()`, `drawer:draw()`, `camera:detach()`
+- `on_enter()` — called when this scene becomes active
+- `on_exit()` — called before being replaced; good place to call `drawer:clear()`
+
+---
+
+### SceneManager
+
+Holds the active scene and delegates the game loop to it.
+
+**Properties**
+- `current` — the active Scene
+
+**Methods**
+- `switch(scene)` — calls `current:on_exit()`, swaps, calls `scene:on_enter()`
+- `update(dt)` — delegates to `current:update(dt)`
+- `draw()` — delegates to `current:draw()`
+
+---
+
 ## Frame Loop
 
 ```
+love.update(dt)
+  scene_manager:update(dt)
+
 love.draw()
-  camera:attach()
-    drawer:draw()        -- all world-space sprites
-  camera:detach()
-  hud_drawer:draw()      -- optional second Drawer for screen-space UI
+  scene_manager:draw()
+    -- internally: camera:attach() → drawer:draw() → camera:detach()
 ```
 
 ---
