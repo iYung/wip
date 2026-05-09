@@ -56,8 +56,8 @@ Adding plant types 2–6 is handled in [plant-types-steps.md](plant-types-steps.
 
 ## Step 4 — End-to-End Test
 
-- [ ] Cycle through all items with A/D — wraps correctly at both ends
-- [ ] Each item shows correct name, description, price
-- [ ] Unaffordable items show red price and don't buy
-- [ ] Buying each kind gives the right item / effect
-- [ ] E cancels with no change
+- [x] Cycle through all items with A/D — wraps correctly at both ends
+- [x] Each item shows correct name, description, price
+- [x] Unaffordable items show red price and don't buy
+- [x] Buying each kind gives the right item / effect
+- [x] E cancels with no change

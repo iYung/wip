@@ -2,9 +2,9 @@
 
 ## What's Built
 
-All MVP steps are implemented and running. Expand Store feature complete (all steps).
+All MVP steps are implemented and running. Expand Store, Shop UI, and Plant Types features complete.
 
-Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `grafter-steps.md`, `expand-store-steps.md`.
+Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `grafter-steps.md`, `expand-store-steps.md`, `shop-ui-steps.md`, `plant-types-steps.md`.
 
 ---
 
@@ -25,7 +25,7 @@ Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `gr
 
 | File | What it does |
 |------|-------------|
-| `config.lua` | Shared constants — `U = 20` (base pixel unit) |
+| `config.lua` | Shared constants — `U = 20` (base pixel unit), `SLOT_COST` |
 | `input.lua` | Polls keyboard each frame; A/D or arrows = move, E = pick up/down, F = interact |
 | `game_state.lua` | Holds store, player, currency; survives scene switches |
 | `player.lua` | Moves left/right, holds one item, two-frame walk animation |
@@ -39,7 +39,7 @@ Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `gr
 | `item.lua` | Base class for all carriable objects; `carriable = true`, `sellable = true` by default |
 | `watering_can.lua` | interact() waters the plant in the active slot |
 | `pc_store.lua` | interact() opens BuyScene; blocked if player is holding anything; `sellable = false` |
-| `plant.lua` | Three stages, cooldown timer, yellow bubble when ready; bubble hidden at stage 3 |
+| `plant.lua` | 6 types, 3 stages each; per-type cooldown and stage colors from `plant_data`; yellow bubble when ready |
 | `grafter.lua` | Clones a stage-3 plant (resets original to stage 1, stores clone); places clone into empty slot on E; renders clone above itself when loaded |
 | `sell_bin.lua` | Sell station; F while holding any sellable item sells it for currency |
 
@@ -48,13 +48,13 @@ Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `gr
 | File | What it does |
 |------|-------------|
 | `store_scene.lua` | Main loop — player moves, camera follows on x, pick up/interact handled here |
-| `buy_scene.lua` | Overlay UI — 4 options (Plant, Expand, Watering Can, Grafter); A/D select, F buy, E cancel |
+| `buy_scene.lua` | Carousel UI — 9 items (6 plants + Watering Can + Grafter + Expand Slot); A/D cycle, F buy, E cancel; per-type price and preview color |
 
 ### Data (`lua/game/data/`)
 
 | File | What it does |
 |------|-------------|
-| `plant_cooldowns.lua` | `[plant_type][stage] = seconds`; currently 3s / 5s (testing values) |
+| `plant_data.lua` | Per-type name, buy cost, sell value, cooldowns, and 3-stage color palette for all 6 plant types |
 
 ---
 
@@ -99,10 +99,9 @@ Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `gr
 
 ## Up Next
 
-See [shop-ui-steps.md](shop-ui-steps.md) — redesign BuyScene to single-item carousel.
+See [context-hud-steps.md](context-hud-steps.md) — context-sensitive HUD labels for E and F.
 
 ## Cut / Not Yet Built
 
-- Plant types 2–6
 - Real sprites (all rectangles)
 - Win condition or idle loop
