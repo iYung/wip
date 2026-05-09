@@ -4,6 +4,7 @@ local WateringCan = require("lua/game/items/watering_can")
 local Grafter     = require("lua/game/items/grafter")
 local config      = require("lua/game/config")
 local PLANT_DATA  = require("lua/game/data/plant_data")
+local SPEED_TIERS = config.SPEED_TIERS
 
 local CATALOGUE = {}
 
@@ -39,6 +40,11 @@ CATALOGUE[#CATALOGUE + 1] = {
     cost        = config.SLOT_COST,
     kind        = "expand",
     color       = {0.8, 0.8, 0.8, 1},
+}
+CATALOGUE[#CATALOGUE + 1] = {
+    label = "Speed Boost",
+    kind  = "speed_boost",
+    color = {1.0, 0.85, 0.2, 1},
 }
 
 local PREVIEW_SIZE = 120
@@ -85,6 +91,17 @@ function BuyScene:_confirm()
     local gs  = self.game_state
     local ent = CATALOGUE[self.selected]
 
+    if ent.kind == "speed_boost" then
+        if gs.speed_level >= #SPEED_TIERS then return end
+        local tier = SPEED_TIERS[gs.speed_level + 1]
+        if gs.currency < tier.cost then return end
+        gs.currency     = gs.currency - tier.cost
+        gs.speed_level  = gs.speed_level + 1
+        gs.player.speed = tier.speed
+        self.scene_manager:switch(self.store_scene)
+        return
+    end
+
     if gs.currency < ent.cost then return end
 
     gs.currency = gs.currency - ent.cost
@@ -107,7 +124,24 @@ function BuyScene:draw()
     local gs       = self.game_state
     local currency = gs.currency
     local ent      = CATALOGUE[self.selected]
-    local can_buy  = currency >= ent.cost
+
+    local display_cost, display_desc, can_buy
+    if ent.kind == "speed_boost" then
+        if gs.speed_level >= #SPEED_TIERS then
+            display_cost = "---"
+            display_desc = "Max speed reached."
+            can_buy      = false
+        else
+            local tier   = SPEED_TIERS[gs.speed_level + 1]
+            display_cost = "$" .. tier.cost
+            display_desc = "Speed: " .. tier.speed .. " px/s"
+            can_buy      = currency >= tier.cost
+        end
+    else
+        display_cost = "$" .. ent.cost
+        display_desc = ent.description
+        can_buy      = currency >= ent.cost
+    end
 
     -- overlay
     love.graphics.setColor(0, 0, 0, 0.88)
@@ -134,7 +168,7 @@ function BuyScene:draw()
     -- description
     love.graphics.setColor(0.8, 0.8, 0.8, 1)
     local desc_lines = {}
-    for line in (ent.description .. "\n"):gmatch("([^\n]*)\n") do
+    for line in (display_desc .. "\n"):gmatch("([^\n]*)\n") do
         desc_lines[#desc_lines + 1] = line
     end
     local desc_scale = 1.2
@@ -150,9 +184,8 @@ function BuyScene:draw()
         love.graphics.setColor(0.6, 0.3, 0.3, 1)
     end
     local price_scale = 1.6
-    local price_str   = "$" .. ent.cost
-    local price_w     = font:getWidth(price_str) * price_scale
-    love.graphics.print(price_str, CENTER_X - price_w / 2, CENTER_Y + 80, 0, price_scale, price_scale)
+    local price_w     = font:getWidth(display_cost) * price_scale
+    love.graphics.print(display_cost, CENTER_X - price_w / 2, CENTER_Y + 80, 0, price_scale, price_scale)
 
     -- cycle arrows
     love.graphics.setColor(0.7, 0.7, 0.7, 1)
