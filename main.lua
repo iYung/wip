@@ -1,17 +1,15 @@
 local SceneManager = require("lua/core/scene_manager")
 local StoreScene   = require("lua/game/scenes/store_scene")
 local GameState    = require("lua/game/game_state")
-local Input        = require("lua/game/input")
+local input        = require("lua/game/input")
 
 local LOGICAL_W, LOGICAL_H = 1280, 720
 local canvas
 
 local scene_manager
-local input
 
 function love.load()
     canvas       = love.graphics.newCanvas(LOGICAL_W, LOGICAL_H)
-    input        = Input.new()
     local gs     = GameState.new()
     scene_manager = SceneManager.new()
     local store_scene = StoreScene.new(gs, input, scene_manager)

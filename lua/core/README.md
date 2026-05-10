@@ -84,3 +84,14 @@ Holds the active scene and drives the game loop.
 - `SceneManager.new()`
 - `switch(scene)` — calls `on_exit()` on the old scene, `on_enter()` on the new one
 - `update(dt)` / `draw()` — delegate to `current`
+
+---
+
+## Input
+
+Action-based keyboard polling. Call `update()` once per frame before reading input.
+
+- `Input.new(key_map)` — `key_map` is `{ action = { keys... } }`, e.g. `{ jump = {"space", "w"} }`
+- `update()` — sample keyboard state; call once per frame
+- `is_down(action)` — true while any bound key is held
+- `pressed(action)` — true only on the frame the action was first pressed
