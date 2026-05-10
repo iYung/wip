@@ -178,3 +178,25 @@ return {
     -- ...
 }
 ```
+
+```lua
+-- game/data/customer_scripts.lua
+-- Each entry is one chapter of a named character's arc.
+-- Characters with the same id are chapters of the same person.
+-- chapter 2 won't fire until chapter 1 has been seen, and so on.
+return {
+    {
+        id         = "old_pete",   -- unique character key
+        chapter    = 1,            -- visit number for this character
+        trigger    = { plant_type = 1, count = 1 },  -- stage3_counts threshold
+        name       = "Old Pete",
+        body_color = {0.25, 0.45, 0.80, 1},
+        plant_type = 2,            -- plant the customer wants
+        accessory  = "flat_cap",   -- optional; key into assets/accessories/
+        messages   = { "...", "...", "..." },
+    },
+    -- ...
+}
+```
+
+`seen_scripts` keys use `"id:chapter"` format (e.g. `"old_pete:1"`) so each chapter is tracked independently.

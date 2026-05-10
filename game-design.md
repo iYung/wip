@@ -141,9 +141,19 @@ x = -400               x = 0
 
 Two kinds of customers can spawn:
 
-**Scripted customers** — defined in `customer_scripts.lua`. Each has a trigger condition (a specific plant type must have reached stage 3 a minimum number of times). Scripts are checked in order; the first unseen eligible script spawns. Scripted customers have a unique name, body color, and multi-line dialog.
+**Scripted customers** — defined in `customer_scripts.lua`. Each entry has an `id`, a `chapter` number, and a `trigger` (a plant type must have reached stage 3 a minimum number of times). Characters with the same `id` are chapters of the same person. Chapter 2 won't appear until chapter 1 has been seen, and so on. Among all currently eligible chapters, one is picked at random — multiple characters can qualify at the same time. Scripted customers have a unique name, body color, multi-line dialog, and an optional accessory sprite drawn over their top half.
 
-**Random customers** — pick a plant type uniformly at random from all plants the player has unlocked (purchased). Fern is unlocked from the start.
+**Random customers** — pick a plant type uniformly at random from all plants the player has unlocked (purchased). Fern is unlocked from the start. Random customers spawn whenever no scripted chapter qualifies.
+
+**Named characters and their arcs:**
+
+| Character | Plant | Chapters | Arc |
+|-----------|-------|----------|-----|
+| Old Pete | Cactus | 3 | Gruff regular who warms up over time; wears a flat cap |
+| Mayor Bloom | Rose | 2 | Formal first visit; returns privately for himself |
+| The Collector | Golden Lotus | 2 | Mysterious; hints at what he did with the first one |
+| Mira | Sunflower | 1 | Kid with her dad's money, no explanation |
+| Dottie | Lavender | 3 | Cheerful regular; presses flowers in books; brings one back as a gift |
 
 **Dialog flow:**
 - Scripted customers: F advances through messages one at a time; after the last message the plant-colored bubble appears

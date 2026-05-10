@@ -92,14 +92,30 @@ end
 function StoreScene:_next_customer_cfg()
     local gs = self.game_state
 
+    local qualified = {}
     for _, script in ipairs(CUSTOMER_SCRIPTS) do
-        if not gs.seen_scripts[script.id] then
+        local key = script.id .. ":" .. script.chapter
+        if not gs.seen_scripts[key] then
             local t = script.trigger
             if (gs.stage3_counts[t.plant_type] or 0) >= t.count then
-                gs.seen_scripts[script.id] = true
-                return script
+                local prior_ok = true
+                for ch = 1, script.chapter - 1 do
+                    if not gs.seen_scripts[script.id .. ":" .. ch] then
+                        prior_ok = false
+                        break
+                    end
+                end
+                if prior_ok then
+                    qualified[#qualified + 1] = script
+                end
             end
         end
+    end
+
+    if #qualified > 0 then
+        local script = qualified[math.random(#qualified)]
+        gs.seen_scripts[script.id .. ":" .. script.chapter] = true
+        return script
     end
 
     local keys = {}

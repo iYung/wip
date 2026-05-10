@@ -30,10 +30,11 @@ function Customer.new(target_x, exit_x, y)
     self.bubble.image   = A.customer_bubble
     self.bubble.visible = false
 
-    self.name         = "Customer"
-    self.messages     = {}
-    self.msg_index    = 1
-    self.done_talking = false
+    self.name            = "Customer"
+    self.messages        = {}
+    self.msg_index       = 1
+    self.done_talking    = false
+    self.accessory_sprite = nil
 
     return self
 end
@@ -55,6 +56,17 @@ function Customer:show(cfg)
         self.sprite.color = cfg.body_color
     else
         self.sprite.color = DEFAULT_COLOR
+    end
+    if cfg.accessory then
+        local img = A.load_accessory(cfg.accessory)
+        if img then
+            self.accessory_sprite       = Sprite.new(0, 0, CW, CW)
+            self.accessory_sprite.image = img
+        else
+            self.accessory_sprite = nil
+        end
+    else
+        self.accessory_sprite = nil
     end
 end
 
@@ -107,11 +119,18 @@ function Customer:update(dt)
     self.sprite.y = self.y - CH / 2
     self.bubble.x = self.x - BW / 2
     self.bubble.y = self.sprite.y - BH - 4
+    if self.accessory_sprite then
+        self.accessory_sprite.x       = self.sprite.x
+        self.accessory_sprite.y       = self.sprite.y
+        self.accessory_sprite.scale_x = self.sprite.scale_x
+        self.accessory_sprite.visible = self.sprite.visible
+    end
 end
 
 function Customer:draw()
     if self.state == "idle" then return end
     self.sprite:draw()
+    if self.accessory_sprite then self.accessory_sprite:draw() end
 end
 
 function Customer:draw_bubble()

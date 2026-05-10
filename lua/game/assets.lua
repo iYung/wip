@@ -29,4 +29,16 @@ A.pc_store       = img("assets/pc_store.png")
 A.slot         = img("assets/slot.png")
 A.cashier_wall = img("assets/cashier_wall.png")
 
+A.accessories = {}
+function A.load_accessory(name)
+    if A.accessories[name] ~= nil then return A.accessories[name] end
+    local path = "assets/accessories/" .. name .. ".png"
+    if love.filesystem.getInfo(path) then
+        A.accessories[name] = love.graphics.newImage(path)
+    else
+        A.accessories[name] = false
+    end
+    return A.accessories[name]
+end
+
 return A

@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(mv /Users/ivan/Development/luagame/facing-steps.md /Users/ivan/Development/luagame/archive/facing-steps.md)",
-      "Bash(grep -rn \"currency\\\\|money\\\\|gold\\\\|\\\\$\\\\|coin\" /Users/ivan/Development/luagame/lua --include=\"*.lua\" -i)"
+      "Bash(grep -rn \"currency\\\\|money\\\\|gold\\\\|\\\\$\\\\|coin\" /Users/ivan/Development/luagame/lua --include=\"*.lua\" -i)",
+      "Bash(python3 -c \"from PIL import Image\")"
     ],
     "additionalDirectories": [
       "/Users/ivan/Development/luagame"

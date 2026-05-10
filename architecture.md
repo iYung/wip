@@ -156,6 +156,10 @@ Loads every PNG once at startup and returns a shared table. All other modules `r
 - `watering_can`, `grafter_empty`, `grafter_loaded`, `sell_bin`, `pc_store` — item images (120×120)
 - `slot` — slot background image (120×200)
 - `cashier_wall` — cashier zone wall with transparent window cutout (400×800)
+- `accessories` — table of lazily-loaded accessory images, keyed by name
+
+**Methods**
+- `load_accessory(name)` — loads `assets/accessories/<name>.png` on first call and caches the result; returns `false` (not nil) on a missing file so the cache entry is set and the disk is not re-checked
 
 ---
 
@@ -187,7 +191,7 @@ Shared state passed between scenes. Survives scene switches.
 - `speed_level` — current speed upgrade tier (0 = base)
 - `unlocked_plants` — set `{ [plant_type] = true }`; Fern (`[1]`) pre-populated; updated on plant purchase
 - `stage3_counts` — `{ [plant_type] = n }`; incremented each time that plant type reaches stage 3
-- `seen_scripts` — set `{ [script_id] = true }`; prevents a scripted customer from firing twice
+- `seen_scripts` — set `{ ["id:chapter"] = true }`; e.g. `"old_pete:1"`; prevents a scripted chapter from firing twice
 
 ---
 
@@ -318,17 +322,18 @@ NPC that appears in the cashier zone and requests a specific plant.
 - `speed` — 80 px/s
 - `sprite` — Sprite (120×240) backed by `customer.png` (white); `color` set per customer as a tint — default orange, scripted customers get a unique body color
 - `bubble` — Sprite (120×120) backed by `customer_bubble.png` (white); tinted to `colors[3]` of the requested plant; same dimensions as a plant sprite so it looks like the stage-3 plant
+- `accessory_sprite` — Sprite (120×120) drawn over the top half of the body; nil for anonymous customers or when the accessory file is missing
 
 **Methods**
 - `new(target_x, exit_x, y)` — constructor; `state = "idle"`
-- `show(cfg)` — accepts `{ plant_type, messages, name, body_color }`; places customer at `exit_x` and begins walk-in
+- `show(cfg)` — accepts `{ plant_type, messages, name, body_color, accessory }`; places customer at `exit_x` and begins walk-in; `accessory` is a string key passed to `A.load_accessory()`
 - `advance()` — increments `msg_index`; sets `done_talking` after the last message
 - `on_last_message()` — returns `done_talking`
 - `serve()` — begin walking out (called on successful sale)
 - `arrived()` — returns `state == "waiting"`
 - `active()` — returns `state ~= "idle"`
-- `update(dt)` — advances walk-in / walk-out movement; positions sprite and bubble
-- `draw()` — draws body sprite
+- `update(dt)` — advances walk-in / walk-out movement; positions sprite, bubble, and accessory sprite; accessory mirrors body `x`, `y`, `scale_x`, and `visible`
+- `draw()` — draws body sprite, then accessory sprite if set
 - `draw_bubble()` — during dialog: draws centered name + message text; once `done_talking`: draws the plant-colored bubble square
 
 ---
