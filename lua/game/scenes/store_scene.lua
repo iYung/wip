@@ -1,7 +1,6 @@
 local Scene        = require("lua/core/scene")
 local WateringCan  = require("lua/game/items/watering_can")
 local PCStore      = require("lua/game/items/pc_store")
-local Grafter      = require("lua/game/items/grafter")
 local SellBin      = require("lua/game/items/sell_bin")
 local BuyScene     = require("lua/game/scenes/buy_scene")
 local PLANT_DATA        = require("lua/game/data/plant_data")
@@ -58,8 +57,6 @@ function StoreScene:_setup_store()
 
     store.slots[1].item = WateringCan.new()
     store.slots[2].item = SellBin.new()
-
-    store.slots[5].item = Grafter.new()
 
     store.slots[3].item = PCStore.new(function()
         local slot = gs.player:active_slot(store)
@@ -228,7 +225,7 @@ function StoreScene:_hud_labels()
     local held      = player.held_item
     local slot_item = slot and slot.item
 
-    local slot_label = slot_item and slot_item.name and ("HOVER: " .. slot_item.name:upper())
+    local slot_label = player.x >= 0 and slot_item and slot_item.name and ("HOVER: " .. slot_item.name:upper())
 
     local e_label
     if player.x >= 0 then
@@ -281,7 +278,8 @@ function StoreScene:draw()
 
     local gs = self.game_state
     love.graphics.setColor(1, 1, 1, 0.8)
-    love.graphics.print("Currency: " .. gs.currency, 10, 10)
+    local cur_text = "Currency: " .. gs.currency
+    love.graphics.print(cur_text, 1280 - love.graphics.getFont():getWidth(cur_text) - 10, 10)
 
     -- context HUD: bottom-left, stacked upward (hover at bottom, then f, then e)
     local hud    = self:_hud_labels()
