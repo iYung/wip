@@ -95,8 +95,8 @@ All items are **120 × 120 px**.
 
 ### Step 1 — Create `assets/` directory and add all PNGs
 
-- [ ] Create `assets/` at the project root
-- [ ] Add all images listed above at the exact pixel dimensions
+- [x] Create `assets/` at the project root
+- [x] Add all images listed above at the exact pixel dimensions
 
 ### Step 2 — Load images at startup
 
@@ -114,33 +114,33 @@ Require it once in `main.lua` (or `love.load`) and pass/share as needed.
 
 ### Step 3 — Player (`player.lua`)
 
-- [ ] Require assets; set `idle.image`, `walk.image`, `idle_held.image`, `walk_held.image` in `Player.new()`
+- [x] Require assets; set `idle.image`, `walk.image`, `idle_held.image`, `walk_held.image` in `Player.new()`
 
 ### Step 4 — Customer (`customer.lua`)
 
-- [ ] Set `self.sprite.image` to `assets/customer.png` in `Customer.new()`
-- [ ] Set `self.bubble.image` to `assets/customer_bubble.png` in `Customer.new()`
+- [x] Set `self.sprite.image` to `assets/customer.png` in `Customer.new()`
+- [x] Set `self.bubble.image` to `assets/customer_bubble.png` in `Customer.new()`
 
 ### Step 5 — Plants (`plant.lua`)
 
-- [ ] In the stage loop, set `s.image = A["plant_" .. plant_type .. "_" .. i]`
-- [ ] Set `self.bubble.image = A.plant_bubble`
+- [x] In the stage loop, set `s.image = A["plant_" .. plant_type .. "_" .. i]`
+- [x] Set `self.bubble.image = A.plant_bubble`
 
 ### Step 6 — Items
 
-- [ ] `watering_can.lua` — set `self.sprite.image = A.watering_can`
-- [ ] `grafter.lua` — set `self.sprite.image = A.grafter_empty` in `new()`; swap to `A.grafter_loaded` in `interact()` and back on unload
-- [ ] `sell_bin.lua` — set `self.sprite.image = A.sell_bin`
-- [ ] `pc_store.lua` — set `self.sprite.image = A.pc_store`
+- [x] `watering_can.lua` — set `self.sprite.image = A.watering_can`
+- [x] `grafter.lua` — set `self.sprite.image = A.grafter_empty` in `new()`; swap to `A.grafter_loaded` in `interact()` and back on unload
+- [x] `sell_bin.lua` — set `self.sprite.image = A.sell_bin`
+- [x] `pc_store.lua` — set `self.sprite.image = A.pc_store`
 
 ### Step 7 — Slot (`slot.lua`)
 
-- [ ] Replace the two rectangle sprites (`border` + `bg`) with a single `Sprite` using `assets/slot.png`
-- [ ] Update `draw()` accordingly
+- [x] Replace the two rectangle sprites (`border` + `bg`) with a single `Sprite` using `assets/slot.png`
+- [x] Update `draw()` accordingly
 
 ### Step 8 — Cashier Wall (`store_scene.lua`)
 
-- [ ] Replace the canvas-generation block with `love.graphics.newImage("assets/cashier_wall.png")` (swap point already marked in the code)
+- [x] Replace the canvas-generation block with `love.graphics.newImage("assets/cashier_wall.png")` (swap point already marked in the code)
 
 ---
 

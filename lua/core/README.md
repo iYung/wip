@@ -6,19 +6,21 @@ Engine-level classes with no game-specific knowledge. Safe to reuse across proje
 
 ## Sprite
 
-A colored rectangle (or image) at a world position.
+A drawable unit at a world position.
 
 | Property | Type | Notes |
 |----------|------|-------|
 | `x`, `y` | number | World position (top-left) |
 | `width`, `height` | number | Dimensions in pixels |
-| `scale_x`, `scale_y` | number | Scale factors |
+| `scale_x`, `scale_y` | number | Scale factors (default `1`) |
 | `visible` | bool | Skips draw when false |
-| `color` | `{r,g,b,a}` | Tint; defaults to white |
-| `image` | Love2D image | Draws a rectangle if nil |
+| `color` | `{r,g,b,a}` | Tint; defaults to white `{1,1,1,1}` |
+| `image` | Love2D image | If set, draws image scaled to `width × height`; if nil, draws a filled rectangle |
 | `shader` | Love2D shader | Applied only during `draw()`, then cleared |
 
 `Sprite.new(x, y, w, h)` — `draw()` — `update(dt)` (no-op hook)
+
+`draw()` scales the image to fill exactly `width × height`, so the image's native pixel size doesn't need to match. `color` is applied as a tint in both image and rectangle modes.
 
 ---
 
@@ -28,11 +30,12 @@ A named collection of Sprites with one active at a time.
 
 - `SpriteSet.new()`
 - `add(name, sprite)` — register a sprite
-- `set(name)` — switch the active sprite; forwards `x`/`y` to it on every `draw()`
-- `draw()` / `update(dt)` — delegate to the active sprite
+- `set(name)` — switch the active sprite
+- `draw()` — copies `x`/`y` to the active sprite, then calls its `draw()`
+- `update(dt)` — delegates to the active sprite
 - `_active()` — returns the current Sprite
 
-Implements the same `draw()`/`update(dt)` interface as Sprite, so it's a drop-in anywhere a sprite is expected.
+Implements the same `draw()`/`update(dt)` interface as Sprite, so it's a drop-in anywhere a Sprite is expected. `color`, `scale_x`, `scale_y` are per-sprite properties — set them on each Sprite after `add()`.
 
 ---
 
@@ -41,8 +44,8 @@ Implements the same `draw()`/`update(dt)` interface as Sprite, so it's a drop-in
 Renders all registered drawables each frame in priority order.
 
 - `Drawer.new()`
-- `add(sprite, priority)` — lower priority = drawn first (behind); sorted on add
-- `draw()` — calls `sprite:draw()` on each entry in order
+- `add(drawable, priority)` — lower priority = drawn first (behind); sorted on add
+- `draw()` — calls `drawable:draw()` on each entry in order
 - `clear()` — removes all entries
 
 Any object with a `draw()` method can be registered, not just Sprites.

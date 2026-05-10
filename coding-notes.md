@@ -5,6 +5,9 @@
 ```
 luagame/
 ├── main.lua
+├── conf.lua
+├── generate_assets.py   ← regenerates assets/ as solid-color PNGs
+├── assets/              ← PNG images (player, customer, plants, items, slot, wall)
 └── lua/
     ├── core/
     │   ├── sprite.lua
@@ -14,23 +17,27 @@ luagame/
     │   ├── scene.lua
     │   └── scene_manager.lua
     └── game/
+        ├── assets.lua       ← loads all PNGs once; require-cached
         ├── config.lua
         ├── input.lua
         ├── game_state.lua
         ├── player.lua
         ├── store.lua
         ├── slot.lua
+        ├── customer.lua
         ├── items/
         │   ├── item.lua
         │   ├── watering_can.lua
         │   ├── grafter.lua
+        │   ├── sell_bin.lua
         │   ├── pc_store.lua
         │   └── plant.lua
         ├── scenes/
         │   ├── store_scene.lua
         │   └── buy_scene.lua
         └── data/
-            └── plant_cooldowns.lua
+            ├── plant_data.lua
+            └── customer_scripts.lua
 ```
 
 ---
@@ -55,7 +62,7 @@ return MyClass
 Inheritance:
 
 ```lua
-local Base = require("core/sprite")
+local Base = require("lua/core/sprite")
 local Child = setmetatable({}, { __index = Base })
 Child.__index = Child
 
@@ -83,7 +90,34 @@ return Child
 
 ```lua
 local Sprite = require("lua/core/sprite")
-local Plant  = require("lua/game/plant")
+local A      = require("lua/game/assets")
+```
+
+---
+
+## Images
+
+All sprites use PNG images loaded via `lua/game/assets.lua`. Every file that needs images does:
+
+```lua
+local A = require("lua/game/assets")
+self.sprite.image = A.watering_can
+```
+
+`require` caches the module, so images are only loaded once regardless of how many files require it.
+
+`Sprite:draw()` scales the image to fill `self.width × self.height` exactly, so image pixel dimensions don't need to match the sprite's declared size:
+
+```lua
+local sx = self.width  / self.image:getWidth()
+local sy = self.height / self.image:getHeight()
+love.graphics.draw(self.image, 0, 0, 0, sx, sy)
+```
+
+To regenerate all PNGs (e.g. to change colors or sizes):
+
+```
+python3 generate_assets.py
 ```
 
 ---
@@ -132,9 +166,15 @@ World coordinates and slot widths should be sized to feel natural at 1280×720.
 Game config lives in `game/data/` as plain Lua tables returning a value:
 
 ```lua
--- game/data/plant_cooldowns.lua
+-- game/data/plant_data.lua
 return {
-    [1] = { [1] = 30, [2] = 60, [3] = 90 },
-    -- [plant_type] = { [stage] = seconds }
+    [1] = {
+        name      = "Fern",
+        buy       = 1,
+        sell      = 5,
+        cooldowns = { 10, 15 },
+        colors    = { {r,g,b,1}, {r,g,b,1}, {r,g,b,1} },
+    },
+    -- ...
 }
 ```
