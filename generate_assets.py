@@ -44,12 +44,12 @@ rect("pc_store.png",       120, 120, 0.70, 0.75, 0.90)
 # ── Slot (120×200) – baked border color ───────────────────────
 rect("slot.png", 120, 200, 0.35, 0.28, 0.20)
 
-# ── Cashier wall (400×800, transparent window y:520-680) ──────
+# ── Cashier wall (400×800, transparent window y:360-520) ──────
 img = Image.new("RGBA", (400, 800), (0, 0, 0, 0))
 wall = (int(0.32*255), int(0.22*255), int(0.38*255), 255)
 d = ImageDraw.Draw(img)
-d.rectangle([0,   0, 400, 520], fill=wall)
-d.rectangle([0, 680, 400, 800], fill=wall)
+d.rectangle([0,   0, 400, 360], fill=wall)
+d.rectangle([0, 520, 400, 800], fill=wall)
 img.save("assets/cashier_wall.png")
 print("  cashier_wall.png")
 
