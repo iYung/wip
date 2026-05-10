@@ -2,9 +2,9 @@
 
 ## What's Built
 
-All MVP steps are implemented and running. Expand Store, Shop UI, Plant Types, Context HUD, and Cashier Zone features complete.
+All MVP steps are implemented and running. Expand Store, Shop UI, Plant Types, Context HUD, Cashier Zone, Speed Upgrade, and Player Walk features complete.
 
-Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `grafter-steps.md`, `expand-store-steps.md`, `shop-ui-steps.md`, `plant-types-steps.md`, `context-hud-steps.md`.
+Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `grafter-steps.md`, `expand-store-steps.md`, `shop-ui-steps.md`, `plant-types-steps.md`, `context-hud-steps.md`, `cashier-zone-steps.md`, `speed-upgrade-steps.md`, `player-walk-steps.md`.
 
 ---
 
@@ -28,7 +28,7 @@ Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `gr
 | `config.lua` | Shared constants — `U`, `SLOT_COST`, `ZONE_WIDTH` (400px cashier zone) |
 | `input.lua` | Polls keyboard each frame; A/D or arrows = move, E = pick up/down, F = interact |
 | `game_state.lua` | Holds store, player, currency; survives scene switches |
-| `player.lua` | Moves left/right into cashier zone; holds one item; two-frame walk animation; `speed` property |
+| `player.lua` | Moves left/right into cashier zone; holds one item; 4-frame walk animation (idle/walk × no-held/held); `speed` property upgradeable via shop |
 | `slot.lua` | One store cell; positions its item every frame |
 | `store.lua` | Array of slots; `slot_at(x)`, `grow()`, `draw_bubbles()` for high-priority bubble rendering |
 | `customer.lua` | Cashier zone NPC; walks in, waits with speech bubble, walks out after sale; state machine: idle → walking_in → waiting → walking_out |
@@ -68,7 +68,7 @@ Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `gr
 | Player size | 6U × 12U (120×240) |
 | All items | 6U × 6U (120×120) |
 | Initial slots | 8 |
-| Player speed | 220 px/s (base); upgradeable to 280 / 340 / 400 |
+| Player speed | 220 px/s (base); upgradeable to 320 / 480 / 720 |
 | Camera lerp | 0.85 (smooth follow on x, locked y) |
 | Cashier zone width | 20U (400px), 2 slots wide, at x = -400 to 0 |
 | Customer walk speed | 80 px/s |
@@ -103,8 +103,7 @@ Completed step files are moved to [`archive/`](archive/) — `mvp-steps.md`, `gr
 
 ## Up Next
 
-- [speed-upgrade-steps.md](speed-upgrade-steps.md) — purchasable speed boost tiers in the shop
-- [player-walk-steps.md](player-walk-steps.md) — 4-frame walk animation (held / not-held × neutral / step)
+*(nothing planned — add a new steps file)*
 
 ## Cut / Not Yet Built
 

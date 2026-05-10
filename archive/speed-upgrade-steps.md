@@ -9,9 +9,9 @@ Goal: a purchasable "Speed Boost" upgrade in the shop. Three tiers, each increme
 | Tier | Cost | Speed (px/s) |
 |------|------|--------------|
 | 0 (base) | — | 220 |
-| 1 | $10 | 280 |
-| 2 | $20 | 340 |
-| 3 (max) | $35 | 400 |
+| 1 | $15 | 320 |
+| 2 | $40 | 480 |
+| 3 (max) | $100 | 720 |
 
 ---
 
