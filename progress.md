@@ -129,6 +129,12 @@ Completed step files are moved to [`archive/`](archive/).
 
 No active step files. See open questions in `game-design.md`.
 
+### Recently completed
+
+- **Slot item centering** — items now centered using `spr.width`/`spr.height` instead of hardcoded offsets
+- **Plant bubble while held** — `Player:draw()` calls `draw_bubble()` on the held item so the bubble is visible while carrying a ready plant
+- **Garbage bin replaces sell bin** — `GarbageBin` (F: DISCARD) is the active discard station; `sell_bin.lua` removed
+
 ## Cut / Not Yet Built
 
 - Win condition or idle loop

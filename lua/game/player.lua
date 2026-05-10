@@ -95,6 +95,9 @@ function Player:draw()
     self.sprite:draw()
     if self.held_item then
         self.held_item:draw()
+        if self.held_item.draw_bubble then
+            self.held_item:draw_bubble()
+        end
     end
 end
 
