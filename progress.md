@@ -77,7 +77,7 @@ Completed step files are moved to [`archive/`](archive/).
 | All items | 6U × 6U (120×120) |
 | Customer bubble | 6U × 6U (120×120) — matches plant sprite size |
 | Plant bubble | 3U × 3U (60×60) |
-| Initial slots | 8 |
+| Initial slots | 6 |
 | Player speed | 220 px/s (base); upgradeable |
 | Camera lerp | 0.85 (smooth follow on x, locked y) |
 | Cashier zone width | 20U (400px), at x = -400 to 0 |
