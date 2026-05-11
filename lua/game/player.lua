@@ -8,7 +8,7 @@ local ZONE_WIDTH = CONFIG.ZONE_WIDTH
 local BASE_SPEED = 220
 local W          = 6 * U   -- 120
 local H          = 12 * U  -- 240
-local INIT_Y     = 31 * U  -- 620  player center y in world
+local INIT_Y     = 31 * U + 5  -- 625  player center y in world
 
 local Player = {}
 Player.__index = Player

@@ -68,7 +68,7 @@ function StoreScene:_setup_store()
 
     local target_x   = -ZONE_WIDTH / 2
     local exit_x     = -(ZONE_WIDTH + 200)
-    local customer_y = 520
+    local customer_y = 500
     self._customer    = Customer.new(target_x, exit_x, customer_y)
     self._spawn_timer = math.random(3, 6)
 

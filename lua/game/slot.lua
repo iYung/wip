@@ -31,7 +31,7 @@ function Slot:update(dt)
     local spr = self.item.sprite
     if spr then
         spr.x = self.x + (self.slot_width - spr.width)  / 2
-        spr.y = self.y + (SLOT_HEIGHT     - spr.height) / 2
+        spr.y = self.y + (SLOT_HEIGHT     - spr.height) / 2 - 80
     end
 end
 
