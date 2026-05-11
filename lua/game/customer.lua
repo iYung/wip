@@ -45,7 +45,7 @@ function Customer.new(target_x, exit_x, y)
 
     self.heart_bubble         = Sprite.new(0, 0, BW, BH)
     self.heart_bubble.image   = A.heart_bubble
-    self.heart_bubble.color   = {1.0, 0.55, 0.75, 1}
+    self.heart_bubble.color   = {1, 1, 1, 1}
     self.heart_bubble.visible = false
 
     self.name            = "Customer"
