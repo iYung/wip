@@ -49,7 +49,7 @@ Completed step files are moved to [`archive/`](archive/).
 
 | File | What it does |
 |------|-------------|
-| `store_scene.lua` | Main loop — player moves, camera follows on x, pick up/interact handled here; cashier zone logic; context HUD bottom-left; layered draw order for wall/bubbles; cashier wall loaded from `cashier_wall.png` |
+| `store_scene.lua` | Main loop — player moves, camera follows on x then clamps to world bounds (left = -400+640, right = store width−640), pick up/interact handled here; cashier zone logic; context HUD bottom-left; parallax background layers drawn pre-drawer in world space; layered draw order for wall/bubbles; cashier wall loaded from `cashier_wall.png` |
 | `buy_scene.lua` | Carousel UI — 9 items (6 plants + Watering Can + Grafter + Expand Slot); A/D cycle, F buy, E cancel; per-type price and preview color |
 
 ### Data (`lua/game/data/`)
@@ -134,6 +134,9 @@ No active step files. See open questions in `game-design.md`.
 - **Slot item centering** — items now centered using `spr.width`/`spr.height` instead of hardcoded offsets
 - **Plant bubble while held** — `Player:draw()` calls `draw_bubble()` on the held item so the bubble is visible while carrying a ready plant
 - **Garbage bin replaces sell bin** — `GarbageBin` (F: DISCARD) is the active discard station; `sell_bin.lua` removed
+- **Store camera bounds** — camera x clamped after follow so neither screen edge overruns the world; active from the start with 6 slots (world 1800px > screen 1280px)
+- **Shop window parallax** — three PNG layers (`shop_bg_far/mid/near`, 400×800) drawn with parallax factors 0.05/0.20/0.45; loaded conditionally so the game runs without them
+- **Initial slots reduced to 6**
 
 ## Cut / Not Yet Built
 

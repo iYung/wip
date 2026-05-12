@@ -93,6 +93,17 @@ function StoreScene:_setup_store()
         draw = function() store_ref:draw_bubbles() end
     }
 
+    local function try_img(path)
+        if love.filesystem.getInfo(path) then
+            return love.graphics.newImage(path)
+        end
+    end
+    self._parallax_layers = {
+        { img = try_img("assets/shop_bg_far.png"),  p = 0.05 },
+        { img = try_img("assets/shop_bg_mid.png"),  p = 0.20 },
+        { img = try_img("assets/shop_bg_near.png"), p = 0.45 },
+    }
+
     local floor_y  = 30 * U
     local slot_w   = store_ref.slot_width
     local sx = slot_w / slot_img:getWidth()
@@ -180,6 +191,11 @@ function StoreScene:update(dt)
 
     self.camera:follow(gs.player, CAMERA_LERP)
     self.camera.y = CAMERA_Y
+
+    local half_w      = 640
+    local world_left  = -ZONE_WIDTH
+    local world_right = gs.store:width()
+    self.camera.x = math.max(world_left + half_w, math.min(world_right - half_w, self.camera.x))
 
     if input:pressed("pick_up_down") then
         self:_handle_pick_up_down()
@@ -306,6 +322,15 @@ function StoreScene:draw()
     -- zone background (wall PNG draws on top of this via the drawer)
     love.graphics.setColor(0.10, 0.09, 0.14, 1)
     love.graphics.rectangle("fill", -ZONE_WIDTH, 0, ZONE_WIDTH, 800)
+
+    local cx = self.camera.x
+    love.graphics.setColor(1, 1, 1, 1)
+    for _, layer in ipairs(self._parallax_layers) do
+        if layer.img then
+            local draw_x = (cx - 640) * (1 - layer.p) - ZONE_WIDTH * layer.p
+            love.graphics.draw(layer.img, draw_x, 0)
+        end
+    end
 
     self.drawer:draw()
     self.camera:detach()

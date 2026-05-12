@@ -90,6 +90,10 @@ Controls the viewport — what portion of the world is visible.
 - `to_screen(wx, wy)` — convert world coordinates to screen coordinates
 - `follow(target, lerp)` — smoothly track `target.x/y`; `lerp` 0 = instant, 1 = no movement
 
+**StoreScene camera rules (applied after `follow()` each frame)**
+- `camera.y` is locked to `CAMERA_Y = 440` (no vertical follow)
+- `camera.x` is clamped so neither screen edge overruns the world: left bound = `-ZONE_WIDTH + 640`, right bound = `store:width() - 640`; ensures the cashier zone far-left and store far-right are never exposed
+
 ---
 
 ### Scene
@@ -153,9 +157,10 @@ Loads every PNG once at startup and returns a shared table. All other modules `r
 - `customer`, `customer_bubble` — customer body and plant-request bubble (120×240, 120×120)
 - `plant_N[stage]` — plant images indexed as `A["plant_N"][stage]` for types 1–6, stages 1–3 (120×120 each)
 - `plant_bubble` — watering-ready indicator shown above plants (60×60)
-- `watering_can`, `grafter_empty`, `grafter_loaded`, `sell_bin`, `pc_store` — item images (120×120)
+- `watering_can`, `grafter_empty`, `grafter_loaded`, `garbage_bin`, `pc_store` — item images (120×120)
 - `slot` — slot background image (120×200)
 - `cashier_wall` — cashier zone wall with transparent window cutout (400×800)
+- `shop_bg_far`, `shop_bg_mid`, `shop_bg_near` — parallax background layers for the cashier zone window (400×800 each); loaded conditionally at runtime — missing files are silently skipped
 - `accessories` — table of lazily-loaded accessory images, keyed by name
 
 **Methods**
@@ -232,7 +237,7 @@ Base class for all carriable/interactable objects in the store.
 - `WateringCan` — interact waters the plant in the player's active slot
 - `Grafter` — clones a stage-3 plant; has `unload()` to reset to empty state
 - `PCStore` — interact switches to BuyScene; only works when placed in a slot
-- `SellBin` — sell station; acts as a target for F-interact while holding another item
+- `GarbageBin` — discard station; F while holding any sellable item discards it (or unloads a grafter clone)
 - `Plant` — has stage and cooldown timer; not directly usable as a tool
 
 ---
@@ -342,9 +347,11 @@ NPC that appears in the cashier zone and requests a specific plant.
 
 | Priority | Content |
 |----------|---------|
+| (pre-drawer) | Parallax background layers (`shop_bg_far/mid/near`) — drawn manually in world space before `drawer:draw()` |
 | 0 | Store (floor, slots, items) |
 | 1 | Customer body |
 | 2 | Cashier wall (`cashier_wall.png` with transparent window cutout) |
+| 2.5 | Cashier floor (tiled `slot.png` across `x = -400` to `0`) |
 | 3 | Plant ready bubbles (`Store:draw_bubbles()`) |
 | 4 | Player (+ held item) |
 | 5 | Customer speech / plant bubble |
