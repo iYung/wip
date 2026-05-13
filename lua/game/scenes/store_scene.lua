@@ -19,6 +19,8 @@ end
 local CAMERA_Y    = 440  -- fixed world y the camera locks to
 local CAMERA_LERP = 0.85 -- smoothing: 0=instant, 1=no movement; 0.85 = smooth lag
 
+local DISMISS_COOLDOWN_SALES = 3  -- scripted customer returns after this many other sales
+
 local StoreScene = setmetatable({}, { __index = Scene })
 StoreScene.__index = StoreScene
 
@@ -69,8 +71,10 @@ function StoreScene:_setup_store()
     local target_x   = -ZONE_WIDTH / 2
     local exit_x     = -(ZONE_WIDTH + 200)
     local customer_y = 500
-    self._customer    = Customer.new(target_x, exit_x, customer_y)
-    self._spawn_timer = math.random(3, 6)
+    self._customer          = Customer.new(target_x, exit_x, customer_y)
+    self._spawn_timer       = math.random(3, 6)
+    self._active_script_key = nil
+    self._script_cooldowns  = {}
 
     local A        = require("lua/game/assets")
     local wall_img = A.cashier_wall
@@ -121,7 +125,7 @@ function StoreScene:_next_customer_cfg()
     local qualified = {}
     for _, script in ipairs(CUSTOMER_SCRIPTS) do
         local key = script.id .. ":" .. script.chapter
-        if not gs.seen_scripts[key] then
+        if not gs.seen_scripts[key] and not self._script_cooldowns[key] then
             local t = script.trigger
             if (gs.stage3_counts[t.plant_type] or 0) >= t.count then
                 local prior_ok = true
@@ -140,10 +144,11 @@ function StoreScene:_next_customer_cfg()
 
     if #qualified > 0 then
         local script = qualified[math.random(#qualified)]
-        gs.seen_scripts[script.id .. ":" .. script.chapter] = true
+        self._active_script_key = script.id .. ":" .. script.chapter
         return script
     end
 
+    self._active_script_key = nil
     local keys = {}
     for pt in pairs(gs.unlocked_plants) do
         keys[#keys + 1] = pt
@@ -206,7 +211,16 @@ function StoreScene:_handle_pick_up_down()
     local store  = self.game_state.store
     local slot   = player:active_slot(store)
 
-    if player.x < 0 then return end
+    if player.x < 0 then
+        if self._customer:arrived() then
+            self._customer:dismiss()
+            if self._active_script_key then
+                self._script_cooldowns[self._active_script_key] = DISMISS_COOLDOWN_SALES
+                self._active_script_key = nil
+            end
+        end
+        return
+    end
 
     -- loaded grafter + empty slot → place clone, grafter stays in hand
     if player.held_item and player.held_item.loaded_plant and slot and not slot.item then
@@ -241,6 +255,18 @@ function StoreScene:_handle_interact()
             self.game_state.currency = self.game_state.currency + value
             player.held_item = nil
             self._customer:serve()
+            if self._active_script_key then
+                self.game_state.seen_scripts[self._active_script_key] = true
+                self._active_script_key = nil
+            end
+            for key, count in pairs(self._script_cooldowns) do
+                local remaining = count - 1
+                if remaining <= 0 then
+                    self._script_cooldowns[key] = nil
+                else
+                    self._script_cooldowns[key] = remaining
+                end
+            end
         else
             if not self._customer:line_complete() then
                 self._customer:skip_reveal()
@@ -283,7 +309,9 @@ function StoreScene:_hud_labels()
     local slot_label = player.x >= 0 and slot_item and slot_item.name and ("HOVER: " .. slot_item.name:upper())
 
     local e_label
-    if player.x >= 0 then
+    if player.x < 0 and self._customer and self._customer:arrived() then
+        e_label = "E: DISMISS"
+    elseif player.x >= 0 then
         if held and held.loaded_plant and slot and not slot_item then
             e_label = "E: PLACE CLONE"
         elseif held and slot and not slot_item then

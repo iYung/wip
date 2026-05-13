@@ -82,6 +82,7 @@ function Customer.new(target_x, exit_x, y)
     self.messages        = {}
     self.msg_index       = 1
     self.done_talking    = false
+    self.dismissed       = false
     self.accessory_sprite = nil
     self.reveal_index    = 0
     self.reveal_t        = 0
@@ -98,6 +99,7 @@ function Customer:show(cfg)
     self.messages      = cfg.messages or {}
     self.msg_index     = 1
     self.done_talking  = #self.messages == 0
+    self.dismissed     = false
     self._full_text    = make_full_text(self)
     self.reveal_index  = 0
     self.reveal_t      = 0
@@ -154,6 +156,13 @@ function Customer:serve()
     self.state              = "walking_out"
     self.bubble.visible     = false
     self.heart_bubble.visible = true
+end
+
+function Customer:dismiss()
+    self.state              = "walking_out"
+    self.bubble.visible     = false
+    self.heart_bubble.visible = false
+    self.dismissed          = true
 end
 
 function Customer:arrived()
