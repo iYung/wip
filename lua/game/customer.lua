@@ -78,9 +78,6 @@ function Customer.new(target_x, exit_x, y)
     self.heart_bubble.color   = {1, 1, 1, 1}
     self.heart_bubble.visible = false
 
-    self.show_plant_bubble  = false
-    self.request_plant_type = 1
-
     self.name            = "Customer"
     self.messages        = {}
     self.msg_index       = 1
@@ -109,8 +106,6 @@ function Customer:show(cfg)
     self.x             = self.exit_x
     self.state         = "walking_in"
     self.sprite.visible = true
-    self.request_plant_type = self.plant_type
-    self.show_plant_bubble  = false
     self.bubble.visible = false
     self.heart_bubble.visible = false
     local color = cfg.body_color or DEFAULT_COLOR
@@ -159,14 +154,12 @@ end
 function Customer:serve()
     self.state              = "walking_out"
     self.bubble.visible     = false
-    self.show_plant_bubble  = false
     self.heart_bubble.visible = true
 end
 
 function Customer:dismiss()
     self.state              = "walking_out"
     self.bubble.visible     = false
-    self.show_plant_bubble  = false
     self.heart_bubble.visible = false
     self.dismissed          = true
 end
@@ -183,10 +176,9 @@ function Customer:update(dt)
     if self.state == "walking_in" then
         self.x = self.x + SPEED * dt
         if self.x >= self.target_x then
-            self.x                 = self.target_x
-            self.state             = "waiting"
-            self.show_plant_bubble = true
-            self.bubble.visible    = false
+            self.x              = self.target_x
+            self.state          = "waiting"
+            self.bubble.visible = true
         end
     elseif self.state == "walking_out" then
         self.x = self.x - SPEED * dt
@@ -195,7 +187,6 @@ function Customer:update(dt)
             self.state             = "idle"
             self.sprite.visible    = false
             self.bubble.visible    = false
-            self.show_plant_bubble = false
             self.heart_bubble.visible = false
         end
     end
@@ -243,34 +234,57 @@ function Customer:draw()
 end
 
 function Customer:draw_bubble()
-    if self.show_plant_bubble and A.speech_bubble and A.speech_bubble_tail then
-        local PD       = 12
-        local IMG_SIZE = 80
-        local BOX_W    = IMG_SIZE + PD * 2
-        local BOX_H    = IMG_SIZE + PD * 2
-        local TAIL_H2  = 24
-
-        local box_x = self.x - BOX_W / 2
-        local box_y = self.sprite.y - BOX_H - TAIL_H2 - 4
-
-        love.graphics.setColor(1, 1, 1, 1)
-        draw9(A.speech_bubble, box_x, box_y, BOX_W, BOX_H, BUBBLE_MARGIN)
-
-        local tw = A.speech_bubble_tail:getWidth()
-        love.graphics.draw(
-            A.speech_bubble_tail,
-            box_x + BOX_W / 2 - tw / 2,
-            box_y + BOX_H - 10
-        )
-
-        local img    = A["plant_" .. self.request_plant_type][3]
-        local iw, ih = img:getDimensions()
-        love.graphics.draw(img, box_x + PD, box_y + PD, 0, IMG_SIZE / iw, IMG_SIZE / ih)
-
-        love.graphics.setColor(1, 1, 1, 1)
-    end
     if self.heart_bubble.visible then
         self.heart_bubble:draw()
+    end
+    if not self.bubble.visible then return end
+    if self.done_talking then
+        if A.speech_bubble and A.speech_bubble_tail then
+            local PD       = 12
+            local IMG_SIZE = 80
+            local BOX_W    = IMG_SIZE + PD * 2
+            local BOX_H    = IMG_SIZE + PD * 2
+
+            local box_x = self.x - BOX_W / 2
+            local box_y = self.sprite.y - BOX_H - TAIL_H - 4
+
+            love.graphics.setColor(1, 1, 1, 1)
+            draw9(A.speech_bubble, box_x, box_y, BOX_W, BOX_H, BUBBLE_MARGIN)
+
+            local tw = A.speech_bubble_tail:getWidth()
+            love.graphics.draw(
+                A.speech_bubble_tail,
+                box_x + BOX_W / 2 - tw / 2,
+                box_y + BOX_H - 10
+            )
+
+            local img    = A["plant_" .. self.plant_type][3]
+            local iw, ih = img:getDimensions()
+            love.graphics.draw(img, box_x + PD, box_y + PD, 0, IMG_SIZE / iw, IMG_SIZE / ih)
+
+            love.graphics.setColor(1, 1, 1, 1)
+        end
+    else
+        local font     = love.graphics.getFont()
+        local revealed = string.sub(self._full_text, 1, self.reveal_index)
+        local text_w   = font:getWidth(self._full_text)
+        local text_h   = font:getHeight()
+        local box_w    = math.max(MIN_BOX_W, text_w + PAD * 2)
+        local box_h    = text_h + PAD * 2
+        local box_x    = self.bubble.x + BW / 2 - box_w / 2
+        local box_y    = self.bubble.y - box_h - TAIL_H + 4
+
+        love.graphics.setColor(1, 1, 1, 1)
+        if A.speech_bubble then
+            draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
+        end
+        if A.speech_bubble_tail then
+            local tw = A.speech_bubble_tail:getWidth()
+            love.graphics.draw(A.speech_bubble_tail, box_x + box_w / 2 - tw / 2, box_y + box_h - 10)
+        end
+        love.graphics.setColor(0.08, 0.07, 0.10, 0.95)
+        love.graphics.print(revealed, box_x + PAD, box_y + BUBBLE_MARGIN.top / 2 + PAD / 2)
+        love.graphics.setColor(1, 1, 1, 1)
     end
 end
 
