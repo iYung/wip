@@ -9,7 +9,8 @@
       "Bash(grep \"\\\\.lua$\")",
       "Bash(python3 -c \"from PIL import Image; print\\('ok'\\)\")",
       "Bash(python3 -c \"import struct, zlib; print\\('zlib ok'\\)\")",
-      "Bash(mkdir -p /Users/ivan/Development/luagame/lua/game/shaders)"
+      "Bash(mkdir -p /Users/ivan/Development/luagame/lua/game/shaders)",
+      "Bash(xargs ls)"
     ],
     "additionalDirectories": [
       "/Users/ivan/Development/luagame",
