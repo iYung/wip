@@ -43,12 +43,14 @@ A.store_window = img("assets/store_window.png")
 local function try_img(path)
     if love.filesystem.getInfo(path) then return love.graphics.newImage(path) end
 end
-A.slot_highlight = try_img("assets/slot_highlight.png")
-A.store_bg_far  = try_img("assets/shop_bg_far.png")
-A.store_bg_mid  = try_img("assets/shop_bg_mid.png")
-A.store_bg_near = try_img("assets/shop_bg_near.png")
-A.speech_bubble      = try_img("assets/speech_bubble.png")
-A.speech_bubble_tail = try_img("assets/speech_bubble_tail.png")
+A.slot_highlight     = img("assets/slot_highlight.png")
+A.store_bg_far       = img("assets/shop_bg_far.png")
+A.store_bg_mid       = img("assets/shop_bg_mid.png")
+A.store_bg_near      = img("assets/shop_bg_near.png")
+A.speech_bubble      = img("assets/speech_bubble.png")
+A.speech_bubble_tail = img("assets/speech_bubble_tail.png")
+A.sneakers           = try_img("assets/sneakers.png")
+A.expand_slot        = try_img("assets/expand_slot.png")
 
 
 A.accessories = {}

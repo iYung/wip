@@ -11,7 +11,6 @@ function WateringCan.new()
     setmetatable(self, WateringCan)
     self.sprite       = Sprite.new(0, 0, 6 * U, 6 * U)
     self.sprite.image = A.watering_can
-    self.sprite.color = {1, 1, 1, 1}
     self.carriable    = true
     self.name         = "Watering Can"
     return self

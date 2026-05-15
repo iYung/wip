@@ -11,7 +11,6 @@ function PCStore.new(buy_scene_factory)
     setmetatable(self, PCStore)
     self.sprite            = Sprite.new(0, 0, 6 * U, 6 * U)
     self.sprite.image      = A.pc_store
-    self.sprite.color      = {1, 1, 1, 1}
     self.carriable         = true
     self.sellable          = false
     self.name              = "PC Store"

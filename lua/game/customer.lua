@@ -242,31 +242,29 @@ function Customer:draw_bubble()
     end
     if not self.bubble.visible then return end
     if self.done_talking then
-        if A.speech_bubble and A.speech_bubble_tail then
-            local PD       = 12
-            local IMG_SIZE = 80
-            local BOX_W    = IMG_SIZE + PD * 2
-            local BOX_H    = IMG_SIZE + PD * 2
+        local PD       = 12
+        local IMG_SIZE = 80
+        local BOX_W    = IMG_SIZE + PD * 2
+        local BOX_H    = IMG_SIZE + PD * 2
 
-            local box_x = self.x - BOX_W / 2
-            local box_y = self.sprite.y - BOX_H - TAIL_H - 4
+        local box_x = self.x - BOX_W / 2
+        local box_y = self.sprite.y - BOX_H - TAIL_H - 4
 
-            love.graphics.setColor(1, 1, 1, 1)
-            draw9(A.speech_bubble, box_x, box_y, BOX_W, BOX_H, BUBBLE_MARGIN)
+        love.graphics.setColor(1, 1, 1, 1)
+        draw9(A.speech_bubble, box_x, box_y, BOX_W, BOX_H, BUBBLE_MARGIN)
 
-            local tw = A.speech_bubble_tail:getWidth()
-            love.graphics.draw(
-                A.speech_bubble_tail,
-                box_x + BOX_W / 2 - tw / 2,
-                box_y + BOX_H - 10
-            )
+        local tw = A.speech_bubble_tail:getWidth()
+        love.graphics.draw(
+            A.speech_bubble_tail,
+            box_x + BOX_W / 2 - tw / 2,
+            box_y + BOX_H - 10
+        )
 
-            local img    = A["plant_" .. self.plant_type][3]
-            local iw, ih = img:getDimensions()
-            love.graphics.draw(img, box_x + PD, box_y + PD, 0, IMG_SIZE / iw, IMG_SIZE / ih)
+        local img    = A["plant_" .. self.plant_type][3]
+        local iw, ih = img:getDimensions()
+        love.graphics.draw(img, box_x + PD, box_y + PD, 0, IMG_SIZE / iw, IMG_SIZE / ih)
 
-            love.graphics.setColor(1, 1, 1, 1)
-        end
+        love.graphics.setColor(1, 1, 1, 1)
     else
         local font     = love.graphics.getFont()
         local revealed = string.sub(self._full_text, 1, self.reveal_index)
@@ -278,13 +276,9 @@ function Customer:draw_bubble()
         local box_y    = self.bubble.y - box_h - TAIL_H + 4
 
         love.graphics.setColor(1, 1, 1, 1)
-        if A.speech_bubble then
-            draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
-        end
-        if A.speech_bubble_tail then
-            local tw = A.speech_bubble_tail:getWidth()
-            love.graphics.draw(A.speech_bubble_tail, box_x + box_w / 2 - tw / 2, box_y + box_h - 10)
-        end
+        draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
+        local tw = A.speech_bubble_tail:getWidth()
+        love.graphics.draw(A.speech_bubble_tail, box_x + box_w / 2 - tw / 2, box_y + box_h - 10)
         love.graphics.setColor(0.08, 0.07, 0.10, 0.95)
         love.graphics.print(revealed, box_x + PAD, box_y + BUBBLE_MARGIN.top / 2 + PAD / 2)
         love.graphics.setColor(1, 1, 1, 1)

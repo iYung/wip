@@ -19,7 +19,6 @@ function Grafter.new()
     self.name         = "Grafter"
     self.sprite       = Sprite.new(0, 0, 6 * U, 6 * U)
     self.sprite.image = A.grafter_empty
-    self.sprite.color = {1, 1, 1, 1}
     return self
 end
 

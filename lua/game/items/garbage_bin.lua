@@ -11,7 +11,6 @@ function GarbageBin.new()
     setmetatable(self, GarbageBin)
     self.sprite         = Sprite.new(0, 0, 6 * U, 6 * U)
     self.sprite.image   = A.garbage_bin
-    self.sprite.color   = {1, 1, 1, 1}
     self.carriable      = true
     self.name           = "Garbage Bin"
     self.is_garbage_bin = true

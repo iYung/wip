@@ -21,10 +21,10 @@ function Player.new(x)
     self.held_item   = nil
     self.speed       = BASE_SPEED
 
-    local idle      = Sprite.new(0, 0, W, H); idle.image      = A.player_idle;      idle.color      = {1, 1, 1, 1}
-    local walk      = Sprite.new(0, 0, W, H); walk.image      = A.player_walk;      walk.color      = {1, 1, 1, 1}
-    local idle_held = Sprite.new(0, 0, W, H); idle_held.image = A.player_idle_held; idle_held.color = {1, 1, 1, 1}
-    local walk_held = Sprite.new(0, 0, W, H); walk_held.image = A.player_walk_held; walk_held.color = {1, 1, 1, 1}
+    local idle      = Sprite.new(0, 0, W, H); idle.image      = A.player_idle
+    local walk      = Sprite.new(0, 0, W, H); walk.image      = A.player_walk
+    local idle_held = Sprite.new(0, 0, W, H); idle_held.image = A.player_idle_held
+    local walk_held = Sprite.new(0, 0, W, H); walk_held.image = A.player_walk_held
 
     self.sprite = SpriteSet.new()
     self.sprite:add("idle",      idle)

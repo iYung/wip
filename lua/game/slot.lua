@@ -37,7 +37,7 @@ end
 
 function Slot:draw()
     self.bg:draw()
-    if self.highlighted and A.slot_highlight then
+    if self.highlighted then
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(
             A.slot_highlight,

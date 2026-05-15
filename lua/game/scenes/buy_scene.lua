@@ -25,27 +25,27 @@ CATALOGUE[#CATALOGUE + 1] = {
     description = "Waters the plant in your\ncurrent slot when you press F.",
     cost        = 0,
     kind        = "tool_watering_can",
-    color       = {0.3, 0.6, 1.0, 1},
+    image       = A.watering_can,
 }
 CATALOGUE[#CATALOGUE + 1] = {
     label       = "Grafter",
     description = "Clones a stage-3 plant.\nPress F to load, E to place clone.",
     cost        = 0,
     kind        = "tool_grafter",
-    color       = {1.0, 0.5, 0.0, 1},
+    image       = A.grafter_empty,
 }
 CATALOGUE[#CATALOGUE + 1] = {
     label       = "Expand Slot",
     description = "Adds one new slot to the\nright end of the store.",
     cost        = config.SLOT_COST,
     kind        = "expand",
-    color       = {0.8, 0.8, 0.8, 1},
+    image       = A.expand_slot,
 }
 CATALOGUE[#CATALOGUE + 1] = {
     label       = "Sneakers",
     description = "New shoes.\nMove faster!",
     kind        = "speed_boost",
-    color       = {1.0, 0.85, 0.2, 1},
+    image       = A.sneakers,
 }
 
 local PREVIEW_SIZE = 160
@@ -187,8 +187,15 @@ function BuyScene:draw()
             0,
             PREVIEW_SIZE / img:getWidth(),
             PREVIEW_SIZE / img:getHeight())
+    elseif ent.image then
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(ent.image,
+            CENTER_X - PREVIEW_SIZE / 2, y,
+            0,
+            PREVIEW_SIZE / ent.image:getWidth(),
+            PREVIEW_SIZE / ent.image:getHeight())
     else
-        love.graphics.setColor(ent.color)
+        love.graphics.setColor(0.5, 0.5, 0.5, 1)
         love.graphics.rectangle("fill", CENTER_X - PREVIEW_SIZE / 2, y, PREVIEW_SIZE, PREVIEW_SIZE)
     end
     y = y + PREVIEW_SIZE + gap1
