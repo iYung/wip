@@ -14,6 +14,20 @@ local INIT_Y     = 31 * U + 5  -- 625  player center y in world
 local Player = {}
 Player.__index = Player
 
+local function make_sprite_set(idle_img, walk_img, idle_held_img, walk_held_img)
+    local idle      = Sprite.new(0, 0, W, H); idle.image      = idle_img
+    local walk      = Sprite.new(0, 0, W, H); walk.image      = walk_img
+    local idle_held = Sprite.new(0, 0, W, H); idle_held.image = idle_held_img
+    local walk_held = Sprite.new(0, 0, W, H); walk_held.image = walk_held_img
+    local ss = SpriteSet.new()
+    ss:add("idle",      idle)
+    ss:add("walk",      walk)
+    ss:add("idle_held", idle_held)
+    ss:add("walk_held", walk_held)
+    ss:set("idle")
+    return ss
+end
+
 function Player.new(x)
     local self       = setmetatable({}, Player)
     self.x           = x or 0
@@ -21,23 +35,29 @@ function Player.new(x)
     self.held_item   = nil
     self.speed       = BASE_SPEED
 
-    local idle      = Sprite.new(0, 0, W, H); idle.image      = A.player_idle
-    local walk      = Sprite.new(0, 0, W, H); walk.image      = A.player_walk
-    local idle_held = Sprite.new(0, 0, W, H); idle_held.image = A.player_idle_held
-    local walk_held = Sprite.new(0, 0, W, H); walk_held.image = A.player_walk_held
-
-    self.sprite = SpriteSet.new()
-    self.sprite:add("idle",      idle)
-    self.sprite:add("walk",      walk)
-    self.sprite:add("idle_held", idle_held)
-    self.sprite:add("walk_held", walk_held)
-    self.sprite:set("idle")
+    self.sprite_sets = {}
+    self.sprite_sets[0] = make_sprite_set(
+        A.player_idle, A.player_walk, A.player_idle_held, A.player_walk_held)
+    for lvl = 1, 3 do
+        local p = "player_spd" .. lvl .. "_"
+        self.sprite_sets[lvl] = make_sprite_set(
+            A[p .. "idle"]      or A.player_idle,
+            A[p .. "walk"]      or A.player_walk,
+            A[p .. "idle_held"] or A.player_idle_held,
+            A[p .. "walk_held"] or A.player_walk_held)
+    end
 
     self._anim_timer = Timer.new(0.15)
     self._anim_frame = "idle"
     self.facing      = "right"
 
+    self:set_speed_level(0)
+
     return self
+end
+
+function Player:set_speed_level(level)
+    self.sprite = self.sprite_sets[level]
 end
 
 function Player:update(dt, input, store)
