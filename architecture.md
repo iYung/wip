@@ -200,7 +200,9 @@ Shared state passed between scenes. Survives scene switches.
 - `player` — the Player instance
 - `currency` — player's current funds
 - `speed_level` — current speed upgrade tier (0 = base)
-- `unlocked_plants` — set `{ [plant_type] = true }`; Fern (`[1]`) pre-populated; updated on plant purchase
+- `growth_level` — current Heat Lamps upgrade tier (0 = base)
+- `growth_mult` — float derived from `growth_level`; multiplied into `dt` passed to the store each frame (1.0 = no change)
+- `unlocked_plants` — set `{ [plant_type] = true }`; Grass (`[1]`) pre-populated; updated on plant purchase
 - `stage3_counts` — `{ [plant_type] = n }`; incremented each time that plant type reaches stage 3
 - `seen_scripts` — set `{ ["id:chapter"] = true }`; e.g. `"old_pete:1"`; prevents a scripted chapter from firing twice
 

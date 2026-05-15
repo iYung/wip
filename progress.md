@@ -28,7 +28,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `assets.lua` | Loads all PNGs once at startup; require-cached so every file can `require` it cheaply; `sneakers` and `expand_slot` loaded conditionally via `try_img` (art not yet created); all other assets use `img()` and are required to exist |
 | `config.lua` | Shared constants — `U`, `SLOT_COST`, `ZONE_WIDTH` (400px cashier zone) |
 | `input.lua` | Polls keyboard each frame; A/D or arrows = move, E = pick up/down, F = interact |
-| `game_state.lua` | Holds store, player, currency, `unlocked_plants`, `stage3_counts`, `seen_scripts`; survives scene switches |
+| `game_state.lua` | Holds store, player, currency, `unlocked_plants`, `stage3_counts`, `seen_scripts`, `speed_level`, `growth_level`, `growth_mult`; survives scene switches |
 | `player.lua` | Moves left/right into cashier zone; holds one item; 4-variant SpriteSet (idle/walk × no-held/held), each backed by a PNG; `speed` upgradeable via shop |
 | `slot.lua` | One store cell; single `slot.png` background sprite; positions its item every frame |
 | `store.lua` | Array of slots; `slot_at(x)`, `grow()`, `draw_bubbles()` for high-priority bubble rendering; `draw_bg(A)` draws wall tiles and window frames using group-of-4 rule |
@@ -50,7 +50,7 @@ Completed step files are moved to [`archive/`](archive/).
 | File | What it does |
 |------|-------------|
 | `store_scene.lua` | Main loop — player moves, camera follows on x then clamps to world bounds (left = -400+640, right = store width−640), pick up/interact handled here; cashier zone logic (F skips reveal → advances → sells, E dismisses); context HUD bottom-left shows F: SKIP while typing, F: NEXT when done, E: DISMISS when customer waiting; `_active_script_key` tracks the current scripted customer (seen_scripts written on sale, not on spawn); `_script_cooldowns` counts down per completed sale — dismissed scripted customers return after 3 sales; unified parallax tiles `store_bg_*` across full world width pre-drawer; `Store:draw_bg` then stamps walls/windows on top; layered draw order for wall/bubbles |
-| `buy_scene.lua` | Carousel UI — 9 items (6 plants + Watering Can + Grafter + Expand Slot); A/D cycle, F buy, E cancel; per-type price and preview color |
+| `buy_scene.lua` | Carousel UI — 10 items (6 plants + Watering Can + Grafter + Expand Slot + Heat Lamps); A/D cycle, F buy, E cancel; per-type price and preview color |
 
 ### Data (`lua/game/data/`)
 
@@ -130,6 +130,8 @@ PNG files for all sprites — player variants, plants (18 total: 6 types × 3 st
 See open questions in `game-design.md`.
 
 ### Recently completed
+
+- **Growth upgrade (Heat Lamps)** — purchasable 3-tier upgrade in the PC Store; tiers cost $20/$50/$100 and scale all plant timers by 1.25×/1.60×/2.00× via `gs.growth_mult` multiplied into `dt` in `StoreScene:update`; `SPEED_TIERS` moved from `config.lua` to `data/speed_tiers.lua` alongside new `data/growth_tiers.lua`
 
 - **PC store item images** — Watering Can, Grafter, Expand Slot, Sneakers entries in buy_scene now show PNG previews instead of colored rectangles; Expand Slot and Sneakers fall back to a grey box until `expand_slot.png` / `sneakers.png` are created
 - **Remove image fallbacks** — `slot_highlight`, `store_bg_*`, and `speech_bubble*` converted from `try_img` to `img()`; nil-checks removed from slot.lua and customer.lua draw sites; redundant `.color = {1,1,1,1}` assignments removed from player, watering_can, grafter, pc_store, and garbage_bin

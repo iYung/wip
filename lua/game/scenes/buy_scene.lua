@@ -5,7 +5,8 @@ local Grafter     = require("lua/game/items/grafter")
 local config      = require("lua/game/config")
 local PLANT_DATA  = require("lua/game/data/plant_data")
 local A           = require("lua/game/assets")
-local SPEED_TIERS = config.SPEED_TIERS
+local SPEED_TIERS  = require("lua/game/data/speed_tiers")
+local GROWTH_TIERS = require("lua/game/data/growth_tiers")
 
 local CATALOGUE = {}
 
@@ -46,6 +47,11 @@ CATALOGUE[#CATALOGUE + 1] = {
     description = "New shoes.\nMove faster!",
     kind        = "speed_boost",
     image       = A.sneakers,
+}
+CATALOGUE[#CATALOGUE + 1] = {
+    label       = "Heat Lamps",
+    description = "Warm your plants.",
+    kind        = "growth_boost",
 }
 
 local PREVIEW_SIZE = 160
@@ -108,6 +114,16 @@ function BuyScene:_confirm()
         return
     end
 
+    if ent.kind == "growth_boost" then
+        if gs.growth_level >= #GROWTH_TIERS then return end
+        local tier = GROWTH_TIERS[gs.growth_level + 1]
+        if gs.currency < tier.cost then return end
+        gs.currency     = gs.currency - tier.cost
+        gs.growth_level = gs.growth_level + 1
+        gs.growth_mult  = tier.mult
+        return
+    end
+
     if gs.currency < ent.cost then return end
 
     gs.currency = gs.currency - ent.cost
@@ -143,6 +159,17 @@ function BuyScene:draw()
             local tier   = SPEED_TIERS[gs.speed_level + 1]
             display_cost = "$" .. tier.cost
             display_desc = ent.description
+            can_buy      = currency >= tier.cost
+        end
+    elseif ent.kind == "growth_boost" then
+        if gs.growth_level >= #GROWTH_TIERS then
+            display_cost = "---"
+            display_desc = "Max growth reached."
+            can_buy      = false
+        else
+            local tier   = GROWTH_TIERS[gs.growth_level + 1]
+            display_cost = "$" .. tier.cost
+            display_desc = ent.description .. "\n" .. math.floor(tier.mult * 100 - 100) .. "% faster"
             can_buy      = currency >= tier.cost
         end
     else

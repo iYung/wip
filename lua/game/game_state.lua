@@ -14,6 +14,8 @@ function GameState.new()
     self.player   = Player.new(SLOT_WIDTH / 2)
     self.currency        = 20
     self.speed_level     = 0
+    self.growth_level    = 0
+    self.growth_mult     = 1.0
     self.unlocked_plants = { [1] = true }
     self.stage3_counts   = {}
     self.seen_scripts    = {}

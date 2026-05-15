@@ -171,7 +171,7 @@ function StoreScene:update(dt)
     local gs    = self.game_state
     local input = self.input
 
-    gs.store:update(dt)
+    gs.store:update(dt * gs.growth_mult)
     gs.player:update(dt, input, gs.store)
     self._customer:update(dt)
 
