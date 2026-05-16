@@ -8,6 +8,7 @@ luagame/
 ├── conf.lua
 ├── generate_assets.py   ← regenerates assets/ as solid-color PNGs
 ├── assets/              ← PNG images (player, customer, plants, items, slot, wall)
+│   └── shaders/         ← GLSL shader source files
 └── lua/
     ├── core/
     │   ├── sprite.lua
@@ -36,6 +37,8 @@ luagame/
         │   ├── start_scene.lua
         │   ├── store_scene.lua
         │   └── buy_scene.lua
+        ├── shaders/
+        │   └── color_replace.lua    ← wraps color_replace.glsl; apply(primary, secondary) / clear()
         └── data/
             ├── plant_data.lua
             ├── customer_scripts.lua

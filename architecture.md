@@ -217,14 +217,14 @@ The player character. Moves left/right into the cashier zone, holds at most one 
 - `held_item` — the Item currently held, or `nil`
 - `speed` — movement speed in px/s; defaults to 220, increased by speed upgrades
 - `sprite` — SpriteSet with four variants: `idle`, `walk`, `idle_held`, `walk_held`; each backed by a PNG image
-- `_speed_color` — `{r,g,b,a}` replacement color for the current speed tier, or `nil` at base level
+- `_speed_color` — `{r,g,b,a}` replacement color for the current speed tier; defaults to `{1,1,1,1}` (white) at base level
 
 **Methods**
 - `new(x)` — constructor
 - `set_speed_level(level, color)` — stores `color` as `_speed_color`; called by BuyScene after a speed purchase
 - `update(dt, input, store)` — handle movement and animation frame switching
 - `active_slot(store)` — returns the slot the player is standing over
-- `draw()` — if `_speed_color` is set, activates a GLSL shader that replaces pure-red pixels (`r > 0.9, g < 0.1, b < 0.1`) in the player PNG with `_speed_color`; draws sprite; resets shader; then draws held item above the player
+- `draw()` — applies `ColorReplace` with `_speed_color` as primary (no secondary); draws sprite; clears shader; then draws held item above the player
 
 ---
 
@@ -354,8 +354,33 @@ NPC that appears in the cashier zone and requests a specific plant.
 - `arrived()` — returns `state == "waiting"`
 - `active()` — returns `state ~= "idle"`
 - `update(dt)` — advances walk-in / walk-out movement; advances typewriter reveal while `bubble.visible` and not `done_talking`; positions sprite, bubble, and accessory sprite
-- `draw()` — draws body sprite, then accessory sprite if set
+- `draw()` — applies `ColorReplace` with `_primary` and `_secondary`; draws body sprite and accessory sprite; clears shader
 - `draw_bubble()` — during dialog: draws 9-slice `speech_bubble` sized to the full line width with `speech_bubble_tail`, then prints the revealed substring on top; once `done_talking`: draws a 9-slice speech bubble containing the stage-3 plant image (80×80 inside 12px padding)
+
+---
+
+## Shaders
+
+### ColorReplace
+
+Replaces pure-red or pure-blue pixels in a sprite with runtime colors. Used by Player and Customer.
+
+**Files**
+- `assets/shaders/color_replace.glsl` — GLSL source loaded from disk
+- `lua/game/shaders/color_replace.lua` — wrapper; `require`-cached so the shader is compiled once
+
+**GLSL logic**
+- Pure red pixel (`r > 0.9, g < 0.1, b < 0.1`) → replaced with `replace_color_a`
+- Pure blue pixel (`b > 0.9, r < 0.1, g < 0.1`) → replaced with `replace_color_b`
+- All other pixels → pass through unchanged
+
+**API**
+- `apply(primary, secondary)` — sends both colors and activates the shader; `secondary` is optional, defaults to `{0,0,0,0}`
+- `clear()` — resets to the default Love2D shader
+
+**Usage**
+- Player: `apply(speed_tier_color)` — red mask pixels show the current speed tier color
+- Customer: `apply(primary, secondary)` — red pixels = body color, blue pixels = secondary (shadow/detail) color
 
 ---
 

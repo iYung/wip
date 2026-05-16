@@ -1,26 +1,18 @@
 local SpriteSet = require("lua/core/spriteset")
 local Sprite    = require("lua/core/sprite")
 local Timer     = require("lua/core/timer")
-local CONFIG     = require("lua/game/config")
-local A          = require("lua/game/assets")
+local CONFIG          = require("lua/game/config")
+local A               = require("lua/game/assets")
+local SPEED_TIERS     = require("lua/game/data/speed_tiers")
+local ColorReplace    = require("lua/game/shaders/color_replace")
 local U          = CONFIG.U
 local ZONE_WIDTH = CONFIG.ZONE_WIDTH
 
-local BASE_SPEED = 220
+local BASE_SPEED  = 220
 local W          = 6 * U   -- 120
 local H          = 12 * U  -- 240
 local INIT_Y     = 31 * U + 5  -- 625  player center y in world
 
-local _color_shader = love.graphics.newShader([[
-    extern vec4 replace_color;
-    vec4 effect(vec4 color, Image tex, vec2 tc, vec2 sc) {
-        vec4 pixel = Texel(tex, tc);
-        if (pixel.r > 0.9 && pixel.g < 0.1 && pixel.b < 0.1 && pixel.a > 0.0) {
-            return vec4(replace_color.rgb, pixel.a) * color;
-        }
-        return pixel * color;
-    }
-]])
 
 local Player = {}
 Player.__index = Player
@@ -31,7 +23,7 @@ function Player.new(x)
     self.y           = INIT_Y
     self.held_item   = nil
     self.speed       = BASE_SPEED
-    self._speed_color = nil
+    self._speed_color = SPEED_TIERS[0].color
 
     local idle      = Sprite.new(0, 0, W, H); idle.image      = A.player_idle
     local walk      = Sprite.new(0, 0, W, H); walk.image      = A.player_walk
@@ -105,12 +97,11 @@ end
 
 function Player:draw()
     if self._speed_color then
-        _color_shader:send("replace_color", self._speed_color)
-        love.graphics.setShader(_color_shader)
+        ColorReplace.apply(self._speed_color)
     end
     self.sprite:draw()
     if self._speed_color then
-        love.graphics.setShader()
+        ColorReplace.clear()
     end
     if self.held_item then
         self.held_item:draw()

@@ -5,8 +5,9 @@ local Grafter     = require("lua/game/items/grafter")
 local config      = require("lua/game/config")
 local PLANT_DATA  = require("lua/game/data/plant_data")
 local A           = require("lua/game/assets")
-local SPEED_TIERS  = require("lua/game/data/speed_tiers")
-local GROWTH_TIERS = require("lua/game/data/growth_tiers")
+local SPEED_TIERS    = require("lua/game/data/speed_tiers")
+local GROWTH_TIERS   = require("lua/game/data/growth_tiers")
+local ColorReplace   = require("lua/game/shaders/color_replace")
 
 local CATALOGUE = {}
 
@@ -215,6 +216,16 @@ function BuyScene:draw()
             0,
             PREVIEW_SIZE / img:getWidth(),
             PREVIEW_SIZE / img:getHeight())
+    elseif ent.kind == "speed_boost" and ent.image then
+        local next_tier = SPEED_TIERS[gs.speed_level + 1]
+        if next_tier then ColorReplace.apply(next_tier.color) end
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(ent.image,
+            CENTER_X - PREVIEW_SIZE / 2, y,
+            0,
+            PREVIEW_SIZE / ent.image:getWidth(),
+            PREVIEW_SIZE / ent.image:getHeight())
+        if next_tier then ColorReplace.clear() end
     elseif ent.image then
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(ent.image,
