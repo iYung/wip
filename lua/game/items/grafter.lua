@@ -8,8 +8,6 @@ local U          = require("lua/game/config").U
 local Grafter = setmetatable({}, { __index = Item })
 Grafter.__index = Grafter
 
-local COLOR_EMPTY  = {1.0, 0.5, 0.0, 1}
-local COLOR_LOADED = {1.0, 0.9, 0.0, 1}
 
 function Grafter.new()
     local self        = Item.new()
@@ -32,7 +30,7 @@ function Grafter:interact(player, store, scene_manager)
 
     local plant          = slot.item
     plant.stage          = 1
-    plant.cooldown       = PLANT_DATA[plant.plant_type].cooldowns[1]
+    plant._cooldown:reset(PLANT_DATA[plant.plant_type].cooldowns[1])
     plant.ready          = false
     plant.bubble.visible = false
     plant.sprite:set("1")

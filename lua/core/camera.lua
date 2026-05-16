@@ -30,14 +30,5 @@ function Camera:follow(target, lerp)
     self.y  = self.y + (target.y - self.y) * f
 end
 
-function Camera:to_world(sx, sy)
-    return (sx - LOGICAL_W / 2) / self.zoom + self.x,
-           (sy - LOGICAL_H / 2) / self.zoom + self.y
-end
-
-function Camera:to_screen(wx, wy)
-    return (wx - self.x) * self.zoom + LOGICAL_W / 2,
-           (wy - self.y) * self.zoom + LOGICAL_H / 2
-end
 
 return Camera

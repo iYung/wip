@@ -68,14 +68,13 @@ local font_ui    = love.graphics.newFont(16)
 local BuyScene = setmetatable({}, { __index = Scene })
 BuyScene.__index = BuyScene
 
-function BuyScene.new(game_state, input, scene_manager, store_scene, target_slot)
+function BuyScene.new(game_state, input, scene_manager, store_scene)
     local self           = Scene.new()
     setmetatable(self, BuyScene)
     self.game_state      = game_state
     self.input           = input
     self.scene_manager   = scene_manager
     self.store_scene     = store_scene
-    self.target_slot     = target_slot
     self.selected        = 1
     return self
 end

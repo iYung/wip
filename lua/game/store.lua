@@ -44,7 +44,7 @@ function Store:draw_bg(A)
             if i < n then love.graphics.draw(A.store_wall, i * sw, 0) end
         end
         local r0, r1 = g * 4 + 2, g * 4 + 3
-        if r1 < n and r1 < n - 1 then
+        if r1 < n - 1 then
             love.graphics.draw(A.store_window, r0 * sw, 0)
         else
             for i = r0, r1 do
