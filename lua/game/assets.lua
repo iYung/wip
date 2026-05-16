@@ -44,14 +44,6 @@ local function try_img(path)
     if love.filesystem.getInfo(path) then return love.graphics.newImage(path) end
 end
 
-for lvl = 1, 3 do
-    local p = "player_spd" .. lvl .. "_"
-    A[p .. "idle"]      = try_img("assets/" .. p .. "idle.png")
-    A[p .. "walk"]      = try_img("assets/" .. p .. "walk.png")
-    A[p .. "idle_held"] = try_img("assets/" .. p .. "idle_held.png")
-    A[p .. "walk_held"] = try_img("assets/" .. p .. "walk_held.png")
-end
-
 A.slot_highlight     = img("assets/slot_highlight.png")
 A.store_bg_far       = img("assets/shop_bg_far.png")
 A.store_bg_mid       = img("assets/shop_bg_mid.png")

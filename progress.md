@@ -29,7 +29,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `config.lua` | Shared constants — `U`, `SLOT_COST`, `ZONE_WIDTH` (400px cashier zone) |
 | `input.lua` | Polls keyboard each frame; A/D or arrows = move, E = pick up/down, F = interact |
 | `game_state.lua` | Holds store, player, currency, `unlocked_plants`, `stage3_counts`, `seen_scripts`, `speed_level`, `growth_level`, `growth_mult`; survives scene switches |
-| `player.lua` | Moves left/right into cashier zone; holds one item; 4-variant SpriteSet (idle/walk × no-held/held), each backed by a PNG; `speed` upgradeable via shop |
+| `player.lua` | Moves left/right into cashier zone; holds one item; 4-variant SpriteSet (idle/walk × no-held/held), each backed by a PNG; `speed` upgradeable via shop; GLSL color-replace shader swaps pure-red mask pixels to a per-tier color on draw |
 | `slot.lua` | One store cell; single `slot.png` background sprite; positions its item every frame |
 | `store.lua` | Array of slots; `slot_at(x)`, `grow()`, `draw_bubbles()` for high-priority bubble rendering; `draw_bg(A)` draws wall tiles and window frames using group-of-4 rule |
 | `customer.lua` | Cashier zone NPC; white PNG tinted per character via `body_color`; optional `accessory_sprite` (120×120) drawn over the top half, synced to body flip; dialog lines reveal character-by-character (40 chars/s) inside a 9-slice `speech_bubble.png` box; F skips to full line, second F advances; `line_complete()` / `skip_reveal()` methods; state machine: idle → walking_in → waiting → walking_out; `dismiss()` sends customer away without selling; when waiting, shows a 9-slice speech bubble containing the requested plant's stage-3 image (104×104 inside 12px padding). **`bubble.visible` is a shared gate** — it controls both the text dialog and the plant request bubble; setting it false suppresses both. Text dialog runs while `bubble.visible = true` and `done_talking = false`; plant image bubble draws when `bubble.visible = true` and `done_talking = true`. |
@@ -131,6 +131,8 @@ PNG files for all sprites — player variants, plants (18 total: 6 types × 3 st
 See open questions in `game-design.md`.
 
 ### Recently completed
+
+- **Player speed sprites** — speed upgrades now apply a GLSL color-replace shader at draw time instead of swapping sprite sets; pure-red pixels in the player PNG are replaced with the tier's color (`speed_tiers.lua` now carries a `color` field per tier); `Player:set_speed_level(level, color)` stores the active color; no extra PNG assets needed
 
 - **Start screen** — `StartScene` with New Game / Continue / Exit buttons; keyboard navigation (up/down/W/S + Enter/Space/F); `main.lua` now opens `StartScene` first; `StoreScene` constructed lazily on confirm; font state saved/restored so store rendering is unaffected
 

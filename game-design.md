@@ -176,13 +176,13 @@ Two kinds of customers can spawn:
 
 ### Speed Boost
 
-Purchasable in the shop. Three tiers, each permanently increasing player movement speed.
+Purchasable in the shop. Three tiers, each permanently increasing player movement speed. Each tier also applies a color (via shader) to the pure-red mask area of the player sprite.
 
-| Tier | Cost | Speed |
-|------|------|-------|
-| 1 | $10 | 280 px/s |
-| 2 | $20 | 340 px/s |
-| 3 | $35 | 400 px/s |
+| Tier | Cost | Speed | Color |
+|------|------|-------|-------|
+| 1 | $15 | 320 px/s | light blue |
+| 2 | $40 | 480 px/s | orange/gold |
+| 3 | $100 | 720 px/s | purple |
 
 ---
 

@@ -217,12 +217,14 @@ The player character. Moves left/right into the cashier zone, holds at most one 
 - `held_item` — the Item currently held, or `nil`
 - `speed` — movement speed in px/s; defaults to 220, increased by speed upgrades
 - `sprite` — SpriteSet with four variants: `idle`, `walk`, `idle_held`, `walk_held`; each backed by a PNG image
+- `_speed_color` — `{r,g,b,a}` replacement color for the current speed tier, or `nil` at base level
 
 **Methods**
 - `new(x)` — constructor
+- `set_speed_level(level, color)` — stores `color` as `_speed_color`; called by BuyScene after a speed purchase
 - `update(dt, input, store)` — handle movement and animation frame switching
 - `active_slot(store)` — returns the slot the player is standing over
-- `draw()` — delegates to sprite, then draws held item above the player
+- `draw()` — if `_speed_color` is set, activates a GLSL shader that replaces pure-red pixels (`r > 0.9, g < 0.1, b < 0.1`) in the player PNG with `_speed_color`; draws sprite; resets shader; then draws held item above the player
 
 ---
 
