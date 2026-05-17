@@ -52,6 +52,7 @@ A.speech_bubble      = img("assets/speech_bubble.png")
 A.speech_bubble_tail = img("assets/speech_bubble_tail.png")
 A.sneakers           = try_img("assets/sneakers.png")
 A.expand_slot        = try_img("assets/expand_slot.png")
+A.heat_lamp_icon     = try_img("assets/heat_lamp_icon.png")
 
 
 A.accessories = {}

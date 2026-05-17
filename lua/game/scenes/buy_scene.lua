@@ -53,6 +53,7 @@ CATALOGUE[#CATALOGUE + 1] = {
     label       = "Heat Lamps",
     description = "Warm your plants.",
     kind        = "growth_boost",
+    image       = A.heat_lamp_icon,
 }
 
 local PREVIEW_SIZE = 160
