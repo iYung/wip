@@ -26,8 +26,11 @@ function StartScene.new(game_state, input, scene_manager)
 end
 
 function StartScene:on_enter()
-    self._font_title  = love.graphics.newFont(64)
     self._font_btn    = love.graphics.newFont(22)
+    self._img_bg      = love.graphics.newImage("assets/start_bg.png")
+    self._img_logo    = love.graphics.newImage("assets/start_logo.png")
+    self._img_btn     = love.graphics.newImage("assets/start_btn.png")
+    self._img_btn_sel = love.graphics.newImage("assets/start_btn_selected.png")
 end
 
 function StartScene:update(dt)
@@ -55,7 +58,6 @@ function StartScene:_confirm()
         love.event.quit()
         return
     end
-    -- New Game (1) and Continue (2) both just start the store for now
     local StoreScene = require("lua/game/scenes/store_scene")
     self.scene_manager:switch(StoreScene.new(self.game_state, self.input, self.scene_manager))
 end
@@ -63,21 +65,17 @@ end
 function StartScene:draw()
     local prev_font = love.graphics.getFont()
 
-    -- title
-    love.graphics.setFont(self._font_title)
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.printf("PLANT STORE", 0, 140, W, "center")
+    love.graphics.draw(self._img_bg, 0, 0)
 
-    -- buttons
+    local iw = self._img_logo:getWidth()
+    love.graphics.draw(self._img_logo, (W - iw) / 2, 140)
+
     love.graphics.setFont(self._font_btn)
     for i, label in ipairs(ITEMS) do
         local y = BTN_Y0 + (i - 1) * BTN_GAP
-        if i == self.selected then
-            love.graphics.setColor(0.35, 0.75, 0.45, 1)
-        else
-            love.graphics.setColor(0.18, 0.18, 0.24, 1)
-        end
-        love.graphics.rectangle("fill", BTN_X, y, BTN_W, BTN_H, 6, 6)
+        local img = i == self.selected and self._img_btn_sel or self._img_btn
+        love.graphics.draw(img, BTN_X, y)
         love.graphics.setColor(1, 1, 1, 1)
         local th = self._font_btn:getHeight()
         love.graphics.printf(label, BTN_X, y + (BTN_H - th) / 2, BTN_W, "center")
