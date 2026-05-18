@@ -46,6 +46,7 @@ function StoreScene:on_enter()
     self.drawer:clear()
     self.drawer:add(gs.store,              0)
     self.drawer:add(self._customer,        1)
+    self.drawer:add(self._heat_lamps,      1.5)
     self.drawer:add(self._wall,            2)
     self.drawer:add(self._cashier_floor,   2.5)
     self.drawer:add(self._plant_bubbles,   3)
@@ -115,6 +116,25 @@ function StoreScene:_setup_store()
             while fx < 0 do
                 love.graphics.draw(slot_img, fx, floor_y, 0, sx, sy)
                 fx = fx + slot_w
+            end
+        end
+    }
+
+    local gs_ref = gs
+    self._heat_lamps = {
+        draw = function()
+            local lvl = gs_ref.growth_level
+            if lvl < 1 then return end
+            local lamp = A.heat_lamps and A.heat_lamps[lvl]
+            if not lamp then return end
+            love.graphics.setColor(1, 1, 1, 1)
+            local lamp_w = store_ref.slot_width * 2
+            local scale  = lamp_w / lamp:getWidth()
+            local slots  = store_ref.slots
+            local i = 1
+            while i + 1 <= #slots do
+                love.graphics.draw(lamp, slots[i].x, 80, 0, scale, scale)
+                i = i + 2
             end
         end
     }

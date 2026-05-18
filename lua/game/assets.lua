@@ -53,6 +53,10 @@ A.speech_bubble_tail = img("assets/speech_bubble_tail.png")
 A.sneakers           = try_img("assets/sneakers.png")
 A.expand_slot        = try_img("assets/expand_slot.png")
 A.heat_lamp_icon     = try_img("assets/heat_lamp_icon.png")
+A.heat_lamps = {}
+for lvl = 1, 3 do
+    A.heat_lamps[lvl] = try_img("assets/heat_lamp_" .. lvl .. ".png")
+end
 
 
 A.accessories = {}
