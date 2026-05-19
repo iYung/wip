@@ -106,3 +106,13 @@ Action-based keyboard polling. Call `update()` once per frame before reading inp
 - `update()` — sample keyboard state; call once per frame
 - `is_down(action)` — true while any bound key is held
 - `pressed(action)` — true only on the frame the action was first pressed
+
+For headless/automated testing, use `lua/headless/input.lua` (`HeadlessInput`) as a drop-in replacement. It satisfies the same `is_down`/`pressed`/`update` interface but is driven by test calls instead of the keyboard:
+
+- `HeadlessInput.new()` — creates a scriptable input instance
+- `hold(action)` — marks action as held down (no pressed edge)
+- `press(action)` — queues a single-frame press (down + pressed edge on next `update()`)
+- `release(action)` — clears action from down state
+- `update()` — advances one frame; called by `lua/headless/runner.lua`
+
+See also `lua/headless/runner.lua` (`setup`, `tick`, `run`) and `lua/headless/stubs.lua` for the full headless test infrastructure.

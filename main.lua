@@ -1,3 +1,19 @@
+do
+    local headless, test_file = false, nil
+    for _, v in ipairs(arg or {}) do
+        if v == "--headless" then
+            headless = true
+        elseif headless and test_file == nil and v:sub(1, 1) ~= "-" then
+            test_file = v
+        end
+    end
+    if headless then
+        require("lua/headless/stubs")
+        require("lua/headless/runner").run(test_file)
+        return
+    end
+end
+
 love.graphics.setDefaultFilter("nearest", "nearest")
 
 local SceneManager = require("lua/core/scene_manager")
