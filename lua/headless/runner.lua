@@ -51,6 +51,24 @@ function runner.tick(input, scene_manager, n, dt)
     end
 end
 
+-- Advances the simulation one tick at a time (dt=1.0) until condition_fn()
+-- returns true, incrementing elapsed by 1.0 each tick.
+-- Errors if cap (default 600) iterations are exceeded.
+-- Returns the updated elapsed.
+function runner.fast_forward_until(ctx, condition_fn, elapsed, cap)
+    cap = cap or 600
+    local iters = 0
+    while not condition_fn() do
+        if iters >= cap then
+            error("fast_forward_until: condition not met after " .. cap .. " simulated seconds")
+        end
+        runner.tick(ctx.input, ctx.sm, 1, 1.0)
+        elapsed = elapsed + 1.0
+        iters   = iters + 1
+    end
+    return elapsed
+end
+
 -- Loads and executes test_file inside a pcall, prints a PASS/FAIL summary
 -- line, then quits Love2D with exit code 0 (all passed) or 1 (failure).
 function runner.run(test_file)
