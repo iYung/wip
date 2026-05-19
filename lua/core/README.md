@@ -110,9 +110,23 @@ Action-based keyboard polling. Call `update()` once per frame before reading inp
 For headless/automated testing, use `lua/headless/input.lua` (`HeadlessInput`) as a drop-in replacement. It satisfies the same `is_down`/`pressed`/`update` interface but is driven by test calls instead of the keyboard:
 
 - `HeadlessInput.new()` — creates a scriptable input instance
-- `hold(action)` — marks action as held down (no pressed edge)
-- `press(action)` — queues a single-frame press (down + pressed edge on next `update()`)
-- `release(action)` — clears action from down state
-- `update()` — advances one frame; called by `lua/headless/runner.lua`
+- `hold(action)` — marks action as persistently held; `is_down()` returns true every frame until `release()` is called; does not fire a `pressed()` edge
+- `press(action)` — queues a single-frame press; fires `pressed()` = true for exactly one frame regardless of how often it is called on consecutive frames
+- `release(action)` — clears both held and queued state for the action
+- `update()` — rebuilds `_down` and `_pressed` from `_held` + `_queued` each frame; `_queued` is consumed and cleared; back-to-back `press()` calls on adjacent frames both fire as rising edges because held state is tracked separately from press state
 
 See also `lua/headless/runner.lua` (`setup`, `tick`, `run`) and `lua/headless/stubs.lua` for the full headless test infrastructure.
+
+---
+
+## Test modes
+
+Three ways to run the game:
+
+| Command | Window | Graphics | Input |
+|---------|--------|----------|-------|
+| `love .` | real | real | keyboard |
+| `love . --headless tests/foo.lua` | none | stubbed | HeadlessInput |
+| `love . --visual tests/foo.lua` | real | real | HeadlessInput |
+
+`--visual` runs a test file like `--headless` but with a real window so you can watch each frame. `runner.tick` yields after every update so Love2D renders between steps. `fast_forward_until` frames (dt=1.0) still render — they just advance game time faster than real-time.

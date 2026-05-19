@@ -9,6 +9,9 @@ luagame/
 ├── generate_assets.py   ← regenerates assets/ as solid-color PNGs
 ├── assets/              ← PNG images (player, customer, plants, items, slot, wall)
 │   └── shaders/         ← GLSL shader source files
+├── tests/               ← test files run via --headless or --visual
+│   ├── test_basics.lua
+│   └── test_golden_lotus.lua
 └── lua/
     ├── core/
     │   ├── sprite.lua
@@ -17,6 +20,10 @@ luagame/
     │   ├── camera.lua
     │   ├── scene.lua
     │   └── scene_manager.lua
+    ├── headless/        ← test infrastructure; not loaded in normal play
+    │   ├── stubs.lua    ← no-op love.graphics/keyboard/filesystem globals
+    │   ├── input.lua    ← HeadlessInput; scriptable drop-in for lua/game/input.lua
+    │   └── runner.lua   ← setup / tick / run helpers
     └── game/
         ├── assets.lua       ← loads all PNGs once; require-cached
         ├── config.lua
@@ -45,6 +52,20 @@ luagame/
             ├── speed_tiers.lua
             └── growth_tiers.lua
 ```
+
+---
+
+## Running Tests
+
+```bash
+# headless — no window, exits with code 0/1
+love . --headless tests/test_golden_lotus.lua
+
+# visual — real window, watch the test play out
+love . --visual tests/test_golden_lotus.lua
+```
+
+`--headless` stubs all Love2D graphics/audio before any game code loads. `--visual` runs with a real window; `runner.tick` yields after each frame so `love.draw` fires between updates.
 
 ---
 

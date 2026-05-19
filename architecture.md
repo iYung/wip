@@ -413,6 +413,37 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 
 ---
 
+## Testing
+
+Three ways to run the game:
+
+| Command | Window | Graphics | Input driven by |
+|---------|--------|----------|-----------------|
+| `love .` | real | real | keyboard |
+| `love . --headless tests/foo.lua` | none | stubbed | `HeadlessInput` |
+| `love . --visual tests/foo.lua` | real | real | `HeadlessInput` |
+
+**Headless mode** (`--headless`) stubs all Love2D graphics/audio modules before any game code loads, so tests run without a window or GPU. `runner.run(test_file)` executes the test file in a `pcall` and quits with exit code 0 (pass) or 1 (fail).
+
+**Visual mode** (`--visual`) opens a real window with full graphics but replaces the keyboard input with `HeadlessInput`. The test file runs inside a Lua coroutine; `runner.tick` yields after each frame update so `love.draw` renders between steps. Slow `walk_to` frames run at frame rate; `fast_forward_until` frames (dt = 1.0) fast-forward visually. Pass/fail prints to the terminal when the test completes.
+
+**Test infrastructure** — `lua/headless/`
+
+| File | Purpose |
+|------|---------|
+| `stubs.lua` | Installs no-op `love.graphics`, `love.keyboard`, `love.filesystem` globals before game modules load |
+| `input.lua` | `HeadlessInput` — scriptable `Input` drop-in; `press()` / `hold()` / `release()` |
+| `runner.lua` | `setup(factory)`, `tick(input, sm, n, dt)`, `run(test_file)`; `_visual` flag enables coroutine-yield mode |
+
+**Test files** — `tests/`
+
+| File | What it tests |
+|------|---------------|
+| `test_basics.lua` | Initial currency, player moves right when `move_right` is held |
+| `test_golden_lotus.lua` | Full grow-and-sell loop for 3 grass plants then one Golden Lotus; asserts currency increases and prints elapsed simulated seconds |
+
+---
+
 ## Layer Priorities (Drawer)
 
 | Priority | Content |

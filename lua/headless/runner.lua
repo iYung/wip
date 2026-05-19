@@ -3,7 +3,13 @@ local HeadlessInput = require("lua/headless/input")
 local SceneManager = require("lua/core/scene_manager")
 local StartScene   = require("lua/game/scenes/start_scene")
 
-local runner = {}
+local runner = {
+    -- Set to true before setup() to enable visual mode: tick() yields each
+    -- frame so love.draw() renders between updates.
+    _visual    = false,
+    -- Populated by setup() in visual mode so love.draw() can find the scene.
+    _active_sm = nil,
+}
 
 -- Creates a fresh GameState, HeadlessInput, and SceneManager; wires them
 -- together; switches to either StartScene (default) or the scene returned by
@@ -23,17 +29,25 @@ function runner.setup(scene_factory)
 
     sm:switch(scene)
 
+    if runner._visual then
+        runner._active_sm = sm
+    end
+
     return { gs = gs, input = input, sm = sm }
 end
 
 -- Advances the simulation n times (default 1) by dt seconds each (default
 -- 1/60).  Calls input:update() then scene_manager:update(dt) each iteration.
+-- In visual mode, yields after each frame so love.draw() can render it.
 function runner.tick(input, scene_manager, n, dt)
     n  = n  or 1
     dt = dt or (1 / 60)
     for _ = 1, n do
         input:update()
         scene_manager:update(dt)
+        if runner._visual then
+            coroutine.yield()
+        end
     end
 end
 

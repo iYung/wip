@@ -5,60 +5,52 @@
 local HeadlessInput = {}
 HeadlessInput.__index = HeadlessInput
 
--- Creates a new instance with empty state and no queued actions.
 function HeadlessInput.new()
     return setmetatable({
-        _down    = {},   -- actions currently held down
-        _pressed = {},   -- actions that triggered a rising edge this frame
-        _queued  = {},   -- actions queued by press() for the next update()
+        _held    = {},   -- actions held via hold() until release()
+        _queued  = {},   -- single-frame presses from press()
+        _down    = {},   -- computed each frame: _held ∪ _queued
+        _pressed = {},   -- computed each frame: rising edges
     }, HeadlessInput)
 end
 
--- Queue a single-frame press: on the next update() the action will be
--- _down=true and _pressed=true; the frame after (without another press()
--- call) it returns to not-down.
+-- Queue a single-frame press: fires _pressed=true for exactly one frame.
+-- Consecutive press() calls on adjacent frames both fire — the key does NOT
+-- stay in _down between frames (unlike hold()).
 function HeadlessInput:press(action)
     self._queued[action] = true
 end
 
--- Mark action as held down indefinitely (no pressed edge after the first
--- frame it transitions in).  Stays down until release() is called.
+-- Hold action down until release() is called.  is_down() returns true every
+-- frame; pressed() never fires (no repeated rising edge).
 function HeadlessInput:hold(action)
-    self._down[action] = true
+    self._held[action] = true
 end
 
--- Clear action from down state entirely.
+-- Clear action from both held and queued state.
 function HeadlessInput:release(action)
-    self._down[action]   = nil
+    self._held[action]   = nil
     self._queued[action] = nil
 end
 
--- Advance one frame.  Called once per tick by the runner before scene:update().
--- Edge-triggered semantics mirror lua/core/input.lua:
---   _pressed  = actions that just transitioned from not-down → down
---   _down     = actions currently held (includes queued presses, only for this frame)
+-- Advance one frame.  _down is rebuilt from _held + _queued each frame so
+-- single-frame presses don't linger and back-to-back press() calls both fire.
 function HeadlessInput:update()
-    local new_pressed = {}
     local new_down    = {}
+    local new_pressed = {}
 
-    -- Keep actions that are held via hold().
-    for action, flag in pairs(self._down) do
-        if flag then
-            new_down[action] = true
-        end
-    end
-
-    -- Apply queued single-frame presses.
-    for action in pairs(self._queued) do
-        if not new_down[action] then
-            -- Rising edge: was not already down, so mark pressed.
-            new_pressed[action] = true
-        end
+    for action in pairs(self._held) do
         new_down[action] = true
     end
 
-    -- Queued presses are consumed after one frame.
-    self._queued  = {}
+    for action in pairs(self._queued) do
+        if not new_down[action] then
+            new_pressed[action] = true  -- rising edge: not already held
+        end
+        new_down[action] = true
+    end
+    self._queued = {}
+
     self._down    = new_down
     self._pressed = new_pressed
 end

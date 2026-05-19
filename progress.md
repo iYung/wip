@@ -132,7 +132,11 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
-- **Golden Lotus timing test** — `tests/test_golden_lotus.lua` headless simulation test that grows and sells three grass plants (to reach $20), then buys and sells a Golden Lotus; measures total simulated seconds elapsed and asserts currency increased; uses `walk_to`, `fast_forward_until`, and `sell_plant` helpers with `math.randomseed(42)` for a deterministic run
+- **Visual test mode** — `--visual tests/foo.lua` flag runs a test file with a real window so you can watch each frame; `runner.tick` yields via coroutine after each update so `love.draw` fires between steps; `loadfile` used instead of `dofile` to avoid LuaJIT's yield-across-C-boundary restriction; `HeadlessInput` fixed: `_held` and `_queued` are now tracked separately so back-to-back `press()` calls on adjacent frames both fire as rising edges (previously the key lingered in `_down` and the second press was silently dropped)
+
+- **Headless mode** — `--headless tests/foo.lua` flag stubs all Love2D graphics/audio and runs tests without a window; `lua/headless/` contains `stubs.lua`, `input.lua` (`HeadlessInput`), and `runner.lua` (`setup` / `tick` / `run`)
+
+- **Golden Lotus timing test** — `tests/test_golden_lotus.lua` simulation test that grows and sells three grass plants (to reach $20), then buys and sells a Golden Lotus; measures total simulated seconds elapsed and asserts currency increased; uses `walk_to`, `fast_forward_until`, and `sell_plant` helpers with `math.randomseed(42)` for a deterministic run
 
 - **Player speed sprites** — speed upgrades now apply a GLSL color-replace shader at draw time instead of swapping sprite sets; pure-red pixels in the player PNG are replaced with the tier's color (`speed_tiers.lua` now carries a `color` field per tier); `Player:set_speed_level(level, color)` stores the active color; no extra PNG assets needed
 
