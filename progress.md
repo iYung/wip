@@ -132,6 +132,8 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
+- **Golden Lotus timing test** — `tests/test_golden_lotus.lua` headless simulation test that grows and sells three grass plants (to reach $20), then buys and sells a Golden Lotus; measures total simulated seconds elapsed and asserts currency increased; uses `walk_to`, `fast_forward_until`, and `sell_plant` helpers with `math.randomseed(42)` for a deterministic run
+
 - **Player speed sprites** — speed upgrades now apply a GLSL color-replace shader at draw time instead of swapping sprite sets; pure-red pixels in the player PNG are replaced with the tier's color (`speed_tiers.lua` now carries a `color` field per tier); `Player:set_speed_level(level, color)` stores the active color; no extra PNG assets needed
 
 - **Start screen** — `StartScene` with New Game / Continue / Exit buttons; keyboard navigation (up/down/W/S + Enter/Space/F); `main.lua` now opens `StartScene` first; `StoreScene` constructed lazily on confirm; font state saved/restored so store rendering is unaffected
