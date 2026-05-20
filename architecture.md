@@ -157,7 +157,8 @@ Loads every PNG once at startup and returns a shared table. All other modules `r
 - `customer`, `customer_bubble` — customer body and plant-request bubble (120×240, 120×120)
 - `plant_N[stage]` — plant images indexed as `A["plant_N"][stage]` for types 1–6, stages 1–3 (120×120 each)
 - `plant_bubble` — watering-ready indicator shown above plants (60×60)
-- `watering_can`, `grafter_empty`, `grafter_loaded`, `garbage_bin`, `pc_store` — item images (120×120)
+- `watering_can`, `grafter_empty`, `grafter_loaded`, `garbage_bin`, `pc_store` — item images (120×120); `grafter_loaded` is loaded but no longer referenced by grafter code
+- `grafter_no_space_bubble` — optional (60×60); shown above the grafter when no empty slot is available; loaded via `try_img`
 - `slot` — slot background image (120×200)
 - `cashier_wall` — cashier zone wall with transparent window cutout (400×800)
 - `store_wall` — repeating store wall tile (200×720); one slot wide
@@ -246,9 +247,9 @@ Base class for all carriable/interactable objects in the store.
 
 **Subclasses**
 - `WateringCan` — interact waters the plant in the player's active slot
-- `Grafter` — clones a stage-3 plant; has `unload()` to reset to empty state
+- `Grafter` — clones a stage-3 plant; auto-spawns the clone into the nearest empty slot; emits a no-space bubble if no slot is available
 - `PCStore` — interact switches to BuyScene; only works when placed in a slot
-- `GarbageBin` — discard station; F while holding any sellable item discards it (or unloads a grafter clone)
+- `GarbageBin` — discard station; F while holding any sellable item discards it
 - `Plant` — has stage and cooldown timer; not directly usable as a tool
 
 ---
@@ -278,13 +279,15 @@ An Item subclass. Tracks growth state via a cooldown timer.
 An Item subclass. Clones a stage-3 plant.
 
 **Properties**
-- `loaded_plant` — a Plant instance stored inside, or `nil`
-- `sprite` — single Sprite; image swaps between `grafter_empty` (orange) and `grafter_loaded` (yellow) PNGs
+- `bubble` — Sprite (60×60) shown above the grafter when no empty slot is available; image = `A.grafter_no_space_bubble`
+- `_bubble_timer` — seconds remaining before the no-space bubble hides; counts down in `update(dt)`
+- `sprite` — single Sprite; always `grafter_empty` image
 
 **Methods**
-- `interact(player, store, scene_manager)` — if player is holding grafter and active slot has a stage-3 plant: resets the plant to stage 1, stores a clone; swaps to `grafter_loaded` image
-- `unload()` — sets `loaded_plant = nil`, swaps back to `grafter_empty` image; called by StoreScene when the clone is placed or sold
-- `draw()` — draws grafter sprite; if loaded, also draws the stored plant sprite above it
+- `interact(player, store, scene_manager)` — if player is holding grafter and active slot has a stage-3 plant: finds the nearest empty slot (by index distance; ties go to lower index); if found, resets the source plant to stage 1 and places a new clone directly into that slot; if no empty slot, shows the no-space bubble for 1.5 s
+- `update(dt)` — counts down `_bubble_timer`; hides bubble when it reaches zero
+- `draw_bubble()` — if `bubble.visible`, positions and draws the no-space bubble above the grafter sprite
+- `draw()` — draws grafter sprite
 
 ---
 
