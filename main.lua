@@ -32,8 +32,23 @@ local canvas
 local scene_manager
 
 local _visual_coro
-local _visual_done     = false
+local _visual_done      = false
 local _visual_exit_code = 0
+local _visual_files     = nil  -- list of paths in run-all mode; nil in single-file mode
+local _visual_file_idx  = 1
+local _visual_passed    = 0
+
+local function _visual_advance()
+    _visual_file_idx = _visual_file_idx + 1
+    if _visual_file_idx <= #_visual_files then
+        local chunk = assert(loadfile(_visual_files[_visual_file_idx]))
+        _visual_coro = coroutine.create(chunk)
+    else
+        print(_visual_passed .. "/" .. #_visual_files .. " passed")
+        _visual_done = true
+        love.event.quit(_visual_exit_code)
+    end
+end
 
 function love.load()
     canvas = love.graphics.newCanvas(LOGICAL_W, LOGICAL_H)
@@ -47,27 +62,17 @@ function love.load()
             if not chunk then error(err) end
             _visual_coro = coroutine.create(chunk)
         else
-            _visual_coro = coroutine.create(function()
-                local items = love.filesystem.getDirectoryItems("tests")
-                local files = {}
-                for _, name in ipairs(items) do
-                    if name:sub(-4) == ".lua" then files[#files + 1] = name end
+            local items = love.filesystem.getDirectoryItems("tests")
+            _visual_files = {}
+            for _, name in ipairs(items) do
+                if name:sub(-4) == ".lua" then
+                    _visual_files[#_visual_files + 1] = "tests/" .. name
                 end
-                table.sort(files)
-                local passed, total = 0, #files
-                for _, filename in ipairs(files) do
-                    local path = "tests/" .. filename
-                    local ok, err = pcall(dofile, path)
-                    if ok then
-                        print("PASS  " .. path)
-                        passed = passed + 1
-                    else
-                        print("FAIL  " .. path .. " — " .. tostring(err))
-                        _visual_exit_code = 1
-                    end
-                end
-                print(passed .. "/" .. total .. " passed")
-            end)
+            end
+            table.sort(_visual_files)
+            if #_visual_files > 0 then
+                _visual_coro = coroutine.create(assert(loadfile(_visual_files[1])))
+            end
         end
     else
         local gs = GameState.new()
@@ -80,12 +85,24 @@ function love.update(dt)
     if _visual_coro and not _visual_done then
         local ok, err = coroutine.resume(_visual_coro)
         if not ok then
-            print("FAIL: " .. tostring(err))
-            _visual_done = true
-            love.event.quit(1)
+            if _visual_files then
+                print("FAIL  " .. _visual_files[_visual_file_idx] .. " — " .. tostring(err))
+                _visual_exit_code = 1
+                _visual_advance()
+            else
+                print("FAIL: " .. tostring(err))
+                _visual_done = true
+                love.event.quit(1)
+            end
         elseif coroutine.status(_visual_coro) == "dead" then
-            _visual_done = true
-            love.event.quit(_visual_exit_code)
+            if _visual_files then
+                print("PASS  " .. _visual_files[_visual_file_idx])
+                _visual_passed = _visual_passed + 1
+                _visual_advance()
+            else
+                _visual_done = true
+                love.event.quit(_visual_exit_code)
+            end
         end
         return
     end
