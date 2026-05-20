@@ -249,13 +249,6 @@ function StoreScene:_handle_pick_up_down()
         return
     end
 
-    -- loaded grafter + empty slot → place clone, grafter stays in hand
-    if player.held_item and player.held_item.loaded_plant and slot and not slot.item then
-        slot.item = player.held_item.loaded_plant
-        player.held_item:unload()
-        return
-    end
-
     if player.held_item then
         if slot and not slot.item then
             slot.item        = player.held_item
@@ -306,12 +299,7 @@ function StoreScene:_handle_interact()
 
     -- held item + garbage bin → discard
     if player.held_item and player.held_item.sellable ~= false and slot and slot.item and slot.item.is_garbage_bin then
-        local held = player.held_item
-        if held.loaded_plant then
-            held:unload()
-        else
-            player.held_item = nil
-        end
+        player.held_item = nil
         return
     end
 
@@ -339,9 +327,7 @@ function StoreScene:_hud_labels()
     if player.x < 0 and self._customer and self._customer:arrived() then
         e_label = "E: DISMISS"
     elseif player.x >= 0 then
-        if held and held.loaded_plant and slot and not slot_item then
-            e_label = "E: PLACE CLONE"
-        elseif held and slot and not slot_item then
+        if held and slot and not slot_item then
             e_label = "E: PUT DOWN"
         elseif not held and slot_item and slot_item.carriable then
             e_label = "E: PICK UP"

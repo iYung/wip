@@ -89,6 +89,10 @@ function Player:update(dt, input, store)
             spr.y = self.y - H / 2 - spr.height
         end
     end
+
+    if self.held_item and self.held_item.update then
+        self.held_item:update(dt)
+    end
 end
 
 function Player:active_slot(store)

@@ -42,7 +42,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `watering_can.lua` | interact() waters the plant in the active slot; blue PNG |
 | `pc_store.lua` | interact() opens BuyScene; blocked if player is holding anything; `sellable = false`; blue-grey PNG |
 | `plant.lua` | 6 types, 3 stages each; per-type cooldown from `plant_data`; stage PNGs rendered as-is (no tinting); yellow bubble via `draw_bubble()` |
-| `grafter.lua` | Clones a stage-3 plant (resets original to stage 1, stores clone); `unload()` method handles image swap back to empty; orange PNG (empty) / yellow PNG (loaded) |
+| `grafter.lua` | Clones a stage-3 plant (resets original to stage 1); auto-spawns clone into nearest empty slot; no-space bubble (60×60, `grafter_no_space_bubble.png`) shown for 1.5 s when no slot available; always shows orange PNG |
 | `sell_bin.lua` | Sell station; F while holding any sellable item sells it for currency; red PNG |
 
 ### Scenes (`lua/game/scenes/`)

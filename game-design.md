@@ -44,10 +44,9 @@ Bottom-left overlay showing context-sensitive labels. Each line only appears whe
 | `HOVER: <name>` | Player is over a slot with an item |
 | `E: PICK UP` | Empty hands, slot has a carriable item |
 | `E: PUT DOWN` | Holding an item, slot is empty |
-| `E: PLACE CLONE` | Holding a loaded grafter, slot is empty |
 | `F: OPEN SHOP` | Empty hands, over PC Store |
 | `F: WATER` | Holding watering can, over a plant |
-| `F: CLONE` | Holding unloaded grafter, over a stage-3 plant |
+| `F: CLONE` | Holding grafter, over a stage-3 plant |
 | `F: DISCARD` | Holding any sellable item, over garbage bin |
 | `F: NEXT` | In cashier zone, customer waiting, still in dialog |
 | `F: SELL TO CUSTOMER ($X)` | In cashier zone, customer done talking, holding the requested stage-3 plant |
@@ -76,16 +75,14 @@ The player can increase the number of slots. Adding a slot expands the store wid
 ### Grafter
 
 - Can be picked up and carried
-- Has two states: **empty** and **loaded**
-- Using it (F) on a slot with a plant: resets the original plant to stage 1, stores a clone inside the grafter (loaded state)
-- Putting it down (E) over an empty slot while loaded: places the clone into that slot; grafter empties and stays in the player's hand
-- Does nothing if already loaded, or if the target slot has no plant
+- Using it (F) on a slot with a stage-3 plant: resets the original plant to stage 1 and immediately spawns a clone into the nearest empty slot (ties broken by lower index)
+- If no empty slot is available, a no-space bubble appears above the grafter for 1.5 s and the source plant is untouched
+- Does nothing if the target slot has no stage-3 plant
 
 ### Garbage Bin
 
 - Can be picked up and placed
 - Player presses Interact (F) while holding any sellable item over the bin to discard it
-- Discarding a loaded grafter unloads the clone (both clone and grafter are discarded)
 - PC Store cannot be discarded
 
 ---
