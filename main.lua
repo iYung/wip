@@ -1,4 +1,5 @@
 local _visual_test = nil
+local _visual_mode = false
 do
     local headless, visual, test_file = false, false, nil
     for _, v in ipairs(arg or {}) do
@@ -15,6 +16,7 @@ do
     end
     if visual then
         _visual_test = test_file
+        _visual_mode = true
     end
 end
 
@@ -30,18 +32,43 @@ local canvas
 local scene_manager
 
 local _visual_coro
-local _visual_done = false
+local _visual_done     = false
+local _visual_exit_code = 0
 
 function love.load()
     canvas = love.graphics.newCanvas(LOGICAL_W, LOGICAL_H)
     canvas:setFilter("nearest", "nearest")
 
-    if _visual_test then
+    if _visual_mode then
         local runner = require("lua/headless/runner")
         runner._visual = true
-        local chunk, err = loadfile(_visual_test)
-        if not chunk then error(err) end
-        _visual_coro = coroutine.create(chunk)
+        if _visual_test then
+            local chunk, err = loadfile(_visual_test)
+            if not chunk then error(err) end
+            _visual_coro = coroutine.create(chunk)
+        else
+            _visual_coro = coroutine.create(function()
+                local items = love.filesystem.getDirectoryItems("tests")
+                local files = {}
+                for _, name in ipairs(items) do
+                    if name:sub(-4) == ".lua" then files[#files + 1] = name end
+                end
+                table.sort(files)
+                local passed, total = 0, #files
+                for _, filename in ipairs(files) do
+                    local path = "tests/" .. filename
+                    local ok, err = pcall(dofile, path)
+                    if ok then
+                        print("PASS  " .. path)
+                        passed = passed + 1
+                    else
+                        print("FAIL  " .. path .. " — " .. tostring(err))
+                        _visual_exit_code = 1
+                    end
+                end
+                print(passed .. "/" .. total .. " passed")
+            end)
+        end
     else
         local gs = GameState.new()
         scene_manager = SceneManager.new()
@@ -58,18 +85,18 @@ function love.update(dt)
             love.event.quit(1)
         elseif coroutine.status(_visual_coro) == "dead" then
             _visual_done = true
-            love.event.quit(0)
+            love.event.quit(_visual_exit_code)
         end
         return
     end
-    if not _visual_test then
+    if not _visual_mode then
         input:update()
         scene_manager:update(dt)
     end
 end
 
 function love.draw()
-    local sm = _visual_test and require("lua/headless/runner")._active_sm or scene_manager
+    local sm = _visual_mode and require("lua/headless/runner")._active_sm or scene_manager
     if not sm then return end
 
     love.graphics.setCanvas(canvas)
