@@ -1,4 +1,5 @@
-local Slot = require("lua/game/slot")
+local Slot        = require("lua/game/slot")
+local WallPattern = require("lua/game/shaders/wall_pattern")
 
 local Store = {}
 Store.__index = Store
@@ -38,21 +39,31 @@ function Store:draw_bg(A)
     local n  = #self.slots
     local sw = self.slot_width
     love.graphics.setColor(1, 1, 1, 1)
+
+    local use_shader = A.wall_pattern ~= nil
+
+    local function draw_wall(img, x)
+        if use_shader then WallPattern.apply(A.wall_pattern, x, 0.0, img) end
+        love.graphics.draw(img, x, 0)
+        if use_shader then WallPattern.clear() end
+    end
+
     local g = 0
     while g * 4 < n do
         for i = g * 4, g * 4 + 1 do
-            if i < n then love.graphics.draw(A.store_wall, i * sw, 0) end
+            if i < n then draw_wall(A.store_wall, i * sw) end
         end
         local r0, r1 = g * 4 + 2, g * 4 + 3
         if r1 < n - 1 then
-            love.graphics.draw(A.store_window, r0 * sw, 0)
+            draw_wall(A.store_window, r0 * sw)
         else
             for i = r0, r1 do
-                if i < n then love.graphics.draw(A.store_wall, i * sw, 0) end
+                if i < n then draw_wall(A.store_wall, i * sw) end
             end
         end
         g = g + 1
     end
+
 end
 
 function Store:draw()

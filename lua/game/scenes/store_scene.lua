@@ -8,6 +8,7 @@ local PLANT_DATA        = require("lua/game/data/plant_data")
 local CUSTOMER_SCRIPTS  = require("lua/game/data/customer_scripts")
 local Customer          = require("lua/game/customer")
 local config       = require("lua/game/config")
+local WallPattern  = require("lua/game/shaders/wall_pattern")
 local ZONE_WIDTH   = config.ZONE_WIDTH
 local U            = config.U
 
@@ -85,7 +86,9 @@ function StoreScene:_setup_store()
     self._wall = {
         draw = function()
             love.graphics.setColor(1, 1, 1, 1)
+            if A.wall_pattern then WallPattern.apply(A.wall_pattern, -ZONE_WIDTH, 0.0, wall_img) end
             love.graphics.draw(wall_img, -ZONE_WIDTH, 0)
+            if A.wall_pattern then WallPattern.clear() end
         end
     }
 

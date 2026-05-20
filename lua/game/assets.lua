@@ -59,6 +59,9 @@ for lvl = 1, 3 do
 end
 
 
+A.wall_pattern = try_img("assets/wall_pattern.png")
+if A.wall_pattern then A.wall_pattern:setWrap("repeat", "repeat") end
+
 A.accessories = {}
 function A.load_accessory(name)
     if A.accessories[name] ~= nil then return A.accessories[name] end
