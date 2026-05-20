@@ -63,6 +63,9 @@ love . --headless tests/test_golden_lotus.lua
 
 # visual — real window, watch the test play out
 love . --visual tests/test_golden_lotus.lua
+
+# run all tests
+love . --headless
 ```
 
 `--headless` stubs all Love2D graphics/audio before any game code loads. `--visual` runs with a real window; `runner.tick` yields after each frame so `love.draw` fires between updates.
