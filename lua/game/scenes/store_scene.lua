@@ -9,6 +9,7 @@ local CUSTOMER_SCRIPTS  = require("lua/game/data/customer_scripts")
 local Customer          = require("lua/game/customer")
 local config       = require("lua/game/config")
 local WallPattern  = require("lua/game/shaders/wall_pattern")
+local Sway         = require("lua/game/shaders/sway")
 local ZONE_WIDTH   = config.ZONE_WIDTH
 local U            = config.U
 
@@ -102,10 +103,12 @@ function StoreScene:_setup_store()
         draw = function() store_ref:draw_bubbles() end
     }
 
+    self._sway_time = 0
+
     self._parallax_layers = {
         { img = A.store_bg_far,  p = 0.05 },
-        { img = A.store_bg_mid,  p = 0.20 },
-        { img = A.store_bg_near, p = 0.45 },
+        { img = A.store_bg_mid,  p = 0.20, sway_amplitude = 0.004 },
+        { img = A.store_bg_near, p = 0.45, sway_amplitude = 0.007 },
     }
 
     local floor_y  = 30 * U
@@ -193,6 +196,8 @@ end
 function StoreScene:update(dt)
     local gs    = self.game_state
     local input = self.input
+
+    self._sway_time = self._sway_time + dt
 
     gs.store:update(dt * gs.growth_mult)
     gs.player:update(dt, input, gs.store)
@@ -387,9 +392,15 @@ function StoreScene:draw()
             local iw     = layer.img:getWidth()
             local offset = -cx * (1 - layer.p)
             local x      = math.floor((start_x + offset) / iw) * iw - offset
+            if layer.sway_amplitude then
+                Sway.apply(self._sway_time, layer.sway_amplitude)
+            end
             while x < end_x do
                 love.graphics.draw(layer.img, x, 0)
                 x = x + iw
+            end
+            if layer.sway_amplitude then
+                Sway.clear()
             end
         end
     end
