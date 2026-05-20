@@ -8,6 +8,7 @@ local A           = require("lua/game/assets")
 local SPEED_TIERS    = require("lua/game/data/speed_tiers")
 local GROWTH_TIERS   = require("lua/game/data/growth_tiers")
 local ColorReplace   = require("lua/game/shaders/color_replace")
+local CRT            = require("lua/game/shaders/crt")
 
 local CATALOGUE = {}
 
@@ -77,6 +78,7 @@ function BuyScene.new(game_state, input, scene_manager, store_scene)
     self.scene_manager   = scene_manager
     self.store_scene     = store_scene
     self.selected        = 1
+    self.canvas          = love.graphics.newCanvas(1280, 720)
     return self
 end
 
@@ -147,6 +149,10 @@ function BuyScene:_confirm()
 end
 
 function BuyScene:draw()
+    local prev_canvas = love.graphics.getCanvas()
+    love.graphics.setCanvas(self.canvas)
+    love.graphics.clear(0, 0, 0, 1)
+
     local gs       = self.game_state
     local currency = gs.currency
     local ent      = CATALOGUE[self.selected]
@@ -292,7 +298,11 @@ function BuyScene:draw()
 
     love.graphics.setFont(prev_font)
 
+    love.graphics.setCanvas(prev_canvas)
     love.graphics.setColor(1, 1, 1, 1)
+    CRT.apply()
+    love.graphics.draw(self.canvas, 0, 0)
+    CRT.clear()
 end
 
 return BuyScene

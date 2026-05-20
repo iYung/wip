@@ -167,6 +167,7 @@ Loads every PNG once at startup and returns a shared table. All other modules `r
 - `speech_bubble` — 9-slice speech bubble image (96×72, margins top=12 right=12 bottom=24 left=12)
 - `speech_bubble_tail` — tail graphic drawn below the speech bubble
 - `sneakers`, `expand_slot` — buy-scene preview images; loaded conditionally via `try_img` (art not yet created; fall back to grey rectangle in preview)
+- `wall_pattern` — optional repeating pattern texture (`assets/wall_pattern.png`); loaded with `setWrap("repeat","repeat")`; nil if the file is absent; used by the `WallPattern` shader on every wall draw
 - `accessories` — table of lazily-loaded accessory images, keyed by name
 
 **Methods**
@@ -318,7 +319,7 @@ The 1D array of slots. Handles layout and growth.
 - `slot_at(x)` — return the Slot at world x position
 - `update(dt)` — delegates to all slots/items
 - `draw()` — delegates to all slots; no background (background drawn by `draw_bg` before the drawer)
-- `draw_bg(A)` — draws store wall tiles and window frames using a group-of-4 rule: slots 1–2 of each group get `store_wall`, slots 3–4 get `store_window` (if both exist and neither is the last slot); fallback to wall tiles otherwise; called manually in `StoreScene:draw()` before `drawer:draw()`
+- `draw_bg(A)` — draws store wall tiles and window frames using a group-of-4 rule: slots 1–2 of each group get `store_wall`, slots 3–4 get `store_window` (if both exist and neither is the last slot); fallback to wall tiles otherwise; each wall image is drawn through a local `draw_wall(img, x)` helper that applies `WallPattern` if `A.wall_pattern` is set; called manually in `StoreScene:draw()` before `drawer:draw()`
 - `draw_bubbles()` — draws only plant ready bubbles; called at a higher drawer priority so bubbles appear above the player
 
 ---
@@ -384,6 +385,60 @@ Replaces pure-red or pure-blue pixels in a sprite with runtime colors. Used by P
 
 ---
 
+### WallPattern
+
+Tiles a repeating pattern texture over wall and window images. Applied to every wall draw call in both `Store:draw_bg` and the cashier wall in `StoreScene`. Gracefully no-ops if `A.wall_pattern` is nil (art missing).
+
+**Files**
+- `assets/shaders/wall_pattern.glsl` — GLSL source
+- `lua/game/shaders/wall_pattern.lua` — wrapper; `require`-cached
+
+**GLSL logic**
+- Pure-red pixels (`r > 0.9, g < 0.1, b < 0.1`) in the wall image are replaced by a sample from `pattern_tex`, tiled via `fract(world_pos / pattern_size)`
+- All other pixels pass through unchanged
+- `world_origin` + `uv * tile_size` reconstructs the world position of each pixel so the pattern is continuous across tiles regardless of where in the world each wall image is drawn
+
+**API**
+- `apply(pattern_img, world_x, world_y, tile_img)` — sends `pattern_tex`, `pattern_size`, `world_origin`, `tile_size` and activates the shader
+- `clear()` — resets to the default Love2D shader
+
+**Assets**
+- `assets/wall_pattern.png` — loaded with `setWrap("repeat", "repeat")`; optional (`try_img`); `A.wall_pattern` is nil if the file is absent
+
+---
+
+### CRT
+
+Full-screen post-processing effect applied over the entire BuyScene. Renders the scene to an off-screen canvas, then draws it through this shader.
+
+**Files**
+- `assets/shaders/crt.glsl` — GLSL source
+- `lua/game/shaders/crt.lua` — wrapper; `require`-cached so the shader is compiled once
+
+**GLSL effects (applied in order)**
+1. **Barrel distortion** — mild outward warp; pixels outside [0,1] after distortion are output as black, giving a rounded-screen border
+2. **Chromatic aberration** — red channel sampled slightly right, blue slightly left
+3. **Scanlines** — `sin`-based horizontal banding that dims every other row by ~7%
+4. **Vignette** — soft edge darkening derived from `uv * (1 - uv)`
+
+**API**
+- `apply()` — activates the shader
+- `clear()` — resets to the default Love2D shader
+
+**Canvas pattern (BuyScene)**
+```
+prev_canvas = love.graphics.getCanvas()   -- save main.lua's canvas
+setCanvas(self.canvas)                    -- render scene here
+  ... all draw calls ...
+setCanvas(prev_canvas)                    -- restore; draw result onto main canvas
+CRT.apply()
+draw(self.canvas, 0, 0)
+CRT.clear()
+```
+`prev_canvas` must be saved and restored (not reset to nil) because `main.lua` already renders inside its own `setCanvas(canvas)` call.
+
+---
+
 ## Scenes
 
 ### StartScene
@@ -410,6 +465,25 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 **Notes**
 - Fonts are saved and restored around `draw()` so the global Love2D font state is unchanged when `StoreScene` draws next frame
 - `StoreScene` is `require`d lazily inside `_confirm()`, not at module load time, to avoid a circular load order
+
+---
+
+### BuyScene
+
+The PC store carousel. Pure screen-space UI — overrides `draw()` entirely, no camera transform. Entire output is post-processed through the CRT shader.
+
+**Location:** `lua/game/scenes/buy_scene.lua`
+
+**Properties**
+- `selected` — index of the currently highlighted catalogue entry
+- `canvas` — 1280×720 Love2D canvas; scene draws into this each frame, then it is composited to the main canvas via the CRT shader
+
+**Rendering**
+1. Save `prev_canvas = love.graphics.getCanvas()` (main.lua's game canvas)
+2. `setCanvas(self.canvas)` → clear → draw all UI
+3. `setCanvas(prev_canvas)` → draw canvas with `CRT.apply()` → `CRT.clear()`
+
+Saving and restoring `prev_canvas` is required because `main.lua` already renders all scenes inside its own `setCanvas(main_canvas)` block; resetting to `nil` would bypass that and produce a black frame.
 
 ---
 

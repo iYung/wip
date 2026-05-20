@@ -31,7 +31,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `game_state.lua` | Holds store, player, currency, `unlocked_plants`, `stage3_counts`, `seen_scripts`, `speed_level`, `growth_level`, `growth_mult`; survives scene switches |
 | `player.lua` | Moves left/right into cashier zone; holds one item; 4-variant SpriteSet (idle/walk × no-held/held), each backed by a PNG; `speed` upgradeable via shop; uses `ColorReplace` shader to swap pure-red mask pixels to the current speed tier color on draw |
 | `slot.lua` | One store cell; single `slot.png` background sprite; positions its item every frame |
-| `store.lua` | Array of slots; `slot_at(x)`, `grow()`, `draw_bubbles()` for high-priority bubble rendering; `draw_bg(A)` draws wall tiles and window frames using group-of-4 rule |
+| `store.lua` | Array of slots; `slot_at(x)`, `grow()`, `draw_bubbles()` for high-priority bubble rendering; `draw_bg(A)` draws wall tiles and window frames using group-of-4 rule; all wall draws go through a `draw_wall(img, x)` helper that applies the `WallPattern` shader when `A.wall_pattern` is set |
 | `customer.lua` | Cashier zone NPC; white PNG tinted per character via `body_color`; optional `accessory_sprite` (120×120) drawn over the top half, synced to body flip; dialog lines reveal character-by-character (40 chars/s) inside a 9-slice `speech_bubble.png` box; F skips to full line, second F advances; `line_complete()` / `skip_reveal()` methods; state machine: idle → walking_in → waiting → walking_out; `dismiss()` sends customer away without selling; when waiting, shows a 9-slice speech bubble containing the requested plant's stage-3 image (104×104 inside 12px padding). **`bubble.visible` is a shared gate** — it controls both the text dialog and the plant request bubble; setting it false suppresses both. Text dialog runs while `bubble.visible = true` and `done_talking = false`; plant image bubble draws when `bubble.visible = true` and `done_talking = true`. |
 
 ### Items (`lua/game/items/`)
@@ -51,7 +51,7 @@ Completed step files are moved to [`archive/`](archive/).
 |------|-------------|
 | `start_scene.lua` | Title screen with New Game / Continue / Exit buttons; up/down/W/S navigate, Enter/Space/F confirms; New Game and Continue both enter StoreScene; fonts saved and restored each draw so global font state is unaffected |
 | `store_scene.lua` | Main loop — player moves, camera follows on x then clamps to world bounds (left = -400+640, right = store width−640), pick up/interact handled here; cashier zone logic (F skips reveal → advances → sells, E dismisses); context HUD bottom-left shows F: SKIP while typing, F: NEXT when done, E: DISMISS when customer waiting; `_active_script_key` tracks the current scripted customer (seen_scripts written on sale, not on spawn); `_script_cooldowns` counts down per completed sale — dismissed scripted customers return after 3 sales; unified parallax tiles `store_bg_*` across full world width pre-drawer; `Store:draw_bg` then stamps walls/windows on top; layered draw order for wall/bubbles |
-| `buy_scene.lua` | Carousel UI — 10 items (6 plants + Watering Can + Grafter + Expand Slot + Heat Lamps); A/D cycle, F buy, E cancel; per-type price and preview color |
+| `buy_scene.lua` | Carousel UI — 10 items (6 plants + Watering Can + Grafter + Expand Slot + Heat Lamps); A/D cycle, F buy, E cancel; per-type price and preview color; scene rendered to off-screen canvas and composited through CRT post-process shader |
 
 ### Data (`lua/game/data/`)
 
@@ -131,6 +131,10 @@ PNG files for all sprites — player variants, plants (18 total: 6 types × 3 st
 See open questions in `game-design.md`.
 
 ### Recently completed
+
+- **Wall pattern shader** — `assets/shaders/wall_pattern.glsl` + `lua/game/shaders/wall_pattern.lua`; tiles a repeating pattern texture over pure-red pixels in wall/window images; world-space UV math keeps the pattern seamless across adjacent tiles; applied in both `Store:draw_bg` and the cashier wall in `StoreScene`; gracefully disabled when `assets/wall_pattern.png` is absent
+
+- **CRT post-process shader (BuyScene)** — `assets/shaders/crt.glsl` + `lua/game/shaders/crt.lua`; BuyScene renders into a 1280×720 canvas then composites through the shader; effects: barrel distortion, chromatic aberration, scanlines, vignette; canvas pattern saves/restores `prev_canvas` so it works correctly inside main.lua's existing canvas wrapper
 
 - **Visual test mode** — `--visual tests/foo.lua` flag runs a test file with a real window so you can watch each frame; `runner.tick` yields via coroutine after each update so `love.draw` fires between steps; `loadfile` used instead of `dofile` to avoid LuaJIT's yield-across-C-boundary restriction; `HeadlessInput` fixed: `_held` and `_queued` are now tracked separately so back-to-back `press()` calls on adjacent frames both fire as rising edges (previously the key lingered in `_down` and the second press was silently dropped)
 
