@@ -464,6 +464,7 @@ Per-sprite horizontal wave distortion applied to the mid and near parallax backg
 - In `draw()`, the mid layer (`p=0.20`) is wrapped with `Sway.apply(self._sway_time, 0.004)` / `Sway.clear()`
 - The near layer (`p=0.45`) is wrapped with `Sway.apply(self._sway_time, 0.007)` / `Sway.clear()`
 - The far layer (`p=0.05`) is drawn without any shader
+- `StoreScene:draw()` also writes `gs.store.sway_time = self._sway_time` immediately before `self.drawer:draw()`; `Store:draw()` forwards this to `Slot:draw(sway_time)`, which wraps `item:draw()` with `Sway.apply` / `Sway.clear` when `sway_time` is non-nil and `item.ready ~= true` — thirsty plants (`ready == true`) are skipped and stay still
 
 ---
 

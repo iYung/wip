@@ -68,7 +68,7 @@ end
 
 function Store:draw()
     for _, slot in ipairs(self.slots) do
-        slot:draw()
+        slot:draw(self.sway_time)
     end
 end
 
