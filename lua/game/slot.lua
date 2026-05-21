@@ -5,7 +5,7 @@ local Sway   = require("lua/game/shaders/sway")
 
 local SLOT_HEIGHT      = 10 * U  -- 200
 local SLOT_Y           = 30 * U  -- 600  world y of slot top
-local ITEM_SWAY_AMPLITUDE = 0.004
+local ITEM_SWAY_AMPLITUDE = 0.012
 
 local Slot = {}
 Slot.__index = Slot
