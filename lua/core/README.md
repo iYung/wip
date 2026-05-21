@@ -119,6 +119,14 @@ See also `lua/headless/runner.lua` (`setup`, `tick`, `run`) and `lua/headless/st
 
 ---
 
+## Shader
+
+Thin wrapper around Love2D shader loading.
+
+- `Shader.load(path)` — loads a GLSL shader from `path` and returns a Love2D shader object
+
+---
+
 ## Test modes
 
 Three ways to run the game:

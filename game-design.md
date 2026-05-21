@@ -145,11 +145,12 @@ Two kinds of customers can spawn:
 
 | Character | Plant | Chapters | Arc |
 |-----------|-------|----------|-----|
+| Sage | Grass / Cactus / Rose | 4 | Tutorial mentor; guaranteed first customer; observational nudges toward each core mechanic; wears a straw hat |
 | Old Pete | Cactus | 3 | Gruff regular who warms up over time; wears a flat cap |
-| Mayor Bloom | Rose | 2 | Formal first visit; returns privately for himself |
-| The Collector | Golden Lotus | 2 | Mysterious; hints at what he did with the first one |
-| Mira | Tulip | 1 | Kid with her dad's money, no explanation |
-| Dottie | Daisy | 3 | Cheerful regular; presses flowers in books; brings one back as a gift |
+| Mayor Bloom | Rose | 2 | Formal first visit; returns privately for himself; wears a chain of office |
+| The Collector | Golden Lotus | 2 | Mysterious; hints at what he did with the first one; wears a wide-brim hat |
+| Mira | Tulip | 1 | Kid with her dad's money, no explanation; wears a hair bow |
+| Dottie | Daisy | 3 | Cheerful regular; presses flowers in books; brings one back as a gift; wears a flower pin |
 
 **Dialog flow:**
 - Scripted customers: F advances through messages one at a time; after the last message the plant-colored bubble appears

@@ -267,7 +267,18 @@ function Customer:draw_bubble()
         love.graphics.setColor(1, 1, 1, 1)
     else
         local font     = love.graphics.getFont()
-        local revealed = string.sub(self._full_text, 1, self.reveal_index)
+        -- reveal_index counts bytes; clamp to a UTF-8 character boundary so
+        -- string.sub never returns a string that ends mid-multibyte-sequence.
+        -- Continuation bytes are 0x80-0xBF; start bytes are >= 0xC0.
+        local idx = self.reveal_index
+        while idx > 0 and (string.byte(self._full_text, idx) or 0) >= 0x80
+                      and (string.byte(self._full_text, idx) or 0) <  0xC0 do
+            idx = idx - 1
+        end
+        if (string.byte(self._full_text, idx) or 0) >= 0xC0 then
+            idx = idx - 1
+        end
+        local revealed = string.sub(self._full_text, 1, idx)
         local text_w   = font:getWidth(self._full_text)
         local text_h   = font:getHeight()
         local box_w    = math.max(MIN_BOX_W, text_w + PAD * 2)
