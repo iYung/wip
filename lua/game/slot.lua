@@ -6,6 +6,7 @@ local Sway   = require("lua/game/shaders/sway")
 local SLOT_HEIGHT      = 10 * U  -- 200
 local SLOT_Y           = 30 * U  -- 600  world y of slot top
 local ITEM_SWAY_AMPLITUDE = 0.012
+local ITEM_SWAY_SPEED     = 2.5
 
 local Slot = {}
 Slot.__index = Slot
@@ -51,7 +52,7 @@ function Slot:draw(sway_time)
     end
     if self.item then
         local should_sway = sway_time and (self.item.ready ~= true)
-        if should_sway then Sway.apply(sway_time, ITEM_SWAY_AMPLITUDE) end
+        if should_sway then Sway.apply(sway_time * ITEM_SWAY_SPEED, ITEM_SWAY_AMPLITUDE) end
         self.item:draw()
         if should_sway then Sway.clear() end
     end
