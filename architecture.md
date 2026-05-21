@@ -452,7 +452,7 @@ Per-sprite horizontal wave distortion applied to the mid and near parallax backg
 
 **GLSL logic**
 - Extern `float time` drives animation; extern `float amplitude` controls displacement intensity
-- `uv.x` is shifted by `sin(uv.y * 3.0 + time * 0.6) * amplitude` before the texture is sampled, producing a vertical-frequency wave that scrolls over time
+- `uv.x` is shifted by `sin(time * 0.6) * amplitude * (1.0 - uv.y)` — `(1.0 - uv.y)` anchors the bottom (`uv.y = 1`) and scales displacement up to full at the top (`uv.y = 0`), producing a pendulum sway
 - The shifted UV is passed to `Texel(MainTex, shifted_uv)` and the result is multiplied by the vertex `color`
 
 **API**
