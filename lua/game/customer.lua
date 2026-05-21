@@ -272,6 +272,9 @@ function Customer:draw_bubble()
                       and (string.byte(self._full_text, idx) or 0) <  0xC0 do
             idx = idx - 1
         end
+        if (string.byte(self._full_text, idx) or 0) >= 0xC0 then
+            idx = idx - 1
+        end
         local revealed = string.sub(self._full_text, 1, idx)
         local text_w   = font:getWidth(self._full_text)
         local text_h   = font:getHeight()
