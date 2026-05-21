@@ -50,6 +50,7 @@ return {
     {
         id             = "mayor_bloom",
         chapter        = 1,
+        accessory      = "chain_of_office",
         trigger        = { plant_type = 3, count = 1 },
         name           = "Mayor Bloom",
         primary_color     = {0.75, 0.25, 0.40, 1},
@@ -63,6 +64,7 @@ return {
     {
         id             = "mayor_bloom",
         chapter        = 2,
+        accessory      = "chain_of_office",
         trigger        = { plant_type = 3, count = 4 },
         name           = "Mayor Bloom",
         primary_color     = {0.75, 0.25, 0.40, 1},
@@ -79,6 +81,7 @@ return {
     {
         id             = "the_collector",
         chapter        = 1,
+        accessory      = "wide_brim_hat",
         trigger        = { plant_type = 6, count = 1 },
         name           = "The Collector",
         primary_color     = {0.85, 0.75, 0.10, 1},
@@ -93,6 +96,7 @@ return {
     {
         id             = "the_collector",
         chapter        = 2,
+        accessory      = "wide_brim_hat",
         trigger        = { plant_type = 6, count = 3 },
         name           = "The Collector",
         primary_color     = {0.85, 0.75, 0.10, 1},
@@ -109,6 +113,7 @@ return {
     {
         id             = "mira",
         chapter        = 1,
+        accessory      = "hair_bow",
         trigger        = { plant_type = 4, count = 1 },
         name           = "Mira",
         primary_color     = {0.95, 0.80, 0.30, 1},
@@ -124,6 +129,7 @@ return {
     {
         id             = "dottie",
         chapter        = 1,
+        accessory      = "flower_pin",
         trigger        = { plant_type = 5, count = 1 },
         name           = "Dottie",
         primary_color     = {0.70, 0.50, 0.85, 1},
@@ -138,6 +144,7 @@ return {
     {
         id             = "dottie",
         chapter        = 2,
+        accessory      = "flower_pin",
         trigger        = { plant_type = 5, count = 3 },
         name           = "Dottie",
         primary_color     = {0.70, 0.50, 0.85, 1},
@@ -152,6 +159,7 @@ return {
     {
         id             = "dottie",
         chapter        = 3,
+        accessory      = "flower_pin",
         trigger        = { plant_type = 5, count = 6 },
         name           = "Dottie",
         primary_color     = {0.70, 0.50, 0.85, 1},
@@ -161,6 +169,68 @@ return {
             "I brought you something.",
             "From the first one you sold me. I pressed it.",
             "It's yours now. And I'll take one more, if that's alright.",
+        },
+    },
+
+    -- Sage (tutorial mentor, 4-chapter arc)
+    {
+        id             = "sage",
+        chapter        = 1,
+        accessory      = "straw_hat",
+        trigger        = { plant_type = 1, count = 0 },
+        name           = "Sage",
+        primary_color     = {0.35, 0.58, 0.38, 1},
+        secondary_color = {0.55, 0.40, 0.25, 1},
+        plant_type     = 1,
+        messages       = {
+            "I've heard there's a new plant shop in town.",
+            "Word gets around fast when someone opens up. I had to see for myself.",
+            "I'll take a grass. Nothing fancy — just to see how you do.",
+        },
+    },
+    {
+        id             = "sage",
+        chapter        = 2,
+        accessory      = "straw_hat",
+        trigger        = { plant_type = 1, count = 3 },
+        name           = "Sage",
+        primary_color     = {0.35, 0.58, 0.38, 1},
+        secondary_color = {0.55, 0.40, 0.25, 1},
+        plant_type     = 1,
+        messages       = {
+            "Grass is a good start. But customers want variety.",
+            "That computer over there — it's how you get new stock. Check it out.",
+            "The more kinds you grow, the more they come.",
+        },
+    },
+    {
+        id             = "sage",
+        chapter        = 3,
+        accessory      = "straw_hat",
+        trigger        = { plant_type = 2, count = 1 },
+        name           = "Sage",
+        primary_color     = {0.35, 0.58, 0.38, 1},
+        secondary_color = {0.55, 0.40, 0.25, 1},
+        plant_type     = 2,
+        messages       = {
+            "A cactus. Good choice. Takes patience but it pays.",
+            "You know about the grafting tool? It copies a finished plant without starting over.",
+            "Once you understand that, everything moves faster.",
+        },
+    },
+    {
+        id             = "sage",
+        chapter        = 4,
+        accessory      = "straw_hat",
+        trigger        = { plant_type = 3, count = 1 },
+        name           = "Sage",
+        primary_color     = {0.35, 0.58, 0.38, 1},
+        secondary_color = {0.55, 0.40, 0.25, 1},
+        plant_type     = 3,
+        messages       = {
+            "A rose. That's real money.",
+            "At some point, how fast you move matters as much as what you grow.",
+            "Check the upgrades. Speed and heat lamps — they compound.",
         },
     },
 }

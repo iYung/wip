@@ -9,6 +9,10 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     ctx.gs.stage3_counts[1] = 1   -- Old Pete ch1: trigger plant_type=1, count=1
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
     local cfg = ctx.sm.current:_next_customer_cfg()
     assert(cfg ~= nil, "should return a cfg")
     assert(cfg.id == "old_pete", "expected id 'old_pete', got " .. tostring(cfg.id))
@@ -23,6 +27,10 @@ do
     end)
     ctx.gs.stage3_counts[1] = 0
     ctx.gs.unlocked_plants = {}   -- disable random-customer fallback
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
     local cfg = ctx.sm.current:_next_customer_cfg()
     assert(cfg == nil or cfg.id == nil,
         "should not return a scripted customer when trigger not met")
@@ -52,6 +60,10 @@ do
     ctx.gs.stage3_counts[1] = 1
     ctx.gs.stage3_counts[2] = 3
     ctx.gs.seen_scripts = { ["old_pete:1"] = true }
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
     ctx.gs.unlocked_plants = {}
     local cfg = ctx.sm.current:_next_customer_cfg()
     assert(cfg ~= nil and cfg.id == "old_pete" and cfg.chapter == 2,
@@ -67,6 +79,10 @@ do
     local elapsed = 0
     ctx.gs.stage3_counts[1] = 1
 
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
     -- spawn alone should NOT write seen_scripts
     local cfg = ctx.sm.current:_next_customer_cfg()
     assert(cfg and cfg.id == "old_pete", "precondition: Old Pete ch1 qualified")
@@ -124,6 +140,10 @@ do
     end)
     local elapsed = 0
     ctx.gs.stage3_counts[1] = 1
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
 
     local cfg = ctx.sm.current:_next_customer_cfg()
     ctx.sm.current._customer:show(cfg)
@@ -148,6 +168,10 @@ do
     local elapsed = 0
     ctx.gs.stage3_counts[1] = 1
     ctx.gs.unlocked_plants = { [1] = true }
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
 
     -- qualify and dismiss Old Pete to set cooldown
     local pete_cfg = ctx.sm.current:_next_customer_cfg()
