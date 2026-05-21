@@ -442,6 +442,31 @@ CRT.clear()
 
 ---
 
+### Sway
+
+Per-sprite horizontal wave distortion applied to the mid and near parallax background layers in StoreScene each frame.
+
+**Files**
+- `assets/shaders/sway.glsl` — GLSL source
+- `lua/game/shaders/sway.lua` — wrapper; `require`-cached
+
+**GLSL logic**
+- Extern `float time` drives animation; extern `float amplitude` controls displacement intensity
+- `uv.x` is shifted by `sin(uv.y * 3.0 + time * 0.6) * amplitude` before the texture is sampled, producing a vertical-frequency wave that scrolls over time
+- The shifted UV is passed to `Texel(MainTex, shifted_uv)` and the result is multiplied by the vertex `color`
+
+**API**
+- `apply(time, amplitude)` — sends both externs and activates the shader
+- `clear()` — resets to the default Love2D shader
+
+**Usage (StoreScene)**
+- `self._sway_time` is initialised to `0` in `_setup_store()` and accumulated each frame via `self._sway_time = self._sway_time + dt`
+- In `draw()`, the mid layer (`p=0.20`) is wrapped with `Sway.apply(self._sway_time, 0.004)` / `Sway.clear()`
+- The near layer (`p=0.45`) is wrapped with `Sway.apply(self._sway_time, 0.007)` / `Sway.clear()`
+- The far layer (`p=0.05`) is drawn without any shader
+
+---
+
 ## Scenes
 
 ### StartScene
