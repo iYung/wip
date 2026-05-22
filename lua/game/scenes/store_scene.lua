@@ -394,6 +394,7 @@ function StoreScene:draw()
     local A = require("lua/game/assets")
     gs.store:draw_bg(A)
 
+    gs.store.sway_time = self._sway_time
     self.drawer:draw()
     self.camera:detach()
 
