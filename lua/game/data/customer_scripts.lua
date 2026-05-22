@@ -129,7 +129,7 @@ return {
     {
         id             = "dottie",
         chapter        = 1,
-        accessory      = "flower_pin",
+        accessory      = "clown",
         trigger        = { plant_type = 5, count = 1 },
         name           = "Dottie",
         primary_color     = {0.70, 0.50, 0.85, 1},
@@ -144,7 +144,7 @@ return {
     {
         id             = "dottie",
         chapter        = 2,
-        accessory      = "flower_pin",
+        accessory      = "clown",
         trigger        = { plant_type = 5, count = 3 },
         name           = "Dottie",
         primary_color     = {0.70, 0.50, 0.85, 1},
@@ -159,7 +159,7 @@ return {
     {
         id             = "dottie",
         chapter        = 3,
-        accessory      = "flower_pin",
+        accessory      = "clown",
         trigger        = { plant_type = 5, count = 6 },
         name           = "Dottie",
         primary_color     = {0.70, 0.50, 0.85, 1},
