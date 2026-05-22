@@ -152,7 +152,8 @@ local plant = Plant.new(1)
 plant.stage = 3
 ctx.gs.store.slots[5].item = plant   -- source at slot 5
 -- slots 1,2,3 filled by StoreScene; slot 4 is empty; slot 6 is empty
--- fill slots 7-10 so only 4 and 6 compete
+-- ensure at least 7 slots so slot 6 exists; fill slots 7+ so only 4 and 6 compete
+while #ctx.gs.store.slots < 7 do ctx.gs.store:grow() end
 for i = 7, #ctx.gs.store.slots do
     ctx.gs.store.slots[i].item = Plant.new(1)
 end

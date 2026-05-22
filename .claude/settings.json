@@ -22,7 +22,12 @@
       "Bash(mv /Users/ivan/Development/luagame/assets/accessories/flat_cap.png /Users/ivan/Development/luagame/assets/flat_cap.png)",
       "Bash(mv /Users/ivan/Development/luagame/assets/accessories/flower_pin.png /Users/ivan/Development/luagame/assets/flower_pin.png)",
       "Bash(mv /Users/ivan/Development/luagame/assets/accessories/hair_bow.png /Users/ivan/Development/luagame/assets/hair_bow.png)",
-      "Bash(mv /Users/ivan/Development/luagame/assets/accessories/straw_hat.png /Users/ivan/Development/luagame/assets/straw_hat.png)"
+      "Bash(mv /Users/ivan/Development/luagame/assets/accessories/straw_hat.png /Users/ivan/Development/luagame/assets/straw_hat.png)",
+      "Bash(which lua *)",
+      "Read(//usr/local/**)",
+      "Bash(ls /Applications/love.app/Contents/MacOS/ && grep -r \"headless\\\\|test\" /Users/ivan/Development/luagame/main.lua | head -20)",
+      "Read(//Applications/love.app/Contents/MacOS/**)",
+      "Bash(/Applications/love.app/Contents/MacOS/love . --headless)"
     ],
     "additionalDirectories": [
       "/Users/ivan/Development/luagame",
