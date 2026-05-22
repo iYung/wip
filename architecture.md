@@ -543,7 +543,16 @@ Three ways to run the game:
 | File | What it tests |
 |------|---------------|
 | `test_basics.lua` | Initial currency, player moves right when `move_right` is held |
+| `test_balance.lua` | Progression pace, gold-per-minute per plant, growth multiplier values, speed upgrade ROI |
+| `test_carrying.lua` | Pick up / put down carriable items; non-carriable items cannot be picked up |
+| `test_customer_scripts.lua` | Scripted customer spawns on trigger, chapter gating (ch2 locked until ch1 seen) |
 | `test_golden_lotus.lua` | Full grow-and-sell loop for 3 grass plants then one Golden Lotus; asserts currency increases and prints elapsed simulated seconds |
+| `test_grafter.lua` | Grafter rejects stage-2 source, clones a stage-1 plant into an adjacent slot |
+| `test_plant_growth.lua` | Stage-1 cooldown fires `ready`; watering advances stage 1→2 |
+| `test_selling.lua` | Correct plant type accepted and currency increases; wrong type / wrong stage rejected |
+| `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
+
+**CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.
 
 ---
 

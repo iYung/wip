@@ -70,6 +70,8 @@ love . --headless
 
 `--headless` stubs all Love2D graphics/audio before any game code loads. `--visual` runs with a real window; `runner.tick` yields after each frame so `love.draw` fires between updates.
 
+CI runs `love . --headless` automatically on every push to `main` and every PR — see `.github/workflows/ci.yml`.
+
 ---
 
 ## Lua Class Pattern
