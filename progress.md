@@ -64,7 +64,7 @@ Completed step files are moved to [`archive/`](archive/).
 
 PNG files for all sprites — player variants, plants (18 total: 6 types × 3 stages, rendered without tinting), items, UI elements, backgrounds, and speech bubbles.
 
-`assets/accessories/` — accessory PNGs for named customers (120×120, transparent background). Loaded lazily by `A.load_accessory(name)`; missing files are cached as `false` so no disk re-check occurs. Contains `flat_cap.png` (Old Pete), `straw_hat.png` (Sage), `chain_of_office.png` (Mayor Bloom), `wide_brim_hat.png` (The Collector), `flower_pin.png` (Dottie), `hair_bow.png` (Mira).
+Accessory PNGs for named customers (120×120, transparent background) live alongside other assets in `assets/`. Loaded lazily by `A.load_accessory(name)`; missing files are cached as `false` so no disk re-check occurs. Contains `flat_cap.png` (Old Pete), `monocle.png` (Sir Moneyton), `secretary_glasses.png` (Mayor Bloom), `wide_brim_hat.png` (The Collector), `flower_pin.png` (Dottie), `hair_bow.png` (Mira).
 
 ---
 
@@ -132,9 +132,9 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
-- **Tutorial character (Sage)** — 4-chapter scripted mentor; guaranteed first customer via `count=0` trigger; each chapter fires at a natural milestone (first grass, 3 grass sold, first cactus, first rose) and teaches a core mechanic (grow loop, PC store, grafter, upgrades)
+- **Tutorial character (Sir Moneyton)** — 4-chapter scripted mentor; guaranteed first customer via `count=0` trigger; each chapter fires at a natural milestone (first grass, 3 grass sold, first cactus, first rose) and teaches a core mechanic (grow loop, PC store, grafter, upgrades)
 
-- **Character accessories** — all scripted characters now have accessories as a visual signal distinguishing them from random customers; 5 new PNGs in `assets/accessories/` (`straw_hat`, `chain_of_office`, `wide_brim_hat`, `flower_pin`, `hair_bow`)
+- **Character accessories** — all scripted characters now have accessories as a visual signal distinguishing them from random customers; PNGs in `assets/` (`monocle`, `secretary_glasses`, `wide_brim_hat`, `flower_pin`, `hair_bow`)
 
 - **Wall pattern shader** — `assets/shaders/wall_pattern.glsl` + `lua/game/shaders/wall_pattern.lua`; tiles a repeating pattern texture over pure-red pixels in wall/window images; world-space UV math keeps the pattern seamless across adjacent tiles; applied in both `Store:draw_bg` and the cashier wall in `StoreScene`; gracefully disabled when `assets/wall_pattern.png` is absent
 

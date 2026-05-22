@@ -17,7 +17,12 @@
       "Bash(git push *)",
       "Bash(git pull *)",
       "Bash(git branch *)",
-      "Bash(grep -E '\\\\.\\(png|jpg|jpeg|gif|wav|ogg|mp3|ttf|otf\\)$')"
+      "Bash(grep -E '\\\\.\\(png|jpg|jpeg|gif|wav|ogg|mp3|ttf|otf\\)$')",
+      "Bash(mv /Users/ivan/Development/luagame/assets/accessories/chain_of_office.png /Users/ivan/Development/luagame/assets/chain_of_office.png)",
+      "Bash(mv /Users/ivan/Development/luagame/assets/accessories/flat_cap.png /Users/ivan/Development/luagame/assets/flat_cap.png)",
+      "Bash(mv /Users/ivan/Development/luagame/assets/accessories/flower_pin.png /Users/ivan/Development/luagame/assets/flower_pin.png)",
+      "Bash(mv /Users/ivan/Development/luagame/assets/accessories/hair_bow.png /Users/ivan/Development/luagame/assets/hair_bow.png)",
+      "Bash(mv /Users/ivan/Development/luagame/assets/accessories/straw_hat.png /Users/ivan/Development/luagame/assets/straw_hat.png)"
     ],
     "additionalDirectories": [
       "/Users/ivan/Development/luagame",

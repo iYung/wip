@@ -66,7 +66,7 @@ if A.wall_pattern then A.wall_pattern:setWrap("repeat", "repeat") end
 A.accessories = {}
 function A.load_accessory(name)
     if A.accessories[name] ~= nil then return A.accessories[name] end
-    local path = "assets/accessories/" .. name .. ".png"
+    local path = "assets/" .. name .. ".png"
     if love.filesystem.getInfo(path) then
         A.accessories[name] = love.graphics.newImage(path)
     else

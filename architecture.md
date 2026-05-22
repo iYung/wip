@@ -172,7 +172,7 @@ Loads every PNG once at startup and returns a shared table. All other modules `r
 - `accessories` — table of lazily-loaded accessory images, keyed by name
 
 **Methods**
-- `load_accessory(name)` — loads `assets/accessories/<name>.png` on first call and caches the result; returns `false` (not nil) on a missing file so the cache entry is set and the disk is not re-checked
+- `load_accessory(name)` — loads `assets/<name>.png` on first call and caches the result; returns `false` (not nil) on a missing file so the cache entry is set and the disk is not re-checked
 
 ---
 

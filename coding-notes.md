@@ -230,7 +230,7 @@ return {
         name       = "Old Pete",
         body_color = {0.25, 0.45, 0.80, 1},
         plant_type = 2,            -- plant the customer wants
-        accessory  = "flat_cap",   -- optional; key into assets/accessories/
+        accessory  = "flat_cap",   -- optional; key into assets/
         messages   = { "...", "...", "..." },
     },
     -- ...
