@@ -332,13 +332,16 @@ The 1D array of slots. Handles layout and growth.
 NPC that appears in the cashier zone and requests a specific plant.
 
 **Properties**
-- `state` — `"idle"` | `"walking_in"` | `"waiting"` | `"walking_out"`
+- `state` — `"idle"` | `"walking_in"` | `"waiting"` | `"talking_after"` | `"walking_out"`
 - `plant_type` — integer type of requested plant
 - `name` — display name shown in dialog (default `"Customer"`)
-- `messages` — ordered array of dialog strings; empty = skip straight to plant bubble
+- `messages` — ordered array of pre-sale dialog strings; empty = skip straight to plant bubble
 - `msg_index` — index of the current message
 - `done_talking` — bool; true once all messages have been advanced through
-- `_full_text` — `"Name: message"` string for the current line; rebuilt on each `show()` / `advance()`
+- `after_messages` — ordered array of post-sale dialog strings; optional (empty = walk out immediately after sale)
+- `after_msg_index` — index of the current after_message
+- `done_after` — bool; true when all after_messages exhausted (or none exist)
+- `_full_text` — `"Name: message"` string for the current line; rebuilt on each `show()` / `advance()` / `advance_after()`
 - `reveal_index` — number of characters currently visible (typewriter progress)
 - `reveal_t` — accumulated time driving the reveal; reset with each new line
 - `x`, `y` — world position
@@ -349,17 +352,19 @@ NPC that appears in the cashier zone and requests a specific plant.
 
 **Methods**
 - `new(target_x, exit_x, y)` — constructor; `state = "idle"`
-- `show(cfg)` — accepts `{ plant_type, messages, name, body_color, accessory }`; places customer at `exit_x` and begins walk-in; `accessory` is a string key passed to `A.load_accessory()`
+- `show(cfg)` — accepts `{ plant_type, messages, after_messages, name, primary_color, secondary_color, accessory }`; places customer at `exit_x` and begins walk-in; `accessory` is a string key passed to `A.load_accessory()`
 - `advance()` — increments `msg_index`; sets `done_talking` after the last message; resets `reveal_index`/`reveal_t`/`_full_text` for the new line
-- `line_complete()` — returns true if `done_talking` or `reveal_index >= #_full_text`
+- `advance_after()` — skips reveal if incomplete; otherwise increments `after_msg_index` and loads the next line; after the last after_message transitions to `"walking_out"` and shows the heart bubble
+- `line_complete()` — returns true if `done_talking` (or in `talking_after`: reveal complete) or `reveal_index >= #_full_text`
 - `skip_reveal()` — snaps `reveal_index` to the end of the current line instantly
 - `on_last_message()` — returns `done_talking`
-- `serve()` — begin walking out (called on successful sale)
+- `serve()` — on successful sale: enters `"talking_after"` if `after_messages` is non-empty; otherwise transitions directly to `"walking_out"` with the heart bubble visible
+- `dismiss()` — send customer walking out immediately without sale; hides heart bubble; sets `dismissed = true`
 - `arrived()` — returns `state == "waiting"`
 - `active()` — returns `state ~= "idle"`
-- `update(dt)` — advances walk-in / walk-out movement; advances typewriter reveal while `bubble.visible` and not `done_talking`; positions sprite, bubble, and accessory sprite
+- `update(dt)` — advances walk-in / walk-out movement; advances typewriter reveal while `bubble.visible` and (`not done_talking` or `state == "talking_after"`); positions sprite, bubble, and accessory sprite
 - `draw()` — applies `ColorReplace` with `_primary` and `_secondary`; draws body sprite and accessory sprite; clears shader
-- `draw_bubble()` — during dialog: draws 9-slice `speech_bubble` sized to the full line width with `speech_bubble_tail`, then prints the revealed substring on top; once `done_talking`: draws a 9-slice speech bubble containing the stage-3 plant image (80×80 inside 12px padding)
+- `draw_bubble()` — during pre-sale dialog: draws 9-slice `speech_bubble` with the revealed text; once `done_talking`: draws a plant-image bubble; during `talking_after`: draws 9-slice speech bubble with the current after_message text; heart bubble drawn whenever `heart_bubble.visible`
 
 ---
 

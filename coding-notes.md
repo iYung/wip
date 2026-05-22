@@ -224,14 +224,16 @@ return {
 -- chapter 2 won't fire until chapter 1 has been seen, and so on.
 return {
     {
-        id         = "old_pete",   -- unique character key
-        chapter    = 1,            -- visit number for this character
-        trigger    = { plant_type = 1, count = 1 },  -- stage3_counts threshold
-        name       = "Old Pete",
-        body_color = {0.25, 0.45, 0.80, 1},
-        plant_type = 2,            -- plant the customer wants
-        accessory  = "flat_cap",   -- optional; key into assets/
-        messages   = { "...", "...", "..." },
+        id              = "old_pete",   -- unique character key
+        chapter         = 1,            -- visit number for this character
+        trigger         = { plant_type = 1, count = 1 },  -- stage3_counts threshold
+        name            = "Old Pete",
+        primary_color   = {0.25, 0.45, 0.80, 1},
+        secondary_color = {0.55, 0.40, 0.25, 1},
+        plant_type      = 2,            -- plant the customer wants
+        accessory       = "flat_cap",   -- optional; key into assets/
+        messages        = { "...", "...", "..." },
+        after_messages  = { "..." },    -- optional; lines shown after the sale, before walk-out
     },
     -- ...
 }

@@ -153,9 +153,10 @@ Two kinds of customers can spawn:
 | Dottie | Daisy | 3 | Cheerful regular; presses flowers in books; brings one back as a gift; wears a flower pin |
 
 **Dialog flow:**
-- Scripted customers: F advances through messages one at a time; after the last message the plant-colored bubble appears
+- Scripted customers: F advances through messages one at a time; after the last message the plant-image bubble appears
 - Random customers: no dialog — plant bubble appears immediately on arrival
 - Once the plant bubble is showing, F while holding the correct stage-3 plant completes the sale
+- After the sale, scripted characters may say additional lines (`after_messages`); F advances through them; after the last line the heart bubble appears and they walk out
 
 **Sale:**
 - Pays **2× normal sell value**

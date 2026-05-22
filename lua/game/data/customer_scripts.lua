@@ -14,6 +14,9 @@ return {
             "You grow plants here, yeah?",
             "I'll take a cactus if you've got one.",
         },
+        after_messages = {
+            "Right. I'll be back.",
+        },
     },
     {
         id             = "old_pete",
@@ -29,6 +32,9 @@ return {
             "That last cactus is doing great, believe it or not.",
             "Got another one for me?",
         },
+        after_messages = {
+            "Good. Two's better than one.",
+        },
     },
     {
         id             = "old_pete",
@@ -43,6 +49,10 @@ return {
             "Hey. It's me again.",
             "You've got a good place here. I mean that.",
             "One more cactus and I think I'm set for life.",
+        },
+        after_messages = {
+            "Take care of yourself.",
+            "And the plants.",
         },
     },
 
@@ -60,6 +70,9 @@ return {
             "The town council is watching this place.",
             "Only the finest rose will do.",
         },
+        after_messages = {
+            "You'll be hearing from us.",
+        },
     },
     {
         id             = "mayor_bloom",
@@ -74,6 +87,9 @@ return {
             "I'm not here on council business today.",
             "The last rose... it was for me. Just for me.",
             "Could I have another? Don't make it strange.",
+        },
+        after_messages = {
+            "This doesn't leave the shop.",
         },
     },
 
@@ -92,6 +108,10 @@ return {
             "They say you can grow the Golden Lotus.",
             "I'll pay handsomely. Do we have a deal?",
         },
+        after_messages = {
+            "Pleasure doing business.",
+            "I may return.",
+        },
     },
     {
         id             = "the_collector",
@@ -106,6 +126,9 @@ return {
             "The first one... I gave it away.",
             "To someone who needed it more than I did.",
             "I won't say who. I need another.",
+        },
+        after_messages = {
+            "This one I'm keeping.",
         },
     },
 
@@ -122,6 +145,9 @@ return {
         messages       = {
             "My dad gave me money for something important.",
             "I want a tulip.",
+        },
+        after_messages = {
+            "He's going to love it.",
         },
     },
 
@@ -140,6 +166,9 @@ return {
             "I've been looking everywhere for this.",
             "I'll take one, please. I'm so glad I found you.",
         },
+        after_messages = {
+            "Thank you! Really, thank you.",
+        },
     },
     {
         id             = "dottie",
@@ -155,6 +184,9 @@ return {
             "It's still there. Page forty-something.",
             "Could I have another? I have more books.",
         },
+        after_messages = {
+            "I know exactly which page this one gets.",
+        },
     },
     {
         id             = "dottie",
@@ -169,6 +201,9 @@ return {
             "I brought you something.",
             "From the first one you sold me. I pressed it.",
             "It's yours now. And I'll take one more, if that's alright.",
+        },
+        after_messages = {
+            "We've both got one now.",
         },
     },
 
@@ -187,6 +222,9 @@ return {
             "Word gets around fast when someone opens up. I had to see for myself.",
             "I'll take a grass. Nothing fancy — just to see how you do.",
         },
+        after_messages = {
+            "Not bad. I'll tell a few people.",
+        },
     },
     {
         id             = "sage",
@@ -201,6 +239,9 @@ return {
             "Grass is a good start. But customers want variety.",
             "That computer over there — it's how you get new stock. Check it out.",
             "The more kinds you grow, the more they come.",
+        },
+        after_messages = {
+            "Don't forget — the computer. It matters.",
         },
     },
     {
@@ -217,6 +258,9 @@ return {
             "You know about the grafting tool? It copies a finished plant without starting over.",
             "Once you understand that, everything moves faster.",
         },
+        after_messages = {
+            "Grafting. Remember that word.",
+        },
     },
     {
         id             = "sage",
@@ -231,6 +275,9 @@ return {
             "A rose. That's real money.",
             "At some point, how fast you move matters as much as what you grow.",
             "Check the upgrades. Speed and heat lamps — they compound.",
+        },
+        after_messages = {
+            "You're further along than most. Keep it up.",
         },
     },
 }

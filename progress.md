@@ -32,7 +32,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `player.lua` | Moves left/right into cashier zone; holds one item; 4-variant SpriteSet (idle/walk × no-held/held), each backed by a PNG; `speed` upgradeable via shop; uses `ColorReplace` shader to swap pure-red mask pixels to the current speed tier color on draw |
 | `slot.lua` | One store cell; single `slot.png` background sprite; positions its item every frame |
 | `store.lua` | Array of slots; `slot_at(x)`, `grow()`, `draw_bubbles()` for high-priority bubble rendering; `draw_bg(A)` draws wall tiles and window frames using group-of-4 rule; all wall draws go through a `draw_wall(img, x)` helper that applies the `WallPattern` shader when `A.wall_pattern` is set |
-| `customer.lua` | Cashier zone NPC; white PNG tinted per character via `body_color`; optional `accessory_sprite` (120×120) drawn over the top half, synced to body flip; dialog lines reveal character-by-character (40 chars/s) inside a 9-slice `speech_bubble.png` box; F skips to full line, second F advances; `line_complete()` / `skip_reveal()` methods; state machine: idle → walking_in → waiting → walking_out; `dismiss()` sends customer away without selling; when waiting, shows a 9-slice speech bubble containing the requested plant's stage-3 image (104×104 inside 12px padding). **`bubble.visible` is a shared gate** — it controls both the text dialog and the plant request bubble; setting it false suppresses both. Text dialog runs while `bubble.visible = true` and `done_talking = false`; plant image bubble draws when `bubble.visible = true` and `done_talking = true`. |
+| `customer.lua` | Cashier zone NPC; white PNG tinted per character via `primary_color`/`secondary_color`; optional `accessory_sprite` (120×120) drawn over the top half, synced to body flip; dialog lines reveal character-by-character (40 chars/s) inside a 9-slice `speech_bubble.png` box; F skips to full line, second F advances; `line_complete()` / `skip_reveal()` methods; state machine: idle → walking_in → waiting → **talking_after** → walking_out; `dismiss()` sends customer away without selling; when waiting, shows a 9-slice speech bubble containing the requested plant's stage-3 image; `after_messages` optional field plays post-sale lines before the heart bubble appears. |
 
 ### Items (`lua/game/items/`)
 
@@ -131,6 +131,8 @@ Accessory PNGs for named customers (120×120, transparent background) live along
 See open questions in `game-design.md`.
 
 ### Recently completed
+
+- **Post-sale dialogue** — scripted characters can now say lines after a sale via `after_messages` in `customer_scripts.lua`; customer enters a `talking_after` state, player clicks through lines, then the heart bubble appears and they walk out; backwards-compatible (characters without `after_messages` walk out immediately as before)
 
 - **Tutorial character (Sir Moneyton)** — 4-chapter scripted mentor; guaranteed first customer via `count=0` trigger; each chapter fires at a natural milestone (first grass, 3 grass sold, first cactus, first rose) and teaches a core mechanic (grow loop, PC store, grafter, upgrades)
 

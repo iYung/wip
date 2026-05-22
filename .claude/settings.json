@@ -27,7 +27,11 @@
       "Read(//usr/local/**)",
       "Bash(ls /Applications/love.app/Contents/MacOS/ && grep -r \"headless\\\\|test\" /Users/ivan/Development/luagame/main.lua | head -20)",
       "Read(//Applications/love.app/Contents/MacOS/**)",
-      "Bash(/Applications/love.app/Contents/MacOS/love . --headless)"
+      "Bash(/Applications/love.app/Contents/MacOS/love . --headless)",
+      "Bash(love . --test tests/test_customer_scripts.lua)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(love . --headless tests/test_customer_scripts.lua)",
+      "Bash(echo \"EXIT:$?\")"
     ],
     "additionalDirectories": [
       "/Users/ivan/Development/luagame",

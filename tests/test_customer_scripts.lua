@@ -219,4 +219,130 @@ do
     print("PASS: scripts: cooldown decrements per sale, customer returns after 3 sales")
 end
 
+-- Test: after_messages play after sale before walk-out
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local elapsed = 0
+    ctx.gs.stage3_counts[1] = 1
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
+
+    ctx.sm.current._customer:show({
+        plant_type     = 2, name = "Old Pete",
+        messages       = {},
+        after_messages = { "Thanks.", "See ya." },
+        primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+    elapsed = runner.fast_forward_until(ctx, function()
+        return ctx.sm.current._customer:arrived()
+    end, elapsed)
+
+    -- make the sale
+    local plant = Plant.new(2); plant.stage = 3
+    ctx.gs.player.held_item = plant
+    ctx.gs.player.x = -200
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    assert(ctx.sm.current._customer.state == "talking_after",
+        "customer should be in talking_after state after sale, got " .. tostring(ctx.sm.current._customer.state))
+
+    -- advance through first after_message
+    ctx.sm.current._customer:skip_reveal()
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    assert(ctx.sm.current._customer.state == "talking_after",
+        "customer should still be talking_after after first line, got " .. tostring(ctx.sm.current._customer.state))
+
+    -- advance through second (last) after_message
+    ctx.sm.current._customer:skip_reveal()
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    assert(ctx.sm.current._customer.state == "walking_out",
+        "customer should be walking_out after last after_message, got " .. tostring(ctx.sm.current._customer.state))
+    assert(ctx.sm.current._customer.heart_bubble.visible == true,
+        "heart_bubble should be visible when walking out after after_messages")
+    print("PASS: scripts: after_messages play after sale before walk-out")
+end
+
+-- Test: dismiss during talking_after skips to walk-out without cooldown
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local elapsed = 0
+    ctx.gs.stage3_counts[1] = 1
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
+
+    ctx.sm.current._customer:show({
+        plant_type     = 2, name = "Old Pete",
+        messages       = {},
+        after_messages = { "Thanks.", "See ya." },
+        primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+    elapsed = runner.fast_forward_until(ctx, function()
+        return ctx.sm.current._customer:arrived()
+    end, elapsed)
+
+    -- make the sale
+    local plant = Plant.new(2); plant.stage = 3
+    ctx.gs.player.held_item = plant
+    ctx.gs.player.x = -200
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    assert(ctx.sm.current._customer.state == "talking_after", "precondition: talking_after")
+
+    -- dismiss mid-after-dialogue
+    ctx.input:press("pick_up_down")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    assert(ctx.sm.current._customer.state == "walking_out",
+        "dismiss during talking_after should send customer walking_out, got " .. tostring(ctx.sm.current._customer.state))
+    assert(ctx.sm.current._script_cooldowns["old_pete:1"] == nil,
+        "dismiss during talking_after should not set a cooldown (sale already happened)")
+    print("PASS: scripts: dismiss during talking_after skips to walk-out without cooldown")
+end
+
+-- Test: script with no after_messages walks out immediately on sale (no regression)
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local elapsed = 0
+    ctx.gs.stage3_counts[1] = 1
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
+
+    ctx.sm.current._customer:show({
+        plant_type = 2, name = "Old Pete",
+        messages   = {},
+        primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+    elapsed = runner.fast_forward_until(ctx, function()
+        return ctx.sm.current._customer:arrived()
+    end, elapsed)
+
+    local plant = Plant.new(2); plant.stage = 3
+    ctx.gs.player.held_item = plant
+    ctx.gs.player.x = -200
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    assert(ctx.sm.current._customer.state == "walking_out",
+        "no after_messages: customer should walk out immediately on sale, got " .. tostring(ctx.sm.current._customer.state))
+    print("PASS: scripts: no after_messages walks out immediately on sale")
+end
+
 print("ALL TESTS PASSED")

@@ -250,6 +250,8 @@ function StoreScene:_handle_pick_up_down()
                 self._script_cooldowns[self._active_script_key] = DISMISS_COOLDOWN_SALES
                 self._active_script_key = nil
             end
+        elseif self._customer.state == "talking_after" then
+            self._customer:dismiss()
         end
         return
     end
@@ -273,6 +275,11 @@ function StoreScene:_handle_interact()
     local slot   = player:active_slot(store)
 
     -- cashier zone: dialog advance or sale
+    if player.x < 0 and self._customer.state == "talking_after" then
+        self._customer:advance_after()
+        return
+    end
+
     if player.x < 0 and self._customer:arrived() then
         local held = player.held_item
         if self._customer:on_last_message() and held and held.plant_type == self._customer.plant_type and held.stage == 3 then
