@@ -17,7 +17,7 @@ function Grafter.new()
     self.sprite          = Sprite.new(0, 0, 6 * U, 6 * U)
     self.sprite.image    = A.grafter_empty
 
-    self.bubble          = Sprite.new(0, 0, 3 * U, 3 * U)
+    self.bubble          = Sprite.new(0, 0, 6 * U, 6 * U)
     self.bubble.image    = A.grafter_no_space_bubble
     self.bubble.visible  = false
     self._bubble_timer   = 0

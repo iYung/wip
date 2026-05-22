@@ -15,7 +15,9 @@
       "Bash(git rebase *)",
       "Bash(git stash *)",
       "Bash(git push *)",
-      "Bash(git pull *)"
+      "Bash(git pull *)",
+      "Bash(git branch *)",
+      "Bash(grep -E '\\\\.\\(png|jpg|jpeg|gif|wav|ogg|mp3|ttf|otf\\)$')"
     ],
     "additionalDirectories": [
       "/Users/ivan/Development/luagame",
