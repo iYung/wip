@@ -81,7 +81,7 @@ return {
     {
         id             = "the_collector",
         chapter        = 1,
-        accessory      = "wide_brim_hat",
+        accessory      = "shades",
         trigger        = { plant_type = 6, count = 1 },
         name           = "The Collector",
         primary_color     = {0.85, 0.75, 0.10, 1},
@@ -96,7 +96,7 @@ return {
     {
         id             = "the_collector",
         chapter        = 2,
-        accessory      = "wide_brim_hat",
+        accessory      = "shades",
         trigger        = { plant_type = 6, count = 3 },
         name           = "The Collector",
         primary_color     = {0.85, 0.75, 0.10, 1},
