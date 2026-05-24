@@ -1,4 +1,4 @@
-local ITEMS = { "Fullscreen / Window", "Leave Game" }
+local ITEMS = { "Fullscreen / Window", "Exit Settings", "Leave Game" }
 
 local W       = 1280
 local H       = 720
@@ -6,7 +6,7 @@ local BTN_W   = 300
 local BTN_H   = 54
 local BTN_X   = (W - BTN_W) / 2
 local BTN_GAP = 74
-local BTN_Y0  = H / 2 - BTN_H / 2 - BTN_GAP / 2
+local BTN_Y0  = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
 
 local SettingsMenu = {}
 SettingsMenu.__index = SettingsMenu
@@ -27,12 +27,14 @@ function SettingsMenu.new()
 end
 
 function SettingsMenu:open()
-    self.is_open       = true
-    self.selected      = 1
-    self._prev_up      = false
-    self._prev_down    = false
-    self._prev_confirm = false
-    self._prev_escape  = false
+    self.is_open  = true
+    self.selected = 1
+    -- Snapshot current key state so keys held at open time don't immediately fire
+    self._prev_up      = love.keyboard.isDown("up")    or love.keyboard.isDown("w")
+    self._prev_down    = love.keyboard.isDown("down")  or love.keyboard.isDown("s")
+    self._prev_confirm = love.keyboard.isDown("e")     or love.keyboard.isDown("f")
+                      or love.keyboard.isDown("return") or love.keyboard.isDown("space")
+    self._prev_escape  = love.keyboard.isDown("escape")
 end
 
 function SettingsMenu:close()
@@ -40,8 +42,8 @@ function SettingsMenu:close()
 end
 
 function SettingsMenu:update(dt)
-    local up      = love.keyboard.isDown("up")
-    local down    = love.keyboard.isDown("down")
+    local up      = love.keyboard.isDown("up")   or love.keyboard.isDown("w")
+    local down    = love.keyboard.isDown("down") or love.keyboard.isDown("s")
     local confirm = love.keyboard.isDown("e")      or love.keyboard.isDown("f")
                  or love.keyboard.isDown("return") or love.keyboard.isDown("space")
     local escape  = love.keyboard.isDown("escape")
@@ -69,6 +71,8 @@ function SettingsMenu:_confirm()
     if self.selected == 1 then
         love.window.setFullscreen(not love.window.getFullscreen())
     elseif self.selected == 2 then
+        self:close()
+    elseif self.selected == 3 then
         love.event.quit()
     end
 end
@@ -91,7 +95,7 @@ function SettingsMenu:draw()
         if i == 1 then
             label = love.window.getFullscreen() and "Window" or "Fullscreen"
         else
-            label = "Leave Game"
+            label = ITEMS[i]
         end
 
         love.graphics.setColor(1, 1, 1, 1)
