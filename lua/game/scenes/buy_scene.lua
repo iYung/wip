@@ -79,6 +79,7 @@ function BuyScene.new(game_state, input, scene_manager, store_scene)
     self.store_scene     = store_scene
     self.selected        = 1
     self.canvas          = love.graphics.newCanvas(1280, 720)
+    self.esc_opens_settings = true
     return self
 end
 
