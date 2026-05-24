@@ -482,13 +482,15 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 **Location:** `lua/game/scenes/start_scene.lua`
 
 **Properties**
-- `selected` — index of the highlighted menu item (1 = New Game, 2 = Continue, 3 = Exit)
+- `selected` — index of the highlighted menu item (1 = New Game, 2 = Continue, 3 = Settings, 4 = Exit)
+- `open_settings` — callback provided by `main.lua`; called when Settings is confirmed; opens the `SettingsMenu` overlay
 - `_font_title`, `_font_btn` — Love2D fonts created in `on_enter()`; stored on the scene so they are not recreated every frame
 - `_prev_up`, `_prev_down`, `_prev_confirm` — previous-frame key states for edge detection
 
 **Menu items**
 - **New Game** — constructs and switches to `StoreScene` (same as Continue for now)
 - **Continue** — constructs and switches to `StoreScene`
+- **Settings** — calls `self.open_settings()` to open the `SettingsMenu` overlay
 - **Exit** — calls `love.event.quit()`
 
 **Navigation keys** (handled with raw `love.keyboard.isDown` + edge detection, not via the `Input` module)
@@ -499,6 +501,35 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 **Notes**
 - Fonts are saved and restored around `draw()` so the global Love2D font state is unchanged when `StoreScene` draws next frame
 - `StoreScene` is `require`d lazily inside `_confirm()`, not at module load time, to avoid a circular load order
+
+---
+
+### SettingsMenu
+
+A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no `Camera` or `Drawer`. Instantiated once in `main.lua` and shared across all scenes.
+
+**Location:** `lua/game/scenes/settings_menu.lua`
+
+**Properties**
+- `is_open` — whether the overlay is visible; `main.lua` gates scene update/draw on this
+- `selected` — index of the highlighted button (1 = Fullscreen/Window, 2 = Leave Game)
+- `_prev_up`, `_prev_down`, `_prev_confirm`, `_prev_escape` — edge-detection flags
+
+**Buttons**
+- **Fullscreen / Window** — calls `love.window.setFullscreen(not love.window.getFullscreen())`; label reads "Fullscreen" when windowed, "Window" when fullscreen
+- **Leave Game** — calls `love.event.quit()`
+
+**Navigation keys** (raw `love.keyboard.isDown` + edge detection)
+- Up / Down — move selection; wraps at both ends
+- E / F / Enter / Space — confirm
+- Escape — close without action
+
+**Integration in `main.lua`**
+- `love.keypressed("escape")`: if `scene_manager.current.esc_opens_settings`, toggle open/close; otherwise fall through to quit
+- `love.update`: when `is_open`, routes to `settings_menu:update(dt)` and skips scene update (game pauses)
+- `love.draw`: `settings_menu:draw()` is called inside the canvas block (after `sm:draw()`), so the overlay scales correctly with the window
+
+Scenes that allow Esc-to-open set `self.esc_opens_settings = true` in their constructor. Currently `StoreScene` and `BuyScene` have this flag; `StartScene` does not (it has its own Settings button instead).
 
 ---
 
