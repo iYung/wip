@@ -162,12 +162,12 @@ return {
         secondary_color = {0.40, 0.70, 0.55, 1},
         plant_type     = 5,
         messages       = {
-            "Oh! You have daisies!",
-            "I've been looking everywhere for this.",
-            "I'll take one, please. I'm so glad I found you.",
+            "Oh! You have daisies! I've been hopping from shop to shop.",
+            "Toadally worth the trip.",
+            "One daisy, please — I'm jumping at the chance.",
         },
         after_messages = {
-            "Thank you! Really, thank you.",
+            "Thank you! You're ribbiting. I mean riveting. Both, really.",
         },
     },
     {
@@ -182,7 +182,7 @@ return {
         messages       = {
             "I pressed the last one in a book.",
             "It's still there. Page forty-something.",
-            "Could I have another? I have more books.",
+            "Could I have another? I'm toadally hooked.",
         },
         after_messages = {
             "I know exactly which page this one gets.",
@@ -199,11 +199,11 @@ return {
         plant_type     = 5,
         messages       = {
             "I brought you something.",
-            "From the first one you sold me. I pressed it.",
-            "It's yours now. And I'll take one more, if that's alright.",
+            "From the first one you sold me. Kept it — warts and all.",
+            "It's yours. And I'll take one more, if you'll have me.",
         },
         after_messages = {
-            "We've both got one now.",
+            "We've both got one now. Leap of faith well spent.",
         },
     },
 
