@@ -19,6 +19,7 @@ luagame/
 │   ├── test_plant_growth.lua
 │   ├── test_selling.lua
 │   ├── test_settings_menu.lua
+│   ├── test_settings_state.lua
 │   └── test_shop.lua
 └── lua/
     ├── core/
@@ -37,6 +38,7 @@ luagame/
         ├── config.lua
         ├── input.lua
         ├── game_state.lua
+        ├── settings_state.lua
         ├── player.lua
         ├── store.lua
         ├── slot.lua

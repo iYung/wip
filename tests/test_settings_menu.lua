@@ -1,9 +1,9 @@
 local SettingsMenu = require("lua/game/scenes/settings_menu")
+local SettingsState = require("lua/game/settings_state")
 
 -- Controllable stubs for this test file
-local _fullscreen = false
-love.window.getFullscreen = function() return _fullscreen end
-love.window.setFullscreen = function(v) _fullscreen = v end
+local _setFullscreen_called_with = nil
+love.window.setFullscreen = function(v) _setFullscreen_called_with = v end
 
 local _quit_called = false
 local _real_quit = love.event.quit
@@ -23,8 +23,10 @@ local function open_clean(menu)
     menu:open()
 end
 
+local state = SettingsState.new()
+
 -- Test 1: new() creates a closed menu at index 1
-local m = SettingsMenu.new()
+local m = SettingsMenu.new(state)
 assert(m.is_open == false, "new menu should be closed")
 assert(m.selected == 1, "new menu should start at index 1")
 print("PASS: new() initial state")
@@ -53,9 +55,9 @@ print("PASS: open() snapshots key state (escape)")
 love.keyboard.isDown = function(k) return k == "f" end
 m:open()  -- _prev_confirm snapshotted as true
 love.keyboard.isDown = function() return false end
-_fullscreen = false
+state.fullscreen = false
 m:update(0)
-assert(_fullscreen == false, "f held at open time should not trigger confirm")
+assert(state.fullscreen == false, "f held at open time should not trigger confirm")
 print("PASS: open() snapshots key state (confirm)")
 
 -- Test 6: down arrow moves selection from 1 to 2
@@ -133,12 +135,12 @@ print("PASS: e key confirms")
 -- Test 17: Fullscreen/Window (index 1) toggles fullscreen, menu stays open
 open_clean(m)
 assert(m.selected == 1)
-_fullscreen = false
+state.fullscreen = false
 sim_key(m, "f")
-assert(_fullscreen == true, "first confirm should toggle fullscreen on")
+assert(state.fullscreen == true, "first confirm should toggle fullscreen on")
 assert(m.is_open == true, "menu should stay open after fullscreen toggle")
 sim_key(m, "f")
-assert(_fullscreen == false, "second confirm should toggle fullscreen off")
+assert(state.fullscreen == false, "second confirm should toggle fullscreen off")
 print("PASS: fullscreen toggle")
 
 -- Test 18: holding a key only fires once (edge-trigger)

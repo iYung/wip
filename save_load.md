@@ -29,6 +29,13 @@ For each slot, save:
 ### Player
 - `speed_level` already covers the player's speed; no extra player fields needed.
 
+### SettingsState
+| Field | Type | Notes |
+|-------|------|-------|
+| `fullscreen` | bool | persisted separately from game progress; restore at startup before the window is shown |
+
+`SettingsState` is currently memory-only. When save/load is implemented, its fields should be written to a separate small config file (e.g. `settings.dat`) so settings survive restarts independently of game-progress saves.
+
 ---
 
 ## What NOT to save

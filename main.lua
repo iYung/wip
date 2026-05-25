@@ -26,7 +26,8 @@ local SceneManager = require("lua/core/scene_manager")
 local StartScene   = require("lua/game/scenes/start_scene")
 local GameState    = require("lua/game/game_state")
 local input        = require("lua/game/input")
-local SettingsMenu = require("lua/game/scenes/settings_menu")
+local SettingsMenu  = require("lua/game/scenes/settings_menu")
+local SettingsState = require("lua/game/settings_state")
 
 local LOGICAL_W, LOGICAL_H = 1280, 720
 local canvas
@@ -79,7 +80,8 @@ function love.load()
     else
         local gs = GameState.new()
         scene_manager = SceneManager.new()
-        settings_menu = SettingsMenu.new()
+        local ss = SettingsState.new()
+        settings_menu = SettingsMenu.new(ss)
         scene_manager:switch(StartScene.new(gs, input, scene_manager, function() settings_menu:open(true) end))
     end
 end
