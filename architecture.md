@@ -512,11 +512,14 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 
 **Properties**
 - `is_open` — whether the overlay is visible; `main.lua` gates scene update/draw on this
-- `selected` — index of the highlighted button (1 = Fullscreen/Window, 2 = Leave Game)
+- `selected` — index of the highlighted button (1 = Fullscreen/Window, 2 = Exit Settings, 3 = Leave Game)
+- `_opaque` — set to `true` when opened via `open(true)` (start scene); controls background style
+- `_img_bg` — Love2D image (`settings_background.png`); drawn full-screen when `_opaque` is true
 - `_prev_up`, `_prev_down`, `_prev_confirm`, `_prev_escape` — edge-detection flags
 
 **Buttons**
 - **Fullscreen / Window** — calls `love.window.setFullscreen(not love.window.getFullscreen())`; label reads "Fullscreen" when windowed, "Window" when fullscreen
+- **Exit Settings** — closes the overlay (`self:close()`)
 - **Leave Game** — calls `love.event.quit()`
 
 **Navigation keys** (raw `love.keyboard.isDown` + edge detection)
@@ -529,7 +532,7 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 - `love.update`: when `is_open`, routes to `settings_menu:update(dt)` and skips scene update (game pauses)
 - `love.draw`: `settings_menu:draw()` is called inside the canvas block (after `sm:draw()`), so the overlay scales correctly with the window
 
-Scenes that allow Esc-to-open set `self.esc_opens_settings = true` in their constructor. Currently `StoreScene` and `BuyScene` have this flag; `StartScene` does not (it has its own Settings button instead).
+Scenes that allow Esc-to-open set `self.esc_opens_settings = true` in their constructor. Currently `StoreScene` and `BuyScene` have this flag; `StartScene` does not (it has its own Settings button instead, which calls `open(true)` so `settings_background.png` is drawn instead of the semi-transparent overlay).
 
 ---
 

@@ -90,11 +90,12 @@ All three exit paths in `buy_scene.lua` (lines 99, 135, 138, 141) go through `sw
 
 ### 4. Wire up the start screen
 
-`start_scene.lua` already has New Game, Continue, and Exit buttons. `_confirm()` currently treats both New Game and Continue identically (line 58–60). Change it to:
+`start_scene.lua` has New Game, Continue, Settings, and Exit buttons. `_confirm()` currently treats both New Game and Continue identically. Change it to:
 
 - **New Game (1)** — call `GameState.new()`, delete any existing `save.dat`, then switch to `StoreScene`
 - **Continue (2)** — call `GameState.load()` and switch to `StoreScene`; if no save file exists this button should appear dimmed and do nothing
-- **Exit (3)** — unchanged
+- **Settings (3)** — already wired; calls `self.open_settings()`, no change needed
+- **Exit (4)** — unchanged
 
 To dim Continue when there's no save, check `love.filesystem.getInfo("save.dat")` in `StartScene:on_enter()` and store the result as `self._has_save`. Use it in `draw()` to set a muted color for that button, and in `_confirm()` to guard the Continue branch.
 
