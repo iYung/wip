@@ -80,7 +80,7 @@ function love.load()
         local gs = GameState.new()
         scene_manager = SceneManager.new()
         settings_menu = SettingsMenu.new()
-        scene_manager:switch(StartScene.new(gs, input, scene_manager, function() settings_menu:open() end))
+        scene_manager:switch(StartScene.new(gs, input, scene_manager, function() settings_menu:open(true) end))
     end
 end
 

@@ -26,8 +26,9 @@ function SettingsMenu.new()
     return self
 end
 
-function SettingsMenu:open()
+function SettingsMenu:open(opaque)
     self.is_open  = true
+    self._opaque  = opaque or false
     self.selected = 1
     -- Snapshot current key state so keys held at open time don't immediately fire
     self._prev_up      = love.keyboard.isDown("up")    or love.keyboard.isDown("w")
@@ -80,8 +81,8 @@ end
 function SettingsMenu:draw()
     local prev_font = love.graphics.getFont()
 
-    -- Semi-transparent overlay
-    love.graphics.setColor(0, 0, 0, 0.55)
+    -- Overlay: opaque when opened from a non-gameplay scene (e.g. start), semi-transparent in-game
+    love.graphics.setColor(0, 0, 0, self._opaque and 1 or 0.55)
     love.graphics.rectangle("fill", 0, 0, W, H)
 
     love.graphics.setFont(self._font_btn)

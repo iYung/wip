@@ -50,7 +50,7 @@ Completed step files are moved to [`archive/`](archive/).
 | File | What it does |
 |------|-------------|
 | `start_scene.lua` | Title screen with New Game / Continue / Settings / Exit buttons; up/down/W/S navigate, Enter/Space/F confirms; New Game and Continue both enter StoreScene; Settings opens the `SettingsMenu` overlay via callback; fonts saved and restored each draw so global font state is unaffected |
-| `settings_menu.lua` | Pause overlay — two buttons (Fullscreen/Window toggle via `love.window.setFullscreen`, Leave Game); keyboard navigation matching start scene style; `is_open` gates scene update in `main.lua`; drawn inside the canvas so it scales with the window |
+| `settings_menu.lua` | Pause overlay — two buttons (Fullscreen/Window toggle via `love.window.setFullscreen`, Leave Game); keyboard navigation matching start scene style; `is_open` gates scene update in `main.lua`; drawn inside the canvas so it scales with the window; overlay is fully opaque when opened from the start scene (`open(true)`) and semi-transparent (alpha 0.55) in-game |
 | `store_scene.lua` | Main loop — player moves, camera follows on x then clamps to world bounds (left = -400+640, right = store width−640), pick up/interact handled here; cashier zone logic (F skips reveal → advances → sells, E dismisses); context HUD bottom-left shows F: SKIP while typing, F: NEXT when done, E: DISMISS when customer waiting; `_active_script_key` tracks the current scripted customer (seen_scripts written on sale, not on spawn); `_script_cooldowns` counts down per completed sale — dismissed scripted customers return after 3 sales; unified parallax tiles `store_bg_*` across full world width pre-drawer; `Store:draw_bg` then stamps walls/windows on top; layered draw order for wall/bubbles |
 | `buy_scene.lua` | Carousel UI — 10 items (6 plants + Watering Can + Grafter + Expand Slot + Heat Lamps); A/D cycle, F buy, E cancel; per-type price and preview color; scene rendered to off-screen canvas and composited through CRT post-process shader |
 
@@ -133,7 +133,7 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
-- **Settings menu** — Esc during gameplay (StoreScene, BuyScene) opens a pause overlay with "Fullscreen / Window" (toggles via `love.window.setFullscreen`) and "Leave Game" (quits); start screen has a Settings button that opens the same overlay; game pauses while open; `esc_opens_settings = true` flag on each gameplay scene controls Esc behavior; 12 headless tests added in `tests/test_settings_menu.lua`
+- **Settings menu** — Esc during gameplay (StoreScene, BuyScene) opens a pause overlay with "Fullscreen / Window" (toggles via `love.window.setFullscreen`) and "Leave Game" (quits); start screen has a Settings button that opens the same overlay; game pauses while open; `esc_opens_settings = true` flag on each gameplay scene controls Esc behavior; 12 headless tests added in `tests/test_settings_menu.lua`; overlay is opaque when opened from start scene (via `open(true)`) so start menu buttons don't bleed through, semi-transparent in-game
 
 - **Post-sale dialogue** — scripted characters can now say lines after a sale via `after_messages` in `customer_scripts.lua`; customer enters a `talking_after` state, player clicks through lines, then the heart bubble appears and they walk out; backwards-compatible (characters without `after_messages` walk out immediately as before)
 
