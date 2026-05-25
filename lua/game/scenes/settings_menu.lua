@@ -22,6 +22,7 @@ function SettingsMenu.new()
     local self = setmetatable({}, SettingsMenu)
     self._img_btn     = love.graphics.newImage("assets/start_btn.png")
     self._img_btn_sel = love.graphics.newImage("assets/start_btn_selected.png")
+    self._img_bg      = love.graphics.newImage("assets/settings_background.png")
     self._font_btn    = love.graphics.newFont(22)
     return self
 end
@@ -81,9 +82,14 @@ end
 function SettingsMenu:draw()
     local prev_font = love.graphics.getFont()
 
-    -- Overlay: opaque when opened from a non-gameplay scene (e.g. start), semi-transparent in-game
-    love.graphics.setColor(0, 0, 0, self._opaque and 1 or 0.55)
-    love.graphics.rectangle("fill", 0, 0, W, H)
+    -- Background: image when opened from start scene, semi-transparent overlay in-game
+    love.graphics.setColor(1, 1, 1, 1)
+    if self._opaque then
+        love.graphics.draw(self._img_bg, 0, 0)
+    else
+        love.graphics.setColor(0, 0, 0, 0.55)
+        love.graphics.rectangle("fill", 0, 0, W, H)
+    end
 
     love.graphics.setFont(self._font_btn)
     for i = 1, #ITEMS do
