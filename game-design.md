@@ -187,11 +187,12 @@ Purchasable in the shop. Three tiers, each permanently increasing player movemen
 
 ## Scenes
 
-| Scene      | Description                                         |
-|------------|-----------------------------------------------------|
-| StartScene | Title screen with New Game / Continue / Exit buttons; up/down to navigate, Enter/Space/F to confirm |
-| StoreScene | Main gameplay — player moves in store and cashier zone |
-| BuyScene   | Full scene swap; browse and buy items (Plant, Expand, Watering Can, Grafter) |
+| Scene         | Description                                         |
+|---------------|-----------------------------------------------------|
+| StartScene    | Title screen with New Game / Continue / Settings / Exit buttons; up/down to navigate, Enter/Space/F to confirm |
+| SettingsMenu  | Pause overlay (not a Scene subclass); Fullscreen toggle, Exit Settings, Leave Game; opened via Esc in gameplay scenes or Settings button on start screen |
+| StoreScene    | Main gameplay — player moves in store and cashier zone |
+| BuyScene      | Full scene swap; browse and buy items (Plant, Expand, Watering Can, Grafter) |
 
 ---
 

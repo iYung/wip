@@ -1,6 +1,6 @@
 local Scene = require("lua/core/scene")
 
-local ITEMS = { "New Game", "Continue", "Exit" }
+local ITEMS = { "New Game", "Continue", "Settings", "Exit" }
 
 local W         = 1280
 local BTN_W     = 300
@@ -12,12 +12,13 @@ local BTN_GAP   = 74
 local StartScene = setmetatable({}, { __index = Scene })
 StartScene.__index = StartScene
 
-function StartScene.new(game_state, input, scene_manager)
+function StartScene.new(game_state, input, scene_manager, open_settings)
     local self          = Scene.new()
     setmetatable(self, StartScene)
     self.game_state     = game_state
     self.input          = input
     self.scene_manager  = scene_manager
+    self.open_settings  = open_settings
     self.selected       = 1
     self._prev_up       = false
     self._prev_down     = false
@@ -55,6 +56,10 @@ end
 
 function StartScene:_confirm()
     if self.selected == 3 then
+        if self.open_settings then self.open_settings() end
+        return
+    end
+    if self.selected == 4 then
         love.event.quit()
         return
     end

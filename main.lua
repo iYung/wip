@@ -26,10 +26,12 @@ local SceneManager = require("lua/core/scene_manager")
 local StartScene   = require("lua/game/scenes/start_scene")
 local GameState    = require("lua/game/game_state")
 local input        = require("lua/game/input")
+local SettingsMenu = require("lua/game/scenes/settings_menu")
 
 local LOGICAL_W, LOGICAL_H = 1280, 720
 local canvas
 local scene_manager
+local settings_menu
 
 local _visual_coro
 local _visual_done      = false
@@ -77,7 +79,8 @@ function love.load()
     else
         local gs = GameState.new()
         scene_manager = SceneManager.new()
-        scene_manager:switch(StartScene.new(gs, input, scene_manager))
+        settings_menu = SettingsMenu.new()
+        scene_manager:switch(StartScene.new(gs, input, scene_manager, function() settings_menu:open(true) end))
     end
 end
 
@@ -107,8 +110,12 @@ function love.update(dt)
         return
     end
     if not _visual_mode then
-        input:update()
-        scene_manager:update(dt)
+        if settings_menu and settings_menu.is_open then
+            settings_menu:update(dt)
+        else
+            input:update()
+            scene_manager:update(dt)
+        end
     end
 end
 
@@ -119,6 +126,9 @@ function love.draw()
     love.graphics.setCanvas(canvas)
     love.graphics.clear(0.08, 0.08, 0.12)
     sm:draw()
+    if settings_menu and settings_menu.is_open then
+        settings_menu:draw()
+    end
     love.graphics.setCanvas()
 
     local sw, sh  = love.graphics.getDimensions()
@@ -129,5 +139,15 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key == "escape" then love.event.quit() end
+    if key == "escape" then
+        if settings_menu and scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then
+            if settings_menu.is_open then
+                settings_menu:close()
+            else
+                settings_menu:open()
+            end
+        elseif not (settings_menu and settings_menu.is_open) then
+            love.event.quit()
+        end
+    end
 end

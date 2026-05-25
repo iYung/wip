@@ -11,7 +11,15 @@ luagame/
 │   └── shaders/         ← GLSL shader source files
 ├── tests/               ← test files run via --headless or --visual
 │   ├── test_basics.lua
-│   └── test_golden_lotus.lua
+│   ├── test_balance.lua
+│   ├── test_carrying.lua
+│   ├── test_customer_scripts.lua
+│   ├── test_golden_lotus.lua
+│   ├── test_grafter.lua
+│   ├── test_plant_growth.lua
+│   ├── test_selling.lua
+│   ├── test_settings_menu.lua
+│   └── test_shop.lua
 └── lua/
     ├── core/
     │   ├── sprite.lua
@@ -42,6 +50,7 @@ luagame/
         │   └── plant.lua
         ├── scenes/
         │   ├── start_scene.lua
+        │   ├── settings_menu.lua
         │   ├── store_scene.lua
         │   └── buy_scene.lua
         ├── shaders/

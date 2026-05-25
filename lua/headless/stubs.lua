@@ -56,6 +56,10 @@ love.graphics = graphics_stub
 love.keyboard = love.keyboard or {}
 love.keyboard.isDown = function() return false end
 
+love.window = love.window or {}
+love.window.getFullscreen = function() return false end
+love.window.setFullscreen = function() end
+
 love.filesystem = love.filesystem or {}
 love.filesystem.getInfo = function() return nil end
 

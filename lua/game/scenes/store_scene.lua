@@ -34,6 +34,7 @@ function StoreScene.new(game_state, input, scene_manager)
     self.input          = input
     self.scene_manager  = scene_manager
     self._initialized   = false
+    self.esc_opens_settings = true
     return self
 end
 
