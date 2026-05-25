@@ -225,5 +225,90 @@ assert(state.keybinds.move_down == "w", "move_down should now be bound to w, got
 assert(state.keybinds.move_up == nil, "collision should clear old move_up binding, got " .. tostring(state.keybinds.move_up))
 print("PASS: collision clears old binding")
 
+-- Test 27: Sub-screen down navigation moves _subscreen_selected from 1 to 2
+open_clean(m)
+m._subscreen = "keybinds"
+m._subscreen_selected = 1
+m._prev_sub_down = false
+sim_key(m, "down")
+assert(m._subscreen_selected == 2, "down in sub-screen should move to row 2, got " .. m._subscreen_selected)
+print("PASS: sub-screen down navigation")
+
+-- Test 28: Sub-screen down wraps from row 7 (Return) to row 1
+open_clean(m)
+m._subscreen = "keybinds"
+m._subscreen_selected = 7
+m._prev_sub_down = false
+sim_key(m, "down")
+assert(m._subscreen_selected == 1, "down from row 7 should wrap to row 1, got " .. m._subscreen_selected)
+print("PASS: sub-screen down wrap")
+
+-- Test 29: Sub-screen up from row 1 wraps to row 7 (Return button)
+open_clean(m)
+m._subscreen = "keybinds"
+m._subscreen_selected = 1
+m._prev_sub_up = false
+sim_key(m, "up")
+assert(m._subscreen_selected == 7, "up from row 1 should wrap to row 7, got " .. m._subscreen_selected)
+print("PASS: sub-screen up wrap to Return")
+
+-- Test 30: Confirming Return button (row 7) exits sub-screen, menu stays open
+open_clean(m)
+m._subscreen = "keybinds"
+m._subscreen_selected = 7
+m._prev_sub_confirm = false
+sim_key(m, "f")
+assert(m._subscreen == nil, "confirming Return button should exit sub-screen")
+assert(m.is_open == true, "menu should stay open after Return")
+print("PASS: Return button exits sub-screen")
+
+-- Test 31: Confirm key held when entering sub-screen does not immediately trigger capture
+open_clean(m)
+m._subscreen = nil
+m.selected = 2
+love.keyboard.isDown = function(k) return k == "f" end
+m:update(0)   -- enters sub-screen; _prev_sub_confirm snapshotted as true ("f" still down)
+m:update(0)   -- sub-screen: confirm held but _prev_sub_confirm=true → should not capture
+love.keyboard.isDown = function() return false end
+m:update(0)
+assert(m._subscreen == "keybinds", "should still be in keybinds sub-screen")
+assert(m._capturing == nil, "confirm held at sub-screen entry should not trigger capture")
+print("PASS: key-bleed prevention on sub-screen entry")
+
+-- Test 32: keypressed returns true when consuming escape during capture
+m._subscreen = "keybinds"
+m._capturing = "move_up"
+local r32 = m:keypressed("escape")
+assert(r32 == true, "keypressed should return true for escape during capture")
+assert(m._capturing == nil, "escape should clear _capturing")
+print("PASS: keypressed returns true for escape during capture")
+
+-- Test 33: keypressed returns true when consuming escape in sub-screen (not capturing)
+m._subscreen = "keybinds"
+m._capturing = nil
+local r33 = m:keypressed("escape")
+assert(r33 == true, "keypressed should return true for escape in sub-screen without capture")
+assert(m._subscreen == nil, "escape should exit sub-screen")
+print("PASS: keypressed returns true for escape in sub-screen")
+
+-- Test 34: keypressed returns false for modifier during capture
+m._subscreen = "keybinds"
+m._capturing = "move_up"
+local r34 = m:keypressed("lshift")
+assert(r34 == false, "keypressed should return false for modifier")
+assert(m._capturing == "move_up", "modifier should not clear _capturing")
+print("PASS: keypressed returns false for modifier")
+
+-- Test 35: Sub-screen selected resets to 1 when re-entering Keybinds
+open_clean(m)
+m._subscreen = nil
+m._subscreen_selected = 4   -- dirty: simulate having navigated the sub-screen before
+m.selected = 2
+m._prev_confirm = false
+sim_key(m, "f")
+assert(m._subscreen == "keybinds", "should be in sub-screen")
+assert(m._subscreen_selected == 1, "_subscreen_selected should reset to 1 on re-entry, got " .. m._subscreen_selected)
+print("PASS: sub-screen selected resets to 1 on re-entry")
+
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")
