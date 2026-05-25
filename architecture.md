@@ -178,18 +178,23 @@ Loads every PNG once at startup and returns a shared table. All other modules `r
 
 ### Input
 
-Maps Love2D key events to the four game actions. Game logic calls Input, never Love2D directly.
+Maps Love2D key events to game actions. Game logic calls Input, never Love2D directly. Key bindings are sourced from `SettingsState.keybinds` and can be remapped at runtime via the settings menu.
 
 **Actions**
-- `move_left`
-- `move_right`
-- `pick_up_down`
-- `interact`
+- `move_left` — default `a`
+- `move_right` — default `d`
+- `pick_up_down` — default `e`
+- `interact` — default `f`
+- `move_up` / `move_down` — default `w` / `s` (used by settings menu navigation; not consumed by StoreScene)
 
 **Methods**
 - `update()` — called each frame, samples key state
 - `is_down(action)` — true while the key is held
 - `pressed(action)` — true only on the frame the key was pressed
+
+**Runtime rebinding**
+
+`SettingsMenu:keypressed()` calls `self._state:set_keybind(action, key)` then patches `self._input._map = self._state:key_map()` so the running `Input` instance reflects the new binding immediately without reconstruction.
 
 ---
 
@@ -512,13 +517,16 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 
 **Properties**
 - `fullscreen` — bool; current fullscreen state (default `false`)
+- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", pick_up_down="e", interact="f"}`
 
 **Methods**
-- `new()` — constructor; sets `fullscreen = false`
+- `new()` — constructor; sets `fullscreen = false` and populates default `keybinds`
 - `toggle_fullscreen()` — flips `self.fullscreen` and calls `love.window.setFullscreen(self.fullscreen)`
+- `set_keybind(action, key)` — assigns `key` to `action`; automatically clears any other action already bound to the same key (no collisions)
+- `key_map()` — returns `{action = {key}}` for all non-nil bindings; suitable for passing directly to `Input.new()` or patching `input._map`
 
 **Notes**
-- Memory-only for now; no filesystem I/O. Persistence will be added in a future save/load pass.
+- Memory-only; no filesystem I/O. Persistence will be added in a future save/load pass.
 - Follows the same Lua class pattern (`SettingsState.__index = SettingsState`) as `GameState`.
 
 ---
@@ -531,28 +539,39 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 
 **Properties**
 - `is_open` — whether the overlay is visible; `main.lua` gates scene update/draw on this
-- `selected` — index of the highlighted button (1 = Fullscreen/Window, 2 = Exit Settings, 3 = Leave Game)
+- `selected` — index of the highlighted button on the main screen (1–4)
 - `_state` — the `SettingsState` instance passed to `new()`; all setting mutations go through it
+- `_input` — the game `Input` instance; `_map` is patched after a keybind capture
+- `_subscreen` — `nil` (main screen) or `"keybinds"` (keybind sub-screen)
+- `_subscreen_selected` — cursor row on the keybind sub-screen (1–6)
+- `_capturing` — `nil`, or the action name currently waiting for a key press
 - `_opaque` — set to `true` when opened via `open(true)` (start scene); controls background style
-- `_img_bg` — Love2D image (`settings_background.png`); drawn full-screen when `_opaque` is true
-- `_prev_up`, `_prev_down`, `_prev_confirm`, `_prev_escape` — edge-detection flags
+- `_prev_up`, `_prev_down`, `_prev_confirm`, `_prev_escape` — edge-detection flags (main screen)
+- `_prev_sub_up`, `_prev_sub_down`, `_prev_sub_confirm`, `_prev_sub_escape` — edge-detection flags (keybind sub-screen)
 
-**Buttons**
-- **Fullscreen / Window** — calls `self._state:toggle_fullscreen()`; label reads "Fullscreen" when `_state.fullscreen` is false, "Window" when true
-- **Exit Settings** — closes the overlay (`self:close()`)
-- **Leave Game** — calls `love.event.quit()`
+**Main screen buttons**
+1. **Fullscreen / Window** — calls `self._state:toggle_fullscreen()`; label flips between "Fullscreen" and "Window"
+2. **Keybinds** — opens the keybind sub-screen
+3. **Exit Settings** — closes the overlay
+4. **Leave Game** — calls `love.event.quit()`
 
-**Navigation keys** (raw `love.keyboard.isDown` + edge detection)
-- Up / Down — move selection; wraps at both ends
-- E / F / Enter / Space — confirm
-- Escape — close without action
+**Keybind sub-screen**
+
+Lists all six remappable actions (`move_up`, `move_down`, `move_left`, `move_right`, `pick_up_down`, `interact`) with their current key. Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. Escape during capture cancels without change; escape outside capture returns to the main screen.
+
+**Methods**
+- `new(settings_state, input)` — constructor
+- `open(opaque?)` / `close()` — show/hide the overlay; `open()` resets selection and snapshots key state
+- `update(dt)` — handles navigation and action dispatch; routes to sub-screen logic when `_subscreen == "keybinds"`
+- `keypressed(key)` — called by `main.lua`'s `love.keypressed`; handles capture mode
+- `draw()` — renders main screen or keybind sub-screen depending on `_subscreen`
 
 **Integration in `main.lua`**
-- `love.keypressed("escape")`: if `scene_manager.current.esc_opens_settings`, toggle open/close; otherwise fall through to quit
+- `love.keypressed`: calls `settings_menu:keypressed(key)` first (capture intercept), then handles Esc toggle
 - `love.update`: when `is_open`, routes to `settings_menu:update(dt)` and skips scene update (game pauses)
-- `love.draw`: `settings_menu:draw()` is called inside the canvas block (after `sm:draw()`), so the overlay scales correctly with the window
+- `love.draw`: `settings_menu:draw()` called inside the canvas block after `sm:draw()`
 
-Scenes that allow Esc-to-open set `self.esc_opens_settings = true` in their constructor. Currently `StoreScene` and `BuyScene` have this flag; `StartScene` does not (it has its own Settings button instead, which calls `open(true)` so `settings_background.png` is drawn instead of the semi-transparent overlay).
+Scenes set `self.esc_opens_settings = true` to opt into Esc-to-open. Currently `StoreScene` and `BuyScene`; `StartScene` uses a Settings button instead (calls `open(true)` for the opaque background).
 
 ---
 
@@ -609,8 +628,8 @@ Three ways to run the game:
 | `test_grafter.lua` | Grafter rejects stage-2 source, clones a stage-1 plant into an adjacent slot |
 | `test_plant_growth.lua` | Stage-1 cooldown fires `ready`; watering advances stage 1→2 |
 | `test_selling.lua` | Correct plant type accepted and currency increases; wrong type / wrong stage rejected |
-| `test_settings_menu.lua` | Settings menu open/close, navigation, fullscreen toggle (via `SettingsState`), key-bleed prevention |
-| `test_settings_state.lua` | `SettingsState.new()` defaults, `toggle_fullscreen()` flips state and calls `love.window.setFullscreen` |
+| `test_settings_menu.lua` | Settings menu open/close, navigation, fullscreen toggle, keybind sub-screen, press-to-capture flow, modifier rejection, collision clearing |
+| `test_settings_state.lua` | `SettingsState` defaults, `toggle_fullscreen`, `set_keybind` (basic + collision), `key_map` output and nil-skipping |
 | `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
 
 **CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.
