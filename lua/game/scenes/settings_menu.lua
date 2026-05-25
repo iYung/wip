@@ -42,6 +42,7 @@ function SettingsMenu.new(settings_state, input)
     self._img_bg      = love.graphics.newImage("assets/settings_background.png")
     self._font_btn    = love.graphics.newFont(22)
     self._btn_y0      = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
+    self._sub_btn_y0  = H / 2 - #_ACTION_LIST * BTN_GAP / 2 - BTN_H / 2  -- centres 7 sub-screen rows
     return self
 end
 
@@ -74,14 +75,19 @@ function SettingsMenu:update(dt)
                      or love.keyboard.isDown("return") or love.keyboard.isDown("space")
         local escape  = love.keyboard.isDown("escape")
 
+        local sub_count = #_ACTION_LIST + 1
         if up and not self._prev_sub_up then
-            self._subscreen_selected = ((self._subscreen_selected - 2) % #_ACTION_LIST) + 1
+            self._subscreen_selected = ((self._subscreen_selected - 2) % sub_count) + 1
         end
         if down and not self._prev_sub_down then
-            self._subscreen_selected = (self._subscreen_selected % #_ACTION_LIST) + 1
+            self._subscreen_selected = (self._subscreen_selected % sub_count) + 1
         end
         if confirm and not self._prev_sub_confirm then
-            self._capturing = _ACTION_LIST[self._subscreen_selected]
+            if self._subscreen_selected == sub_count then
+                self._subscreen = nil
+            else
+                self._capturing = _ACTION_LIST[self._subscreen_selected]
+            end
         end
         if escape and not self._prev_sub_escape then
             self._subscreen = nil
@@ -172,9 +178,10 @@ function SettingsMenu:draw()
             love.graphics.rectangle("fill", 0, 0, W, H)
         end
 
+        local sub_count = #_ACTION_LIST + 1
         love.graphics.setFont(self._font_btn)
         for i = 1, #_ACTION_LIST do
-            local y = self._btn_y0 + (i - 1) * BTN_GAP
+            local y = self._sub_btn_y0 + (i - 1) * BTN_GAP
             local img = i == self._subscreen_selected and self._img_btn_sel or self._img_btn
             love.graphics.setColor(1, 1, 1, 1)
             love.graphics.draw(img, BTN_X, y)
@@ -190,6 +197,12 @@ function SettingsMenu:draw()
             love.graphics.print(_ACTION_LABELS[i], BTN_X + 10, y + (BTN_H - self._font_btn:getHeight()) / 2)
             love.graphics.printf(right_label, BTN_X, y + (BTN_H - self._font_btn:getHeight()) / 2, BTN_W - 10, "right")
         end
+
+        local ry  = self._sub_btn_y0 + #_ACTION_LIST * BTN_GAP
+        local img = sub_count == self._subscreen_selected and self._img_btn_sel or self._img_btn
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(img, BTN_X, ry)
+        love.graphics.printf("Return", BTN_X, ry + (BTN_H - self._font_btn:getHeight()) / 2, BTN_W, "center")
 
         love.graphics.setFont(prev_font)
         love.graphics.setColor(1, 1, 1, 1)
