@@ -504,6 +504,25 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 
 ---
 
+### SettingsState
+
+Holds all user-facing settings in memory. Owns the Love2D API calls that apply each setting. Constructed once in `main.lua` and passed to `SettingsMenu.new()`.
+
+**Location:** `lua/game/settings_state.lua`
+
+**Properties**
+- `fullscreen` — bool; current fullscreen state (default `false`)
+
+**Methods**
+- `new()` — constructor; sets `fullscreen = false`
+- `toggle_fullscreen()` — flips `self.fullscreen` and calls `love.window.setFullscreen(self.fullscreen)`
+
+**Notes**
+- Memory-only for now; no filesystem I/O. Persistence will be added in a future save/load pass.
+- Follows the same Lua class pattern (`SettingsState.__index = SettingsState`) as `GameState`.
+
+---
+
 ### SettingsMenu
 
 A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no `Camera` or `Drawer`. Instantiated once in `main.lua` and shared across all scenes.
@@ -513,12 +532,13 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 **Properties**
 - `is_open` — whether the overlay is visible; `main.lua` gates scene update/draw on this
 - `selected` — index of the highlighted button (1 = Fullscreen/Window, 2 = Exit Settings, 3 = Leave Game)
+- `_state` — the `SettingsState` instance passed to `new()`; all setting mutations go through it
 - `_opaque` — set to `true` when opened via `open(true)` (start scene); controls background style
 - `_img_bg` — Love2D image (`settings_background.png`); drawn full-screen when `_opaque` is true
 - `_prev_up`, `_prev_down`, `_prev_confirm`, `_prev_escape` — edge-detection flags
 
 **Buttons**
-- **Fullscreen / Window** — calls `love.window.setFullscreen(not love.window.getFullscreen())`; label reads "Fullscreen" when windowed, "Window" when fullscreen
+- **Fullscreen / Window** — calls `self._state:toggle_fullscreen()`; label reads "Fullscreen" when `_state.fullscreen` is false, "Window" when true
 - **Exit Settings** — closes the overlay (`self:close()`)
 - **Leave Game** — calls `love.event.quit()`
 
@@ -589,6 +609,8 @@ Three ways to run the game:
 | `test_grafter.lua` | Grafter rejects stage-2 source, clones a stage-1 plant into an adjacent slot |
 | `test_plant_growth.lua` | Stage-1 cooldown fires `ready`; watering advances stage 1→2 |
 | `test_selling.lua` | Correct plant type accepted and currency increases; wrong type / wrong stage rejected |
+| `test_settings_menu.lua` | Settings menu open/close, navigation, fullscreen toggle (via `SettingsState`), key-bleed prevention |
+| `test_settings_state.lua` | `SettingsState.new()` defaults, `toggle_fullscreen()` flips state and calls `love.window.setFullscreen` |
 | `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
 
 **CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.

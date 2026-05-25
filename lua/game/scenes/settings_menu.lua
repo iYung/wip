@@ -18,8 +18,9 @@ SettingsMenu._prev_down    = false
 SettingsMenu._prev_confirm = false
 SettingsMenu._prev_escape  = false
 
-function SettingsMenu.new()
+function SettingsMenu.new(settings_state)
     local self = setmetatable({}, SettingsMenu)
+    self._state = settings_state
     self._img_btn     = love.graphics.newImage("assets/start_btn.png")
     self._img_btn_sel = love.graphics.newImage("assets/start_btn_selected.png")
     self._img_bg      = love.graphics.newImage("assets/settings_background.png")
@@ -71,7 +72,7 @@ end
 
 function SettingsMenu:_confirm()
     if self.selected == 1 then
-        love.window.setFullscreen(not love.window.getFullscreen())
+        self._state:toggle_fullscreen()
     elseif self.selected == 2 then
         self:close()
     elseif self.selected == 3 then
@@ -100,7 +101,7 @@ function SettingsMenu:draw()
 
         local label
         if i == 1 then
-            label = love.window.getFullscreen() and "Window" or "Fullscreen"
+            label = self._state.fullscreen and "Window" or "Fullscreen"
         else
             label = ITEMS[i]
         end
