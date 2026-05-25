@@ -81,7 +81,7 @@ function love.load()
         local gs = GameState.new()
         scene_manager = SceneManager.new()
         local ss = SettingsState.new()
-        settings_menu = SettingsMenu.new(ss)
+        settings_menu = SettingsMenu.new(ss, input)
         scene_manager:switch(StartScene.new(gs, input, scene_manager, function() settings_menu:open(true) end))
     end
 end
@@ -141,6 +141,9 @@ function love.draw()
 end
 
 function love.keypressed(key)
+    if settings_menu and settings_menu.is_open then
+        settings_menu:keypressed(key)
+    end
     if key == "escape" then
         if settings_menu and scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then
             if settings_menu.is_open then

@@ -1,4 +1,13 @@
-local ITEMS = { "Fullscreen / Window", "Exit Settings", "Leave Game" }
+local ITEMS = { "Fullscreen / Window", "Keybinds", "Exit Settings", "Leave Game" }
+
+local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","pick_up_down","interact"}
+local _ACTION_LABELS = {"move up","move down","move left","move right","pick up/down","interact"}
+
+local _MODIFIERS = {
+    lshift=true, rshift=true, lctrl=true, rctrl=true,
+    lalt=true, ralt=true, lgui=true, rgui=true,
+    capslock=true, numlock=true, scrolllock=true
+}
 
 local W       = 1280
 local H       = 720
@@ -6,7 +15,6 @@ local BTN_W   = 300
 local BTN_H   = 54
 local BTN_X   = (W - BTN_W) / 2
 local BTN_GAP = 74
-local BTN_Y0  = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
 
 local SettingsMenu = {}
 SettingsMenu.__index = SettingsMenu
@@ -18,13 +26,22 @@ SettingsMenu._prev_down    = false
 SettingsMenu._prev_confirm = false
 SettingsMenu._prev_escape  = false
 
-function SettingsMenu.new(settings_state)
+function SettingsMenu.new(settings_state, input)
     local self = setmetatable({}, SettingsMenu)
     self._state = settings_state
+    self._input = input
+    self._subscreen = nil
+    self._subscreen_selected = 1
+    self._capturing = nil
+    self._prev_sub_up      = false
+    self._prev_sub_down    = false
+    self._prev_sub_confirm = false
+    self._prev_sub_escape  = false
     self._img_btn     = love.graphics.newImage("assets/start_btn.png")
     self._img_btn_sel = love.graphics.newImage("assets/start_btn_selected.png")
     self._img_bg      = love.graphics.newImage("assets/settings_background.png")
     self._font_btn    = love.graphics.newFont(22)
+    self._btn_y0      = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
     return self
 end
 
@@ -45,6 +62,38 @@ function SettingsMenu:close()
 end
 
 function SettingsMenu:update(dt)
+    if self._subscreen == "keybinds" then
+        if self._capturing ~= nil then
+            return
+        end
+
+        local up      = love.keyboard.isDown("up")   or love.keyboard.isDown(self._state.keybinds.move_up   or "w")
+        local down    = love.keyboard.isDown("down") or love.keyboard.isDown(self._state.keybinds.move_down or "s")
+        local confirm = love.keyboard.isDown(self._state.keybinds.pick_up_down or "e")
+                     or love.keyboard.isDown(self._state.keybinds.interact     or "f")
+                     or love.keyboard.isDown("return") or love.keyboard.isDown("space")
+        local escape  = love.keyboard.isDown("escape")
+
+        if up and not self._prev_sub_up then
+            self._subscreen_selected = ((self._subscreen_selected - 2) % #_ACTION_LIST) + 1
+        end
+        if down and not self._prev_sub_down then
+            self._subscreen_selected = (self._subscreen_selected % #_ACTION_LIST) + 1
+        end
+        if confirm and not self._prev_sub_confirm then
+            self._capturing = _ACTION_LIST[self._subscreen_selected]
+        end
+        if escape and not self._prev_sub_escape then
+            self._subscreen = nil
+        end
+
+        self._prev_sub_up      = up
+        self._prev_sub_down    = down
+        self._prev_sub_confirm = confirm
+        self._prev_sub_escape  = escape
+        return
+    end
+
     local up      = love.keyboard.isDown("up")   or love.keyboard.isDown("w")
     local down    = love.keyboard.isDown("down") or love.keyboard.isDown("s")
     local confirm = love.keyboard.isDown("e")      or love.keyboard.isDown("f")
@@ -74,14 +123,63 @@ function SettingsMenu:_confirm()
     if self.selected == 1 then
         self._state:toggle_fullscreen()
     elseif self.selected == 2 then
-        self:close()
+        self._subscreen = "keybinds"
+        self._subscreen_selected = 1
     elseif self.selected == 3 then
+        self:close()
+    elseif self.selected == 4 then
         love.event.quit()
     end
 end
 
+function SettingsMenu:keypressed(key)
+    if self._capturing == nil then return end
+    if key == "escape" then
+        self._capturing = nil
+        return
+    end
+    if _MODIFIERS[key] then return end
+    self._state:set_keybind(self._capturing, key)
+    self._input._map = self._state:key_map()
+    self._capturing = nil
+end
+
 function SettingsMenu:draw()
     local prev_font = love.graphics.getFont()
+
+    if self._subscreen == "keybinds" then
+        -- Background
+        love.graphics.setColor(1, 1, 1, 1)
+        if self._opaque then
+            love.graphics.draw(self._img_bg, 0, 0)
+        else
+            love.graphics.setColor(0, 0, 0, 0.55)
+            love.graphics.rectangle("fill", 0, 0, W, H)
+        end
+
+        love.graphics.setFont(self._font_btn)
+        for i = 1, #_ACTION_LIST do
+            local y = self._btn_y0 + (i - 1) * BTN_GAP
+            local img = i == self._subscreen_selected and self._img_btn_sel or self._img_btn
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(img, BTN_X, y)
+
+            local right_label
+            if self._capturing == _ACTION_LIST[i] then
+                right_label = "[press a key]"
+            else
+                right_label = "[" .. (self._state.keybinds[_ACTION_LIST[i]] or "unbound"):upper() .. "]"
+            end
+
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.print(_ACTION_LABELS[i], BTN_X + 10, y + (BTN_H - self._font_btn:getHeight()) / 2)
+            love.graphics.printf(right_label, BTN_X, y + (BTN_H - self._font_btn:getHeight()) / 2, BTN_W - 10, "right")
+        end
+
+        love.graphics.setFont(prev_font)
+        love.graphics.setColor(1, 1, 1, 1)
+        return
+    end
 
     -- Background: image when opened from start scene, semi-transparent overlay in-game
     love.graphics.setColor(1, 1, 1, 1)
@@ -94,7 +192,7 @@ function SettingsMenu:draw()
 
     love.graphics.setFont(self._font_btn)
     for i = 1, #ITEMS do
-        local y   = BTN_Y0 + (i - 1) * BTN_GAP
+        local y   = self._btn_y0 + (i - 1) * BTN_GAP
         local img = i == self.selected and self._img_btn_sel or self._img_btn
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(img, BTN_X, y)
