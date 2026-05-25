@@ -50,8 +50,8 @@ Completed step files are moved to [`archive/`](archive/).
 | File | What it does |
 |------|-------------|
 | `start_scene.lua` | Title screen with New Game / Continue / Settings / Exit buttons; up/down/W/S navigate, Enter/Space/F confirms; New Game and Continue both enter StoreScene; Settings opens the `SettingsMenu` overlay via callback; fonts saved and restored each draw so global font state is unaffected |
-| `settings_menu.lua` | Pause overlay — three buttons (Fullscreen/Window toggle via `SettingsState`, Exit Settings, Leave Game); keyboard navigation matching start scene style; `is_open` gates scene update in `main.lua`; drawn inside the canvas so it scales with the window; draws `settings_background.png` when opened from start scene (`open(true)`), semi-transparent black overlay (alpha 0.55) in-game |
-| `settings_state.lua` | Holds user settings (`fullscreen` bool); owns Love2D API calls (`toggle_fullscreen()` calls `love.window.setFullscreen`); memory-only for now; passed to `SettingsMenu.new()` at startup |
+| `settings_menu.lua` | Pause overlay — four buttons (Fullscreen/Window, Keybinds, Exit Settings, Leave Game); Keybinds opens a sub-screen listing all 6 actions with press-to-capture rebinding; navigation uses remapped move_up/move_down keys; `is_open` gates scene update in `main.lua`; drawn inside the canvas so it scales with the window |
+| `settings_state.lua` | Holds user settings: `fullscreen` bool + `keybinds` table (6 actions); `set_keybind` clears collisions; `key_map()` produces `Input`-compatible map; passed to `SettingsMenu.new(ss, input)` at startup |
 | `store_scene.lua` | Main loop — player moves, camera follows on x then clamps to world bounds (left = -400+640, right = store width−640), pick up/interact handled here; cashier zone logic (F skips reveal → advances → sells, E dismisses); context HUD bottom-left shows F: SKIP while typing, F: NEXT when done, E: DISMISS when customer waiting; `_active_script_key` tracks the current scripted customer (seen_scripts written on sale, not on spawn); `_script_cooldowns` counts down per completed sale — dismissed scripted customers return after 3 sales; unified parallax tiles `store_bg_*` across full world width pre-drawer; `Store:draw_bg` then stamps walls/windows on top; layered draw order for wall/bubbles |
 | `buy_scene.lua` | Carousel UI — 10 items (6 plants + Watering Can + Grafter + Expand Slot + Heat Lamps); A/D cycle, F buy, E cancel; per-type price and preview color; scene rendered to off-screen canvas and composited through CRT post-process shader |
 
@@ -91,10 +91,13 @@ Accessory PNGs for named customers (120×120, transparent background) live along
 
 ## Controls
 
+Defaults — all remappable via Settings → Keybinds.
+
 | Key | Action |
 |-----|--------|
-| A / ← | Move left |
-| D / → | Move right |
+| A | Move left |
+| D | Move right |
+| W / S | Navigate menus up / down |
 | E | Pick up / put down (in cashier zone: dismiss customer) |
 | F | Interact (water, open shop) |
 | Escape | Open settings menu (in gameplay); quit (on start screen) |
@@ -133,6 +136,8 @@ Accessory PNGs for named customers (120×120, transparent background) live along
 See open questions in `game-design.md`.
 
 ### Recently completed
+
+- **Configurable keybinds** — all six game/menu actions (`move_up`, `move_down`, `move_left`, `move_right`, `pick_up_down`, `interact`) are remappable from Settings → Keybinds; press-to-capture flow (select action → next keypress sets binding); modifier keys ignored; binding a key to a new action automatically clears it from the old one; bindings live in `SettingsState.keybinds` and are applied to `input._map` immediately; 8 new settings-state tests + 8 new settings-menu tests (26 total)
 
 - **SettingsState** — new `lua/game/settings_state.lua` data class holds `fullscreen` bool and owns the `love.window.setFullscreen` call via `toggle_fullscreen()`; `SettingsMenu` is now a pure view — it reads `_state.fullscreen` for the label and delegates all mutations to `SettingsState`; `main.lua` constructs `SettingsState.new()` and passes it to `SettingsMenu.new(ss)`; 3 headless tests added in `tests/test_settings_state.lua`; `tests/test_settings_menu.lua` updated to use a real `SettingsState` instance (18 tests total)
 
