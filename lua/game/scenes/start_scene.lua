@@ -30,8 +30,8 @@ function StartScene:on_enter()
     self._font_btn    = love.graphics.newFont(22)
     self._img_bg      = love.graphics.newImage("assets/start_bg.png")
     self._img_logo    = love.graphics.newImage("assets/start_logo.png")
-    self._img_btn     = love.graphics.newImage("assets/start_btn.png")
-    self._img_btn_sel = love.graphics.newImage("assets/start_btn_selected.png")
+    self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
+    self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
 end
 
 function StartScene:update(dt)
