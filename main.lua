@@ -142,7 +142,7 @@ end
 
 function love.keypressed(key)
     if settings_menu and settings_menu.is_open then
-        settings_menu:keypressed(key)
+        if settings_menu:keypressed(key) then return end
     end
     if key == "escape" then
         if settings_menu and scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then

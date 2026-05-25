@@ -125,6 +125,13 @@ function SettingsMenu:_confirm()
     elseif self.selected == 2 then
         self._subscreen = "keybinds"
         self._subscreen_selected = 1
+        -- Snapshot so keys held at transition time don't immediately fire in the sub-screen
+        self._prev_sub_up      = love.keyboard.isDown("up")   or love.keyboard.isDown(self._state.keybinds.move_up   or "w")
+        self._prev_sub_down    = love.keyboard.isDown("down") or love.keyboard.isDown(self._state.keybinds.move_down or "s")
+        self._prev_sub_confirm = love.keyboard.isDown(self._state.keybinds.pick_up_down or "e")
+                              or love.keyboard.isDown(self._state.keybinds.interact     or "f")
+                              or love.keyboard.isDown("return") or love.keyboard.isDown("space")
+        self._prev_sub_escape  = love.keyboard.isDown("escape")
     elseif self.selected == 3 then
         self:close()
     elseif self.selected == 4 then
@@ -133,15 +140,23 @@ function SettingsMenu:_confirm()
 end
 
 function SettingsMenu:keypressed(key)
-    if self._capturing == nil then return end
+    if self._subscreen == "keybinds" and self._capturing == nil then
+        if key == "escape" then
+            self._subscreen = nil
+            return true
+        end
+        return false
+    end
+    if self._capturing == nil then return false end
     if key == "escape" then
         self._capturing = nil
-        return
+        return true
     end
-    if _MODIFIERS[key] then return end
+    if _MODIFIERS[key] then return false end
     self._state:set_keybind(self._capturing, key)
     self._input._map = self._state:key_map()
     self._capturing = nil
+    return true
 end
 
 function SettingsMenu:draw()
