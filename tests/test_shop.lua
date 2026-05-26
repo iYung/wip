@@ -97,6 +97,23 @@ do
     print("PASS: shop: speed upgrade cost and speed value")
 end
 
+-- Test: speed upgrade sets player color
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local buy = make_buy(ctx)
+    ctx.gs.currency = 100
+    ctx.gs.speed_level = 0
+    buy.selected = 10   -- Sneakers → tier 1
+    buy:_confirm()
+    local expected = SPEED_TIERS[1].color
+    local actual   = ctx.gs.player._speed_color
+    assert(actual == expected,
+        "player._speed_color should be tier-1 color after upgrade")
+    print("PASS: shop: speed upgrade sets player color")
+end
+
 -- Test: growth upgrade cost and multiplier value
 do
     local ctx = runner.setup(function(gs, input, sm)

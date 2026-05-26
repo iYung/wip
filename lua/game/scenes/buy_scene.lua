@@ -115,7 +115,7 @@ function BuyScene:_confirm()
         gs.currency     = gs.currency - tier.cost
         gs.speed_level  = gs.speed_level + 1
         gs.player.speed = tier.speed
-        gs.player:set_speed_level(gs.speed_level, tier.color)
+        gs.player:set_speed_color(tier.color)
         return
     end
 

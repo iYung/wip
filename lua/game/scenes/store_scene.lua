@@ -70,7 +70,7 @@ function StoreScene:_setup_store()
 
     store.slots[3].item = PCStore.new(function()
         local slot = gs.player:active_slot(store)
-        return BuyScene.new(gs, self_ref.input, self_ref.scene_manager, self_ref, slot)
+        return BuyScene.new(gs, self_ref.input, self_ref.scene_manager, self_ref)
     end)
 
     local target_x   = -ZONE_WIDTH / 2
