@@ -1,4 +1,5 @@
 local Scene = require("lua/core/scene")
+local Sound = require("lua/game/sound")
 
 local ITEMS = { "New Game", "Continue", "Settings", "Exit" }
 
@@ -41,9 +42,11 @@ function StartScene:update(dt)
 
     if up and not self._prev_up then
         self.selected = ((self.selected - 2) % #ITEMS) + 1
+        Sound.play("menu_navigate")
     end
     if down and not self._prev_down then
         self.selected = (self.selected % #ITEMS) + 1
+        Sound.play("menu_navigate")
     end
     if confirm and not self._prev_confirm then
         self:_confirm()
@@ -55,6 +58,7 @@ function StartScene:update(dt)
 end
 
 function StartScene:_confirm()
+    Sound.play("menu_confirm")
     if self.selected == 3 then
         if self.open_settings then self.open_settings() end
         return

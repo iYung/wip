@@ -115,4 +115,29 @@ do
     print("PASS: plant: stage3_counts incremented in StoreScene")
 end
 
+-- Test: plant: water() returns false when not ready
+do
+    local p = Plant.new(1)
+    assert(p:water() == false, "water() should return false when not ready")
+    print("PASS: plant: water() returns false when not ready")
+end
+
+-- Test: plant: water() returns true on successful advance
+do
+    local p = Plant.new(1)
+    p:update(1.0)
+    assert(p:water() == true, "water() should return true on success")
+    print("PASS: plant: water() returns true on successful advance")
+end
+
+-- Test: plant: water() returns false at stage 3
+do
+    local p = Plant.new(1)
+    p:update(1.0); p:water()
+    p:update(1.0); p:water()
+    assert(p.stage == 3)
+    assert(p:water() == false, "water() should return false at stage 3")
+    print("PASS: plant: water() returns false at stage 3")
+end
+
 print("ALL TESTS PASSED")

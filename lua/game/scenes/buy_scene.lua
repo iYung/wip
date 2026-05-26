@@ -9,6 +9,7 @@ local SPEED_TIERS    = require("lua/game/data/speed_tiers")
 local GROWTH_TIERS   = require("lua/game/data/growth_tiers")
 local ColorReplace   = require("lua/game/shaders/color_replace")
 local CRT            = require("lua/game/shaders/crt")
+local Sound          = require("lua/game/sound")
 
 local CATALOGUE = {}
 
@@ -93,13 +94,16 @@ function BuyScene:update(dt)
 
     if input:pressed("move_left") then
         self.selected = ((self.selected - 2) % n) + 1
+        Sound.play("shop_navigate")
     elseif input:pressed("move_right") then
         self.selected = (self.selected % n) + 1
+        Sound.play("shop_navigate")
     end
 
     if input:pressed("interact") then
         self:_confirm()
     elseif input:pressed("pick_up_down") then
+        Sound.play("shop_close")
         self.scene_manager:switch(self.store_scene)
     end
 end
@@ -116,6 +120,7 @@ function BuyScene:_confirm()
         gs.speed_level  = gs.speed_level + 1
         gs.player.speed = tier.speed
         gs.player:set_speed_color(tier.color)
+        Sound.play("shop_buy")
         return
     end
 
@@ -126,6 +131,7 @@ function BuyScene:_confirm()
         gs.currency     = gs.currency - tier.cost
         gs.growth_level = gs.growth_level + 1
         gs.growth_mult  = tier.mult
+        Sound.play("shop_buy")
         return
     end
 
@@ -137,15 +143,19 @@ function BuyScene:_confirm()
     if kind == "plant" then
         gs.player.held_item = Plant.new(ent.plant_type)
         gs.unlocked_plants[ent.plant_type] = true
+        Sound.play("shop_buy")
         self.scene_manager:switch(self.store_scene)
     elseif kind == "tool_watering_can" then
         gs.player.held_item = WateringCan.new()
+        Sound.play("shop_buy")
         self.scene_manager:switch(self.store_scene)
     elseif kind == "tool_grafter" then
         gs.player.held_item = Grafter.new()
+        Sound.play("shop_buy")
         self.scene_manager:switch(self.store_scene)
     elseif kind == "expand" then
         gs.store:grow()
+        Sound.play("shop_buy")
     end
 end
 

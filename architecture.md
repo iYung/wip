@@ -176,6 +176,46 @@ Loads every PNG once at startup and returns a shared table. All other modules `r
 
 ---
 
+### Sound
+
+Loads and plays named sound effects. Parallel singleton to `Assets` — required directly by any module that needs to play audio.
+
+**Location:** `lua/game/sound.lua`
+
+**API**
+- `Sound.load()` — called once from `main.lua:love.load()`; iterates all 17 event names, loads each `assets/sounds/<name>.wav` via `love.audio.newSource(path, "static")` if the file exists; no-ops if `love.audio` is nil (headless)
+- `Sound.play(name)` — clones the pre-loaded source for `name` and plays it; cloning allows the same sound to overlap itself; no-ops if `love.audio` is nil or the name was not loaded
+
+**Sound events**
+
+| Name | Trigger |
+|---|---|
+| `pick_up` | Player picks up a carriable item |
+| `put_down` | Player places held item into a slot |
+| `water_plant` | Watering can successfully advances a plant's stage |
+| `plant_ready` | Plant growth timer completes; bubble appears |
+| `clone_success` | Grafter clones a stage-3 plant |
+| `clone_fail` | Grafter used but no empty slot available |
+| `sell_plant` | Player sells plant to customer |
+| `dismiss_customer` | Player dismisses a waiting customer |
+| `dialogue_skip` | Player skips typewriter reveal mid-message |
+| `dialogue_advance` | Player advances to the next dialogue line |
+| `discard_plant` | Player discards held item into garbage bin |
+| `open_shop` | Player opens the PC store / buy scene |
+| `shop_navigate` | Player cycles items in the buy scene |
+| `shop_buy` | Player successfully purchases an item |
+| `shop_close` | Player closes the buy scene |
+| `menu_navigate` | Player moves cursor in the start screen menu |
+| `menu_confirm` | Player confirms a selection in the start screen menu |
+
+**Assets**
+- `assets/sounds/<name>.wav` — one file per event; silent placeholder WAV files ship with the project; replace with real audio without any code changes
+
+**Headless**
+- `lua/headless/stubs.lua` installs a `love.audio` stub so `Sound.load()` / `Sound.play()` never see a nil `love.audio` and make no real audio calls
+
+---
+
 ### Input
 
 Maps Love2D key events to game actions. Game logic calls Input, never Love2D directly. Key bindings are sourced from `SettingsState.keybinds` and can be remapped at runtime via the settings menu.
@@ -273,7 +313,7 @@ An Item subclass. Tracks growth state via a cooldown timer.
 
 **Methods**
 - `update(dt)` — count down `cooldown`; flips `ready` and `bubble.visible` when it hits zero
-- `water()` — if `ready`, advance stage, reset cooldown, hide bubble; otherwise no-op
+- `water()` — if `ready`, advance stage, reset cooldown, hide bubble, return `true`; return `false` if not ready or already stage 3
 - `draw()` — renders `sprite`
 - `draw_bubble()` — if `bubble.visible`, positions and draws the bubble above the plant
 
@@ -612,7 +652,7 @@ Three ways to run the game:
 
 | File | Purpose |
 |------|---------|
-| `stubs.lua` | Installs no-op `love.graphics`, `love.keyboard`, `love.filesystem` globals before game modules load |
+| `stubs.lua` | Installs no-op `love.graphics`, `love.keyboard`, `love.filesystem`, and `love.audio` globals before game modules load |
 | `input.lua` | `HeadlessInput` — scriptable `Input` drop-in; `press()` / `hold()` / `release()` |
 | `runner.lua` | `setup(factory)`, `tick(input, sm, n, dt)`, `run(test_file)`; `_visual` flag enables coroutine-yield mode |
 
@@ -631,6 +671,7 @@ Three ways to run the game:
 | `test_settings_menu.lua` | Settings menu open/close, navigation, fullscreen toggle, keybind sub-screen, press-to-capture flow, modifier rejection, collision clearing |
 | `test_settings_state.lua` | `SettingsState` defaults, `toggle_fullscreen`, `set_keybind` (basic + collision), `key_map` output and nil-skipping |
 | `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
+| `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op |
 
 **CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.
 
