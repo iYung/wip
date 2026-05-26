@@ -4,6 +4,7 @@ local Sprite     = require("lua/core/sprite")
 local PLANT_DATA = require("lua/game/data/plant_data")
 local A          = require("lua/game/assets")
 local U          = require("lua/game/config").U
+local Sound      = require("lua/game/sound")
 
 local Grafter = setmetatable({}, { __index = Item })
 Grafter.__index = Grafter
@@ -68,10 +69,12 @@ function Grafter:interact(player, store, scene_manager)
 
         -- Spawn clone into nearest empty slot
         best_slot.item = Plant.new(plant.plant_type)
+        Sound.play("clone_success")
     else
         -- No empty slot — show bubble
         self.bubble.visible = true
         self._bubble_timer  = 1.5
+        Sound.play("clone_fail")
     end
 end
 

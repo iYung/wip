@@ -2,6 +2,7 @@ local Item   = require("lua/game/items/item")
 local Sprite = require("lua/core/sprite")
 local A      = require("lua/game/assets")
 local U      = require("lua/game/config").U
+local Sound  = require("lua/game/sound")
 
 local WateringCan = setmetatable({}, { __index = Item })
 WateringCan.__index = WateringCan
@@ -19,7 +20,9 @@ end
 function WateringCan:interact(player, store, scene_manager)
     local slot = player:active_slot(store)
     if slot and slot.item and slot.item.water then
-        slot.item:water()
+        if slot.item:water() then
+            Sound.play("water_plant")
+        end
     end
 end
 

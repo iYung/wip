@@ -5,6 +5,7 @@ local Timer      = require("lua/core/timer")
 local PLANT_DATA = require("lua/game/data/plant_data")
 local A          = require("lua/game/assets")
 local U          = require("lua/game/config").U
+local Sound      = require("lua/game/sound")
 
 local Plant = setmetatable({}, { __index = Item })
 Plant.__index = Plant
@@ -43,13 +44,14 @@ function Plant:update(dt)
         if self._cooldown:update(dt) then
             self.ready          = true
             self.bubble.visible = true
+            Sound.play("plant_ready")
         end
     end
 end
 
 function Plant:water()
-    if not self.ready then return end
-    if self.stage >= 3 then return end
+    if not self.ready then return false end
+    if self.stage >= 3 then return false end
     self.stage          = self.stage + 1
     self.ready          = false
     self.bubble.visible = false
@@ -58,6 +60,7 @@ function Plant:water()
     if next_cd then
         self._cooldown:reset(next_cd)
     end
+    return true
 end
 
 function Plant:draw()
