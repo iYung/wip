@@ -44,7 +44,7 @@ function Player.new(x)
     return self
 end
 
-function Player:set_speed_level(level, color)
+function Player:set_speed_color(color)
     self._speed_color = color
 end
 
