@@ -37,8 +37,8 @@ function SettingsMenu.new(settings_state, input)
     self._prev_sub_down    = false
     self._prev_sub_confirm = false
     self._prev_sub_escape  = false
-    self._img_btn     = love.graphics.newImage("assets/start_btn.png")
-    self._img_btn_sel = love.graphics.newImage("assets/start_btn_selected.png")
+    self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
+    self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
     self._img_bg      = love.graphics.newImage("assets/settings_background.png")
     self._font_btn    = love.graphics.newFont(22)
     self._btn_y0      = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
