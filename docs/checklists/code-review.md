@@ -1,8 +1,8 @@
 ## Code Review Checklist
 
-- [ ] **Bug** — `lua/game/player.lua:47` — `set_speed_level` accepts `level` but never stores it; rename to `set_speed_color` or add `self.speed_level = level`
-- [ ] **Bug** — `lua/game/scenes/store_scene.lua:73` — remove dead `slot` arg from `BuyScene.new(...)` call; `BuyScene.new` only takes 4 params and silently drops it
-- [ ] **Dead code** — `lua/game/assets.lua:33` — delete `A.grafter_loaded = img(...)` line; `grafter_loaded` is never referenced anywhere
+- [x] **Bug** — `lua/game/player.lua:47` — `set_speed_level` accepts `level` but never stores it; rename to `set_speed_color` or add `self.speed_level = level`
+- [x] **Bug** — `lua/game/scenes/store_scene.lua:73` — remove dead `slot` arg from `BuyScene.new(...)` call; `BuyScene.new` only takes 4 params and silently drops it
+- [x] **Dead code** — `lua/game/assets.lua:33` — delete `A.grafter_loaded = img(...)` line; `grafter_loaded` is never referenced anywhere
 - [ ] **Code quality** — `lua/game/scenes/buy_scene.lua:294` — change `local y = 652` to `y = 652` (or rename to `hint_y`) to avoid shadowing the outer `y` declared on line 215
 - [ ] **Code quality** — `lua/game/scenes/settings_menu.lua:22-27` — move `is_open`, `selected`, `_prev_up`, `_prev_down`, `_prev_confirm`, `_prev_escape` out of the class table and into `new()` as per-instance fields
 - [ ] **Code quality** — `lua/game/scenes/store_scene.lua:402` — add `local A = require("lua/game/assets")` at the top of the file; remove the per-frame `require` inside `draw()`
