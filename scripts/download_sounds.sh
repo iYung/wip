@@ -2,9 +2,14 @@
 # download_sounds.sh — Fetch all 17 game sounds from freesound.org and write
 # them to assets/sounds/<event_name>.wav.
 #
+# Strategy: The /download/ endpoint requires OAuth2. Instead, we call the
+# info endpoint (token auth) to get the public HQ-preview URL, download that
+# (no auth needed), and convert to WAV via ffmpeg.
+#
 # Requirements:
 #   - curl
 #   - ffmpeg
+#   - jq
 #   - FREESOUND_TOKEN env var set to a valid personal API token
 
 set -euo pipefail
@@ -16,6 +21,11 @@ if [[ -z "${FREESOUND_TOKEN:-}" ]]; then
   echo "Error: FREESOUND_TOKEN environment variable is not set." >&2
   echo "Obtain a personal API token from https://freesound.org/apiv2/apply/ and export it:" >&2
   echo "  export FREESOUND_TOKEN=your_token_here" >&2
+  exit 1
+fi
+
+if ! command -v jq &>/dev/null; then
+  echo "Error: jq is required but not found. Install it (e.g. brew install jq)." >&2
   exit 1
 fi
 
@@ -59,56 +69,46 @@ download_sound() {
   local sound_id="$1"
   local event_name="$2"
   local dest="$SOUNDS_DIR/${event_name}.wav"
-  local tmp_raw
-  tmp_raw="$(mktemp)"
+  local tmp_json tmp_audio tmp_wav
+  tmp_json="$(mktemp)"
 
-  # Download (follow redirects; freesound redirects to the actual audio file)
-  if ! curl -sSL \
-       -H "Authorization: Token $FREESOUND_TOKEN" \
-       -o "$tmp_raw" \
-       "https://freesound.org/apiv2/sounds/${sound_id}/download/"; then
-    echo "✗ ${event_name} (curl failed for ID ${sound_id})" >&2
-    rm -f "$tmp_raw"
+  # Step 1: fetch sound metadata (token auth is fine for the info endpoint)
+  if ! curl -sSf \
+       "https://freesound.org/apiv2/sounds/${sound_id}/?token=${FREESOUND_TOKEN}" \
+       -o "$tmp_json"; then
+    echo "✗ ${event_name} (info request failed for ID ${sound_id})" >&2
+    rm -f "$tmp_json"
     return 1
   fi
 
-  # Verify we got an actual audio file (not an error JSON)
-  local mime
-  mime="$(file --brief --mime-type "$tmp_raw" 2>/dev/null || true)"
-  case "$mime" in
-    audio/*|application/octet-stream)
-      : # looks like audio — proceed
-      ;;
-    *)
-      # Could be JSON error response from the API
-      echo "✗ ${event_name} (unexpected response type '${mime}' for ID ${sound_id})" >&2
-      rm -f "$tmp_raw"
-      return 1
-      ;;
-  esac
+  # Step 2: extract the HQ preview URL (public — no auth required to download)
+  local preview_url
+  preview_url="$(jq -r '.previews["preview-hq-mp3"] // .previews["preview-hq-ogg"] // empty' "$tmp_json")"
+  rm -f "$tmp_json"
 
-  # Determine whether conversion is needed.
-  # We consider a file already WAV if its MIME type is audio/x-wav or audio/wav,
-  # OR if the magic bytes match RIFF....WAVE.
-  local needs_conversion=1
-  if [[ "$mime" == "audio/x-wav" || "$mime" == "audio/wav" || "$mime" == "audio/wave" ]]; then
-    needs_conversion=0
+  if [[ -z "$preview_url" ]]; then
+    echo "✗ ${event_name} (no preview URL in API response for ID ${sound_id})" >&2
+    return 1
   fi
 
-  if [[ $needs_conversion -eq 0 ]]; then
-    mv "$tmp_raw" "$dest"
-  else
-    local tmp_wav
-    tmp_wav="$(mktemp --suffix=.wav)"
-    if ! ffmpeg -y -loglevel error -i "$tmp_raw" "$tmp_wav" 2>&1; then
-      echo "✗ ${event_name} (ffmpeg conversion failed for ID ${sound_id})" >&2
-      rm -f "$tmp_raw" "$tmp_wav"
-      return 1
-    fi
-    mv "$tmp_wav" "$dest"
-    rm -f "$tmp_raw"
+  # Step 3: download the preview
+  tmp_audio="$(mktemp)"
+  if ! curl -sSfL -o "$tmp_audio" "$preview_url"; then
+    echo "✗ ${event_name} (preview download failed for ID ${sound_id})" >&2
+    rm -f "$tmp_audio"
+    return 1
   fi
 
+  # Step 4: convert to WAV (preview is MP3 or OGG)
+  tmp_wav="$(mktemp --suffix=.wav)"
+  if ! ffmpeg -y -loglevel error -i "$tmp_audio" "$tmp_wav"; then
+    echo "✗ ${event_name} (ffmpeg conversion failed for ID ${sound_id})" >&2
+    rm -f "$tmp_audio" "$tmp_wav"
+    return 1
+  fi
+  rm -f "$tmp_audio"
+
+  mv "$tmp_wav" "$dest"
   echo "✓ ${event_name}"
   return 0
 }
