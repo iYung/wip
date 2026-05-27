@@ -20,7 +20,8 @@ luagame/
 │   ├── test_selling.lua
 │   ├── test_settings_menu.lua
 │   ├── test_settings_state.lua
-│   └── test_shop.lua
+│   ├── test_shop.lua
+│   └── test_start_scene.lua
 └── lua/
     ├── core/
     │   ├── sprite.lua

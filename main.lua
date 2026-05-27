@@ -20,6 +20,8 @@ do
     end
 end
 
+local _runner = _visual_mode and require("lua/headless/runner") or nil
+
 love.graphics.setDefaultFilter("nearest", "nearest")
 
 local SceneManager = require("lua/core/scene_manager")
@@ -124,7 +126,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    local sm = _visual_mode and require("lua/headless/runner")._active_sm or scene_manager
+    local sm = _visual_mode and _runner._active_sm or scene_manager
     if not sm then return end
 
     love.graphics.setCanvas(canvas)
