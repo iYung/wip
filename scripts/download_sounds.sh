@@ -25,7 +25,14 @@ if [[ -z "${FREESOUND_TOKEN:-}" ]]; then
 fi
 
 if ! command -v jq &>/dev/null; then
-  echo "Error: jq is required but not found. Install it (e.g. brew install jq)." >&2
+  echo "Error: jq is required but not found. Install it:" >&2
+  echo "  brew install jq" >&2
+  exit 1
+fi
+
+if ! command -v ffmpeg &>/dev/null; then
+  echo "Error: ffmpeg is required but not found. Install it:" >&2
+  echo "  brew install ffmpeg" >&2
   exit 1
 fi
 
@@ -100,7 +107,7 @@ download_sound() {
   fi
 
   # Step 4: convert to WAV (preview is MP3 or OGG)
-  tmp_wav="$(mktemp --suffix=.wav)"
+  tmp_wav="$(mktemp /tmp/sound_XXXXXX.wav)"
   if ! ffmpeg -y -loglevel error -i "$tmp_audio" "$tmp_wav"; then
     echo "✗ ${event_name} (ffmpeg conversion failed for ID ${sound_id})" >&2
     rm -f "$tmp_audio" "$tmp_wav"
