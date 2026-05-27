@@ -92,7 +92,7 @@ Controls the viewport — what portion of the world is visible.
 
 **StoreScene camera rules (applied after `follow()` each frame)**
 - `camera.y` is locked to `CAMERA_Y = 440` (no vertical follow)
-- `camera.x` is clamped so neither screen edge overruns the world: left bound = `-ZONE_WIDTH + 640`, right bound = `store:width() - 640`; ensures the cashier zone far-left and store far-right are never exposed
+- `camera.x` is clamped so neither screen edge overruns the world: left bound = `-ZONE_WIDTH + Config.LOGICAL_W/2`, right bound = `store:width() - Config.LOGICAL_W/2`; ensures the cashier zone far-left and store far-right are never exposed
 
 ---
 
@@ -221,11 +221,13 @@ Loads and plays named sound effects. Parallel singleton to `Assets` — required
 Maps Love2D key events to game actions. Game logic calls Input, never Love2D directly. Key bindings are sourced from `SettingsState.keybinds` and can be remapped at runtime via the settings menu.
 
 **Actions**
-- `move_left` — default `a`
-- `move_right` — default `d`
+- `move_left` — default `left` / `a`
+- `move_right` — default `right` / `d`
+- `move_up` — default `up` / `w`
+- `move_down` — default `down` / `s`
 - `pick_up_down` — default `e`
 - `interact` — default `f`
-- `move_up` / `move_down` — default `w` / `s` (used by settings menu navigation; not consumed by StoreScene)
+- `menu_confirm` — `return` / `space` / `f` (non-remappable; used by StartScene)
 
 **Methods**
 - `update()` — called each frame, samples key state
@@ -530,7 +532,6 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 - `selected` — index of the highlighted menu item (1 = New Game, 2 = Continue, 3 = Settings, 4 = Exit)
 - `open_settings` — callback provided by `main.lua`; called when Settings is confirmed; opens the `SettingsMenu` overlay
 - `_font_title`, `_font_btn` — Love2D fonts created in `on_enter()`; stored on the scene so they are not recreated every frame
-- `_prev_up`, `_prev_down`, `_prev_confirm` — previous-frame key states for edge detection
 
 **Menu items**
 - **New Game** — constructs and switches to `StoreScene` (same as Continue for now)
@@ -538,10 +539,10 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 - **Settings** — calls `self.open_settings()` to open the `SettingsMenu` overlay
 - **Exit** — calls `love.event.quit()`
 
-**Navigation keys** (handled with raw `love.keyboard.isDown` + edge detection, not via the `Input` module)
-- Up / W — move selection up
-- Down / S — move selection down
-- Enter / Space / F — confirm
+**Navigation keys** (delegated to the passed-in `Input` instance via `self.input:pressed(action)`)
+- `move_up` (Up / W) — move selection up
+- `move_down` (Down / S) — move selection down
+- `menu_confirm` (Enter / Space / F) — confirm
 
 **Notes**
 - Fonts are saved and restored around `draw()` so the global Love2D font state is unchanged when `StoreScene` draws next frame
@@ -672,6 +673,7 @@ Three ways to run the game:
 | `test_settings_state.lua` | `SettingsState` defaults, `toggle_fullscreen`, `set_keybind` (basic + collision), `key_map` output and nil-skipping |
 | `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
 | `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op |
+| `test_start_scene.lua` | StartScene navigation (up/down/wrap), confirm callbacks (Settings, Exit), no legacy `_prev_*` fields |
 
 **CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.
 

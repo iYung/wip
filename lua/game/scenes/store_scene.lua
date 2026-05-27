@@ -226,7 +226,7 @@ function StoreScene:update(dt)
     self.camera:follow(gs.player, CAMERA_LERP)
     self.camera.y = CAMERA_Y
 
-    local half_w      = 640
+    local half_w      = config.LOGICAL_W / 2
     local world_left  = -ZONE_WIDTH
     local world_right = gs.store:width()
     self.camera.x = math.max(world_left + half_w, math.min(world_right - half_w, self.camera.x))
