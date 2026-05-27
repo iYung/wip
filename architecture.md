@@ -209,7 +209,7 @@ Loads and plays named sound effects. Parallel singleton to `Assets` — required
 | `menu_confirm` | Player confirms a selection in the start screen menu |
 
 **Assets**
-- `assets/sounds/<name>.wav` — one file per event; silent placeholder WAV files ship with the project; replace with real audio without any code changes
+- `assets/sounds/<name>.wav` — one file per event; real sound effects sourced from craigsmith's public-domain library on freesound.org; run `scripts/download_sounds.sh` (requires `FREESOUND_TOKEN` env var, `curl`, and `ffmpeg`) to download/refresh all 17 files
 
 **Headless**
 - `lua/headless/stubs.lua` installs a `love.audio` stub so `Sound.load()` / `Sound.play()` never see a nil `love.audio` and make no real audio calls

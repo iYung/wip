@@ -137,6 +137,8 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
+- **Real sound effects** — `scripts/download_sounds.sh` downloads all 17 game-event sounds from craigsmith's public-domain freesound.org library and writes them to `assets/sounds/<event_name>.wav`; requires `FREESOUND_TOKEN` env var, `curl`, and `ffmpeg`; no code changes needed (filenames match the existing placeholders)
+
 - **Configurable keybinds** — all six game/menu actions (`move_up`, `move_down`, `move_left`, `move_right`, `pick_up_down`, `interact`) are remappable from Settings → Keybinds; press-to-capture flow (select action → next keypress sets binding); modifier keys ignored; binding a key to a new action automatically clears it from the old one; bindings live in `SettingsState.keybinds` and are applied to `input._map` immediately; 8 new settings-state tests + 8 new settings-menu tests (26 total)
 
 - **SettingsState** — new `lua/game/settings_state.lua` data class holds `fullscreen` bool and owns the `love.window.setFullscreen` call via `toggle_fullscreen()`; `SettingsMenu` is now a pure view — it reads `_state.fullscreen` for the label and delegates all mutations to `SettingsState`; `main.lua` constructs `SettingsState.new()` and passes it to `SettingsMenu.new(ss)`; 3 headless tests added in `tests/test_settings_state.lua`; `tests/test_settings_menu.lua` updated to use a real `SettingsState` instance (18 tests total)
