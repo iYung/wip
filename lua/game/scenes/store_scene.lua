@@ -11,6 +11,7 @@ local Customer          = require("lua/game/customer")
 local config       = require("lua/game/config")
 local WallPattern  = require("lua/game/shaders/wall_pattern")
 local Sway         = require("lua/game/shaders/sway")
+local A            = require("lua/game/assets")
 local ZONE_WIDTH   = config.ZONE_WIDTH
 local U            = config.U
 
@@ -82,7 +83,6 @@ function StoreScene:_setup_store()
     self._active_script_key = nil
     self._script_cooldowns  = {}
 
-    local A        = require("lua/game/assets")
     local wall_img = A.cashier_wall
     local slot_img = A.slot
 
@@ -408,7 +408,6 @@ function StoreScene:draw()
         end
     end
 
-    local A = require("lua/game/assets")
     gs.store:draw_bg(A)
 
     gs.store.sway_time = self._sway_time

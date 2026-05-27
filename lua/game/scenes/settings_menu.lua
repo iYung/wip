@@ -19,15 +19,14 @@ local BTN_GAP = 74
 local SettingsMenu = {}
 SettingsMenu.__index = SettingsMenu
 
-SettingsMenu.is_open = false
-SettingsMenu.selected = 1
-SettingsMenu._prev_up      = false
-SettingsMenu._prev_down    = false
-SettingsMenu._prev_confirm = false
-SettingsMenu._prev_escape  = false
-
 function SettingsMenu.new(settings_state, input)
     local self = setmetatable({}, SettingsMenu)
+    self.is_open = false
+    self.selected = 1
+    self._prev_up      = false
+    self._prev_down    = false
+    self._prev_confirm = false
+    self._prev_escape  = false
     self._state = settings_state
     self._input = input
     self._subscreen = nil

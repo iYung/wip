@@ -301,10 +301,10 @@ function BuyScene:draw()
     love.graphics.setFont(font_ui)
     love.graphics.setColor(0.35, 0.35, 0.35, 1)
     local hints = { "A/D: CYCLE", "F: BUY", "E: CANCEL" }
-    local y = 652
+    local hint_y = 652
     for _, hint in ipairs(hints) do
-        love.graphics.print(hint, 56, y)
-        y = y - 20
+        love.graphics.print(hint, 56, hint_y)
+        hint_y = hint_y - 20
     end
 
     love.graphics.setFont(prev_font)
