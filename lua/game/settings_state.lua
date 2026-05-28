@@ -4,8 +4,14 @@ SettingsState.__index = SettingsState
 function SettingsState.new()
     local self = setmetatable({}, SettingsState)
     self.fullscreen = false
+    self.volume = 100
     self.keybinds = {move_up="w", move_down="s", move_left="a", move_right="d", pick_up_down="e", interact="f"}
     return self
+end
+
+function SettingsState:set_volume(v)
+    self.volume = math.max(0, math.min(100, v))
+    love.audio.setVolume(self.volume / 100)
 end
 
 function SettingsState:toggle_fullscreen()
