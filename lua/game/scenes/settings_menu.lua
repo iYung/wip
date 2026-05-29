@@ -1,4 +1,4 @@
-local ITEMS = { "Fullscreen / Window", "Keybinds", "Exit Settings", "Leave Game" }
+local ITEMS = { "Fullscreen / Window", "Volume", "Keybinds", "Exit Settings", "Leave Game" }
 
 local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","pick_up_down","interact"}
 local _ACTION_LABELS = {"move up","move down","move left","move right","pick up/down","interact"}
@@ -25,6 +25,8 @@ function SettingsMenu.new(settings_state, input)
     self.selected = 1
     self._prev_up      = false
     self._prev_down    = false
+    self._prev_left    = false
+    self._prev_right   = false
     self._prev_confirm = false
     self._prev_escape  = false
     self._state = settings_state
@@ -49,9 +51,13 @@ function SettingsMenu:open(opaque)
     self.is_open  = true
     self._opaque  = opaque or false
     self.selected = 1
+    self._subscreen = nil
+    self._capturing = nil
     -- Snapshot current key state so keys held at open time don't immediately fire
     self._prev_up      = love.keyboard.isDown("up")    or love.keyboard.isDown("w")
     self._prev_down    = love.keyboard.isDown("down")  or love.keyboard.isDown("s")
+    self._prev_left    = love.keyboard.isDown("left")  or love.keyboard.isDown("a")
+    self._prev_right   = love.keyboard.isDown("right") or love.keyboard.isDown("d")
     self._prev_confirm = love.keyboard.isDown("e")     or love.keyboard.isDown("f")
                       or love.keyboard.isDown("return") or love.keyboard.isDown("space")
     self._prev_escape  = love.keyboard.isDown("escape")
@@ -99,8 +105,10 @@ function SettingsMenu:update(dt)
         return
     end
 
-    local up      = love.keyboard.isDown("up")   or love.keyboard.isDown("w")
-    local down    = love.keyboard.isDown("down") or love.keyboard.isDown("s")
+    local up      = love.keyboard.isDown("up")    or love.keyboard.isDown("w")
+    local down    = love.keyboard.isDown("down")  or love.keyboard.isDown("s")
+    local left    = love.keyboard.isDown("left")  or love.keyboard.isDown("a")
+    local right   = love.keyboard.isDown("right") or love.keyboard.isDown("d")
     local confirm = love.keyboard.isDown("e")      or love.keyboard.isDown("f")
                  or love.keyboard.isDown("return") or love.keyboard.isDown("space")
     local escape  = love.keyboard.isDown("escape")
@@ -117,9 +125,17 @@ function SettingsMenu:update(dt)
     if escape and not self._prev_escape then
         self:close()
     end
+    if left and not self._prev_left and self.selected == 2 then
+        self._state:set_volume(self._state.volume - 10)
+    end
+    if right and not self._prev_right and self.selected == 2 then
+        self._state:set_volume(self._state.volume + 10)
+    end
 
     self._prev_up      = up
     self._prev_down    = down
+    self._prev_left    = left
+    self._prev_right   = right
     self._prev_confirm = confirm
     self._prev_escape  = escape
 end
@@ -127,7 +143,7 @@ end
 function SettingsMenu:_confirm()
     if self.selected == 1 then
         self._state:toggle_fullscreen()
-    elseif self.selected == 2 then
+    elseif self.selected == 3 then
         self._subscreen = "keybinds"
         self._subscreen_selected = 1
         -- Snapshot so keys held at transition time don't immediately fire in the sub-screen
@@ -137,9 +153,9 @@ function SettingsMenu:_confirm()
                               or love.keyboard.isDown(self._state.keybinds.interact     or "f")
                               or love.keyboard.isDown("return") or love.keyboard.isDown("space")
         self._prev_sub_escape  = love.keyboard.isDown("escape")
-    elseif self.selected == 3 then
-        self:close()
     elseif self.selected == 4 then
+        self:close()
+    elseif self.selected == 5 then
         love.event.quit()
     end
 end
@@ -224,16 +240,17 @@ function SettingsMenu:draw()
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(img, BTN_X, y)
 
-        local label
-        if i == 1 then
-            label = self._state.fullscreen and "Window" or "Fullscreen"
-        else
-            label = ITEMS[i]
-        end
-
         love.graphics.setColor(1, 1, 1, 1)
         local th = self._font_btn:getHeight()
-        love.graphics.printf(label, BTN_X, y + (BTN_H - th) / 2, BTN_W, "center")
+        local ty = y + (BTN_H - th) / 2
+        if i == 1 then
+            love.graphics.printf(self._state.fullscreen and "Window" or "Fullscreen", BTN_X, ty, BTN_W, "center")
+        elseif i == 2 then
+            love.graphics.print("Volume", BTN_X + 10, ty)
+            love.graphics.printf("< " .. tostring(self._state.volume) .. "% >", BTN_X, ty, BTN_W - 10, "right")
+        else
+            love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
+        end
     end
 
     love.graphics.setFont(prev_font)

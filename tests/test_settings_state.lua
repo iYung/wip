@@ -4,6 +4,10 @@ local SettingsState = require("lua/game/settings_state")
 local _setFullscreen_last = nil
 love.window.setFullscreen = function(v) _setFullscreen_last = v end
 
+local _setVolume_last = nil
+love.audio = love.audio or {}
+love.audio.setVolume = function(v) _setVolume_last = v end
+
 -- Test 1: new() defaults fullscreen to false
 local s = SettingsState.new()
 assert(s.fullscreen == false, "new() should default fullscreen to false")
@@ -60,5 +64,27 @@ s6.keybinds.move_up = nil
 local km2 = s6:key_map()
 assert(km2.move_up == nil, "key_map should omit actions with nil bindings")
 print("PASS: key_map skips nil bindings")
+
+-- Test 9: new() defaults volume to 100
+local sv = SettingsState.new()
+assert(sv.volume == 100, "new() should default volume to 100, got " .. tostring(sv.volume))
+print("PASS: new() defaults volume to 100")
+
+-- Test 10: set_volume updates volume and calls love.audio.setVolume
+_setVolume_last = nil
+sv:set_volume(50)
+assert(sv.volume == 50, "set_volume(50) should set volume to 50, got " .. tostring(sv.volume))
+assert(_setVolume_last == 0.5, "set_volume(50) should call love.audio.setVolume(0.5), got " .. tostring(_setVolume_last))
+print("PASS: set_volume updates volume and calls love.audio.setVolume")
+
+-- Test 11: set_volume clamps below 0
+sv:set_volume(-10)
+assert(sv.volume == 0, "set_volume(-10) should clamp to 0, got " .. tostring(sv.volume))
+print("PASS: set_volume clamps to 0")
+
+-- Test 12: set_volume clamps above 100
+sv:set_volume(150)
+assert(sv.volume == 100, "set_volume(150) should clamp to 100, got " .. tostring(sv.volume))
+print("PASS: set_volume clamps to 100")
 
 print("ALL TESTS PASSED")

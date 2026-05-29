@@ -50,7 +50,7 @@ Completed step files are moved to [`archive/`](archive/).
 | File | What it does |
 |------|-------------|
 | `start_scene.lua` | Title screen with New Game / Continue / Settings / Exit buttons; up/down/W/S navigate, Enter/Space/F confirms; New Game and Continue both enter StoreScene; Settings opens the `SettingsMenu` overlay via callback; fonts saved and restored each draw so global font state is unaffected |
-| `settings_menu.lua` | Pause overlay — four buttons (Fullscreen/Window, Keybinds, Exit Settings, Leave Game); Keybinds opens a sub-screen listing all 6 actions with press-to-capture rebinding; navigation uses remapped move_up/move_down keys; `is_open` gates scene update in `main.lua`; drawn inside the canvas so it scales with the window |
+| `settings_menu.lua` | Pause overlay — five buttons (Fullscreen/Window, Volume, Keybinds, Exit Settings, Leave Game); Volume row shows `< XX% >` and responds to left/right keys in 10% steps; Keybinds opens a sub-screen listing all 6 actions with press-to-capture rebinding; navigation uses remapped move_up/move_down keys; `is_open` gates scene update in `main.lua`; drawn inside the canvas so it scales with the window |
 | `settings_state.lua` | Holds user settings: `fullscreen` bool + `keybinds` table (6 actions); `set_keybind` clears collisions; `key_map()` produces `Input`-compatible map; passed to `SettingsMenu.new(ss, input)` at startup |
 | `store_scene.lua` | Main loop — player moves, camera follows on x then clamps to world bounds (left = -400+640, right = store width−640), pick up/interact handled here; cashier zone logic (F skips reveal → advances → sells, E dismisses); context HUD bottom-left shows F: SKIP while typing, F: NEXT when done, E: DISMISS when customer waiting; `_active_script_key` tracks the current scripted customer (seen_scripts written on sale, not on spawn); `_script_cooldowns` counts down per completed sale — dismissed scripted customers return after 3 sales; unified parallax tiles `store_bg_*` across full world width pre-drawer; `Store:draw_bg` then stamps walls/windows on top; layered draw order for wall/bubbles |
 | `buy_scene.lua` | Carousel UI — 10 items (6 plants + Watering Can + Grafter + Expand Slot + Heat Lamps); A/D cycle, F buy, E cancel; per-type price and preview color; scene rendered to off-screen canvas and composited through CRT post-process shader |
@@ -136,6 +136,8 @@ Defaults — all remappable via Settings → Keybinds.
 See open questions in `game-design.md`.
 
 ### Recently completed
+
+- **Volume control** — master volume adjustable from the settings menu in 10% steps (0–100%); Volume row added as slot 2 with `< XX% >` display; left/right keys edge-trigger `SettingsState:set_volume()` which clamps and calls `love.audio.setVolume`; 4 new settings-state tests + 3 new settings-menu tests (38 total)
 
 - **Real sound effects** — `scripts/download_sounds.sh` downloads all 17 game-event sounds from craigsmith's public-domain freesound.org library and writes them to `assets/sounds/<event_name>.wav`; requires `FREESOUND_TOKEN` env var, `curl`, and `ffmpeg`; no code changes needed (filenames match the existing placeholders)
 
