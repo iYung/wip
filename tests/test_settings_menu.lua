@@ -1,3 +1,5 @@
+package.loaded["lua/game/sound"] = { set_sfx_volume = function() end, set_music_volume = function() end }
+
 local SettingsMenu = require("lua/game/scenes/settings_menu")
 local SettingsState = require("lua/game/settings_state")
 
@@ -8,9 +10,6 @@ love.window.setFullscreen = function(v) _setFullscreen_called_with = v end
 local _quit_called = false
 local _real_quit = love.event.quit
 love.event.quit = function() _quit_called = true end
-
-love.audio = love.audio or {}
-love.audio.setVolume = function() end
 
 -- Simulate pressing a key for one frame then releasing it.
 -- open() snapshots current key state, so we reset isDown before opening.
@@ -77,16 +76,19 @@ print("PASS: down navigation (2->3)")
 -- Test 8: down wraps from last item back to 1
 sim_key(m, "down")  -- 3->4
 sim_key(m, "down")  -- 4->5
-sim_key(m, "down")  -- 5->1 (wrap)
+sim_key(m, "down")  -- 5->6
+sim_key(m, "down")  -- 6->1 (wrap)
 assert(m.selected == 1, "down from last item should wrap to 1, got " .. m.selected)
-print("PASS: down wrap")
+print("PASS: down wrap (6 items)")
 
 -- Test 9: up from 1 wraps to last item
 sim_key(m, "up")
-assert(m.selected == 5, "up from 1 should wrap to 5, got " .. m.selected)
-print("PASS: up wrap")
+assert(m.selected == 6, "up from 1 should wrap to 6, got " .. m.selected)
+print("PASS: up wrap (wraps to 6)")
 
 -- Test 10: up navigates upward
+sim_key(m, "up")
+assert(m.selected == 5, "up from 6 should go to 5, got " .. m.selected)
 sim_key(m, "up")
 assert(m.selected == 4, "up from 5 should go to 4, got " .. m.selected)
 sim_key(m, "up")
@@ -95,7 +97,7 @@ sim_key(m, "up")
 assert(m.selected == 2, "up from 3 should go to 2, got " .. m.selected)
 sim_key(m, "up")
 assert(m.selected == 1, "up from 2 should go to 1, got " .. m.selected)
-print("PASS: up navigation")
+print("PASS: up navigation (6 rows)")
 
 -- Test 11: s key navigates down
 open_clean(m)
@@ -114,23 +116,25 @@ sim_key(m, "escape")
 assert(m.is_open == false, "escape should close the menu")
 print("PASS: escape closes menu")
 
--- Test 14: Exit Settings (index 4) closes the menu
+-- Test 14: Exit Settings (index 5) closes the menu
 open_clean(m)
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
-assert(m.selected == 4)
+sim_key(m, "down")
+assert(m.selected == 5)
 sim_key(m, "f")
 assert(m.is_open == false, "Exit Settings should close the menu")
 print("PASS: Exit Settings closes menu")
 
--- Test 15: Leave Game (index 5) calls love.event.quit
+-- Test 15: Leave Game (index 6) calls love.event.quit
 open_clean(m)
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
-assert(m.selected == 5, "should be on Leave Game")
+sim_key(m, "down")
+assert(m.selected == 6, "should be on Leave Game")
 _quit_called = false
 sim_key(m, "f")
 assert(_quit_called, "confirming Leave Game should call love.event.quit")
@@ -138,6 +142,7 @@ print("PASS: Leave Game calls quit")
 
 -- Test 16: e key also confirms
 open_clean(m)
+sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
@@ -169,25 +174,27 @@ m:update(0)
 assert(m.selected == 2, "held key should only fire once, got selected=" .. m.selected)
 print("PASS: edge-triggered navigation")
 
--- Test 19: Item count wraps at 5
+-- Test 19: Item count wraps at 6
 open_clean(m)
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
-assert(m.selected == 1, "5 downs from 1 should wrap back to 1, got " .. m.selected)
-print("PASS: item count wraps at 5")
+sim_key(m, "down")
+assert(m.selected == 1, "6 downs from 1 should wrap back to 1, got " .. m.selected)
+print("PASS: item count wraps at 6")
 
--- Test 20: Selecting item 3 opens keybind sub-screen
+-- Test 20: Selecting item 4 opens keybind sub-screen
 open_clean(m)
 sim_key(m, "down")
 sim_key(m, "down")
-assert(m.selected == 3)
+sim_key(m, "down")
+assert(m.selected == 4)
 sim_key(m, "f")
-assert(m._subscreen == "keybinds", "selecting item 3 should open keybinds sub-screen")
+assert(m._subscreen == "keybinds", "selecting item 4 should open keybinds sub-screen")
 assert(m._subscreen_selected == 1, "sub-screen should start at index 1")
-print("PASS: item 3 opens keybind sub-screen")
+print("PASS: item 4 opens keybind sub-screen")
 
 -- Test 21: Escape from sub-screen returns to main
 m._subscreen = "keybinds"
@@ -276,7 +283,7 @@ print("PASS: Return button exits sub-screen")
 -- Test 31: Confirm key held when entering sub-screen does not immediately trigger capture
 open_clean(m)
 m._subscreen = nil
-m.selected = 3
+m.selected = 4
 love.keyboard.isDown = function(k) return k == "f" end
 m:update(0)   -- enters sub-screen; _prev_sub_confirm snapshotted as true ("f" still down)
 m:update(0)   -- sub-screen: confirm held but _prev_sub_confirm=true → should not capture
@@ -314,38 +321,67 @@ print("PASS: keypressed returns false for modifier")
 open_clean(m)
 m._subscreen = nil
 m._subscreen_selected = 4   -- dirty: simulate having navigated the sub-screen before
-m.selected = 3
+m.selected = 4
 m._prev_confirm = false
 sim_key(m, "f")
 assert(m._subscreen == "keybinds", "should be in sub-screen")
 assert(m._subscreen_selected == 1, "_subscreen_selected should reset to 1 on re-entry, got " .. m._subscreen_selected)
-print("PASS: sub-screen selected resets to 1 on re-entry")
+print("PASS: sub-screen selected resets to 1 on re-entry (item 4)")
 
--- Test 36: left on volume row (index 2) decreases volume by 10
+-- Test 36: left on SFX Volume row (index 2) decreases sfx_volume by 10
 open_clean(m)
-state.volume = 50
-sim_key(m, "down")   -- move to volume row (index 2)
-assert(m.selected == 2, "should be on volume row")
+state.sfx_volume = 50
+sim_key(m, "down")   -- move to SFX Volume row (index 2)
+assert(m.selected == 2, "should be on SFX Volume row")
 sim_key(m, "left")
-assert(state.volume == 40, "left on volume row should decrease volume by 10, got " .. tostring(state.volume))
-print("PASS: left on volume row decreases volume")
+assert(state.sfx_volume == 40, "left on SFX Volume row should decrease sfx_volume by 10, got " .. tostring(state.sfx_volume))
+print("PASS: left on SFX Volume row decreases sfx_volume")
 
--- Test 37: right on volume row increases volume by 10
+-- Test 37: right on SFX Volume row increases sfx_volume by 10
 open_clean(m)
-state.volume = 50
-sim_key(m, "down")   -- move to volume row (index 2)
+state.sfx_volume = 50
+sim_key(m, "down")   -- move to SFX Volume row (index 2)
 sim_key(m, "right")
-assert(state.volume == 60, "right on volume row should increase volume by 10, got " .. tostring(state.volume))
-print("PASS: right on volume row increases volume")
+assert(state.sfx_volume == 60, "right on SFX Volume row should increase sfx_volume by 10, got " .. tostring(state.sfx_volume))
+print("PASS: right on SFX Volume row increases sfx_volume")
 
--- Test 38: left/right on non-volume row does not change volume
+-- Test 38: left/right on non-SFX-volume row does not change sfx_volume
 open_clean(m)
-state.volume = 50
+state.sfx_volume = 50
 assert(m.selected == 1, "should be on row 1 (Fullscreen)")
 sim_key(m, "left")
 sim_key(m, "right")
-assert(state.volume == 50, "left/right on non-volume row should not change volume, got " .. tostring(state.volume))
-print("PASS: left/right on non-volume row leaves volume unchanged")
+assert(state.sfx_volume == 50, "left/right on non-SFX-volume row should not change sfx_volume, got " .. tostring(state.sfx_volume))
+print("PASS: left/right on non-SFX-volume row leaves sfx_volume unchanged")
+
+-- Test 39: left on Music Volume row (index 3) decreases music_volume by 10
+open_clean(m)
+state.music_volume = 50
+sim_key(m, "down")   -- move to index 2
+sim_key(m, "down")   -- move to Music Volume row (index 3)
+assert(m.selected == 3, "should be on Music Volume row")
+sim_key(m, "left")
+assert(state.music_volume == 40, "left on Music Volume row should decrease music_volume by 10, got " .. tostring(state.music_volume))
+print("PASS: left on Music Volume row decreases music_volume")
+
+-- Test 40: right on Music Volume row (index 3) increases music_volume by 10
+open_clean(m)
+state.music_volume = 50
+sim_key(m, "down")   -- move to index 2
+sim_key(m, "down")   -- move to Music Volume row (index 3)
+assert(m.selected == 3, "should be on Music Volume row")
+sim_key(m, "right")
+assert(state.music_volume == 60, "right on Music Volume row should increase music_volume by 10, got " .. tostring(state.music_volume))
+print("PASS: right on Music Volume row increases music_volume")
+
+-- Test 41: left/right on non-music row does not change music_volume
+open_clean(m)
+state.music_volume = 50
+assert(m.selected == 1, "should be on row 1 (Fullscreen)")
+sim_key(m, "left")
+sim_key(m, "right")
+assert(state.music_volume == 50, "left/right on non-music row should not change music_volume, got " .. tostring(state.music_volume))
+print("PASS: left/right on non-music row leaves music_volume unchanged")
 
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")

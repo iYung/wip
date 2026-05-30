@@ -1,4 +1,4 @@
-local ITEMS = { "Fullscreen / Window", "Volume", "Keybinds", "Exit Settings", "Leave Game" }
+local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Exit Settings", "Leave Game" }
 
 local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","pick_up_down","interact"}
 local _ACTION_LABELS = {"move up","move down","move left","move right","pick up/down","interact"}
@@ -126,10 +126,16 @@ function SettingsMenu:update(dt)
         self:close()
     end
     if left and not self._prev_left and self.selected == 2 then
-        self._state:set_volume(self._state.volume - 10)
+        self._state:set_sfx_volume(self._state.sfx_volume - 10)
     end
     if right and not self._prev_right and self.selected == 2 then
-        self._state:set_volume(self._state.volume + 10)
+        self._state:set_sfx_volume(self._state.sfx_volume + 10)
+    end
+    if left and not self._prev_left and self.selected == 3 then
+        self._state:set_music_volume(self._state.music_volume - 10)
+    end
+    if right and not self._prev_right and self.selected == 3 then
+        self._state:set_music_volume(self._state.music_volume + 10)
     end
 
     self._prev_up      = up
@@ -143,7 +149,7 @@ end
 function SettingsMenu:_confirm()
     if self.selected == 1 then
         self._state:toggle_fullscreen()
-    elseif self.selected == 3 then
+    elseif self.selected == 4 then
         self._subscreen = "keybinds"
         self._subscreen_selected = 1
         -- Snapshot so keys held at transition time don't immediately fire in the sub-screen
@@ -153,9 +159,9 @@ function SettingsMenu:_confirm()
                               or love.keyboard.isDown(self._state.keybinds.interact     or "f")
                               or love.keyboard.isDown("return") or love.keyboard.isDown("space")
         self._prev_sub_escape  = love.keyboard.isDown("escape")
-    elseif self.selected == 4 then
-        self:close()
     elseif self.selected == 5 then
+        self:close()
+    elseif self.selected == 6 then
         love.event.quit()
     end
 end
@@ -246,8 +252,11 @@ function SettingsMenu:draw()
         if i == 1 then
             love.graphics.printf(self._state.fullscreen and "Window" or "Fullscreen", BTN_X, ty, BTN_W, "center")
         elseif i == 2 then
-            love.graphics.print("Volume", BTN_X + 10, ty)
-            love.graphics.printf("< " .. tostring(self._state.volume) .. "% >", BTN_X, ty, BTN_W - 10, "right")
+            love.graphics.print("SFX Volume", BTN_X + 10, ty)
+            love.graphics.printf("< " .. tostring(self._state.sfx_volume) .. "% >", BTN_X, ty, BTN_W - 10, "right")
+        elseif i == 3 then
+            love.graphics.print("Music Volume", BTN_X + 10, ty)
+            love.graphics.printf("< " .. tostring(self._state.music_volume) .. "% >", BTN_X, ty, BTN_W - 10, "right")
         else
             love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
         end
