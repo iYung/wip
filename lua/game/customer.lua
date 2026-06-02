@@ -15,7 +15,7 @@ local SPEED = 80
 local REVEAL_SPEED  = 40
 local PAD           = 14
 local MIN_BOX_W     = 120
-local MAX_BOX_W     = 12 * U  -- 240
+local MAX_BOX_W     = 18 * U  -- 360
 local TAIL_H        = 24
 local BUBBLE_MARGIN = { top = 12, right = 12, bottom = 12, left = 12 }
 

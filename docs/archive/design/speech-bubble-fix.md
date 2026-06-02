@@ -22,7 +22,7 @@ The `draw_bubble` else-branch (lines 304–331) currently:
 - Measures `text_w = font:getWidth(self._full_text)` (single-line width)
 - Sets `box_w = math.max(MIN_BOX_W, text_w + PAD * 2)` — no cap, so long text overflows the screen
 
-Fix: introduce a `MAX_BOX_W = 12 * U` constant (240px). Use `font:getWrap(text, MAX_BOX_W - PAD * 2)` to split the text into wrapped lines, size the box to the widest wrapped line (capped at `MAX_BOX_W`) and tall enough for all lines, and render each line individually.
+Fix: introduce a `MAX_BOX_W = 18 * U` constant (360px). Use `font:getWrap(text, MAX_BOX_W - PAD * 2)` to split the text into wrapped lines, size the box to the widest wrapped line (capped at `MAX_BOX_W`) and tall enough for all lines, and render each line individually.
 
 The reveal animation currently slices `_full_text` by byte index. After wrapping, the visible portion should still be sliced the same way from the full unwrapped string; only the draw call changes to word-wrap the revealed substring.
 

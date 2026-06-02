@@ -137,7 +137,7 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
-- **Speech bubble fix** — customer name prefix (`"Name: "`) removed from all dialogue lines (`make_full_text`, `serve`, `advance_after`); speech bubble now wraps long lines via `font:getWrap` with `MAX_BOX_W = 12 * U` (240px) so text never overflows the screen; bubble height grows to fit wrapped lines; typewriter reveal respects the same wrap limit
+- **Speech bubble fix** — customer name prefix (`"Name: "`) removed from all dialogue lines (`make_full_text`, `serve`, `advance_after`); speech bubble now wraps long lines via `font:getWrap` with `MAX_BOX_W = 18 * U` (360px) so text never overflows the screen; bubble height grows to fit wrapped lines; typewriter reveal respects the same wrap limit
 
 - **Web deploy** — game builds to WebAssembly via `love.js` and auto-deploys to GitHub Pages on every push to `main`; PRs get a live preview URL posted as a comment (`https://iyung.github.io/wip/pr-{n}/`) that is cleaned up on merge; on-screen controls (←↑↓→ d-pad + E / F / Esc action buttons) injected into the page for keyboard-less play; `conf.lua` gains `t.identity = "plantgame"` for save isolation
 
