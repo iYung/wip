@@ -100,13 +100,26 @@
   ].join('\n');
   document.head.appendChild(style);
 
+  // love.js's WASM SDL layer reads e.keyCode (a legacy numeric code) to
+  // determine which key was pressed. Synthetic events default to keyCode=0
+  // which SDL maps to nothing, so all button presses are silently ignored.
+  var KEY_CODES = {
+    'ArrowLeft': 37, 'ArrowRight': 39, 'ArrowUp': 38, 'ArrowDown': 40,
+    'e': 69, 'f': 70, 'Escape': 27
+  };
+
   document.addEventListener('DOMContentLoaded', function () {
     var canvas = document.getElementById('canvas');
 
     function fireKey(type, key, code) {
       if (!canvas) { canvas = document.getElementById('canvas'); }
       if (!canvas) { return; }
-      canvas.dispatchEvent(new KeyboardEvent(type, { key: key, code: code, bubbles: true }));
+      var kc = KEY_CODES[key] || 0;
+      canvas.dispatchEvent(new KeyboardEvent(type, {
+        key: key, code: code,
+        keyCode: kc, which: kc, charCode: kc,
+        bubbles: true, cancelable: true
+      }));
     }
 
     function attachButton(btn, key, code) {
