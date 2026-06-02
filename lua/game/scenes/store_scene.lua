@@ -253,8 +253,6 @@ function StoreScene:_handle_pick_up_down()
                 self._script_cooldowns[self._active_script_key] = DISMISS_COOLDOWN_SALES
                 self._active_script_key = nil
             end
-        elseif self._customer.state == "talking_after" then
-            self._customer:dismiss()
         end
         return
     end
