@@ -51,7 +51,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./web
-          keep_files: false
+          keep_files: true
 
   deploy-pr:
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
