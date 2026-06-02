@@ -137,6 +137,8 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
+- **Web deploy** — game builds to WebAssembly via `love.js` and auto-deploys to GitHub Pages on every push to `main`; PRs get a live preview URL posted as a comment (`https://iyung.github.io/wip/pr-{n}/`) that is cleaned up on merge; on-screen controls (←↑↓→ d-pad + E / F / Esc action buttons) injected into the page for keyboard-less play; `conf.lua` gains `t.identity = "plantgame"` for save isolation
+
 - **Volume control** — master volume adjustable from the settings menu in 10% steps (0–100%); Volume row added as slot 2 with `< XX% >` display; left/right keys edge-trigger `SettingsState:set_volume()` which clamps and calls `love.audio.setVolume`; 4 new settings-state tests + 3 new settings-menu tests (38 total)
 
 - **Real sound effects** — `scripts/download_sounds.sh` downloads all 17 game-event sounds from craigsmith's public-domain freesound.org library and writes them to `assets/sounds/<event_name>.wav`; requires `FREESOUND_TOKEN` env var, `curl`, and `ffmpeg`; no code changes needed (filenames match the existing placeholders)
