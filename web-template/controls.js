@@ -7,20 +7,29 @@
     document.head.appendChild(meta);
   }
 
+  // love.js sets canvas dimensions via JS inline styles after page load.
+  // CSS !important alone loses that race, so we force-apply via setProperty
+  // every 100 ms for the first 3 seconds, then on every resize.
+  function scaleCanvas() {
+    var c = document.getElementById('canvas');
+    if (!c) return;
+    var vw = window.innerWidth;
+    var vh = Math.round(vw * 720 / 1280);
+    c.style.setProperty('width',  vw + 'px', 'important');
+    c.style.setProperty('height', vh + 'px', 'important');
+  }
+  scaleCanvas();
+  window.addEventListener('resize', scaleCanvas);
+  var _poll = setInterval(scaleCanvas, 100);
+  setTimeout(function () { clearInterval(_poll); }, 3000);
+
   var style = document.createElement('style');
   style.textContent = [
-    // Scale the canvas to fit the viewport width while keeping aspect ratio.
-    // Canvas has intrinsic dimensions (1280x720) so height:auto preserves 16:9.
     'html, body {',
     '  margin: 0;',
     '  padding: 0;',
     '  background: #000;',
     '  overflow-x: hidden;',
-    '}',
-    '#canvas {',
-    '  display: block;',
-    '  width: 100% !important;',
-    '  height: auto !important;',
     '}',
     '#game-controls {',
     '  display: flex;',
