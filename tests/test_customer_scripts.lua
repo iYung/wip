@@ -271,7 +271,7 @@ do
     print("PASS: scripts: after_messages play after sale before walk-out")
 end
 
--- Test: dismiss during talking_after skips to walk-out without cooldown
+-- Test: pick_up_down during talking_after does NOT dismiss the customer
 do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
@@ -302,15 +302,49 @@ do
 
     assert(ctx.sm.current._customer.state == "talking_after", "precondition: talking_after")
 
-    -- dismiss mid-after-dialogue
+    -- press pick_up_down in the cashier zone while in talking_after
     ctx.input:press("pick_up_down")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
-    assert(ctx.sm.current._customer.state == "walking_out",
-        "dismiss during talking_after should send customer walking_out, got " .. tostring(ctx.sm.current._customer.state))
+    assert(ctx.sm.current._customer.state == "talking_after",
+        "pick_up_down during talking_after should NOT dismiss customer, got " .. tostring(ctx.sm.current._customer.state))
     assert(ctx.sm.current._script_cooldowns["old_pete:1"] == nil,
-        "dismiss during talking_after should not set a cooldown (sale already happened)")
-    print("PASS: scripts: dismiss during talking_after skips to walk-out without cooldown")
+        "no cooldown should be set when pick_up_down is a no-op during talking_after")
+    print("PASS: scripts: pick_up_down during talking_after does not dismiss customer")
+end
+
+-- Test: talking_after state reached via show/arrive/serve
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local elapsed = 0
+    ctx.gs.stage3_counts[1] = 1
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
+
+    -- show a scripted customer with after_messages
+    ctx.sm.current._customer:show({
+        plant_type     = 2, name = "Old Pete",
+        messages       = {},
+        after_messages = { "Thanks." },
+        primary_color  = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+
+    -- simulate arrival
+    elapsed = runner.fast_forward_until(ctx, function()
+        return ctx.sm.current._customer:arrived()
+    end, elapsed)
+    assert(ctx.sm.current._customer.state == "waiting", "precondition: customer arrived (waiting)")
+
+    -- serve the customer (triggers talking_after since after_messages is non-empty)
+    ctx.sm.current._customer:serve()
+
+    assert(ctx.sm.current._customer.state == "talking_after",
+        "customer should be in talking_after after serve(), got " .. tostring(ctx.sm.current._customer.state))
+    print("PASS: scripts: talking_after state reached via show/arrive/serve")
 end
 
 -- Test: script with no after_messages walks out immediately on sale (no regression)
