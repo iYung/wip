@@ -1,6 +1,27 @@
 (function () {
+  // Ensure viewport meta tag exists for correct mobile scaling
+  if (!document.querySelector('meta[name="viewport"]')) {
+    var meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1.0';
+    document.head.appendChild(meta);
+  }
+
   var style = document.createElement('style');
   style.textContent = [
+    // Scale the canvas to fit the viewport width while keeping aspect ratio.
+    // Canvas has intrinsic dimensions (1280x720) so height:auto preserves 16:9.
+    'html, body {',
+    '  margin: 0;',
+    '  padding: 0;',
+    '  background: #000;',
+    '  overflow-x: hidden;',
+    '}',
+    '#canvas {',
+    '  display: block;',
+    '  width: 100% !important;',
+    '  height: auto !important;',
+    '}',
     '#game-controls {',
     '  display: flex;',
     '  flex-direction: row;',
@@ -8,8 +29,7 @@
     '  padding: 12px;',
     '  background: rgba(0,0,0,0.7);',
     '  width: 100%;',
-    '  max-width: 640px;',
-    '  margin: 0 auto;',
+    '  margin: 0;',
     '  box-sizing: border-box;',
     '}',
     '#game-controls .cluster-left {',
