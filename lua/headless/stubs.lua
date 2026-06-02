@@ -68,13 +68,14 @@ love.audio = love.audio or {}
 -- Stub source object returned by newSource.
 local function make_stub_source()
   local src = {}
-  src.clone = function() return src end
+  src.clone      = function() return src end
+  src.setLooping = noop
+  src.setVolume  = noop
   return src
 end
 
 love.audio.newSource  = function(path, type) return make_stub_source() end
 love.audio.play       = noop
-love.audio.setVolume  = noop
 
 -- Force assets.lua to be re-required so its top-level love.graphics.newImage
 -- calls run through the stub rather than a cached (nil-graphics) version.

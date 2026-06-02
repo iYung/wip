@@ -1,17 +1,25 @@
+local Sound = require("lua/game/sound")
+
 local SettingsState = {}
 SettingsState.__index = SettingsState
 
 function SettingsState.new()
     local self = setmetatable({}, SettingsState)
     self.fullscreen = false
-    self.volume = 100
+    self.sfx_volume = 100
+    self.music_volume = 100
     self.keybinds = {move_up="w", move_down="s", move_left="a", move_right="d", pick_up_down="e", interact="f"}
     return self
 end
 
-function SettingsState:set_volume(v)
-    self.volume = math.max(0, math.min(100, v))
-    love.audio.setVolume(self.volume / 100)
+function SettingsState:set_sfx_volume(v)
+    self.sfx_volume = math.max(0, math.min(100, v))
+    Sound.set_sfx_volume(self.sfx_volume / 100)
+end
+
+function SettingsState:set_music_volume(v)
+    self.music_volume = math.max(0, math.min(100, v))
+    Sound.set_music_volume(self.music_volume / 100)
 end
 
 function SettingsState:toggle_fullscreen()
