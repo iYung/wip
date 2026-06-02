@@ -7,28 +7,6 @@
     document.head.appendChild(meta);
   }
 
-  // iOS Safari suspends the AudioContext until a trusted user gesture occurs.
-  // love.js calls ctx.resume() on the first touch/click, but the Promise
-  // resolves asynchronously — if a sound is triggered on that same tap it
-  // fires before audio is ready. Playing a 1-sample silent buffer inside the
-  // trusted touchstart handler unlocks audio synchronously for the whole page.
-  var _audioUnlocked = false;
-  function unlockAudio() {
-    if (_audioUnlocked) return;
-    _audioUnlocked = true;
-    var Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return;
-    var ctx = new Ctx();
-    var buf = ctx.createBuffer(1, 1, 22050);
-    var src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.connect(ctx.destination);
-    src.start(0);
-    ctx.close();
-  }
-  document.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
-  document.addEventListener('mousedown',  unlockAudio, { once: true });
-
   // love.js sets canvas dimensions via JS inline styles after page load.
   // CSS !important alone loses that race, so we force-apply via setProperty
   // every 100 ms for the first 3 seconds, then on every resize.
