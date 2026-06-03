@@ -35,12 +35,11 @@ function StartScene:on_enter()
     self._img_logo    = love.graphics.newImage("assets/start_logo.png")
     self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
     self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
-    local ok, pat = pcall(function()
+    if love.filesystem.getInfo("assets/start_pattern.png") then
         local img = love.graphics.newImage("assets/start_pattern.png")
         img:setWrap("repeat", "repeat")
-        return img
-    end)
-    if ok then self._img_pattern = pat end
+        self._img_pattern = img
+    end
     self._time = 0
 end
 
