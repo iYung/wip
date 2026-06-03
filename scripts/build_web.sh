@@ -7,7 +7,7 @@ echo "Zipping game files into game.love..."
 zip -r game.love main.lua conf.lua lua/ assets/
 
 echo "Running love.js to build web output..."
-npx love.js game.love web/ --title "plant game" --compatibility
+npx love.js game.love web/ --title "plant game" --compatibility -m 67108864
 
 echo "Copying controls.js into web/..."
 cp web-template/controls.js web/controls.js
