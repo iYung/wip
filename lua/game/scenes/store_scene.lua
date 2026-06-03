@@ -355,7 +355,13 @@ function StoreScene:_hud_labels()
     end
 
     local f_label
-    if player.x < 0 and self._customer and self._customer:arrived() then
+    if player.x < 0 and self._customer and self._customer.state == "talking_after" then
+        if not self._customer:line_complete() then
+            f_label = "F: SKIP"
+        else
+            f_label = "F: CONTINUE"
+        end
+    elseif player.x < 0 and self._customer and self._customer:arrived() then
         if self._customer:on_last_message() then
             if held and held.plant_type == self._customer.plant_type and held.stage == 3 then
                 f_label = "F: SELL TO CUSTOMER ($" .. plant_sell_value(held) .. ")"
