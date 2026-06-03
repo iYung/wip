@@ -1,61 +1,4 @@
 return {
-    -- Old Pete (cactus regular, 3-chapter arc)
-    {
-        id             = "old_pete",
-        chapter        = 1,
-        accessory      = "flat_cap",
-        trigger        = { plant_type = 1, count = 1 },
-        name           = "Old Pete",
-        primary_color     = {0.25, 0.45, 0.80, 1},
-        secondary_color = {0.55, 0.40, 0.25, 1},
-        plant_type     = 2,
-        messages       = {
-            "Haven't seen you before.",
-            "You grow plants here, yeah?",
-            "I'll take a cactus if you've got one.",
-        },
-        after_messages = {
-            "Right. I'll be back.",
-        },
-    },
-    {
-        id             = "old_pete",
-        chapter        = 2,
-        accessory      = "flat_cap",
-        trigger        = { plant_type = 2, count = 3 },
-        name           = "Old Pete",
-        primary_color     = {0.25, 0.45, 0.80, 1},
-        secondary_color = {0.55, 0.40, 0.25, 1},
-        plant_type     = 2,
-        messages       = {
-            "Back again.",
-            "That last cactus is doing great, believe it or not.",
-            "Got another one for me?",
-        },
-        after_messages = {
-            "Good. Two's better than one.",
-        },
-    },
-    {
-        id             = "old_pete",
-        chapter        = 3,
-        accessory      = "flat_cap",
-        trigger        = { plant_type = 2, count = 6 },
-        name           = "Old Pete",
-        primary_color     = {0.25, 0.45, 0.80, 1},
-        secondary_color = {0.55, 0.40, 0.25, 1},
-        plant_type     = 2,
-        messages       = {
-            "Hey. It's me again.",
-            "You've got a good place here. I mean that.",
-            "One more cactus and I think I'm set for life.",
-        },
-        after_messages = {
-            "Take care of yourself.",
-            "And the plants.",
-        },
-    },
-
     -- Mayor Bloom (rose questline, 2 chapters)
     {
         id             = "mayor_bloom",
@@ -98,7 +41,7 @@ return {
         id             = "the_collector",
         chapter        = 1,
         accessory      = "shades",
-        trigger        = { plant_type = 6, count = 1 },
+        trigger        = { plant_type = 5, count = 30 },
         name           = "The Collector",
         primary_color     = {0.85, 0.75, 0.10, 1},
         secondary_color = {0.25, 0.20, 0.40, 1},
@@ -132,22 +75,78 @@ return {
         },
     },
 
-    -- Mira (one-time visit, sunflower)
+    -- Mira (tulip pull, 2-chapter arc)
     {
-        id             = "mira",
-        chapter        = 1,
-        accessory      = "hair_bow",
-        trigger        = { plant_type = 4, count = 1 },
-        name           = "Mira",
-        primary_color     = {0.95, 0.80, 0.30, 1},
+        id              = "mira",
+        chapter         = 1,
+        accessory       = "hair_bow",
+        trigger         = { plant_type = 3, count = 3 },
+        name            = "Mira",
+        primary_color   = {0.95, 0.80, 0.30, 1},
         secondary_color = {0.30, 0.55, 0.35, 1},
-        plant_type     = 4,
-        messages       = {
+        plant_type      = 4,
+        messages        = {
             "My dad gave me money for something important.",
             "I want a tulip.",
         },
-        after_messages = {
+        after_messages  = {
             "He's going to love it.",
+        },
+    },
+    {
+        id              = "mira",
+        chapter         = 2,
+        accessory       = "hair_bow",
+        trigger         = { plant_type = 4, count = 3 },
+        name            = "Mira",
+        primary_color   = {0.95, 0.80, 0.30, 1},
+        secondary_color = {0.30, 0.55, 0.35, 1},
+        plant_type      = 4,
+        messages        = {
+            "I forgot to get one more.",
+            "It's fine. I just forgot.",
+        },
+        after_messages  = {
+            "Okay. Now I'm set.",
+        },
+    },
+
+    -- Mechafrog (daisy pull, 1-chapter arc)
+    {
+        id              = "mechafrog",
+        chapter         = 1,
+        accessory       = "antenna",
+        trigger         = { plant_type = 4, count = 5 },
+        name            = "Mechafrog",
+        primary_color   = {0.40, 0.55, 0.35, 1},
+        secondary_color = {0.60, 0.65, 0.60, 1},
+        plant_type      = 5,
+        messages        = {
+            "RECENTLY UNEMPLOYED. Organization: defeated.",
+            "Someone used prickly ball. Surrounded HQ with barbed wire. Very effective.",
+            "We seek forgiveness. I am told you have something for that.",
+        },
+        after_messages  = {
+            "FORGIVENESS ACQUIRED. This unit thanks you.",
+        },
+    },
+
+    {
+        id              = "mechafrog",
+        chapter         = 2,
+        accessory       = "antenna",
+        trigger         = { plant_type = 1, count = 50 },
+        name            = "Mechafrog",
+        primary_color   = {0.40, 0.55, 0.35, 1},
+        secondary_color = {0.60, 0.65, 0.60, 1},
+        plant_type      = 1,
+        messages        = {
+            "UPDATE: New employment acquired.",
+            "Current occupation: gardener. It is peaceful.",
+            "I will need grass. For the garden.",
+        },
+        after_messages  = {
+            "Gardening suits this unit.",
         },
     },
 
@@ -207,7 +206,45 @@ return {
         },
     },
 
-    -- Sage (tutorial mentor, 4-chapter arc)
+    -- Agent Frogsby (comedy spy, 2-chapter arc; cactus then rose pull)
+    {
+        id              = "agent_frogsby",
+        chapter         = 1,
+        accessory       = "coat",
+        trigger         = { plant_type = 2, count = 5 },
+        name            = "Agent Frogsby",
+        primary_color   = {0.22, 0.28, 0.22, 1},
+        secondary_color = {0.40, 0.32, 0.20, 1},
+        plant_type      = 2,
+        messages        = {
+            "I can't tell you who I work for.",
+            "What I can tell you is I need something. Spiky. For close quarters.",
+            "Word is you've got the thing. I'll take one.",
+        },
+        after_messages  = {
+            "This conversation never happened.",
+        },
+    },
+    {
+        id              = "agent_frogsby",
+        chapter         = 2,
+        accessory       = "coat",
+        trigger         = { plant_type = 2, count = 10 },
+        name            = "Agent Frogsby",
+        primary_color   = {0.22, 0.28, 0.22, 1},
+        secondary_color = {0.40, 0.32, 0.20, 1},
+        plant_type      = 3,
+        messages        = {
+            "Me again. Don't act surprised.",
+            "I needed barbed wire for a perimeter. Ran out. Classic.",
+            "A rose has thorns. Thorns are barbed wire. Do you have a rose?",
+        },
+        after_messages  = {
+            "Highly effective. Field-tested.",
+        },
+    },
+
+    -- Sage (intro + cactus pull, 2-chapter arc)
     {
         id             = "sage",
         chapter        = 1,
@@ -234,7 +271,7 @@ return {
         name           = "Sir Moneyton",
         primary_color     = {0.35, 0.58, 0.38, 1},
         secondary_color = {0.55, 0.40, 0.25, 1},
-        plant_type     = 1,
+        plant_type     = 2,
         messages       = {
             "Grass is a good start. But customers want variety.",
             "That computer over there — it's how you get new stock. Check it out.",
@@ -242,42 +279,6 @@ return {
         },
         after_messages = {
             "Don't forget — the computer. It matters.",
-        },
-    },
-    {
-        id             = "sage",
-        chapter        = 3,
-        accessory      = "monocle",
-        trigger        = { plant_type = 2, count = 1 },
-        name           = "Sir Moneyton",
-        primary_color     = {0.35, 0.58, 0.38, 1},
-        secondary_color = {0.55, 0.40, 0.25, 1},
-        plant_type     = 2,
-        messages       = {
-            "A cactus. Good choice. Takes patience but it pays.",
-            "You know about the grafting tool? It copies a finished plant without starting over.",
-            "Once you understand that, everything moves faster.",
-        },
-        after_messages = {
-            "Grafting. Remember that word.",
-        },
-    },
-    {
-        id             = "sage",
-        chapter        = 4,
-        accessory      = "monocle",
-        trigger        = { plant_type = 3, count = 1 },
-        name           = "Sir Moneyton",
-        primary_color     = {0.35, 0.58, 0.38, 1},
-        secondary_color = {0.55, 0.40, 0.25, 1},
-        plant_type     = 3,
-        messages       = {
-            "A rose. That's real money.",
-            "At some point, how fast you move matters as much as what you grow.",
-            "Check the upgrades. Speed and heat lamps — they compound.",
-        },
-        after_messages = {
-            "You're further along than most. Keep it up.",
         },
     },
 }
