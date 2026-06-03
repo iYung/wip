@@ -40,7 +40,12 @@ function SettingsMenu.new(settings_state, input)
     self._prev_sub_escape  = false
     self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
     self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
-    self._img_bg      = love.graphics.newImage("assets/start_bg.png")
+    self._img_bgs     = {
+        love.graphics.newImage("assets/settings_pattern_1.png"),
+        love.graphics.newImage("assets/settings_pattern_2.png"),
+    }
+    self._bg_frame    = 1
+    self._bg_timer    = 0
     self._font_btn    = love.graphics.newFont(22)
     self._btn_y0      = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
     self._sub_btn_y0  = H / 2 - #_ACTION_LIST * BTN_GAP / 2 - BTN_H / 2  -- centres 7 sub-screen rows
@@ -68,6 +73,12 @@ function SettingsMenu:close()
 end
 
 function SettingsMenu:update(dt)
+    self._bg_timer = self._bg_timer + dt
+    if self._bg_timer >= 1 then
+        self._bg_timer = self._bg_timer - 1
+        self._bg_frame = (self._bg_frame % 2) + 1
+    end
+
     if self._subscreen == "keybinds" then
         if self._capturing ~= nil then
             return
@@ -193,7 +204,7 @@ function SettingsMenu:draw()
         -- Background
         love.graphics.setColor(1, 1, 1, 1)
         if self._opaque then
-            love.graphics.draw(self._img_bg, 0, 0)
+            love.graphics.draw(self._img_bgs[self._bg_frame], 0, 0)
         else
             love.graphics.setColor(0, 0, 0, 0.55)
             love.graphics.rectangle("fill", 0, 0, W, H)
@@ -233,7 +244,7 @@ function SettingsMenu:draw()
     -- Background: image when opened from start scene, semi-transparent overlay in-game
     love.graphics.setColor(1, 1, 1, 1)
     if self._opaque then
-        love.graphics.draw(self._img_bg, 0, 0)
+        love.graphics.draw(self._img_bgs[self._bg_frame], 0, 0)
     else
         love.graphics.setColor(0, 0, 0, 0.55)
         love.graphics.rectangle("fill", 0, 0, W, H)

@@ -1,5 +1,9 @@
-local Scene = require("lua/core/scene")
-local Sound = require("lua/game/sound")
+local Scene   = require("lua/core/scene")
+local Sound   = require("lua/game/sound")
+local MenuBg  = require("lua/game/shaders/menu_bg")
+
+local SCROLL_SPEED_X = 60
+local SCROLL_SPEED_Y = 30
 
 local ITEMS = { "New Game", "Continue", "Settings", "Exit" }
 
@@ -21,6 +25,7 @@ function StartScene.new(game_state, input, scene_manager, open_settings)
     self.scene_manager  = scene_manager
     self.open_settings  = open_settings
     self.selected       = 1
+    self._time          = 0
     return self
 end
 
@@ -30,9 +35,16 @@ function StartScene:on_enter()
     self._img_logo    = love.graphics.newImage("assets/start_logo.png")
     self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
     self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
+    if love.filesystem.getInfo("assets/start_pattern.png") then
+        local img = love.graphics.newImage("assets/start_pattern.png")
+        img:setWrap("repeat", "repeat")
+        self._img_pattern = img
+    end
+    self._time = 0
 end
 
 function StartScene:update(dt)
+    self._time = self._time + dt
     if self.input:pressed("move_up") then
         self.selected = ((self.selected - 2) % #ITEMS) + 1
         Sound.play("menu_navigate")
@@ -64,7 +76,13 @@ function StartScene:draw()
     local prev_font = love.graphics.getFont()
 
     love.graphics.setColor(1, 1, 1, 1)
+    if self._img_pattern then
+        MenuBg.apply(self._img_pattern, self._img_bg,
+            self._time * SCROLL_SPEED_X,
+            self._time * SCROLL_SPEED_Y)
+    end
     love.graphics.draw(self._img_bg, 0, 0)
+    if self._img_pattern then MenuBg.clear() end
 
     local iw = self._img_logo:getWidth()
     love.graphics.draw(self._img_logo, (W - iw) / 2, 140)
