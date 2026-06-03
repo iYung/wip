@@ -87,5 +87,13 @@ s4:update(0)
 assert(s4.selected == 2, "no input should leave selection unchanged")
 print("PASS: no input, selection unchanged")
 
+-- Test 11: _time accumulates with dt
+local s5 = make_scene(nil)
+s5:update(1.0)
+assert(s5._time == 1.0, "_time should be 1.0 after update(1.0), got " .. tostring(s5._time))
+s5:update(0.5)
+assert(s5._time == 1.5, "_time should be 1.5 after another update(0.5), got " .. tostring(s5._time))
+print("PASS: _time accumulates with dt")
+
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")

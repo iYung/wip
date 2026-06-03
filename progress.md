@@ -157,6 +157,8 @@ See open questions in `game-design.md`.
 
 - **Character accessories** — all scripted characters now have accessories as a visual signal distinguishing them from random customers; PNGs in `assets/` (`monocle`, `secretary_glasses`, `shades`, `clown`, `hair_bow`)
 
+- **Menu background shader** — `assets/shaders/menu_bg.glsl` + `lua/game/shaders/menu_bg.lua`; tiles a scrolling pattern texture over pure-red masked pixels in `start_bg.png`; scroll offset advances with time (30px/s horizontal, 15px/s vertical); pattern loaded from `assets/start_pattern.png` and gracefully disabled when absent; `_time` initialised in `StartScene.new()` so tests can call `update()` without `on_enter()`
+
 - **Wall pattern shader** — `assets/shaders/wall_pattern.glsl` + `lua/game/shaders/wall_pattern.lua`; tiles a repeating pattern texture over pure-red pixels in wall/window images; world-space UV math keeps the pattern seamless across adjacent tiles; applied in both `Store:draw_bg` and the cashier wall in `StoreScene`; gracefully disabled when `assets/wall_pattern.png` is absent
 
 - **CRT post-process shader (BuyScene)** — `assets/shaders/crt.glsl` + `lua/game/shaders/crt.lua`; BuyScene renders into a 1280×720 canvas then composites through the shader; effects: barrel distortion, chromatic aberration, scanlines, vignette; canvas pattern saves/restores `prev_canvas` so it works correctly inside main.lua's existing canvas wrapper
