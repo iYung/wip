@@ -47,4 +47,52 @@ do
     print("PASS: set_music_volume accepts boundary values")
 end
 
+-- Test: Sound.update(dt) runs without error
+do
+    Sound.update(0.016)
+    Sound.update(0)
+    print("PASS: Sound.update() runs without error")
+end
+
+-- Test: Sound.play_music runs without error for known and unknown names
+do
+    Sound.play_music("menu")
+    Sound.play_music("bg")
+    Sound.play_music("nonexistent")
+    print("PASS: Sound.play_music() runs without error")
+end
+
+-- Test: Sound.fade_music runs without error for fade in and fade out
+do
+    Sound.fade_music("menu", 0, 2)
+    Sound.fade_music("bg", 1, 2)
+    Sound.fade_music("nonexistent", 0, 1)
+    print("PASS: Sound.fade_music() runs without error")
+end
+
+-- Test: Sound.stop_music runs without error
+do
+    Sound.stop_music("menu")
+    Sound.stop_music("bg")
+    Sound.stop_music("nonexistent")
+    print("PASS: Sound.stop_music() runs without error")
+end
+
+-- Test: Sound.is_music_playing returns false in headless (stubs return false)
+do
+    assert(Sound.is_music_playing("menu") == false, "is_music_playing should return false in headless")
+    assert(Sound.is_music_playing("bg") == false, "is_music_playing should return false in headless")
+    assert(Sound.is_music_playing("nonexistent") == false, "is_music_playing for unknown name should return false")
+    print("PASS: Sound.is_music_playing() returns false in headless")
+end
+
+-- Test: update runs cleanly after a fade_music call (no error from fade arithmetic)
+do
+    Sound.load()
+    Sound.fade_music("bg", 1, 2)
+    Sound.update(0.5)
+    Sound.update(2.0)
+    print("PASS: Sound.update() runs cleanly after fade_music")
+end
+
 print("ALL TESTS PASSED")

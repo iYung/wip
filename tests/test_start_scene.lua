@@ -80,14 +80,44 @@ s3:update(0)
 assert(_settings_opened, "confirming Settings (item 3) should invoke open_settings")
 print("PASS: confirm Settings calls open_settings")
 
--- Test 10: no action → selection unchanged
+-- Test 10: menu_confirm on item 1 (New Game) switches scene
+do
+    local switched = false
+    local sng = StartScene.new(
+        {},
+        make_input("menu_confirm"),
+        { switch = function() switched = true end },
+        function() end
+    )
+    sng.selected = 1
+    sng:update(0)
+    assert(switched, "confirming New Game (item 1) should switch scene")
+    print("PASS: confirm New Game switches scene")
+end
+
+-- Test 11: menu_confirm on item 2 (Continue) switches scene
+do
+    local switched = false
+    local sc = StartScene.new(
+        {},
+        make_input("menu_confirm"),
+        { switch = function() switched = true end },
+        function() end
+    )
+    sc.selected = 2
+    sc:update(0)
+    assert(switched, "confirming Continue (item 2) should switch scene")
+    print("PASS: confirm Continue switches scene")
+end
+
+-- Test 12: no action → selection unchanged
 local s4 = make_scene(nil)
 s4.selected = 2
 s4:update(0)
 assert(s4.selected == 2, "no input should leave selection unchanged")
 print("PASS: no input, selection unchanged")
 
--- Test 11: _time accumulates with dt
+-- Test 13: _time accumulates with dt
 local s5 = make_scene(nil)
 s5:update(1.0)
 assert(s5._time == 1.0, "_time should be 1.0 after update(1.0), got " .. tostring(s5._time))

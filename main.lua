@@ -116,6 +116,7 @@ function love.update(dt)
         return
     end
     if not _visual_mode then
+        Sound.update(dt)
         if settings_menu and settings_menu.is_open then
             settings_menu:update(dt)
         else

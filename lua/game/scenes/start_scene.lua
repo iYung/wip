@@ -43,6 +43,9 @@ function StartScene:on_enter()
         self._img_pattern = img
     end
     self._time = 0
+    if not Sound.is_music_playing("menu") then
+        Sound.play_music("menu")
+    end
 end
 
 function StartScene:update(dt)
@@ -71,6 +74,7 @@ function StartScene:_confirm()
         return
     end
     local StoreScene = require("lua/game/scenes/store_scene")
+    Sound.fade_music("menu", 0, 2)
     self.scene_manager:switch(StoreScene.new(self.game_state, self.input, self.scene_manager))
 end
 
