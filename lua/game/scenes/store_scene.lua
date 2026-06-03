@@ -48,6 +48,9 @@ function StoreScene.new(game_state, input, scene_manager)
 end
 
 function StoreScene:on_enter()
+    Sound.stop_music("menu")
+    Sound.fade_music("bg", 1, 2)
+
     local gs = self.game_state
 
     if not self._initialized then

@@ -71,6 +71,9 @@ local function make_stub_source()
   src.clone      = function() return src end
   src.setLooping = noop
   src.setVolume  = noop
+  src.play       = noop
+  src.stop       = noop
+  src.isPlaying  = function() return false end
   return src
 end
 
