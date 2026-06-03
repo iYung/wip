@@ -7,6 +7,7 @@ local PLANT_DATA  = require("lua/game/data/plant_data")
 local A           = require("lua/game/assets")
 local SPEED_TIERS    = require("lua/game/data/speed_tiers")
 local GROWTH_TIERS   = require("lua/game/data/growth_tiers")
+local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local ColorReplace   = require("lua/game/shaders/color_replace")
 local CRT            = require("lua/game/shaders/crt")
 local Sound          = require("lua/game/sound")
@@ -56,6 +57,11 @@ CATALOGUE[#CATALOGUE + 1] = {
     description = "Warm your plants.",
     kind        = "growth_boost",
     image       = A.heat_lamp_icon,
+}
+CATALOGUE[#CATALOGUE + 1] = {
+    label       = "Marketing",
+    description = "More customers, faster.",
+    kind        = "customer_cooldown",
 }
 
 local PREVIEW_SIZE = 160
@@ -135,6 +141,16 @@ function BuyScene:_confirm()
         return
     end
 
+    if ent.kind == "customer_cooldown" then
+        if gs.cooldown_level >= #COOLDOWN_TIERS then return end
+        local tier = COOLDOWN_TIERS[gs.cooldown_level + 1]
+        if gs.currency < tier.cost then return end
+        gs.currency       = gs.currency - tier.cost
+        gs.cooldown_level = gs.cooldown_level + 1
+        Sound.play("shop_buy")
+        return
+    end
+
     if gs.currency < ent.cost then return end
 
     gs.currency = gs.currency - ent.cost
@@ -191,6 +207,18 @@ function BuyScene:draw()
             display_desc = ent.description .. "\n" .. math.floor(tier.mult * 100 - 100) .. "% faster"
             can_buy      = currency >= tier.cost
         end
+    elseif ent.kind == "customer_cooldown" then
+        if gs.cooldown_level >= #COOLDOWN_TIERS then
+            display_cost = "---"
+            display_desc = "Max cooldown reached."
+            can_buy      = false
+        else
+            local tier   = COOLDOWN_TIERS[gs.cooldown_level + 1]
+            display_cost = "$" .. tier.cost
+            local cd_str = tier.cooldown == 0 and "instant" or (tier.cooldown .. "s between customers")
+            display_desc = ent.description .. "\n" .. cd_str
+            can_buy      = gs.currency >= tier.cost
+        end
     else
         display_cost = "$" .. ent.cost
         display_desc = ent.description
@@ -243,6 +271,17 @@ function BuyScene:draw()
             PREVIEW_SIZE / ent.image:getWidth(),
             PREVIEW_SIZE / ent.image:getHeight())
         if next_tier then ColorReplace.clear() end
+    elseif ent.kind == "customer_cooldown" then
+        local icon_lvl = math.min(gs.cooldown_level + 1, #A.ads)
+        local icon = A.ads[icon_lvl]
+        if icon then
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(icon,
+                CENTER_X - PREVIEW_SIZE / 2, y,
+                0,
+                PREVIEW_SIZE / icon:getWidth(),
+                PREVIEW_SIZE / icon:getHeight())
+        end
     elseif ent.image then
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(ent.image,

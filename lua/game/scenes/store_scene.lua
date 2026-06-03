@@ -12,6 +12,13 @@ local config       = require("lua/game/config")
 local WallPattern  = require("lua/game/shaders/wall_pattern")
 local Sway         = require("lua/game/shaders/sway")
 local A            = require("lua/game/assets")
+local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
+
+local function spawn_cooldown(gs)
+    if gs.cooldown_level == 0 then return 4 end
+    return COOLDOWN_TIERS[gs.cooldown_level].cooldown
+end
+
 local ZONE_WIDTH   = config.ZONE_WIDTH
 local U            = config.U
 
@@ -79,7 +86,7 @@ function StoreScene:_setup_store()
     local exit_x     = -(ZONE_WIDTH + 200)
     local customer_y = 500
     self._customer          = Customer.new(target_x, exit_x, customer_y)
-    self._spawn_timer       = Timer.new(math.random(3, 6))
+    self._spawn_timer       = Timer.new(spawn_cooldown(gs))
     self._active_script_key = nil
     self._script_cooldowns  = {}
 
@@ -214,12 +221,18 @@ function StoreScene:update(dt)
     end
 
     if not self._customer:active() then
-        if self._spawn_timer:update(dt) then
+        local cd = spawn_cooldown(self.game_state)
+        if cd == 0 then
             local cfg = self:_next_customer_cfg()
             if cfg then
                 self._customer:show(cfg)
             end
-            self._spawn_timer:reset(math.random(3, 6))
+        elseif self._spawn_timer:update(dt) then
+            local cfg = self:_next_customer_cfg()
+            if cfg then
+                self._customer:show(cfg)
+            end
+            self._spawn_timer:reset(cd)
         end
     end
 

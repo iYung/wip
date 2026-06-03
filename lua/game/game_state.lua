@@ -15,6 +15,7 @@ function GameState.new()
     self.currency        = 1000
     self.speed_level     = 0
     self.growth_level    = 0
+    self.cooldown_level  = 0
     self.growth_mult     = 1.0
     self.unlocked_plants = { [1] = true }
     self.stage3_counts   = {}
