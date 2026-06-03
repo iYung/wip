@@ -1,0 +1,3 @@
+# Settings Menu Sounds Checklist
+
+- [x] Task A — `lua/game/scenes/settings_menu.lua` — Add `local Sound = require("lua/game/sound")` at the top of the file (after the existing local constants), then insert `Sound.play("menu_navigate")` in the main-screen up and down edge-detect blocks (around lines 134–138), `Sound.play("menu_confirm")` at the top of `_confirm()`, `Sound.play("menu_navigate")` in the keybinds-subscreen up and down edge-detect blocks (around lines 102–106), `Sound.play("menu_confirm")` in the keybinds-subscreen confirm edge-detect block (around line 108), and `Sound.play("menu_navigate")` in each of the four left/right volume-step blocks for `selected == 2` and `selected == 3` (around lines 146–157).

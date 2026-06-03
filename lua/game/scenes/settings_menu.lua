@@ -1,3 +1,5 @@
+local Sound = require("lua/game/sound")
+
 local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Exit Settings", "Leave Game" }
 
 local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","pick_up_down","interact"}
@@ -101,11 +103,14 @@ function SettingsMenu:update(dt)
         local sub_count = #_ACTION_LIST + 1
         if up and not self._prev_sub_up then
             self._subscreen_selected = ((self._subscreen_selected - 2) % sub_count) + 1
+            Sound.play("menu_navigate")
         end
         if down and not self._prev_sub_down then
             self._subscreen_selected = (self._subscreen_selected % sub_count) + 1
+            Sound.play("menu_navigate")
         end
         if confirm and not self._prev_sub_confirm then
+            Sound.play("menu_confirm")
             if self._subscreen_selected == sub_count then
                 self._subscreen = nil
             else
@@ -133,9 +138,11 @@ function SettingsMenu:update(dt)
 
     if up and not self._prev_up then
         self.selected = ((self.selected - 2) % #ITEMS) + 1
+        Sound.play("menu_navigate")
     end
     if down and not self._prev_down then
         self.selected = (self.selected % #ITEMS) + 1
+        Sound.play("menu_navigate")
     end
     if confirm and not self._prev_confirm then
         self:_confirm()
@@ -145,15 +152,19 @@ function SettingsMenu:update(dt)
     end
     if left and not self._prev_left and self.selected == 2 then
         self._state:set_sfx_volume(self._state.sfx_volume - 10)
+        Sound.play("menu_navigate")
     end
     if right and not self._prev_right and self.selected == 2 then
         self._state:set_sfx_volume(self._state.sfx_volume + 10)
+        Sound.play("menu_navigate")
     end
     if left and not self._prev_left and self.selected == 3 then
         self._state:set_music_volume(self._state.music_volume - 10)
+        Sound.play("menu_navigate")
     end
     if right and not self._prev_right and self.selected == 3 then
         self._state:set_music_volume(self._state.music_volume + 10)
+        Sound.play("menu_navigate")
     end
 
     self._prev_up      = up
@@ -165,6 +176,7 @@ function SettingsMenu:update(dt)
 end
 
 function SettingsMenu:_confirm()
+    Sound.play("menu_confirm")
     if self.selected == 1 then
         self._state:toggle_fullscreen()
     elseif self.selected == 4 then
