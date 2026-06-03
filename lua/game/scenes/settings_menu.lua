@@ -16,6 +16,12 @@ local BTN_H   = 54
 local BTN_X   = (W - BTN_W) / 2
 local BTN_GAP = 74
 
+local LABEL_W  = 180
+local VAL_W    = 110
+local BAR_GAP  = 10
+local LABEL_SX = LABEL_W / BTN_W   -- horizontal scale for label bar image
+local VAL_SX   = VAL_W  / BTN_W    -- horizontal scale for value bar image
+
 local SettingsMenu = {}
 SettingsMenu.__index = SettingsMenu
 
@@ -40,6 +46,8 @@ function SettingsMenu.new(settings_state, input)
     self._prev_sub_escape  = false
     self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
     self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
+    self._img_arrow_l = love.graphics.newImage("assets/arrow_left.png")
+    self._img_arrow_r = love.graphics.newImage("assets/arrow_right.png")
     self._img_bgs     = {
         love.graphics.newImage("assets/settings_pattern_1.png"),
         love.graphics.newImage("assets/settings_pattern_2.png"),
@@ -215,19 +223,18 @@ function SettingsMenu:draw()
         for i = 1, #_ACTION_LIST do
             local y = self._sub_btn_y0 + (i - 1) * BTN_GAP
             local img = i == self._subscreen_selected and self._img_btn_sel or self._img_btn
+            local ty = y + (BTN_H - self._font_btn:getHeight()) / 2
+            -- Label bar
             love.graphics.setColor(1, 1, 1, 1)
-            love.graphics.draw(img, BTN_X, y)
-
-            local right_label
+            love.graphics.draw(img, BTN_X, y, 0, LABEL_SX, 1)
+            love.graphics.printf(_ACTION_LABELS[i], BTN_X, ty, LABEL_W, "center")
+            -- Value bar
+            love.graphics.draw(img, BTN_X + LABEL_W + BAR_GAP, y, 0, VAL_SX, 1)
             if self._capturing == _ACTION_LIST[i] then
-                right_label = "[press a key]"
+                love.graphics.printf("press a key", BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
             else
-                right_label = "[" .. (self._state.keybinds[_ACTION_LIST[i]] or "unbound"):upper() .. "]"
+                love.graphics.printf((self._state.keybinds[_ACTION_LIST[i]] or "unbound"):upper(), BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
             end
-
-            love.graphics.setColor(1, 1, 1, 1)
-            love.graphics.print(_ACTION_LABELS[i], BTN_X + 10, y + (BTN_H - self._font_btn:getHeight()) / 2)
-            love.graphics.printf(right_label, BTN_X, y + (BTN_H - self._font_btn:getHeight()) / 2, BTN_W - 10, "right")
         end
 
         local ry  = self._sub_btn_y0 + #_ACTION_LIST * BTN_GAP
@@ -255,7 +262,9 @@ function SettingsMenu:draw()
         local y   = self._btn_y0 + (i - 1) * BTN_GAP
         local img = i == self.selected and self._img_btn_sel or self._img_btn
         love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(img, BTN_X, y)
+        if i ~= 2 and i ~= 3 then
+            love.graphics.draw(img, BTN_X, y)
+        end
 
         love.graphics.setColor(1, 1, 1, 1)
         local th = self._font_btn:getHeight()
@@ -263,11 +272,27 @@ function SettingsMenu:draw()
         if i == 1 then
             love.graphics.printf(self._state.fullscreen and "Window" or "Fullscreen", BTN_X, ty, BTN_W, "center")
         elseif i == 2 then
-            love.graphics.print("SFX Volume", BTN_X + 10, ty)
-            love.graphics.printf("< " .. tostring(self._state.sfx_volume) .. "% >", BTN_X, ty, BTN_W - 10, "right")
+            -- Label bar
+            love.graphics.draw(img, BTN_X, y, 0, LABEL_SX, 1)
+            love.graphics.printf("SFX Volume", BTN_X, ty, LABEL_W, "center")
+            -- Value bar
+            local vx = BTN_X + LABEL_W + BAR_GAP
+            love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
+            love.graphics.draw(self._img_arrow_l, vx, y, 0, BTN_H/60, BTN_H/60)
+            love.graphics.draw(self._img_arrow_r, vx + VAL_W - BTN_H, y, 0, BTN_H/60, BTN_H/60)
+            local vol = self._state.sfx_volume
+            love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
         elseif i == 3 then
-            love.graphics.print("Music Volume", BTN_X + 10, ty)
-            love.graphics.printf("< " .. tostring(self._state.music_volume) .. "% >", BTN_X, ty, BTN_W - 10, "right")
+            -- Label bar
+            love.graphics.draw(img, BTN_X, y, 0, LABEL_SX, 1)
+            love.graphics.printf("Music Volume", BTN_X, ty, LABEL_W, "center")
+            -- Value bar
+            local vx = BTN_X + LABEL_W + BAR_GAP
+            love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
+            love.graphics.draw(self._img_arrow_l, vx, y, 0, BTN_H/60, BTN_H/60)
+            love.graphics.draw(self._img_arrow_r, vx + VAL_W - BTN_H, y, 0, BTN_H/60, BTN_H/60)
+            local vol = self._state.music_volume
+            love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
         else
             love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
         end
