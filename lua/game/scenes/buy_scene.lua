@@ -60,7 +60,7 @@ CATALOGUE[#CATALOGUE + 1] = {
 }
 CATALOGUE[#CATALOGUE + 1] = {
     label       = "Marketing",
-    description = "More customers, faster.",
+    description = "More customers, faster!",
     kind        = "customer_cooldown",
 }
 
@@ -210,13 +210,12 @@ function BuyScene:draw()
     elseif ent.kind == "customer_cooldown" then
         if gs.cooldown_level >= #COOLDOWN_TIERS then
             display_cost = "---"
-            display_desc = "Max cooldown reached."
+            display_desc = "Max ads reached."
             can_buy      = false
         else
             local tier   = COOLDOWN_TIERS[gs.cooldown_level + 1]
             display_cost = "$" .. tier.cost
-            local cd_str = tier.cooldown == 0 and "instant" or (tier.cooldown .. "s between customers")
-            display_desc = ent.description .. "\n" .. cd_str
+            display_desc = ent.description .. "\n" .. tier.label
             can_buy      = gs.currency >= tier.cost
         end
     else
