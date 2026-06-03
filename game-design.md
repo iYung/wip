@@ -145,12 +145,23 @@ Two kinds of customers can spawn:
 
 | Character | Plant | Chapters | Arc |
 |-----------|-------|----------|-----|
-| Sir Moneyton | Grass / Cactus / Rose | 4 | Tutorial mentor; guaranteed first customer; observational nudges toward each core mechanic; wears a monocle |
-| Old Pete | Cactus | 3 | Gruff regular who warms up over time; wears a flat cap |
+| Sir Moneyton | Grass → Cactus | 2 | Guaranteed first customer; intro buy then pulls toward cactus; wears a monocle |
 | Mayor Bloom | Rose | 2 | Formal first visit; returns privately for himself; wears secretary glasses |
-| The Collector | Golden Lotus | 2 | Mysterious; hints at what he did with the first one; wears a wide-brim hat |
-| Mira | Tulip | 1 | Kid with her dad's money, no explanation; wears a hair bow |
+| Agent Frogsby | Cactus → Rose | 2 | Comedy spy; buys cactus for close-quarters combat, returns needing rose thorns as barbed wire (pulls toward rose); wears a coat — *coat.png asset needed* |
+| Mira | Tulip | 2 | Kid with her dad's money; shows up after roses to buy a tulip (pulls toward tulip); forgets one more later |
 | Dottie | Daisy | 3 | Cheerful regular; presses flowers in books; brings one back as a gift; wears a flower pin |
+| Mechafrog | Daisy → Grass | 2 | Recently unemployed robot; their org was defeated by a prickly ball and barbed wire (Frogsby); seeks forgiveness via daisy (pulls toward daisy); returns later as a gardener wanting grass; wears an antenna — *antenna.png asset needed* |
+| The Collector | Golden Lotus | 2 | Mysterious; shows up after 30 daisies asking for golden lotus (pulls toward lotus); hints at what he did with the first one; wears shades |
+
+**Pull characters by plant tier:**
+
+| Plant | Pull character | Trigger |
+|-------|---------------|---------|
+| Cactus | Sir Moneyton Ch2 | grass sold ≥ 3 |
+| Rose | Agent Frogsby Ch2 | cactus sold ≥ 10 |
+| Tulip | Mira Ch1 | rose sold ≥ 3 |
+| Daisy | Mechafrog Ch1 | tulip sold ≥ 5 |
+| Golden Lotus | The Collector Ch1 | daisy sold ≥ 30 |
 
 **Dialog flow:**
 - Scripted customers: F advances through messages one at a time; after the last message the plant-image bubble appears
