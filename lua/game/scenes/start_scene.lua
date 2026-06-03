@@ -11,7 +11,7 @@ local W         = 1280
 local BTN_W     = 300
 local BTN_H     = 54
 local BTN_X     = (W - BTN_W) / 2
-local BTN_Y0    = 290
+local BTN_Y0    = 360
 local BTN_GAP   = 74
 
 local StartScene = setmetatable({}, { __index = Scene })
@@ -30,9 +30,11 @@ function StartScene.new(game_state, input, scene_manager, open_settings)
 end
 
 function StartScene:on_enter()
-    self._font_btn    = love.graphics.newFont(22)
+    self._font_btn      = love.graphics.newFont(22)
+    self._font_tagline  = love.graphics.newFont(16, "mono")
     self._img_bg      = love.graphics.newImage("assets/start_bg.png")
-    self._img_logo    = love.graphics.newImage("assets/start_logo.png")
+    self._img_logo     = love.graphics.newImage("assets/start_logo.png")
+    self._img_sub_logo = love.graphics.newImage("assets/sub_logo.png")
     self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
     self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
     if love.filesystem.getInfo("assets/start_pattern.png") then
@@ -85,7 +87,23 @@ function StartScene:draw()
     if self._img_pattern then MenuBg.clear() end
 
     local iw = self._img_logo:getWidth()
-    love.graphics.draw(self._img_logo, (W - iw) / 2, 140)
+    local logo_y = 140
+    love.graphics.draw(self._img_logo, (W - iw) / 2, logo_y)
+
+    local sw = self._img_sub_logo:getWidth()
+    local sub_y = logo_y + self._img_logo:getHeight() + 8
+    local sub_x = (W - sw) / 2
+    love.graphics.draw(self._img_sub_logo, sub_x, sub_y)
+
+    love.graphics.setFont(self._font_tagline)
+    local sh = self._img_sub_logo:getHeight()
+    local th = self._font_tagline:getHeight()
+    local tag_y = sub_y + (sh - th) / 2
+    local tag   = "grows plants with increasing speed and quantity for profit"
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.printf(tag, sub_x,     tag_y, sw, "center")
+    love.graphics.printf(tag, sub_x + 1, tag_y, sw, "center")
+    love.graphics.setColor(1, 1, 1, 1)
 
     love.graphics.setFont(self._font_btn)
     for i, label in ipairs(ITEMS) do
