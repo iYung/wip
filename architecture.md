@@ -197,14 +197,8 @@ Loads and plays named sound effects. Parallel singleton to `Assets` — required
 | `clone_success` | Grafter clones a stage-3 plant |
 | `clone_fail` | Grafter used but no empty slot available |
 | `sell_plant` | Player sells plant to customer |
-| `dismiss_customer` | Player dismisses a waiting customer |
-| `dialogue_skip` | Player skips typewriter reveal mid-message |
-| `dialogue_advance` | Player advances to the next dialogue line |
-| `discard_plant` | Player discards held item into garbage bin |
-| `open_shop` | Player opens the PC store / buy scene |
 | `shop_navigate` | Player cycles items in the buy scene |
 | `shop_buy` | Player successfully purchases an item |
-| `shop_close` | Player closes the buy scene |
 | `menu_navigate` | Player moves cursor in the start screen menu |
 | `menu_confirm` | Player confirms a selection in the start screen menu |
 
