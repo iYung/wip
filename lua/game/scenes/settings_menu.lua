@@ -46,8 +46,7 @@ function SettingsMenu.new(settings_state, input)
     self._prev_sub_escape  = false
     self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
     self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
-    self._img_arrow_l = love.graphics.newImage("assets/arrow_left.png")
-    self._img_arrow_r = love.graphics.newImage("assets/arrow_right.png")
+
     self._img_bgs     = {
         love.graphics.newImage("assets/settings_pattern_1.png"),
         love.graphics.newImage("assets/settings_pattern_2.png"),
@@ -278,9 +277,9 @@ function SettingsMenu:draw()
             -- Value bar
             local vx = BTN_X + LABEL_W + BAR_GAP
             love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
-            love.graphics.draw(self._img_arrow_l, vx, y, 0, BTN_H/60, BTN_H/60)
-            love.graphics.draw(self._img_arrow_r, vx + VAL_W - BTN_H, y, 0, BTN_H/60, BTN_H/60)
             local vol = self._state.sfx_volume
+            if vol > 0   then love.graphics.printf("<", vx,      ty, VAL_W, "left")  end
+            if vol < 100 then love.graphics.printf(">", vx - 10, ty, VAL_W, "right") end
             love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
         elseif i == 3 then
             -- Label bar
@@ -289,9 +288,9 @@ function SettingsMenu:draw()
             -- Value bar
             local vx = BTN_X + LABEL_W + BAR_GAP
             love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
-            love.graphics.draw(self._img_arrow_l, vx, y, 0, BTN_H/60, BTN_H/60)
-            love.graphics.draw(self._img_arrow_r, vx + VAL_W - BTN_H, y, 0, BTN_H/60, BTN_H/60)
             local vol = self._state.music_volume
+            if vol > 0   then love.graphics.printf("<", vx,      ty, VAL_W, "left")  end
+            if vol < 100 then love.graphics.printf(">", vx - 10, ty, VAL_W, "right") end
             love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
         else
             love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
