@@ -29,7 +29,7 @@ do
     print("PASS: scene_manager: first switch is immediate with no fade")
 end
 
--- Test 2: subsequent switch swaps scene immediately and starts fade-out
+-- Test 2: subsequent switch swaps scene immediately and starts fade-in from black
 do
     local sm = SceneManager.new()
     local a  = make_scene("A")
@@ -39,39 +39,37 @@ do
     assert(sm.current == b,          "subsequent switch: current should be B immediately")
     assert(a._exited  == 1,          "subsequent switch: on_exit called on A")
     assert(b._entered == 1,          "subsequent switch: on_enter called on B")
-    assert(sm._fade_state == "out",  "subsequent switch: fade-out started")
-    assert(sm._fade_alpha == 0,      "subsequent switch: alpha starts at 0")
+    assert(sm._fade_state == "in",   "subsequent switch: fade-in started")
+    assert(sm._fade_alpha == 1,      "subsequent switch: alpha starts at 1 (fully black)")
     print("PASS: scene_manager: subsequent switch swaps scene immediately")
 end
 
--- Test 3: fade-out advances alpha and transitions to fade-in
+-- Test 3: fade-in decrements alpha from 1 to 0 and returns to idle
 do
     local sm = SceneManager.new()
     local a  = make_scene("A")
     local b  = make_scene("B")
     sm:switch(a)
-    sm:switch(b)
-
-    -- tick with large dt to complete fade-out in one step
-    sm:update(1.0)
-    assert(sm._fade_state == "in",   "after large dt: should be in fade-in")
-    assert(sm._fade_alpha == 1,      "after large dt: alpha clamped to 1")
-    print("PASS: scene_manager: fade-out completes and transitions to fade-in")
-end
-
--- Test 4: fade-in decrements alpha and returns to idle
-do
-    local sm = SceneManager.new()
-    local a  = make_scene("A")
-    local b  = make_scene("B")
-    sm:switch(a)
-    sm:switch(b)
-    sm:update(1.0)   -- complete fade-out → state="in", alpha=1
-    sm:update(1.0)   -- complete fade-in  → state="idle", alpha=0
+    sm:switch(b)   -- alpha=1, state="in"
+    sm:update(1.0) -- complete fade-in → state="idle", alpha=0
     assert(sm._fade_state == "idle", "after fade-in: state should be idle")
     assert(sm._fade_alpha == 0,      "after fade-in: alpha back to 0")
     assert(sm.current == b,          "after fade: current still B")
     print("PASS: scene_manager: fade-in completes and returns to idle")
+end
+
+-- Test 4: alpha decrements gradually each tick
+do
+    local sm = SceneManager.new()
+    local a  = make_scene("A")
+    local b  = make_scene("B")
+    sm:switch(a)
+    sm:switch(b)   -- alpha=1
+    sm:update(1/60)
+    assert(sm._fade_alpha > 0 and sm._fade_alpha < 1,
+        "alpha should be between 0 and 1 after one tick, got " .. sm._fade_alpha)
+    assert(sm._fade_state == "in", "should still be fading in")
+    print("PASS: scene_manager: alpha decrements gradually each tick")
 end
 
 -- Test 5: new scene's update runs immediately after switch

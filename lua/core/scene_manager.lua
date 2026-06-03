@@ -19,12 +19,12 @@ function SceneManager:switch(scene)
         self.current = scene
         if self.current then self.current:on_enter() end
     else
-        -- Subsequent switches: swap immediately, then run fade overlay
+        -- Subsequent switches: swap immediately, fade in from black
         self.current:on_exit()
         self.current = scene
         if self.current then self.current:on_enter() end
-        self._fade_state = "out"
-        self._fade_alpha = 0
+        self._fade_state = "in"
+        self._fade_alpha = 1
     end
 end
 
