@@ -5,6 +5,7 @@
     "build": "bash scripts/build_web.sh"
   },
   "devDependencies": {
+    "coi-serviceworker": "^0.1.7",
     "love.js": "11.4.1"
   }
 }

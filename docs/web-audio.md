@@ -1,45 +1,29 @@
-# Web Audio — Known Issue
+# Web Audio — Resolved
 
-Audio does not play in the web build. This is a known-unresolved issue.
-
----
-
-## What was tried
-
-**Silent-buffer unlock** — on the first `touchstart`, a 1-sample silent `AudioBufferSourceNode` was created and played in a new `AudioContext`. This is a standard iOS autoplay unlock technique. It did not fix the issue and was reverted.
+Audio now works in the web build.
 
 ---
 
-## What we know about the stack
+## Fix
 
-love.js 11.4.1 compiles LÖVE with Emscripten. Audio goes through:
+The build was using `--compatibility` mode (`src/compat/love.js`), which does not use pthreads. The love.js README explicitly states this causes "dodgy audio."
 
-```
-LÖVE  →  OpenAL (emulated)  →  Emscripten AL layer  →  Web Audio API  →  browser
-```
+The fix switches to the release build (pthreads) and adds `coi-serviceworker` to inject the `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` headers via a service worker, which GitHub Pages requires for `SharedArrayBuffer` (used by pthreads).
 
-love.js registers `autoResumeAudioContext` which listens once for `keydown`, `mousedown`, or `touchstart` on `document` and the canvas, then calls `AudioContext.resume()`. This is intended to satisfy the browser autoplay policy.
+Changes:
+- `scripts/build_web.sh` — removed `--compatibility` flag; copies `coi-serviceworker.js` to `web/` and injects it as the first script in `<head>`
+- `package.json` — added `coi-serviceworker ^0.1.7` as a dev dependency
 
----
-
-## Suspected causes (unconfirmed)
-
-1. **Promise timing** — `AudioContext.resume()` returns a Promise. If a sound is triggered on the same tick as the first user gesture, the AudioContext may not be in `running` state yet when `alSourcePlay` is called.
-
-2. **OpenAL context not connected to the unlocked AudioContext** — iOS may create a second suspended AudioContext for OpenAL after the first one was unlocked, meaning the silent-buffer unlock targets the wrong context.
-
-3. **compat build limitation** — the `--compatibility` flag uses `src/compat/love.js` (no web workers). This is a different binary from the release build. It's possible audio is broken or degraded in the compat build specifically. Switching to the release build (removing `--compatibility` from `build_web.sh`) is the next thing to try — but the release build uses `love.worker.js` (pthreads), which needs cross-origin isolation headers (`COOP`/`COEP`) to work, which GitHub Pages does not serve by default.
-
-4. **WAV format** — all sounds are 16-bit PCM WAV. These should decode fine in all browsers, but this has not been confirmed in the web build specifically.
+On first visit the page reloads once (the service worker registers and redirects). Subsequent visits load normally with audio working.
 
 ---
 
-## Next steps to try (in order)
+## History
 
-1. **Check the browser console** — open the web build in Safari/Chrome with DevTools and look for any AudioContext or OpenAL errors on first interaction.
+### What was tried before
 
-2. **Switch to the release build** — remove `--compatibility` from `build_web.sh`. The release build uses pthreads and may have better audio support. Note: pthreads require the server to send `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` headers. GitHub Pages does not support custom headers, so this would require a different host (e.g. Netlify with a `_headers` file) or a service worker to inject the headers.
+**Silent-buffer unlock** — on the first `touchstart`, a 1-sample silent `AudioBufferSourceNode` was created and played in a new `AudioContext`. Standard iOS autoplay unlock technique. Did not fix the issue; reverted.
 
-3. **Convert sounds to OGG** — OGG Vorbis is love.js's preferred web audio format and is explicitly listed as an audio suffix in the packager. WAV may have decode issues in the Emscripten OpenAL layer that OGG does not.
+### Root cause
 
-4. **Test with a minimal LÖVE web audio example** — strip the game down to `love.audio.newSource` + `love.audio.play` in `love.load` to isolate whether the issue is with love.js audio on this platform at all, or something specific to how `Sound.load`/`Sound.play` is called.
+`--compatibility` (compat build) uses a different Emscripten binary with no web workers. The release build uses pthreads (`love.worker.js`) which requires cross-origin isolation headers. GitHub Pages does not serve these headers natively, hence the `coi-serviceworker` workaround.
