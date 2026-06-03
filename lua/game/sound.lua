@@ -33,8 +33,8 @@ function Sound.load()
             _src[name] = love.audio.newSource(path, "static")
         end
     end
-    if love.filesystem.getInfo("assets/music/background.ogg") then
-        _music = love.audio.newSource("assets/music/background.ogg", "stream")
+    if love.filesystem.getInfo("assets/music/background.wav") then
+        _music = love.audio.newSource("assets/music/background.wav", "stream")
         _music:setLooping(true)
         _music:setVolume(_music_volume)
         love.audio.play(_music)
