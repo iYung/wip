@@ -13,15 +13,9 @@ local _EVENT_NAMES = {
     "clone_success",
     "clone_fail",
     "sell_plant",
-    "dismiss_customer",
-    "dialogue_skip",
-    "dialogue_advance",
-    "discard_plant",
-    "open_shop",
-    "shop_navigate",
+"shop_navigate",
     "shop_buy",
-    "shop_close",
-    "menu_navigate",
+"menu_navigate",
     "menu_confirm",
 }
 

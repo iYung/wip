@@ -17,8 +17,8 @@ Add sound effects for every player-triggered action. Background music is out of 
 - `lua/game/items/plant.lua` — emit `plant_ready`; return bool from `:water()` for caller-side sound
 - `lua/game/items/watering_can.lua` — play `water_plant` when `:water()` returns true
 - `lua/game/items/grafter.lua` — play `clone_success` or `clone_fail`
-- `lua/game/scenes/store_scene.lua` — play pick_up, put_down, sell_plant, dismiss_customer, dialogue_advance, dialogue_skip, discard_plant, open_shop
-- `lua/game/scenes/buy_scene.lua` — play shop_navigate, shop_buy, shop_close
+- `lua/game/scenes/store_scene.lua` — play pick_up, put_down, sell_plant
+- `lua/game/scenes/buy_scene.lua` — play shop_navigate, shop_buy
 - `lua/game/scenes/start_scene.lua` — play menu_navigate, menu_confirm
 
 ---
@@ -70,14 +70,8 @@ Each call to `Sound.play` clones the source so overlapping playback works (e.g. 
 | `clone_success` | Grafter successfully clones a stage-3 plant |
 | `clone_fail` | Grafter used but no empty slot available |
 | `sell_plant` | Player successfully sells plant to customer |
-| `dismiss_customer` | Player dismisses a waiting customer |
-| `dialogue_skip` | Player skips typewriter reveal mid-message |
-| `dialogue_advance` | Player advances to the next dialogue line |
-| `discard_plant` | Player discards held item into garbage bin |
-| `open_shop` | Player opens the PC store / buy scene |
 | `shop_navigate` | Player cycles items left or right in the buy scene |
 | `shop_buy` | Player successfully purchases an item |
-| `shop_close` | Player closes the buy scene (E key) |
 | `menu_navigate` | Player moves cursor in the start screen menu |
 | `menu_confirm` | Player confirms a selection in the start screen menu |
 
@@ -114,20 +108,15 @@ Two changes:
 `_handle_pick_up_down`:
 - After `slot.item = player.held_item; player.held_item = nil` → `Sound.play("put_down")`
 - After `player.held_item = slot.item; slot.item = nil` → `Sound.play("pick_up")`
-- After `self._customer:dismiss()` → `Sound.play("dismiss_customer")`
 
 `_handle_interact`:
-- After `player.held_item = nil` (garbage bin discard) → `Sound.play("discard_plant")`
+- After `player.held_item = nil` (garbage bin discard) → `Sound.play("put_down")`
 - After `self._customer:serve()` (successful sale) → `Sound.play("sell_plant")`
-- After `self._customer:skip_reveal()` → `Sound.play("dialogue_skip")`
-- After `self._customer:advance()` → `Sound.play("dialogue_advance")`
-- When `item.buy_scene_factory` triggers a scene switch → `Sound.play("open_shop")`
 
 ### `lua/game/scenes/buy_scene.lua`
 
 `update`:
 - After left/right navigation changes `self.selected` → `Sound.play("shop_navigate")`
-- After E key triggers `scene_manager:switch` back to store → `Sound.play("shop_close")`
 
 `_confirm`:
 - After a successful purchase (any kind) → `Sound.play("shop_buy")`

@@ -109,7 +109,6 @@ function BuyScene:update(dt)
     if input:pressed("interact") then
         self:_confirm()
     elseif input:pressed("pick_up_down") then
-        Sound.play("shop_close")
         self.scene_manager:switch(self.store_scene)
     end
 end

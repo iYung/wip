@@ -264,7 +264,6 @@ function StoreScene:_handle_pick_up_down()
     if player.x < 0 then
         if self._customer:arrived() then
             self._customer:dismiss()
-            Sound.play("dismiss_customer")
             if self._active_script_key then
                 self._script_cooldowns[self._active_script_key] = DISMISS_COOLDOWN_SALES
                 self._active_script_key = nil
@@ -322,11 +321,9 @@ function StoreScene:_handle_interact()
         else
             if not self._customer:line_complete() then
                 self._customer:skip_reveal()
-                Sound.play("dialogue_skip")
                 return
             end
             self._customer:advance()
-            Sound.play("dialogue_advance")
         end
         return
     end
@@ -334,15 +331,14 @@ function StoreScene:_handle_interact()
     -- held item + garbage bin → discard
     if player.held_item and player.held_item.sellable ~= false and slot and slot.item and slot.item.is_garbage_bin then
         player.held_item = nil
-        Sound.play("discard_plant")
+        Sound.play("put_down")
         return
     end
 
     local item = player.held_item or (slot and slot.item)
     if item then
         local prev_stage = slot and slot.item and slot.item.stage
-        if item.buy_scene_factory then Sound.play("open_shop") end
-        item:interact(player, store, self.scene_manager)
+item:interact(player, store, self.scene_manager)
         if slot and slot.item and slot.item.stage == 3 and prev_stage == 2 then
             local pt = slot.item.plant_type
             self.game_state.stage3_counts[pt] = (self.game_state.stage3_counts[pt] or 0) + 1

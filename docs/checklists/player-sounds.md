@@ -13,9 +13,9 @@
 - [x] Task F — `lua/game/items/grafter.lua` — In `Grafter:interact()`, call `Sound.play("clone_success")` after placing the clone into `best_slot`, and `Sound.play("clone_fail")` in the else branch (no empty slot).
 
 - [x] Task G — `lua/game/scenes/store_scene.lua` — Add sound calls throughout the two handlers:
-  - `_handle_pick_up_down`: `pick_up` after picking up, `put_down` after putting down, `dismiss_customer` after `customer:dismiss()`.
-  - `_handle_interact`: `discard_plant` after the garbage-bin discard, `sell_plant` after `customer:serve()`, `dialogue_skip` after `skip_reveal()`, `dialogue_advance` after `customer:advance()`, `open_shop` when the pc_store interact triggers a scene switch.
+  - `_handle_pick_up_down`: `pick_up` after picking up, `put_down` after putting down.
+  - `_handle_interact`: `put_down` after the garbage-bin discard, `sell_plant` after `customer:serve()`.
 
-- [x] Task H — `lua/game/scenes/buy_scene.lua` — Add sound calls: `shop_navigate` after left/right changes `self.selected`; `shop_close` after E key triggers the scene switch back to store; `shop_buy` at the end of a successful `_confirm` (after any early-return guards, before or after the switch back to store scene).
+- [x] Task H — `lua/game/scenes/buy_scene.lua` — Add sound calls: `shop_navigate` after left/right changes `self.selected`; `shop_buy` at the end of a successful `_confirm` (after any early-return guards, before or after the switch back to store scene).
 
 - [x] Task I — `lua/game/scenes/start_scene.lua` — Add sound calls: `menu_navigate` after up or down changes `self.selected`; `menu_confirm` at the start of `_confirm` (before branching on `self.selected`).
