@@ -1,4 +1,11 @@
-package.loaded["lua/game/sound"] = { set_sfx_volume = function() end, set_music_volume = function() end }
+local _played = {}
+package.loaded["lua/game/sound"] = {
+    set_sfx_volume = function() end,
+    set_music_volume = function() end,
+    play = function(name) table.insert(_played, name) end,
+}
+local function last_sound() return _played[#_played] end
+local function clear_sounds() _played = {} end
 
 local SettingsMenu = require("lua/game/scenes/settings_menu")
 local SettingsState = require("lua/game/settings_state")
@@ -382,6 +389,69 @@ sim_key(m, "left")
 sim_key(m, "right")
 assert(state.music_volume == 50, "left/right on non-music row should not change music_volume, got " .. tostring(state.music_volume))
 print("PASS: left/right on non-music row leaves music_volume unchanged")
+
+-- Test 42: up/down navigation plays menu_navigate
+open_clean(m)
+clear_sounds()
+sim_key(m, "down")
+assert(last_sound() == "menu_navigate", "down navigation should play menu_navigate, got " .. tostring(last_sound()))
+clear_sounds()
+sim_key(m, "up")
+assert(last_sound() == "menu_navigate", "up navigation should play menu_navigate, got " .. tostring(last_sound()))
+print("PASS: up/down navigation plays menu_navigate")
+
+-- Test 43: confirm plays menu_confirm
+open_clean(m)
+clear_sounds()
+sim_key(m, "f")   -- confirm on Fullscreen/Window (index 1)
+assert(last_sound() == "menu_confirm", "confirm should play menu_confirm, got " .. tostring(last_sound()))
+print("PASS: confirm plays menu_confirm")
+
+-- Test 44: escape does not play any sound
+open_clean(m)
+clear_sounds()
+sim_key(m, "escape")
+assert(#_played == 0, "escape should not play any sound, got " .. tostring(last_sound()))
+print("PASS: escape plays no sound")
+
+-- Test 45: volume left/right plays menu_navigate
+open_clean(m)
+sim_key(m, "down")   -- move to SFX Volume (index 2)
+clear_sounds()
+sim_key(m, "left")
+assert(last_sound() == "menu_navigate", "SFX volume left should play menu_navigate, got " .. tostring(last_sound()))
+clear_sounds()
+sim_key(m, "right")
+assert(last_sound() == "menu_navigate", "SFX volume right should play menu_navigate, got " .. tostring(last_sound()))
+sim_key(m, "down")   -- move to Music Volume (index 3)
+clear_sounds()
+sim_key(m, "left")
+assert(last_sound() == "menu_navigate", "Music volume left should play menu_navigate, got " .. tostring(last_sound()))
+clear_sounds()
+sim_key(m, "right")
+assert(last_sound() == "menu_navigate", "Music volume right should play menu_navigate, got " .. tostring(last_sound()))
+print("PASS: volume left/right plays menu_navigate")
+
+-- Test 46: keybinds subscreen up/down plays menu_navigate
+open_clean(m)
+m._subscreen = "keybinds"
+m._subscreen_selected = 1
+clear_sounds()
+sim_key(m, "down")
+assert(last_sound() == "menu_navigate", "keybinds down should play menu_navigate, got " .. tostring(last_sound()))
+clear_sounds()
+sim_key(m, "up")
+assert(last_sound() == "menu_navigate", "keybinds up should play menu_navigate, got " .. tostring(last_sound()))
+print("PASS: keybinds subscreen up/down plays menu_navigate")
+
+-- Test 47: keybinds subscreen confirm plays menu_confirm
+open_clean(m)
+m._subscreen = "keybinds"
+m._subscreen_selected = 1
+clear_sounds()
+sim_key(m, "f")
+assert(last_sound() == "menu_confirm", "keybinds confirm should play menu_confirm, got " .. tostring(last_sound()))
+print("PASS: keybinds subscreen confirm plays menu_confirm")
 
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")
