@@ -1,11 +1,12 @@
 math.randomseed(42)
-local runner       = require("lua/headless/runner")
-local StoreScene   = require("lua/game/scenes/store_scene")
-local BuyScene     = require("lua/game/scenes/buy_scene")
-local PLANT_DATA   = require("lua/game/data/plant_data")
-local config       = require("lua/game/config")
-local SPEED_TIERS  = require("lua/game/data/speed_tiers")
-local GROWTH_TIERS = require("lua/game/data/growth_tiers")
+local runner         = require("lua/headless/runner")
+local StoreScene     = require("lua/game/scenes/store_scene")
+local BuyScene       = require("lua/game/scenes/buy_scene")
+local PLANT_DATA     = require("lua/game/data/plant_data")
+local config         = require("lua/game/config")
+local SPEED_TIERS    = require("lua/game/data/speed_tiers")
+local GROWTH_TIERS   = require("lua/game/data/growth_tiers")
+local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 
 -- CATALOGUE indices (matches buy_scene.lua build order):
 -- 1-6: plant types 1-6
@@ -14,6 +15,7 @@ local GROWTH_TIERS = require("lua/game/data/growth_tiers")
 -- 9:   Expand Slot
 -- 10:  Sneakers (speed_boost)
 -- 11:  Heat Lamps (growth_boost)
+-- 12:  Marketing (customer_cooldown)
 
 local function make_buy(ctx)
     return BuyScene.new(ctx.gs, ctx.input, ctx.sm, ctx.sm.current)
@@ -194,6 +196,73 @@ do
     assert(ctx.gs.currency == 9999,
         "currency should be unchanged at max growth, got " .. tostring(ctx.gs.currency))
     print("PASS: shop: cannot buy growth at max level")
+end
+
+-- Test: marketing upgrade deducts correct cost and increments cooldown_level
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local buy = make_buy(ctx)
+    ctx.gs.currency = 100
+    ctx.gs.cooldown_level = 0
+    buy.selected = 12   -- Marketing, tier 1 costs $10
+    buy:_confirm()
+    assert(ctx.gs.currency == 90,
+        "currency should be 90 after Marketing tier 1 ($10), got " .. tostring(ctx.gs.currency))
+    assert(ctx.gs.cooldown_level == 1,
+        "cooldown_level should be 1 after first upgrade, got " .. tostring(ctx.gs.cooldown_level))
+    print("PASS: shop: marketing upgrade cost and cooldown_level")
+end
+
+-- Test: marketing upgrade through all tiers
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local buy = make_buy(ctx)
+    ctx.gs.currency = 9999
+    buy.selected = 12
+    for i = 1, #COOLDOWN_TIERS do
+        buy:_confirm()
+        assert(ctx.gs.cooldown_level == i,
+            "cooldown_level should be " .. i .. " after upgrade " .. i .. ", got " .. tostring(ctx.gs.cooldown_level))
+    end
+    print("PASS: shop: marketing upgrade through all tiers")
+end
+
+-- Test: cannot buy marketing at max level
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local buy = make_buy(ctx)
+    ctx.gs.currency = 9999
+    ctx.gs.cooldown_level = #COOLDOWN_TIERS
+    buy.selected = 12
+    buy:_confirm()
+    assert(ctx.gs.cooldown_level == #COOLDOWN_TIERS,
+        "cooldown_level should remain at max, got " .. tostring(ctx.gs.cooldown_level))
+    assert(ctx.gs.currency == 9999,
+        "currency should be unchanged at max cooldown, got " .. tostring(ctx.gs.currency))
+    print("PASS: shop: cannot buy marketing at max level")
+end
+
+-- Test: cannot buy marketing if insufficient currency
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local buy = make_buy(ctx)
+    ctx.gs.currency = 0
+    ctx.gs.cooldown_level = 0
+    buy.selected = 12
+    buy:_confirm()
+    assert(ctx.gs.cooldown_level == 0,
+        "cooldown_level should be unchanged when broke, got " .. tostring(ctx.gs.cooldown_level))
+    assert(ctx.gs.currency == 0,
+        "currency should be unchanged when broke")
+    print("PASS: shop: cannot buy marketing if insufficient currency")
 end
 
 print("ALL TESTS PASSED")
