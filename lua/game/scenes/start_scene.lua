@@ -2,8 +2,8 @@ local Scene   = require("lua/core/scene")
 local Sound   = require("lua/game/sound")
 local MenuBg  = require("lua/game/shaders/menu_bg")
 
-local SCROLL_SPEED_X = 30
-local SCROLL_SPEED_Y = 15
+local SCROLL_SPEED_X = 60
+local SCROLL_SPEED_Y = 30
 
 local ITEMS = { "New Game", "Continue", "Settings", "Exit" }
 
