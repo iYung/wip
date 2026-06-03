@@ -15,6 +15,7 @@ local SPEED = 80
 local REVEAL_SPEED  = 40
 local PAD           = 14
 local MIN_BOX_W     = 120
+local MAX_BOX_W     = 18 * U  -- 360
 local TAIL_H        = 24
 local BUBBLE_MARGIN = { top = 12, right = 12, bottom = 12, left = 12 }
 
@@ -39,7 +40,7 @@ local function draw9(img, x, y, w, h, m)
 end
 
 local function make_full_text(c)
-    return c.name .. ": " .. (c.messages[c.msg_index] or "")
+    return c.messages[c.msg_index] or ""
 end
 
 local Customer = {}
@@ -167,7 +168,7 @@ function Customer:serve()
     self.bubble.visible = false
     if not self.done_after then
         self.state        = "talking_after"
-        self._full_text   = self.name .. ": " .. self.after_messages[1]
+        self._full_text   = self.after_messages[1]
         self.reveal_index = 0
         self.reveal_t     = 0
         self.bubble.visible = true
@@ -185,7 +186,7 @@ function Customer:advance_after()
     end
     if self.after_msg_index < #self.after_messages then
         self.after_msg_index = self.after_msg_index + 1
-        self._full_text      = self.name .. ": " .. self.after_messages[self.after_msg_index]
+        self._full_text      = self.after_messages[self.after_msg_index]
         self.reveal_index    = 0
         self.reveal_t        = 0
     else
@@ -315,19 +316,28 @@ function Customer:draw_bubble()
             idx = idx - 1
         end
         local revealed = string.sub(self._full_text, 1, idx)
-        local text_w   = font:getWidth(self._full_text)
         local text_h   = font:getHeight()
-        local box_w    = math.max(MIN_BOX_W, text_w + PAD * 2)
-        local box_h    = text_h + PAD * 2
-        local box_x    = self.bubble.x + BW / 2 - box_w / 2
-        local box_y    = self.bubble.y - box_h - TAIL_H + 4
+        local _, lines = font:getWrap(self._full_text, MAX_BOX_W - PAD * 2)
+        local widest_line_width = 0
+        for _, line in ipairs(lines) do
+            local lw = font:getWidth(line)
+            if lw > widest_line_width then widest_line_width = lw end
+        end
+        local box_w = math.min(MAX_BOX_W, math.max(MIN_BOX_W, widest_line_width + PAD * 2))
+        local box_h = text_h * #lines + PAD * 2
+        local box_x = self.bubble.x + BW / 2 - box_w / 2
+        local box_y = self.bubble.y - box_h - TAIL_H + 4
+
+        local _, revealed_lines = font:getWrap(revealed, MAX_BOX_W - PAD * 2)
 
         love.graphics.setColor(1, 1, 1, 1)
         draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
         local tw = A.speech_bubble_tail:getWidth()
         love.graphics.draw(A.speech_bubble_tail, box_x + box_w / 2 - tw / 2, box_y + box_h - 10)
         love.graphics.setColor(0.08, 0.07, 0.10, 0.95)
-        love.graphics.print(revealed, box_x + PAD, box_y + BUBBLE_MARGIN.top / 2 + PAD / 2)
+        for i, line in ipairs(revealed_lines) do
+            love.graphics.print(line, box_x + PAD, box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h)
+        end
         love.graphics.setColor(1, 1, 1, 1)
     end
 end

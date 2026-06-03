@@ -379,4 +379,76 @@ do
     print("PASS: scripts: no after_messages walks out immediately on sale")
 end
 
+-- Test: _full_text has no name prefix after show()
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx.sm.current._customer:show({
+        plant_type = 2, name = "Old Pete",
+        messages = { "Hello there." },
+        primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+    local ft = ctx.sm.current._customer._full_text
+    assert(ft == "Hello there.", "expected 'Hello there.', got '" .. tostring(ft) .. "'")
+    assert(not ft:find("Old Pete"), "_full_text should not contain customer name")
+    print("PASS: scripts: _full_text has no name prefix after show()")
+end
+
+-- Test: _full_text has no name prefix after serve()
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local elapsed = 0
+    ctx.sm.current._customer:show({
+        plant_type = 2, name = "Old Pete",
+        messages = {},
+        after_messages = { "Right. I'll be back." },
+        primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+    elapsed = runner.fast_forward_until(ctx, function()
+        return ctx.sm.current._customer:arrived()
+    end, elapsed)
+    local plant = Plant.new(2); plant.stage = 3
+    ctx.gs.player.held_item = plant
+    ctx.gs.player.x = -200
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+    local ft = ctx.sm.current._customer._full_text
+    assert(ft == "Right. I'll be back.", "expected raw after_message, got '" .. tostring(ft) .. "'")
+    assert(not ft:find("Old Pete"), "_full_text should not contain customer name after serve()")
+    print("PASS: scripts: _full_text has no name prefix after serve()")
+end
+
+-- Test: _full_text has no name prefix after advance_after()
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local elapsed = 0
+    ctx.sm.current._customer:show({
+        plant_type = 2, name = "Old Pete",
+        messages = {},
+        after_messages = { "First line.", "Second line." },
+        primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+    elapsed = runner.fast_forward_until(ctx, function()
+        return ctx.sm.current._customer:arrived()
+    end, elapsed)
+    local plant = Plant.new(2); plant.stage = 3
+    ctx.gs.player.held_item = plant
+    ctx.gs.player.x = -200
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+    -- advance to second after_message
+    ctx.sm.current._customer:skip_reveal()
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+    local ft = ctx.sm.current._customer._full_text
+    assert(ft == "Second line.", "expected 'Second line.', got '" .. tostring(ft) .. "'")
+    assert(not ft:find("Old Pete"), "_full_text should not contain customer name after advance_after()")
+    print("PASS: scripts: _full_text has no name prefix after advance_after()")
+end
+
 print("ALL TESTS PASSED")
