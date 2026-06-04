@@ -31,7 +31,12 @@
       "Bash(love . --test tests/test_customer_scripts.lua)",
       "Bash(echo \"exit: $?\")",
       "Bash(love . --headless tests/test_customer_scripts.lua)",
-      "Bash(echo \"EXIT:$?\")"
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(lua tests/test_sound.lua)",
+      "Bash(love . --headless)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(gh pr create --title 'Remove unused sound events' --body ' *)"
     ],
     "additionalDirectories": [
       "/Users/ivan/Development/luagame",
