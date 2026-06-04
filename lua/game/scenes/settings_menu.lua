@@ -26,9 +26,10 @@ local BTN_H   = 54
 local BTN_X   = (W - BTN_W) / 2
 local BTN_GAP = 74
 
-local LABEL_W  = 180
-local VAL_W    = 110
-local BAR_GAP  = 10
+local LABEL_W    = 180
+local VAL_W      = 110
+local BAR_GAP    = 10
+local ARROW_PAD  = 5
 local LABEL_SX = LABEL_W / BTN_W   -- horizontal scale for label bar image
 local VAL_SX   = VAL_W  / BTN_W    -- horizontal scale for value bar image
 
@@ -319,8 +320,8 @@ function SettingsMenu:draw()
             local vx = BTN_X + LABEL_W + BAR_GAP + 5
             love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
             local vol = self._state.sfx_volume
-            if vol > 0   then love.graphics.printf("<", vx, ty, VAL_W, "left")  end
-            if vol < 100 then love.graphics.printf(">", vx, ty, VAL_W, "right") end
+            if vol > 0   then love.graphics.printf("<", vx + ARROW_PAD, ty, VAL_W,              "left")  end
+            if vol < 100 then love.graphics.printf(">", vx,             ty, VAL_W - ARROW_PAD, "right") end
             love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
         elseif i == 3 then
             -- Label bar
@@ -330,8 +331,8 @@ function SettingsMenu:draw()
             local vx = BTN_X + LABEL_W + BAR_GAP + 5
             love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
             local vol = self._state.music_volume
-            if vol > 0   then love.graphics.printf("<", vx, ty, VAL_W, "left")  end
-            if vol < 100 then love.graphics.printf(">", vx, ty, VAL_W, "right") end
+            if vol > 0   then love.graphics.printf("<", vx + ARROW_PAD, ty, VAL_W,              "left")  end
+            if vol < 100 then love.graphics.printf(">", vx,             ty, VAL_W - ARROW_PAD, "right") end
             love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
         else
             local label = (i == 5 and self._saved) and "Saved!" or ITEMS[i]
