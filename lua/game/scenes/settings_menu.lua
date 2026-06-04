@@ -29,7 +29,7 @@ local BTN_GAP = 74
 local LABEL_W    = 180
 local VAL_W      = 110
 local BAR_GAP    = 10
-local ARROW_PAD  = 5
+local ARROW_PAD  = 10
 local LABEL_SX = LABEL_W / BTN_W   -- horizontal scale for label bar image
 local VAL_SX   = VAL_W  / BTN_W    -- horizontal scale for value bar image
 
