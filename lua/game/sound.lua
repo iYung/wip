@@ -1,6 +1,7 @@
 local Sound = {}
 
 local _src = {}
+local _animalese_src = nil
 local _sfx_volume = 1.0
 local _music_volume = 1.0
 local _music_tracks = {}
@@ -26,6 +27,9 @@ function Sound.load()
         if love.filesystem.getInfo(path) then
             _src[name] = love.audio.newSource(path, "static")
         end
+    end
+    if love.filesystem.getInfo("assets/sounds/animalese.wav") then
+        _animalese_src = love.audio.newSource("assets/sounds/animalese.wav", "static")
     end
     if love.filesystem.getInfo("assets/music/menu.wav") then
         local menu_src = love.audio.newSource("assets/music/menu.wav", "stream")
@@ -61,6 +65,16 @@ function Sound.play(name)
     if s then
         local clone = s:clone()
         clone:setVolume(_sfx_volume)
+        love.audio.play(clone)
+    end
+end
+
+function Sound.play_animalese(pitch)
+    if not love.audio then return end
+    if _animalese_src then
+        local clone = _animalese_src:clone()
+        clone:setVolume(_sfx_volume)
+        clone:setPitch(pitch)
         love.audio.play(clone)
     end
 end

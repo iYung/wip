@@ -360,6 +360,48 @@ do
     print("PASS: scripts: no after_messages walks out immediately on sale")
 end
 
+-- Test: all script entries have a voice_pitch field
+do
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, entry in ipairs(scripts) do
+        local p = entry.voice_pitch
+        assert(type(p) == "number", "expected voice_pitch number for " .. entry.id .. " ch" .. entry.chapter .. ", got " .. type(p))
+        assert(p > 0, "voice_pitch must be positive for " .. entry.id .. " ch" .. entry.chapter)
+    end
+    print("PASS: scripts: all script entries have a valid voice_pitch field")
+end
+
+-- Test: show() stores voice_pitch from cfg onto customer
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx.sm.current._customer:show({
+        plant_type = 5, name = "Dottie",
+        messages = { "Hi." },
+        voice_pitch = 1.28,
+        primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+    assert(ctx.sm.current._customer._voice_pitch == 1.28,
+        "expected _voice_pitch 1.28, got " .. tostring(ctx.sm.current._customer._voice_pitch))
+    print("PASS: scripts: show() stores voice_pitch from cfg")
+end
+
+-- Test: show() defaults voice_pitch to 1.0 when not provided
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx.sm.current._customer:show({
+        plant_type = 5, name = "Dottie",
+        messages = { "Hi." },
+        primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+    assert(ctx.sm.current._customer._voice_pitch == 1.0,
+        "expected _voice_pitch default 1.0, got " .. tostring(ctx.sm.current._customer._voice_pitch))
+    print("PASS: scripts: show() defaults _voice_pitch to 1.0 when not in cfg")
+end
+
 -- Test: _full_text has no name prefix after show()
 do
     local ctx = runner.setup(function(gs, input, sm)
