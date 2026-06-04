@@ -601,23 +601,26 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 
 **Properties**
 - `is_open` — whether the overlay is visible; `main.lua` gates scene update/draw on this
-- `selected` — index of the highlighted button on the main screen (1–4)
+- `selected` — index into `ITEMS` of the highlighted button
 - `_state` — the `SettingsState` instance passed to `new()`; all setting mutations go through it
 - `_input` — the game `Input` instance; `_map` is patched after a keybind capture
 - `_subscreen` — `nil` (main screen) or `"keybinds"` (keybind sub-screen)
 - `_subscreen_selected` — cursor row on the keybind sub-screen (1–6)
 - `_capturing` — `nil`, or the action name currently waiting for a key press
-- `_opaque` — set to `true` when opened via `open(true)` (start scene); controls background style
+- `_opaque` — `true` when opened via `open(true)` (start scene); hides Save Game and switches background style
+- `_saved` — `true` after a successful save this session; resets to `false` on `open()`; changes Save Game label to "Saved!"
 - `_prev_up`, `_prev_down`, `_prev_confirm`, `_prev_escape` — edge-detection flags (main screen)
 - `_prev_sub_up`, `_prev_sub_down`, `_prev_sub_confirm`, `_prev_sub_escape` — edge-detection flags (keybind sub-screen)
 
-**Main screen buttons**
+**Main screen buttons** (ITEMS indices; Save Game hidden when `_opaque`)
 1. **Fullscreen / Window** — calls `self._state:toggle_fullscreen()`; label flips between "Fullscreen" and "Window"
 2. **SFX Volume** / **Music Volume** — left/right adjusts volume in 10% steps
 3. **Keybinds** — opens the keybind sub-screen
-4. **Save Game** — calls the `on_save` callback (in-game only; grayed out when opened from start screen)
+4. **Save Game** *(in-game only)* — calls `on_save`; label becomes "Saved!" until the menu is reopened; hidden entirely when `_opaque`
 5. **Exit Settings** — closes the overlay
 6. **Leave Game** — calls `love.event.quit()`
+
+Navigation uses `_visible_items(opaque)` to build the active index list, so Save Game is unreachable and the remaining items recentre automatically when it is hidden.
 
 **Keybind sub-screen**
 
@@ -625,7 +628,7 @@ Lists all six remappable actions (`move_up`, `move_down`, `move_left`, `move_rig
 
 **Methods**
 - `new(settings_state, input, on_save)` — constructor; `on_save` is a callback invoked by "Save Game"
-- `open(opaque?)` / `close()` — show/hide the overlay; `open()` resets selection and snapshots key state
+- `open(opaque?)` / `close()` — show/hide the overlay; `open()` resets selection, clears `_saved`, and snapshots key state
 - `update(dt)` — handles navigation and action dispatch; routes to sub-screen logic when `_subscreen == "keybinds"`
 - `keypressed(key)` — called by `main.lua`'s `love.keypressed`; handles capture mode
 - `draw()` — renders main screen or keybind sub-screen depending on `_subscreen`
