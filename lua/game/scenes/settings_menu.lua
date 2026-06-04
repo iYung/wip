@@ -1,6 +1,6 @@
 local Sound = require("lua/game/sound")
 
-local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Exit Settings", "Leave Game" }
+local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Save Game", "Exit Settings", "Leave Game" }
 
 local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","pick_up_down","interact"}
 local _ACTION_LABELS = {"move up","move down","move left","move right","pick up/down","interact"}
@@ -27,7 +27,7 @@ local VAL_SX   = VAL_W  / BTN_W    -- horizontal scale for value bar image
 local SettingsMenu = {}
 SettingsMenu.__index = SettingsMenu
 
-function SettingsMenu.new(settings_state, input)
+function SettingsMenu.new(settings_state, input, on_save)
     local self = setmetatable({}, SettingsMenu)
     self.is_open = false
     self.selected = 1
@@ -39,6 +39,7 @@ function SettingsMenu.new(settings_state, input)
     self._prev_escape  = false
     self._state = settings_state
     self._input = input
+    self._on_save = on_save
     self._subscreen = nil
     self._subscreen_selected = 1
     self._capturing = nil
@@ -190,8 +191,12 @@ function SettingsMenu:_confirm()
                               or love.keyboard.isDown("return") or love.keyboard.isDown("space")
         self._prev_sub_escape  = love.keyboard.isDown("escape")
     elseif self.selected == 5 then
-        self:close()
+        if not self._opaque and self._on_save then
+            self._on_save()
+        end
     elseif self.selected == 6 then
+        self:close()
+    elseif self.selected == 7 then
         love.event.quit()
     end
 end
@@ -273,7 +278,7 @@ function SettingsMenu:draw()
         local y   = self._btn_y0 + (i - 1) * BTN_GAP
         local img = i == self.selected and self._img_btn_sel or self._img_btn
         love.graphics.setColor(1, 1, 1, 1)
-        if i ~= 2 and i ~= 3 then
+        if i ~= 2 and i ~= 3 and i ~= 5 then
             love.graphics.draw(img, BTN_X, y)
         end
 
@@ -304,6 +309,14 @@ function SettingsMenu:draw()
             if vol > 0   then love.graphics.printf("<", vx,      ty, VAL_W, "left")  end
             if vol < 100 then love.graphics.printf(">", vx - 10, ty, VAL_W, "right") end
             love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
+        elseif i == 5 then
+            -- Save Game: grayed out on start screen (unavailable)
+            if self._opaque then
+                love.graphics.setColor(0.5, 0.5, 0.5, 1)
+            end
+            love.graphics.draw(img, BTN_X, y)
+            love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
+            love.graphics.setColor(1, 1, 1, 1)
         else
             love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
         end

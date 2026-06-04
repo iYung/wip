@@ -236,7 +236,7 @@ Maps Love2D key events to game actions. Game logic calls Input, never Love2D dir
 
 ### GameState
 
-Shared state passed between scenes. Survives scene switches.
+Shared state passed between scenes. Survives scene switches. Fully serializable via `to_save` / `from_save`.
 
 **Properties**
 - `store` — the Store instance
@@ -246,8 +246,13 @@ Shared state passed between scenes. Survives scene switches.
 - `growth_level` — current Heat Lamps upgrade tier (0 = base)
 - `growth_mult` — float derived from `growth_level`; multiplied into `dt` passed to the store each frame (1.0 = no change)
 - `unlocked_plants` — set `{ [plant_type] = true }`; Grass (`[1]`) pre-populated; updated on plant purchase
-- `stage3_counts` — `{ [plant_type] = n }`; incremented each time that plant type reaches stage 3
-- `seen_scripts` — set `{ ["id:chapter"] = true }`; e.g. `"old_pete:1"`; prevents a scripted chapter from firing twice
+- `stage3_counts` — `{ [plant_type] = n }`; incremented each time that plant type reaches stage 3; used as quest unlock triggers
+- `seen_scripts` — set `{ ["id:chapter"] = true }`; e.g. `"sage:1"`; prevents a scripted chapter from firing twice
+
+**Methods**
+- `new()` — constructor; creates fresh default state
+- `to_save(gs)` — returns a plain serializable table capturing all fields (scalars, slot items, player position/held item)
+- `from_save(data)` — reconstructs a live GameState from a plain save table; item objects are recreated via type-dispatch; plant cooldowns restart from scratch
 
 ---
 
@@ -561,8 +566,29 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 - `key_map()` — returns `{action = {key}}` for all non-nil bindings; suitable for passing directly to `Input.new()` or patching `input._map`
 
 **Notes**
-- Memory-only; no filesystem I/O. Persistence will be added in a future save/load pass.
+- Memory-only; no filesystem I/O. Settings (volume, keybinds, fullscreen) are intentionally not included in the game save.
 - Follows the same Lua class pattern (`SettingsState.__index = SettingsState`) as `GameState`.
+
+---
+
+### Save
+
+Handles save file I/O. Serializes and deserializes game state to `save.dat` in Love2D's save directory (IndexedDB on web, a platform-appropriate directory on desktop).
+
+**Location:** `lua/game/save.lua`
+
+**Methods**
+- `Save.exists()` → bool — returns true if `save.dat` exists
+- `Save.write(data)` — serializes a plain Lua table (produced by `GameState.to_save`) to `save.dat` using a recursive Lua-table serializer; all string keys including non-identifier keys (e.g. `"sage:1"`) are handled
+- `Save.read()` → table or nil — reads and `load()`s `save.dat`; returns nil if the file is missing or the content fails to parse
+
+**Save file format:** A Lua-loadable string (`return { ... }`) written with `love.filesystem.write`. No third-party library required.
+
+**What is saved:** All `GameState` scalars, per-slot items (type + plant type/stage), player position and facing, held item. Plant cooldown progress is NOT saved — plants restart their cooldown on load.
+
+**What is not saved:** Customer/quest state, spawn timers, settings (volume, keybinds, fullscreen).
+
+**Web compatibility:** `love.filesystem.write` maps to browser IndexedDB on web (love.js) — no code changes needed for web builds. Auto-save via `love.quit()` may not fire reliably on web; the "Save Game" button in the settings menu is the reliable save path.
 
 ---
 
@@ -586,16 +612,18 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 
 **Main screen buttons**
 1. **Fullscreen / Window** — calls `self._state:toggle_fullscreen()`; label flips between "Fullscreen" and "Window"
-2. **Keybinds** — opens the keybind sub-screen
-3. **Exit Settings** — closes the overlay
-4. **Leave Game** — calls `love.event.quit()`
+2. **SFX Volume** / **Music Volume** — left/right adjusts volume in 10% steps
+3. **Keybinds** — opens the keybind sub-screen
+4. **Save Game** — calls the `on_save` callback (in-game only; grayed out when opened from start screen)
+5. **Exit Settings** — closes the overlay
+6. **Leave Game** — calls `love.event.quit()`
 
 **Keybind sub-screen**
 
 Lists all six remappable actions (`move_up`, `move_down`, `move_left`, `move_right`, `pick_up_down`, `interact`) with their current key. Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. Escape during capture cancels without change; escape outside capture returns to the main screen.
 
 **Methods**
-- `new(settings_state, input)` — constructor
+- `new(settings_state, input, on_save)` — constructor; `on_save` is a callback invoked by "Save Game"
 - `open(opaque?)` / `close()` — show/hide the overlay; `open()` resets selection and snapshots key state
 - `update(dt)` — handles navigation and action dispatch; routes to sub-screen logic when `_subscreen == "keybinds"`
 - `keypressed(key)` — called by `main.lua`'s `love.keypressed`; handles capture mode

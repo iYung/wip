@@ -95,7 +95,7 @@ do
     print("PASS: confirm New Game switches scene")
 end
 
--- Test 11: menu_confirm on item 2 (Continue) switches scene
+-- Test 11: menu_confirm on item 2 (Continue) is a no-op when no save exists
 do
     local switched = false
     local sc = StartScene.new(
@@ -105,9 +105,39 @@ do
         function() end
     )
     sc.selected = 2
+    sc._has_save = false
     sc:update(0)
-    assert(switched, "confirming Continue (item 2) should switch scene")
-    print("PASS: confirm Continue switches scene")
+    assert(not switched, "confirming Continue with no save should not switch scene")
+    print("PASS: confirm Continue no-op when no save")
+end
+
+-- Test 11b: menu_confirm on item 2 (Continue) switches scene when save exists
+do
+    local switched = false
+    local Save = require("lua/game/save")
+    local _orig_read = Save.read
+    -- stub Save.read to return a minimal valid save table
+    Save.read = function()
+        return {
+            version=1, currency=500, speed_level=0, growth_level=0,
+            cooldown_level=0, growth_mult=1.0,
+            unlocked_plants={[1]=true}, stage3_counts={}, seen_scripts={},
+            player={ x=100, facing="right", held_item=nil },
+            slots={ {item=nil},{item=nil},{item=nil},{item=nil},{item=nil} },
+        }
+    end
+    local sc = StartScene.new(
+        {},
+        make_input("menu_confirm"),
+        { switch = function() switched = true end },
+        function() end
+    )
+    sc.selected = 2
+    sc._has_save = true
+    sc:update(0)
+    assert(switched, "confirming Continue with save should switch scene")
+    Save.read = _orig_read
+    print("PASS: confirm Continue switches scene when save exists")
 end
 
 -- Test 12: no action → selection unchanged

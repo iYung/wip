@@ -1,6 +1,8 @@
-local Scene   = require("lua/core/scene")
-local Sound   = require("lua/game/sound")
-local MenuBg  = require("lua/game/shaders/menu_bg")
+local Scene     = require("lua/core/scene")
+local Sound     = require("lua/game/sound")
+local MenuBg    = require("lua/game/shaders/menu_bg")
+local Save      = require("lua/game/save")
+local GameState = require("lua/game/game_state")
 
 local SCROLL_SPEED_X = 60
 local SCROLL_SPEED_Y = 30
@@ -46,6 +48,7 @@ function StartScene:on_enter()
     if not Sound.is_music_playing("menu") then
         Sound.play_music("menu")
     end
+    self._has_save = Save.exists()
 end
 
 function StartScene:update(dt)
@@ -74,8 +77,18 @@ function StartScene:_confirm()
         return
     end
     local StoreScene = require("lua/game/scenes/store_scene")
+    if self.selected == 2 then
+        if not self._has_save then return end
+        local data = Save.read()
+        if not data then return end
+        local gs = GameState.from_save(data)
+        Sound.fade_music("menu", 0, 2)
+        self.scene_manager:switch(StoreScene.new(gs, self.input, self.scene_manager, true))
+        return
+    end
+    -- New Game (selected == 1)
     Sound.fade_music("menu", 0, 2)
-    self.scene_manager:switch(StoreScene.new(self.game_state, self.input, self.scene_manager))
+    self.scene_manager:switch(StoreScene.new(GameState.new(), self.input, self.scene_manager, false))
 end
 
 function StartScene:draw()
@@ -112,11 +125,20 @@ function StartScene:draw()
     love.graphics.setFont(self._font_btn)
     for i, label in ipairs(ITEMS) do
         local y = BTN_Y0 + (i - 1) * BTN_GAP
-        local img = i == self.selected and self._img_btn_sel or self._img_btn
-        love.graphics.draw(img, BTN_X, y)
-        love.graphics.setColor(1, 1, 1, 1)
-        local th = self._font_btn:getHeight()
-        love.graphics.printf(label, BTN_X, y + (BTN_H - th) / 2, BTN_W, "center")
+        if i == 2 and not self._has_save then
+            love.graphics.setColor(1, 1, 1, 0.4)
+            love.graphics.draw(self._img_btn, BTN_X, y)
+            love.graphics.setColor(1, 1, 1, 0.4)
+            local th = self._font_btn:getHeight()
+            love.graphics.printf(label, BTN_X, y + (BTN_H - th) / 2, BTN_W, "center")
+            love.graphics.setColor(1, 1, 1, 1)
+        else
+            local img = i == self.selected and self._img_btn_sel or self._img_btn
+            love.graphics.draw(img, BTN_X, y)
+            love.graphics.setColor(1, 1, 1, 1)
+            local th = self._font_btn:getHeight()
+            love.graphics.printf(label, BTN_X, y + (BTN_H - th) / 2, BTN_W, "center")
+        end
     end
 
     love.graphics.setFont(prev_font)
