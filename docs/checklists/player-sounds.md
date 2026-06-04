@@ -14,7 +14,7 @@
 
 - [x] Task G — `lua/game/scenes/store_scene.lua` — Add sound calls throughout the two handlers:
   - `_handle_pick_up_down`: `pick_up` after picking up, `put_down` after putting down.
-  - `_handle_interact`: `put_down` after the garbage-bin discard, `sell_plant` after `customer:serve()`.
+  - `_handle_interact`: `put_down` after the garbage-bin discard, `shop_buy` after `customer:serve()`.
 
 - [x] Task H — `lua/game/scenes/buy_scene.lua` — Add sound calls: `shop_navigate` after left/right changes `self.selected`; `shop_buy` at the end of a successful `_confirm` (after any early-return guards, before or after the switch back to store scene).
 

@@ -17,7 +17,7 @@ Add sound effects for every player-triggered action. Background music is out of 
 - `lua/game/items/plant.lua` — emit `plant_ready`; return bool from `:water()` for caller-side sound
 - `lua/game/items/watering_can.lua` — play `water_plant` when `:water()` returns true
 - `lua/game/items/grafter.lua` — play `clone_success` or `clone_fail`
-- `lua/game/scenes/store_scene.lua` — play pick_up, put_down, sell_plant
+- `lua/game/scenes/store_scene.lua` — play pick_up, put_down, shop_buy (on sell)
 - `lua/game/scenes/buy_scene.lua` — play shop_navigate, shop_buy
 - `lua/game/scenes/start_scene.lua` — play menu_navigate, menu_confirm
 
@@ -69,9 +69,8 @@ Each call to `Sound.play` clones the source so overlapping playback works (e.g. 
 | `plant_ready` | Plant growth timer completes; bubble appears |
 | `clone_success` | Grafter successfully clones a stage-3 plant |
 | `clone_fail` | Grafter used but no empty slot available |
-| `sell_plant` | Player successfully sells plant to customer |
 | `shop_navigate` | Player cycles items left or right in the buy scene |
-| `shop_buy` | Player successfully purchases an item |
+| `shop_buy` | Player successfully purchases an item or sells a plant to a customer |
 | `menu_navigate` | Player moves cursor in the start screen menu |
 | `menu_confirm` | Player confirms a selection in the start screen menu |
 
@@ -111,7 +110,7 @@ Two changes:
 
 `_handle_interact`:
 - After `player.held_item = nil` (garbage bin discard) → `Sound.play("put_down")`
-- After `self._customer:serve()` (successful sale) → `Sound.play("sell_plant")`
+- After `self._customer:serve()` (successful sale) → `Sound.play("shop_buy")`
 
 ### `lua/game/scenes/buy_scene.lua`
 

@@ -305,7 +305,7 @@ function StoreScene:_handle_interact()
             self.game_state.currency = self.game_state.currency + value
             player.held_item = nil
             self._customer:serve()
-            Sound.play("sell_plant")
+            Sound.play("shop_buy")
             if self._active_script_key then
                 self.game_state.seen_scripts[self._active_script_key] = true
                 self._active_script_key = nil

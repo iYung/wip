@@ -18,7 +18,7 @@ Add looping background music that plays continuously across all scenes (title + 
 - `tests/test_sound.lua` — add tests for `set_sfx_volume` and `set_music_volume`
 
 **New (optional asset):**
-- `assets/music/background.ogg` — placeholder slot; Sound gracefully skips if absent
+- `assets/music/background.mp3` — placeholder slot; Sound gracefully skips if absent
 
 ---
 
@@ -34,7 +34,7 @@ Love2D's global `love.audio.setVolume()` is a master multiplier that scales **al
 
 - Add module-level `_sfx_volume = 1.0` and `_music_volume = 1.0`
 - Add `_music = nil` for the looping background `Source`
-- In `Sound.load()`: after loading SFX, attempt to load `assets/music/background.ogg` as a `"stream"` source. If the file exists: set looping true, set volume to `_music_volume`, and call `love.audio.play(_music)`. If absent: silently skip (same pattern as `try_img` in assets.lua).
+- In `Sound.load()`: after loading SFX, attempt to load `assets/music/background.mp3` as a `"stream"` source. If the file exists: set looping true, set volume to `_music_volume`, and call `love.audio.play(_music)`. If absent: silently skip (same pattern as `try_img` in assets.lua).
 - In `Sound.play()`: apply `clone:setVolume(_sfx_volume)` on each clone before playing.
 - Add `Sound.set_sfx_volume(v)` (v is 0..1) — stores `_sfx_volume`. Already-playing fire-and-forget clones are unaffected; new clones pick up the new level.
 - Add `Sound.set_music_volume(v)` (v is 0..1) — stores `_music_volume`; if `_music` is loaded, calls `_music:setVolume(v)` immediately.

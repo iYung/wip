@@ -13,7 +13,6 @@ local _EVENT_NAMES = {
     "plant_ready",
     "clone_success",
     "clone_fail",
-    "sell_plant",
 "shop_navigate",
     "shop_buy",
 "menu_navigate",
@@ -44,8 +43,8 @@ function Sound.load()
         }
         menu_src:play()
     end
-    if love.filesystem.getInfo("assets/music/background.wav") then
-        local bg_src = love.audio.newSource("assets/music/background.wav", "stream")
+    if love.filesystem.getInfo("assets/music/background.mp3") then
+        local bg_src = love.audio.newSource("assets/music/background.mp3", "stream")
         bg_src:setLooping(true)
         bg_src:setVolume(0)
         _music_tracks["bg"] = {

@@ -3,7 +3,7 @@
 - [x] Task 1 — `lua/game/sound.lua` — Add music source and per-source volume control (independent; no dependencies).
   - Add module-level `_sfx_volume = 1.0` and `_music_volume = 1.0` at the top alongside `_src = {}`.
   - Add `_music = nil` for the looping music `Source`.
-  - In `Sound.load()`, after the SFX loading loop, attempt to load `assets/music/background.ogg` as a `"stream"` source: if `love.filesystem.getInfo("assets/music/background.ogg")` returns truthy, call `love.audio.newSource(...)`, set looping true via `_music:setLooping(true)`, set volume via `_music:setVolume(_music_volume)`, then call `love.audio.play(_music)`. If the file is absent, do nothing (silent skip).
+  - In `Sound.load()`, after the SFX loading loop, attempt to load `assets/music/background.mp3` as a `"stream"` source: if `love.filesystem.getInfo("assets/music/background.mp3")` returns truthy, call `love.audio.newSource(...)`, set looping true via `_music:setLooping(true)`, set volume via `_music:setVolume(_music_volume)`, then call `love.audio.play(_music)`. If the file is absent, do nothing (silent skip).
   - In `Sound.play()`, call `local clone = s:clone()` then `clone:setVolume(_sfx_volume)` before passing the clone to `love.audio.play()`.
   - Add `Sound.set_sfx_volume(v)` — stores `v` into `_sfx_volume`; no other action needed (future clones pick up the new level automatically).
   - Add `Sound.set_music_volume(v)` — stores `v` into `_music_volume`; if `_music ~= nil`, also calls `_music:setVolume(v)` immediately so a playing track responds in real time.
