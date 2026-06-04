@@ -19,6 +19,11 @@ local function spawn_cooldown(gs)
     return COOLDOWN_TIERS[gs.cooldown_level].cooldown
 end
 
+local function customer_walk_speed(gs)
+    if gs.cooldown_level == 0 then return 80 end
+    return COOLDOWN_TIERS[gs.cooldown_level].walk_speed
+end
+
 local ZONE_WIDTH   = config.ZONE_WIDTH
 local U            = config.U
 
@@ -231,11 +236,13 @@ function StoreScene:update(dt)
         if cd == 0 then
             local cfg = self:_next_customer_cfg()
             if cfg then
+                cfg.walk_speed = customer_walk_speed(gs)
                 self._customer:show(cfg)
             end
         elseif self._spawn_timer:update(dt) then
             local cfg = self:_next_customer_cfg()
             if cfg then
+                cfg.walk_speed = customer_walk_speed(gs)
                 self._customer:show(cfg)
             end
             self._spawn_timer:reset(cd)

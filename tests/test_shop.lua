@@ -265,4 +265,29 @@ do
     print("PASS: shop: cannot buy marketing if insufficient currency")
 end
 
+-- Test: cooldown_tiers have walk_speed fields at correct values
+do
+    assert(COOLDOWN_TIERS[1].walk_speed == 100,
+        "tier 1 walk_speed should be 100, got " .. tostring(COOLDOWN_TIERS[1].walk_speed))
+    assert(COOLDOWN_TIERS[2].walk_speed == 120,
+        "tier 2 walk_speed should be 120, got " .. tostring(COOLDOWN_TIERS[2].walk_speed))
+    assert(COOLDOWN_TIERS[3].walk_speed == 150,
+        "tier 3 walk_speed should be 150, got " .. tostring(COOLDOWN_TIERS[3].walk_speed))
+    print("PASS: shop: cooldown_tiers walk_speed values")
+end
+
+-- Test: walk_speed increases with each marketing tier
+do
+    local base = 80
+    local prev = base
+    for i = 1, #COOLDOWN_TIERS do
+        local ws = COOLDOWN_TIERS[i].walk_speed
+        assert(type(ws) == "number", "tier " .. i .. " walk_speed should be a number")
+        assert(ws > prev,
+            "tier " .. i .. " walk_speed (" .. ws .. ") should be greater than previous (" .. prev .. ")")
+        prev = ws
+    end
+    print("PASS: shop: walk_speed increases with each marketing tier")
+end
+
 print("ALL TESTS PASSED")
