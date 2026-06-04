@@ -378,7 +378,13 @@ class QuestEditorApp:
             return
 
         self.scripts = parse_scripts(self.script_path)
-        self._editing_key = None
+        self._editing_key   = None
+        self.card_positions = {}   # (id, chapter) -> (x, y) top-left; persists across redraws
+        self.item_to_card   = {}   # canvas item id -> (id, chapter)
+        self.card_tags      = {}   # (id, chapter) -> canvas tag string
+        self.card_coords    = {}   # (id, chapter) -> (x1, y1, x2, y2)
+        self._drag_state    = None
+        self._pan_mode      = False
 
         # ------------------------------------------------------------------ #
         # Layout                                                               #
@@ -593,206 +599,274 @@ class QuestEditorApp:
         6: "#f0c040",
     }
 
+    # ------------------------------------------------------------------ #
+    # Whiteboard canvas                                                    #
+    # ------------------------------------------------------------------ #
+
+    CARD_W  = 200   # card width
+    CARD_H  = 90    # card height
+    H_GAP   = 60    # default horizontal gap between cards
+    V_GAP   = 50    # default vertical gap between rows
+    TOP_PAD = 40    # default top margin
+    LFT_PAD = 40    # default left margin
+
+    @staticmethod
+    def _darken(hex_color: str, factor: float = 0.68) -> str:
+        """Return *hex_color* (#rrggbb) darkened by *factor*."""
+        h = hex_color.lstrip("#")
+        r = max(0, int(int(h[0:2], 16) * factor))
+        g = max(0, int(int(h[2:4], 16) * factor))
+        b = max(0, int(int(h[4:6], 16) * factor))
+        return f"#{r:02x}{g:02x}{b:02x}"
+
     def draw_canvas(self) -> None:
-        """Render the swimlane quest visualization onto the canvas."""
+        """Full redraw.  Preserves any card positions the user has dragged."""
         self.canvas.delete("all")
+        self.item_to_card = {}
+        self.card_tags    = {}
+        self.card_coords  = {}
 
-        # ------------------------------------------------------------------ #
-        # Layout constants                                                     #
-        # ------------------------------------------------------------------ #
-        LEFT_MARGIN = 160
-        CARD_W      = 180
-        CARD_H      = 80
-        H_GAP       = 40   # horizontal gap between cards in a row
-        V_GAP       = 30   # vertical gap between rows
-        TOP_MARGIN  = 20
-
-        # ------------------------------------------------------------------ #
-        # Group chapters by id, order groups by min trigger["count"] asc      #
-        # (ties broken alphabetically), then chapters within each group asc   #
-        # ------------------------------------------------------------------ #
+        # ── group & sort ───────────────────────────────────────────────────────
         groups: dict[str, list[dict]] = {}
         for ch in self.scripts:
-            gid = ch["id"]
-            groups.setdefault(gid, []).append(ch)
-
-        # Sort chapters within each group by chapter number
+            groups.setdefault(ch["id"], []).append(ch)
         for gid in groups:
             groups[gid].sort(key=lambda c: c["chapter"])
 
-        # Sort groups: primary = min trigger count, secondary = id string
-        def group_sort_key(gid):
-            min_count = min(c["trigger"]["count"] for c in groups[gid])
-            return (min_count, gid)
+        ordered_ids = sorted(
+            groups.keys(),
+            key=lambda gid: (min(c["trigger"]["count"] for c in groups[gid]), gid),
+        )
 
-        ordered_ids = sorted(groups.keys(), key=group_sort_key)
-
-        # ------------------------------------------------------------------ #
-        # Draw rows                                                            #
-        # ------------------------------------------------------------------ #
-        self.card_coords: dict[tuple, tuple] = {}
-
-        # Bind click handler once
-        self.canvas.bind("<Button-1>", self._on_canvas_click)
-        self.selected_card = None
-
+        # ── default positions for cards not yet placed ─────────────────────────
         for row_i, gid in enumerate(ordered_ids):
-            chapters = groups[gid]
-            y1 = TOP_MARGIN + row_i * (CARD_H + V_GAP)
-            y2 = y1 + CARD_H
-            cy = (y1 + y2) // 2  # vertical midpoint for label
-
-            # Row label (character id, right-aligned to x=155)
-            self.canvas.create_text(
-                155, cy,
-                text=gid,
-                anchor="e",
-                font=("TkDefaultFont", 10),
-            )
-
-            for col_j, chapter in enumerate(chapters):
-                x1 = LEFT_MARGIN + col_j * (CARD_W + H_GAP)
-                x2 = x1 + CARD_W
-
-                # Card background color based on trigger plant_type
-                trigger_type = chapter.get("trigger", {}).get("plant_type", 1)
-                bg_color = self.PLANT_COLORS.get(trigger_type, "#cccccc")
-
-                # Draw card rectangle
-                self.canvas.create_rectangle(
-                    x1, y1, x2, y2,
-                    fill=bg_color,
-                    outline="#555555",
-                    width=1,
-                )
-
-                # Text content
-                ch_name    = chapter.get("name", gid)
-                ch_num     = chapter.get("chapter", col_j + 1)
-                trig_count = chapter.get("trigger", {}).get("count", "?")
-                trig_plant = self.PLANT_NAMES.get(trigger_type, str(trigger_type))
-                req_plant  = self.PLANT_NAMES.get(
-                    chapter.get("plant_type", 1), "?"
-                )
-
-                tx = x1 + 8
-                ty = y1 + 8
-                line_h = 18
-
-                # Line 1: name — Ch N  (bold)
-                self.canvas.create_text(
-                    tx, ty,
-                    text=f"{ch_name} — Ch {ch_num}",
-                    anchor="nw",
-                    font=("TkDefaultFont", 9, "bold"),
-                )
-                # Line 2: needs PlantName ×count
-                self.canvas.create_text(
-                    tx, ty + line_h,
-                    text=f"needs {trig_plant} ×{trig_count}",
-                    anchor="nw",
-                    font=("TkDefaultFont", 9),
-                )
-                # Line 3: requests PlantName
-                self.canvas.create_text(
-                    tx, ty + line_h * 2,
-                    text=f"requests {req_plant}",
-                    anchor="nw",
-                    font=("TkDefaultFont", 9),
-                )
-
-                # Store bounding box
-                self.card_coords[(gid, ch_num)] = (x1, y1, x2, y2)
-
-                # Draw arrow from previous card to this one
-                if col_j > 0:
-                    prev_x2 = LEFT_MARGIN + (col_j - 1) * (CARD_W + H_GAP) + CARD_W
-                    arrow_y  = cy
-                    self.canvas.create_line(
-                        prev_x2, arrow_y,
-                        x1, arrow_y,
-                        arrow="last",
-                        fill="#555555",
-                        width=1,
+            for col_j, ch in enumerate(groups[gid]):
+                k = (gid, ch["chapter"])
+                if k not in self.card_positions:
+                    self.card_positions[k] = (
+                        self.LFT_PAD + col_j * (self.CARD_W + self.H_GAP),
+                        self.TOP_PAD + row_i * (self.CARD_H + self.V_GAP),
                     )
 
-        # ------------------------------------------------------------------ #
-        # First-appearance plant badges                                       #
-        # ------------------------------------------------------------------ #
-        # For each plant type 1-6, find the chapter that is the first
-        # appearance (lowest trigger count; tie-break: id alpha, chapter asc).
-        # That card gets a gold star + plant-name badge in its top-right corner.
-
-        BADGE_COLOR = "#b8860b"  # dark-gold
-
+        # ── first-appearance badges ────────────────────────────────────────────
+        first_badge: dict[int, tuple] = {}
         for pt in range(1, 7):
-            # Collect all chapters that involve this plant type
             candidates = [
                 ch for ch in self.scripts
                 if ch.get("trigger", {}).get("plant_type") == pt
                 or ch.get("plant_type") == pt
             ]
-            if not candidates:
-                continue
+            if candidates:
+                candidates.sort(key=lambda c: (
+                    c.get("trigger", {}).get("count", float("inf")),
+                    c.get("id", ""),
+                    c.get("chapter", 0),
+                ))
+                best = candidates[0]
+                first_badge[pt] = (best["id"], best["chapter"])
 
-            # Sort: primary = trigger count asc, secondary = id alpha, tertiary = chapter asc
-            candidates.sort(key=lambda c: (
-                c.get("trigger", {}).get("count", float("inf")),
-                c.get("id", ""),
-                c.get("chapter", 0),
+        badges_for: dict[tuple, list[int]] = {}
+        for pt, key in first_badge.items():
+            badges_for.setdefault(key, []).append(pt)
+
+        # ── arrows behind cards ────────────────────────────────────────────────
+        self._draw_arrows_items(groups)
+
+        # ── cards ──────────────────────────────────────────────────────────────
+        for gid in ordered_ids:
+            for ch in groups[gid]:
+                self._draw_card(ch, badges_for.get((gid, ch["chapter"]), []))
+
+        # ── scroll region ──────────────────────────────────────────────────────
+        bbox = self.canvas.bbox("all")
+        if bbox:
+            pad = 40
+            self.canvas.configure(scrollregion=(
+                bbox[0] - pad, bbox[1] - pad,
+                bbox[2] + pad, bbox[3] + pad,
             ))
-            first = candidates[0]
-            key = (first.get("id", ""), first.get("chapter", 0))
 
-            coords = self.card_coords.get(key)
-            if coords is None:
-                continue
+        # ── event bindings ─────────────────────────────────────────────────────
+        self.canvas.bind("<ButtonPress-1>",   self._on_canvas_press)
+        self.canvas.bind("<B1-Motion>",        self._on_canvas_motion)
+        self.canvas.bind("<ButtonRelease-1>", self._on_canvas_release)
 
-            x1, y1, x2, y2 = coords
-            star_x = x2 - 12
-            star_y = y1 + 8
-            name_x = x2 - 4
-            name_y = star_y + 12
+    def _draw_card(self, chapter: dict, badges: list) -> None:
+        """Draw one card and register all its canvas items."""
+        gid    = chapter["id"]
+        ch_num = chapter["chapter"]
+        key    = (gid, ch_num)
+        x, y   = self.card_positions[key]
 
-            # Gold star
-            self.canvas.create_text(
-                star_x, star_y,
-                text="★",
-                anchor="center",
-                fill=BADGE_COLOR,
-                font=("TkDefaultFont", 9, "bold"),
-                tags="badge",
-            )
-            # Plant name in tiny font, right-aligned
-            plant_label = self.PLANT_NAMES.get(pt, str(pt))
-            self.canvas.create_text(
-                name_x, name_y,
-                text=plant_label,
-                anchor="ne",
-                fill=BADGE_COLOR,
-                font=("TkDefaultFont", 8),
-                tags="badge",
-            )
+        safe = re.sub(r"\W", "_", gid)
+        tag  = f"ci_{safe}_{ch_num}"
+        self.card_tags[key] = tag
 
-        # Expand scroll region to fit all drawn content
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        trig      = chapter.get("trigger", {})
+        trig_type = trig.get("plant_type", 1)
+        trig_cnt  = trig.get("count", 0)
+        color     = self.PLANT_COLORS.get(trig_type, "#cccccc")
+        dark      = self._darken(color)
+        HDR       = 26
 
-    def _on_canvas_click(self, event) -> None:
-        """Handle a click on the canvas: select the card under the cursor."""
+        def reg(item):
+            self.item_to_card[item] = key
+
+        # drop shadow
+        reg(self.canvas.create_rectangle(
+            x + 4, y + 4, x + self.CARD_W + 4, y + self.CARD_H + 4,
+            fill="#bbbbbb", outline="", tags=(tag,),
+        ))
+        # card body
+        reg(self.canvas.create_rectangle(
+            x, y, x + self.CARD_W, y + self.CARD_H,
+            fill=color, outline="#555555", width=1, tags=(tag,),
+        ))
+        # header band
+        reg(self.canvas.create_rectangle(
+            x, y, x + self.CARD_W, y + HDR,
+            fill=dark, outline="", tags=(tag,),
+        ))
+        # header label
+        ch_name = chapter.get("name", gid)
+        reg(self.canvas.create_text(
+            x + self.CARD_W // 2, y + HDR // 2,
+            text=f"{ch_name} — Ch {ch_num}",
+            anchor="center",
+            font=("TkDefaultFont", 9, "bold"),
+            fill="white",
+            tags=(tag,),
+        ))
+        # body lines
+        trig_plant = self.PLANT_NAMES.get(trig_type, "?")
+        req_plant  = self.PLANT_NAMES.get(chapter.get("plant_type", 1), "?")
+        ty = y + HDR + 7
+        for line in (f"needs {trig_plant} ×{trig_cnt}", f"requests {req_plant}"):
+            reg(self.canvas.create_text(
+                x + 8, ty, text=line, anchor="nw",
+                font=("TkDefaultFont", 9), tags=(tag,),
+            ))
+            ty += 17
+
+        # first-appearance badges
+        BADGE_C = "#b8860b"
+        bx = x + self.CARD_W - 6
+        by = y + HDR + 5
+        for pt in sorted(badges):
+            reg(self.canvas.create_text(
+                bx, by, text="★", anchor="ne",
+                fill=BADGE_C, font=("TkDefaultFont", 9, "bold"), tags=(tag,),
+            ))
+            reg(self.canvas.create_text(
+                bx, by + 12, text=self.PLANT_NAMES.get(pt, str(pt)),
+                anchor="ne", fill=BADGE_C,
+                font=("TkDefaultFont", 7), tags=(tag,),
+            ))
+            by += 26
+
+        self.card_coords[key] = (x, y, x + self.CARD_W, y + self.CARD_H)
+
+    def _draw_arrows_items(self, groups: dict) -> None:
+        """Draw S-curve arrows between sequential chapters of each character."""
+        for gid, chapters in groups.items():
+            for i in range(len(chapters) - 1):
+                k1 = (gid, chapters[i]["chapter"])
+                k2 = (gid, chapters[i + 1]["chapter"])
+                if k1 not in self.card_positions or k2 not in self.card_positions:
+                    continue
+                x1, y1 = self.card_positions[k1]
+                x2, y2 = self.card_positions[k2]
+                ax1 = x1 + self.CARD_W
+                ay1 = y1 + self.CARD_H // 2
+                ax2 = x2
+                ay2 = y2 + self.CARD_H // 2
+                mx  = (ax1 + ax2) / 2
+                self.canvas.create_line(
+                    ax1, ay1, mx, ay1, mx, ay2, ax2, ay2,
+                    arrow="last", smooth=True,
+                    fill="#777777", width=1.5,
+                    tags=("arrow",),
+                )
+
+    def _redraw_arrows_only(self) -> None:
+        """Delete and redraw only arrows (called during card drag)."""
+        self.canvas.delete("arrow")
+        groups: dict[str, list[dict]] = {}
+        for ch in self.scripts:
+            groups.setdefault(ch["id"], []).append(ch)
+        for gid in groups:
+            groups[gid].sort(key=lambda c: c["chapter"])
+        self._draw_arrows_items(groups)
+        self.canvas.tag_lower("arrow")
+
+    def _on_canvas_press(self, event: tk.Event) -> None:
+        """Start a card drag or canvas pan."""
         cx = self.canvas.canvasx(event.x)
         cy = self.canvas.canvasy(event.y)
 
-        for (gid, chapter), (x1, y1, x2, y2) in self.card_coords.items():
-            if x1 <= cx <= x2 and y1 <= cy <= y2:
-                self.selected_card = (gid, chapter)
-                # Find the matching script entry and populate the panel
-                for entry in self.scripts:
-                    if entry.get("id") == gid and entry.get("chapter") == chapter:
-                        self._populate_edit_panel(entry)
-                        return
-                return
+        items   = self.canvas.find_overlapping(cx - 2, cy - 2, cx + 2, cy + 2)
+        hit_key = None
+        for item in reversed(items):    # reversed = topmost first
+            if item in self.item_to_card:
+                hit_key = self.item_to_card[item]
+                break
 
-        self.selected_card = None
+        if hit_key:
+            self._drag_state = {
+                "key": hit_key, "last_cx": cx, "last_cy": cy, "moved": False,
+            }
+            tag = self.card_tags.get(hit_key)
+            if tag:
+                self.canvas.tag_raise(tag)
+        else:
+            self._pan_mode = True
+            self.canvas.scan_mark(event.x, event.y)
+
+    def _on_canvas_motion(self, event: tk.Event) -> None:
+        """Move a dragged card or pan the canvas."""
+        cx = self.canvas.canvasx(event.x)
+        cy = self.canvas.canvasy(event.y)
+
+        if self._drag_state:
+            dx  = cx - self._drag_state["last_cx"]
+            dy  = cy - self._drag_state["last_cy"]
+            key = self._drag_state["key"]
+            tag = self.card_tags.get(key)
+
+            if tag:
+                self.canvas.move(tag, dx, dy)
+
+            ox, oy = self.card_positions[key]
+            self.card_positions[key] = (ox + dx, oy + dy)
+            self.card_coords[key]    = (
+                ox + dx, oy + dy,
+                ox + dx + self.CARD_W, oy + dy + self.CARD_H,
+            )
+            self._drag_state["last_cx"] = cx
+            self._drag_state["last_cy"] = cy
+            if abs(dx) > 1 or abs(dy) > 1:
+                self._drag_state["moved"] = True
+
+            self._redraw_arrows_only()
+            bbox = self.canvas.bbox("all")
+            if bbox:
+                self.canvas.configure(scrollregion=bbox)
+
+        elif self._pan_mode:
+            self.canvas.scan_dragto(event.x, event.y, gain=1)
+
+    def _on_canvas_release(self, event: tk.Event) -> None:
+        """End drag: a non-moving press opens the edit panel."""
+        if self._drag_state and not self._drag_state["moved"]:
+            key   = self._drag_state["key"]
+            entry = next(
+                (s for s in self.scripts if (s["id"], s["chapter"]) == key),
+                None,
+            )
+            if entry:
+                self._populate_edit_panel(entry)
+        self._drag_state = None
+        self._pan_mode   = False
 
     # ---------------------------------------------------------------------- #
     # Edit panel                                                               #
@@ -825,6 +899,7 @@ class QuestEditorApp:
             e for e in self.scripts
             if not (e.get("id") == edit_id and e.get("chapter") == edit_chapter)
         ]
+        self.card_positions.pop((edit_id, edit_chapter), None)
         for child in self.edit_panel.winfo_children():
             child.destroy()
         self._editing_key = None
