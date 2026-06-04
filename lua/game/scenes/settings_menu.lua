@@ -76,6 +76,7 @@ function SettingsMenu:open(opaque)
     self.selected = 1
     self._subscreen = nil
     self._capturing = nil
+    self._saved = false
     -- Snapshot current key state so keys held at open time don't immediately fire
     self._prev_up      = love.keyboard.isDown("up")    or love.keyboard.isDown("w")
     self._prev_down    = love.keyboard.isDown("down")  or love.keyboard.isDown("s")
@@ -213,6 +214,7 @@ function SettingsMenu:_confirm()
     elseif self.selected == 5 then
         if not self._opaque and self._on_save then
             self._on_save()
+            self._saved = true
         end
     elseif self.selected == 6 then
         self:close()
@@ -332,7 +334,8 @@ function SettingsMenu:draw()
             if vol < 100 then love.graphics.printf(">", vx - 10, ty, VAL_W, "right") end
             love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
         else
-            love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
+            local label = (i == 5 and self._saved) and "Saved!" or ITEMS[i]
+            love.graphics.printf(label, BTN_X, ty, BTN_W, "center")
         end
     end
 
