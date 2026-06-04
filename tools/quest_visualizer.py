@@ -41,8 +41,35 @@ def row_y(idx):
 def parse_scripts(path):
     with open(path) as f:
         text = f.read()
+
+    # Extract top-level entry blocks by tracking brace depth.
+    # re.split on },\s*{ breaks when Lua comments sit between entries.
+    raw_blocks = []
+    depth, start, i = 0, -1, 0
+    while i < len(text):
+        c = text[i]
+        if c == '-' and i + 1 < len(text) and text[i + 1] == '-':
+            while i < len(text) and text[i] != '\n':
+                i += 1
+        elif c == '"':
+            i += 1
+            while i < len(text) and text[i] != '"':
+                if text[i] == '\\':
+                    i += 1
+                i += 1
+        elif c == '{':
+            depth += 1
+            if depth == 2:
+                start = i + 1
+        elif c == '}':
+            if depth == 2 and start >= 0:
+                raw_blocks.append(text[start:i])
+                start = -1
+            depth -= 1
+        i += 1
+
     entries = []
-    for block in re.split(r"\},\s*\{", text):
+    for block in raw_blocks:
         e = {}
         m = re.search(r'\bid\s*=\s*"([^"]+)"', block)
         if m: e["id"] = m.group(1)
@@ -57,7 +84,8 @@ def parse_scripts(path):
         for m2 in re.finditer(r'\bplant_type\s*=\s*(\d+)', block):
             e["buy_pt"] = int(m2.group(1))
         m = re.search(r'\bmessages\s*=\s*\{([^}]*)\}', block)
-        e["first_msg"] = re.findall(r'"([^"]+)"', m.group(1))[0] if m else ""
+        msgs = re.findall(r'"([^"]+)"', m.group(1)) if m else []
+        e["first_msg"] = msgs[0] if msgs else ""
         e["no_dismiss"] = bool(re.search(r'\bno_dismiss\s*=\s*true', block))
         if "id" in e and "chapter" in e and "trig_pt" in e:
             entries.append(e)
