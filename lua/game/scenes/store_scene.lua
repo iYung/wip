@@ -41,7 +41,7 @@ local DISMISS_COOLDOWN_SALES = 3  -- scripted customer returns after this many o
 local StoreScene = setmetatable({}, { __index = Scene })
 StoreScene.__index = StoreScene
 
-function StoreScene.new(game_state, input, scene_manager)
+function StoreScene.new(game_state, input, scene_manager, from_save)
     local self          = Scene.new()
     setmetatable(self, StoreScene)
     self.game_state     = game_state
@@ -49,6 +49,7 @@ function StoreScene.new(game_state, input, scene_manager)
     self.scene_manager  = scene_manager
     self._initialized   = false
     self.esc_opens_settings = true
+    self._from_save     = from_save or false
     return self
 end
 
@@ -82,13 +83,16 @@ function StoreScene:_setup_store()
     local store   = gs.store
     local self_ref = self
 
-    store.slots[1].item = WateringCan.new()
-    store.slots[2].item = GarbageBin.new()
-
-    store.slots[3].item = PCStore.new(function()
+    local buy_scene_factory = function()
         local slot = gs.player:active_slot(store)
         return BuyScene.new(gs, self_ref.input, self_ref.scene_manager, self_ref)
-    end)
+    end
+
+    if not self._from_save then
+        store.slots[1].item = WateringCan.new()
+        store.slots[2].item = GarbageBin.new()
+        store.slots[3].item = PCStore.new(buy_scene_factory)
+    end
 
     local target_x   = -ZONE_WIDTH / 2
     local exit_x     = -(ZONE_WIDTH + 200)
@@ -162,6 +166,30 @@ function StoreScene:_setup_store()
             end
         end
     }
+
+    if self._from_save then
+        self:_wire_pc_store()
+    end
+end
+
+function StoreScene:_wire_pc_store()
+    local gs    = self.game_state
+    local store = gs.store
+    local self_ref = self
+
+    local factory = function()
+        local slot = gs.player:active_slot(store)
+        return BuyScene.new(gs, self_ref.input, self_ref.scene_manager, self_ref)
+    end
+
+    for _, slot in ipairs(store.slots) do
+        if slot.item and slot.item.name == "PC Store" then
+            slot.item.buy_scene_factory = factory
+        end
+    end
+    if gs.player.held_item and gs.player.held_item.name == "PC Store" then
+        gs.player.held_item.buy_scene_factory = factory
+    end
 end
 
 function StoreScene:_next_customer_cfg()

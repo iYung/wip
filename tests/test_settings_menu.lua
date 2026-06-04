@@ -84,16 +84,19 @@ print("PASS: down navigation (2->3)")
 sim_key(m, "down")  -- 3->4
 sim_key(m, "down")  -- 4->5
 sim_key(m, "down")  -- 5->6
-sim_key(m, "down")  -- 6->1 (wrap)
+sim_key(m, "down")  -- 6->7
+sim_key(m, "down")  -- 7->1 (wrap)
 assert(m.selected == 1, "down from last item should wrap to 1, got " .. m.selected)
-print("PASS: down wrap (6 items)")
+print("PASS: down wrap (7 items)")
 
 -- Test 9: up from 1 wraps to last item
 sim_key(m, "up")
-assert(m.selected == 6, "up from 1 should wrap to 6, got " .. m.selected)
-print("PASS: up wrap (wraps to 6)")
+assert(m.selected == 7, "up from 1 should wrap to 7, got " .. m.selected)
+print("PASS: up wrap (wraps to 7)")
 
 -- Test 10: up navigates upward
+sim_key(m, "up")
+assert(m.selected == 6, "up from 7 should go to 6, got " .. m.selected)
 sim_key(m, "up")
 assert(m.selected == 5, "up from 6 should go to 5, got " .. m.selected)
 sim_key(m, "up")
@@ -104,7 +107,7 @@ sim_key(m, "up")
 assert(m.selected == 2, "up from 3 should go to 2, got " .. m.selected)
 sim_key(m, "up")
 assert(m.selected == 1, "up from 2 should go to 1, got " .. m.selected)
-print("PASS: up navigation (6 rows)")
+print("PASS: up navigation (7 rows)")
 
 -- Test 11: s key navigates down
 open_clean(m)
@@ -123,25 +126,27 @@ sim_key(m, "escape")
 assert(m.is_open == false, "escape should close the menu")
 print("PASS: escape closes menu")
 
--- Test 14: Exit Settings (index 5) closes the menu
+-- Test 14: Exit Settings (index 6) closes the menu
 open_clean(m)
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
-assert(m.selected == 5)
+sim_key(m, "down")
+assert(m.selected == 6)
 sim_key(m, "f")
 assert(m.is_open == false, "Exit Settings should close the menu")
 print("PASS: Exit Settings closes menu")
 
--- Test 15: Leave Game (index 6) calls love.event.quit
+-- Test 15: Leave Game (index 7) calls love.event.quit
 open_clean(m)
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
-assert(m.selected == 6, "should be on Leave Game")
+sim_key(m, "down")
+assert(m.selected == 7, "should be on Leave Game")
 _quit_called = false
 sim_key(m, "f")
 assert(_quit_called, "confirming Leave Game should call love.event.quit")
@@ -149,6 +154,7 @@ print("PASS: Leave Game calls quit")
 
 -- Test 16: e key also confirms
 open_clean(m)
+sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
@@ -181,7 +187,7 @@ m:update(0)
 assert(m.selected == 2, "held key should only fire once, got selected=" .. m.selected)
 print("PASS: edge-triggered navigation")
 
--- Test 19: Item count wraps at 6
+-- Test 19: Item count wraps at 7
 open_clean(m)
 sim_key(m, "down")
 sim_key(m, "down")
@@ -189,8 +195,9 @@ sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
-assert(m.selected == 1, "6 downs from 1 should wrap back to 1, got " .. m.selected)
-print("PASS: item count wraps at 6")
+sim_key(m, "down")
+assert(m.selected == 1, "7 downs from 1 should wrap back to 1, got " .. m.selected)
+print("PASS: item count wraps at 7")
 
 -- Test 20: Selecting item 4 opens keybind sub-screen
 open_clean(m)

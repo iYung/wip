@@ -1,6 +1,14 @@
 local Sound = require("lua/game/sound")
 
-local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Exit Settings", "Leave Game" }
+local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Save Game", "Exit Settings", "Leave Game" }
+
+local function _visible_items(opaque)
+    local result = {}
+    for i = 1, #ITEMS do
+        if not (opaque and i == 5) then result[#result + 1] = i end
+    end
+    return result
+end
 
 local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","pick_up_down","interact"}
 local _ACTION_LABELS = {"move up","move down","move left","move right","pick up/down","interact"}
@@ -27,7 +35,7 @@ local VAL_SX   = VAL_W  / BTN_W    -- horizontal scale for value bar image
 local SettingsMenu = {}
 SettingsMenu.__index = SettingsMenu
 
-function SettingsMenu.new(settings_state, input)
+function SettingsMenu.new(settings_state, input, on_save)
     local self = setmetatable({}, SettingsMenu)
     self.is_open = false
     self.selected = 1
@@ -39,6 +47,7 @@ function SettingsMenu.new(settings_state, input)
     self._prev_escape  = false
     self._state = settings_state
     self._input = input
+    self._on_save = on_save
     self._subscreen = nil
     self._subscreen_selected = 1
     self._capturing = nil
@@ -67,6 +76,7 @@ function SettingsMenu:open(opaque)
     self.selected = 1
     self._subscreen = nil
     self._capturing = nil
+    self._saved = false
     -- Snapshot current key state so keys held at open time don't immediately fire
     self._prev_up      = love.keyboard.isDown("up")    or love.keyboard.isDown("w")
     self._prev_down    = love.keyboard.isDown("down")  or love.keyboard.isDown("s")
@@ -137,11 +147,23 @@ function SettingsMenu:update(dt)
     local escape  = love.keyboard.isDown("escape")
 
     if up and not self._prev_up then
-        self.selected = ((self.selected - 2) % #ITEMS) + 1
+        local vis = _visible_items(self._opaque)
+        for j, idx in ipairs(vis) do
+            if idx == self.selected then
+                self.selected = vis[((j - 2) % #vis) + 1]
+                break
+            end
+        end
         Sound.play("menu_navigate")
     end
     if down and not self._prev_down then
-        self.selected = (self.selected % #ITEMS) + 1
+        local vis = _visible_items(self._opaque)
+        for j, idx in ipairs(vis) do
+            if idx == self.selected then
+                self.selected = vis[(j % #vis) + 1]
+                break
+            end
+        end
         Sound.play("menu_navigate")
     end
     if confirm and not self._prev_confirm then
@@ -190,8 +212,13 @@ function SettingsMenu:_confirm()
                               or love.keyboard.isDown("return") or love.keyboard.isDown("space")
         self._prev_sub_escape  = love.keyboard.isDown("escape")
     elseif self.selected == 5 then
-        self:close()
+        if not self._opaque and self._on_save then
+            self._on_save()
+            self._saved = true
+        end
     elseif self.selected == 6 then
+        self:close()
+    elseif self.selected == 7 then
         love.event.quit()
     end
 end
@@ -269,8 +296,10 @@ function SettingsMenu:draw()
     end
 
     love.graphics.setFont(self._font_btn)
-    for i = 1, #ITEMS do
-        local y   = self._btn_y0 + (i - 1) * BTN_GAP
+    local vis    = _visible_items(self._opaque)
+    local btn_y0 = H / 2 - (#vis - 1) * BTN_GAP / 2 - BTN_H / 2
+    for j, i in ipairs(vis) do
+        local y   = btn_y0 + (j - 1) * BTN_GAP
         local img = i == self.selected and self._img_btn_sel or self._img_btn
         love.graphics.setColor(1, 1, 1, 1)
         if i ~= 2 and i ~= 3 then
@@ -305,7 +334,8 @@ function SettingsMenu:draw()
             if vol < 100 then love.graphics.printf(">", vx - 10, ty, VAL_W, "right") end
             love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
         else
-            love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
+            local label = (i == 5 and self._saved) and "Saved!" or ITEMS[i]
+            love.graphics.printf(label, BTN_X, ty, BTN_W, "center")
         end
     end
 
