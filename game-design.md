@@ -168,6 +168,7 @@ Two kinds of customers can spawn:
 - Random customers: no dialog — plant bubble appears immediately on arrival
 - Once the plant bubble is showing, F while holding the correct stage-3 plant completes the sale
 - After the sale, scripted characters may say additional lines (`after_messages`); F advances through them; after the last line the heart bubble appears and they walk out
+- While the typewriter is revealing text, each character's voice plays as a pitched sample (animalese); skipping a line is silent since it jumps the index instantly; each character has a unique `voice_pitch` tuned to their personality
 
 **Sale:**
 - Pays **2× normal sell value**

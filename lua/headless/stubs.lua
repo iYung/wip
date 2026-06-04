@@ -68,9 +68,10 @@ love.audio = love.audio or {}
 -- Stub source object returned by newSource.
 local function make_stub_source()
   local src = {}
-  src.clone      = function() return src end
+  src.clone      = function() return make_stub_source() end
   src.setLooping = noop
   src.setVolume  = noop
+  src.setPitch   = noop
   src.play       = noop
   src.stop       = noop
   src.isPlaying  = function() return false end

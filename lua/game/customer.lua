@@ -5,6 +5,7 @@ local PLANT_DATA   = require("lua/game/data/plant_data")
 local A            = require("lua/game/assets")
 local U            = require("lua/game/config").U
 local ColorReplace = require("lua/game/shaders/color_replace")
+local Sound        = require("lua/game/sound")
 
 local CW    = 6 * U   -- 120
 local CH    = 12 * U  -- 240
@@ -119,6 +120,7 @@ function Customer:show(cfg)
     self.sprite.visible  = true
     self.bubble.visible  = false
     self.heart_bubble.visible = false
+    self._voice_pitch = cfg.voice_pitch or 1.0
     self._primary   = cfg.primary_color   or DEFAULT_PRIMARY
     self._secondary = cfg.secondary_color or DEFAULT_SECONDARY
     if cfg.accessory then
@@ -232,11 +234,15 @@ function Customer:update(dt)
     end
 
     if self.bubble.visible and (not self.done_talking or self.state == "talking_after") then
+        local prev_index  = self.reveal_index
         self.reveal_t     = self.reveal_t + dt
         self.reveal_index = math.min(
             #self._full_text,
             math.floor(self.reveal_t * REVEAL_SPEED)
         )
+        if self.reveal_index > prev_index then
+            Sound.play_animalese(self._voice_pitch)
+        end
     end
 
     local moving = self.state == "walking_in" or self.state == "walking_out"

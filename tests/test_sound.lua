@@ -95,4 +95,17 @@ do
     print("PASS: Sound.update() runs cleanly after fade_music")
 end
 
+-- Test: Sound.play_animalese runs without error at neutral pitch
+do
+    Sound.play_animalese(1.0)
+    print("PASS: sound: Sound.play_animalese() runs without error at pitch 1.0")
+end
+
+-- Test: Sound.play_animalese runs without error at low and high pitches
+do
+    Sound.play_animalese(0.70)
+    Sound.play_animalese(1.35)
+    print("PASS: sound: Sound.play_animalese() runs without error at extreme pitches")
+end
+
 print("ALL TESTS PASSED")
