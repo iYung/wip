@@ -163,7 +163,7 @@ return {
         id             = "dottie",
         chapter        = 1,
         accessory      = "clown",
-        trigger        = { plant_type = 5, count = 1 },
+        trigger        = { plant_type = 4, count = 4 },
         name           = "Dottie",
         voice_pitch    = 1.28,
         primary_color     = {0.70, 0.50, 0.85, 1},
