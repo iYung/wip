@@ -91,6 +91,7 @@ function StoreScene:_setup_store()
     self._customer          = Customer.new(target_x, exit_x, customer_y)
     self._spawn_timer       = Timer.new(spawn_cooldown(gs))
     self._active_script_key = nil
+    self._active_script     = nil
     self._script_cooldowns  = {}
 
     local wall_img = A.cashier_wall
@@ -184,10 +185,12 @@ function StoreScene:_next_customer_cfg()
     if #qualified > 0 then
         local script = qualified[math.random(#qualified)]
         self._active_script_key = script.id .. ":" .. script.chapter
+        self._active_script     = script
         return script
     end
 
     self._active_script_key = nil
+    self._active_script     = nil
     local keys = {}
     for pt in pairs(gs.unlocked_plants) do
         keys[#keys + 1] = pt
@@ -262,11 +265,12 @@ function StoreScene:_handle_pick_up_down()
     local slot   = player:active_slot(store)
 
     if player.x < 0 then
-        if self._customer:arrived() then
+        if self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
             self._customer:dismiss()
             if self._active_script_key then
                 self._script_cooldowns[self._active_script_key] = DISMISS_COOLDOWN_SALES
                 self._active_script_key = nil
+                self._active_script     = nil
             end
         end
         return
@@ -309,6 +313,7 @@ function StoreScene:_handle_interact()
             if self._active_script_key then
                 self.game_state.seen_scripts[self._active_script_key] = true
                 self._active_script_key = nil
+                self._active_script     = nil
             end
             for key, count in pairs(self._script_cooldowns) do
                 local remaining = count - 1
@@ -356,7 +361,7 @@ function StoreScene:_hud_labels()
     local slot_label = player.x >= 0 and slot_item and slot_item.name and ("HOVER: " .. slot_item.name:upper())
 
     local e_label
-    if player.x < 0 and self._customer and self._customer:arrived() then
+    if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
         e_label = "E: DISMISS"
     elseif player.x >= 0 then
         if held and slot and not slot_item then

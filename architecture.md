@@ -393,14 +393,14 @@ NPC that appears in the cashier zone and requests a specific plant.
 
 **Methods**
 - `new(target_x, exit_x, y)` — constructor; `state = "idle"`
-- `show(cfg)` — accepts `{ plant_type, messages, after_messages, name, primary_color, secondary_color, accessory }`; places customer at `exit_x` and begins walk-in; `accessory` is a string key passed to `A.load_accessory()`
+- `show(cfg)` — accepts `{ plant_type, messages, after_messages, name, primary_color, secondary_color, accessory, no_dismiss }`; places customer at `exit_x` and begins walk-in; `accessory` is a string key passed to `A.load_accessory()`; `no_dismiss = true` blocks the E-key dismiss action for this customer
 - `advance()` — increments `msg_index`; sets `done_talking` after the last message; resets `reveal_index`/`reveal_t`/`_full_text` for the new line
 - `advance_after()` — skips reveal if incomplete; otherwise increments `after_msg_index` and loads the next line; after the last after_message transitions to `"walking_out"` and shows the heart bubble
 - `line_complete()` — returns true if `done_talking` (or in `talking_after`: reveal complete) or `reveal_index >= #_full_text`
 - `skip_reveal()` — snaps `reveal_index` to the end of the current line instantly
 - `on_last_message()` — returns `done_talking`
 - `serve()` — on successful sale: enters `"talking_after"` if `after_messages` is non-empty; otherwise transitions directly to `"walking_out"` with the heart bubble visible
-- `dismiss()` — send customer walking out immediately without sale; hides heart bubble; sets `dismissed = true`
+- `dismiss()` — send customer walking out immediately without sale; hides heart bubble; sets `dismissed = true`; never called when the active script has `no_dismiss = true`
 - `arrived()` — returns `state == "waiting"`
 - `active()` — returns `state ~= "idle"`
 - `update(dt)` — advances walk-in / walk-out movement; advances typewriter reveal while `bubble.visible` and (`not done_talking` or `state == "talking_after"`); positions sprite, bubble, and accessory sprite
