@@ -109,7 +109,7 @@ Plant types:
 |---|------|------|------|-----------|
 | 1 | Grass | $0 | $3 | 1s, 1s |
 | 2 | Cactus | $9 | $15 | 8s, 12s |
-| 3 | Rose | $30 | $50 | 6s, 9s |
+| 3 | Rose | $150 | $50 | 6s, 9s |
 | 4 | Tulip | $60 | $90 | 4s, 7s |
 | 5 | Daisy | $90 | $140 | 3s, 5s |
 | 6 | Golden Lotus | $500 | $800 | 2s, 3s |
@@ -145,7 +145,7 @@ Two kinds of customers can spawn:
 
 | Character | Plant | Chapters | Arc |
 |-----------|-------|----------|-----|
-| Sir Moneyton | Grass → Cactus → Grafter → Expand | 4 | Guaranteed first customer; teaches cactus, grafter, and store expansion in sequence; wears a monocle |
+| Sir Moneyton | Grass → Cactus → Expand → Grafter | 4 | Guaranteed first customer; teaches cactus, store expansion, then grafter (after roses — because roses are expensive, grafting is how you scale them); wears a monocle |
 | Mayor Bloom | Rose | 2 | Formal first visit; returns privately for himself; wears secretary glasses |
 | Agent Frogsby | Cactus → Rose | 2 | Comedy spy; buys cactus for close-quarters combat, returns needing rose thorns as barbed wire (pulls toward rose); wears a coat — *coat.png asset needed* |
 | Mira | Tulip | 2 | Kid with her dad's money; shows up after roses to buy a tulip (pulls toward tulip); forgets one more later |
@@ -158,9 +158,9 @@ Two kinds of customers can spawn:
 | Plant | Pull character | Trigger |
 |-------|---------------|---------|
 | Cactus | Sir Moneyton Ch2 | grass stage3 ≥ 3 |
-| Rose | Agent Frogsby Ch2 | cactus stage3 ≥ 6 |
+| Rose | Agent Frogsby Ch2 | cactus stage3 ≥ 4 |
 | Tulip | Mira Ch1 | rose stage3 ≥ 3 |
-| Daisy | Mechafrog Ch1 | tulip stage3 ≥ 5 |
+| Daisy | Mechafrog Ch1 | daisy stage3 ≥ 3 |
 | Golden Lotus | The Collector Ch1 | daisy stage3 ≥ 30 |
 
 **Dialog flow:**

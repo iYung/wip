@@ -153,7 +153,7 @@ See open questions in `game-design.md`.
 
 - **Post-sale dialogue** — scripted characters can now say lines after a sale via `after_messages` in `customer_scripts.lua`; customer enters a `talking_after` state, player clicks through lines, then the heart bubble appears and they walk out; backwards-compatible (characters without `after_messages` walk out immediately as before)
 
-- **Tutorial character (Sir Moneyton)** — 4-chapter scripted mentor; guaranteed first customer via `count=0` trigger; each chapter fires at a natural milestone (first grass, 3 grass sold, first cactus, first rose) and teaches a core mechanic (grow loop, PC store, grafter, upgrades)
+- **Tutorial character (Sir Moneyton)** — 4-chapter scripted mentor; guaranteed first customer via `count=0` trigger; each chapter fires at a natural milestone (first grass, 3 grass sold, 3 cactus sold, 2 roses sold) and teaches a core mechanic (grow loop, PC store, store expansion, grafter); grafter tutorial comes after roses because roses cost $150 — grafting is how the player makes them profitable
 
 - **Character accessories** — all scripted characters now have accessories as a visual signal distinguishing them from random customers; PNGs in `assets/` (`monocle`, `secretary_glasses`, `shades`, `clown`, `hair_bow`)
 

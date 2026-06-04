@@ -16,7 +16,7 @@ return {
     [3] = {
         name        = "Rose",
         description = "Classic beauty.\nSells for $50 at stage 3.",
-        cost        = 30,
+        cost        = 150,
         sell        = 50,
         cooldowns   = { 6, 9 },
     },
