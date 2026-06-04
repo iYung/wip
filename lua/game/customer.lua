@@ -11,8 +11,6 @@ local CW    = 6 * U   -- 120
 local CH    = 12 * U  -- 240
 local BW    = 6 * U   -- bubble width  120  (matches plant sprite size)
 local BH    = 6 * U   -- bubble height 120
-local SPEED = 80
-
 local REVEAL_SPEED  = 40
 local PAD           = 14
 local MIN_BOX_W     = 120
@@ -120,6 +118,7 @@ function Customer:show(cfg)
     self.sprite.visible  = true
     self.bubble.visible  = false
     self.heart_bubble.visible = false
+    self.speed        = cfg.walk_speed or 80
     self._voice_pitch = cfg.voice_pitch or 1.0
     self._primary   = cfg.primary_color   or DEFAULT_PRIMARY
     self._secondary = cfg.secondary_color or DEFAULT_SECONDARY
@@ -216,14 +215,14 @@ end
 
 function Customer:update(dt)
     if self.state == "walking_in" then
-        self.x = self.x + SPEED * dt
+        self.x = self.x + self.speed * dt
         if self.x >= self.target_x then
             self.x              = self.target_x
             self.state          = "waiting"
             self.bubble.visible = true
         end
     elseif self.state == "walking_out" then
-        self.x = self.x - SPEED * dt
+        self.x = self.x - self.speed * dt
         if self.x <= self.exit_x then
             self.x                 = self.exit_x
             self.state             = "idle"
