@@ -2,6 +2,14 @@ local Sound = require("lua/game/sound")
 
 local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Save Game", "Exit Settings", "Leave Game" }
 
+local function _visible_items(opaque)
+    local result = {}
+    for i = 1, #ITEMS do
+        if not (opaque and i == 5) then result[#result + 1] = i end
+    end
+    return result
+end
+
 local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","pick_up_down","interact"}
 local _ACTION_LABELS = {"move up","move down","move left","move right","pick up/down","interact"}
 
@@ -138,11 +146,23 @@ function SettingsMenu:update(dt)
     local escape  = love.keyboard.isDown("escape")
 
     if up and not self._prev_up then
-        self.selected = ((self.selected - 2) % #ITEMS) + 1
+        local vis = _visible_items(self._opaque)
+        for j, idx in ipairs(vis) do
+            if idx == self.selected then
+                self.selected = vis[((j - 2) % #vis) + 1]
+                break
+            end
+        end
         Sound.play("menu_navigate")
     end
     if down and not self._prev_down then
-        self.selected = (self.selected % #ITEMS) + 1
+        local vis = _visible_items(self._opaque)
+        for j, idx in ipairs(vis) do
+            if idx == self.selected then
+                self.selected = vis[(j % #vis) + 1]
+                break
+            end
+        end
         Sound.play("menu_navigate")
     end
     if confirm and not self._prev_confirm then
@@ -274,11 +294,13 @@ function SettingsMenu:draw()
     end
 
     love.graphics.setFont(self._font_btn)
-    for i = 1, #ITEMS do
-        local y   = self._btn_y0 + (i - 1) * BTN_GAP
+    local vis    = _visible_items(self._opaque)
+    local btn_y0 = H / 2 - (#vis - 1) * BTN_GAP / 2 - BTN_H / 2
+    for j, i in ipairs(vis) do
+        local y   = btn_y0 + (j - 1) * BTN_GAP
         local img = i == self.selected and self._img_btn_sel or self._img_btn
         love.graphics.setColor(1, 1, 1, 1)
-        if i ~= 2 and i ~= 3 and i ~= 5 then
+        if i ~= 2 and i ~= 3 then
             love.graphics.draw(img, BTN_X, y)
         end
 
@@ -309,14 +331,6 @@ function SettingsMenu:draw()
             if vol > 0   then love.graphics.printf("<", vx,      ty, VAL_W, "left")  end
             if vol < 100 then love.graphics.printf(">", vx - 10, ty, VAL_W, "right") end
             love.graphics.printf(tostring(vol) .. "%", vx, ty, VAL_W, "center")
-        elseif i == 5 then
-            -- Save Game: grayed out on start screen (unavailable)
-            if self._opaque then
-                love.graphics.setColor(0.5, 0.5, 0.5, 1)
-            end
-            love.graphics.draw(img, BTN_X, y)
-            love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
-            love.graphics.setColor(1, 1, 1, 1)
         else
             love.graphics.printf(ITEMS[i], BTN_X, ty, BTN_W, "center")
         end
