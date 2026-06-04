@@ -1,144 +1,242 @@
 #!/usr/bin/env python3
-"""Visualize quest pull chain and character details from customer_scripts.lua."""
+"""Quest grid: plant tiers as columns, characters as rows, chapter arrows per row."""
 
-import re
-import sys
-import os
+import re, os, sys
+import tkinter as tk
 
 SCRIPT_PATH = os.path.join(os.path.dirname(__file__), "..", "lua", "game", "data", "customer_scripts.lua")
 
-PLANT_NAMES = {
-    1: "Grass",
-    2: "Cactus",
-    3: "Rose",
-    4: "Tulip",
-    5: "Daisy",
-    6: "Golden Lotus",
+PLANTS     = [(1,"Grass"),(2,"Cactus"),(3,"Rose"),(4,"Tulip"),(5,"Daisy"),(6,"Golden Lotus")]
+PLANT_NAME = {pt: n for pt, n in PLANTS}
+PLANT_IDX  = {pt: i for i, (pt, _) in enumerate(PLANTS)}
+
+NODE_FILL = {
+    1: "#b2dfdb",  # Grass
+    2: "#c5e1a5",  # Cactus
+    3: "#f48fb1",  # Rose
+    4: "#ce93d8",  # Tulip
+    5: "#fff176",  # Daisy
+    6: "#ffd54f",  # Golden Lotus
 }
+PULL_OUTLINE = "#e64a19"
+BG = "#f9f9f6"
 
-PLANT_ORDER = [1, 2, 3, 4, 5, 6]
+LEFT  = 160   # px reserved for character name column
+COL_W = 130   # px per plant-tier column
+TOP   = 58    # px reserved for headers
+ROW_H = 96    # px per character row
+NW, NH = 92, 38  # node width, height
 
+
+def col_x(plant_type):
+    return LEFT + PLANT_IDX[plant_type] * COL_W + COL_W // 2
+
+
+def row_y(idx):
+    return TOP + idx * ROW_H + ROW_H // 2
+
+
+# ── parsing ────────────────────────────────────────────────────────────────────
 
 def parse_scripts(path):
     with open(path) as f:
         text = f.read()
-
     entries = []
     for block in re.split(r"\},\s*\{", text):
-        entry = {}
-
+        e = {}
         m = re.search(r'\bid\s*=\s*"([^"]+)"', block)
-        if m:
-            entry["id"] = m.group(1)
-
+        if m: e["id"] = m.group(1)
         m = re.search(r'\bchapter\s*=\s*(\d+)', block)
-        if m:
-            entry["chapter"] = int(m.group(1))
-
+        if m: e["chapter"] = int(m.group(1))
         m = re.search(r'\bname\s*=\s*"([^"]+)"', block)
+        if m: e["name"] = m.group(1)
+        m = re.search(r'\btrigger\s*=\s*\{[^}]*plant_type\s*=\s*(\d+)[^}]*count\s*=\s*(\d+)', block)
         if m:
-            entry["name"] = m.group(1)
-
-        m = re.search(r'\btrigger\s*=\s*\{\s*plant_type\s*=\s*(\d+)\s*,\s*count\s*=\s*(\d+)', block)
-        if m:
-            entry["trigger_type"] = int(m.group(1))
-            entry["trigger_count"] = int(m.group(2))
-
-        # plant_type line (what they buy) — comes after trigger block
-        for m in re.finditer(r'\bplant_type\s*=\s*(\d+)', block):
-            entry["plant_type"] = int(m.group(1))
-
-        m = re.search(r'\bno_dismiss\s*=\s*true', block)
-        entry["no_dismiss"] = bool(m)
-
-        if "id" in entry and "chapter" in entry:
-            entries.append(entry)
-
+            e["trig_pt"]    = int(m.group(1))
+            e["trig_count"] = int(m.group(2))
+        for m2 in re.finditer(r'\bplant_type\s*=\s*(\d+)', block):
+            e["buy_pt"] = int(m2.group(1))
+        m = re.search(r'\bmessages\s*=\s*\{([^}]*)\}', block)
+        e["first_msg"] = re.findall(r'"([^"]+)"', m.group(1))[0] if m else ""
+        e["no_dismiss"] = bool(re.search(r'\bno_dismiss\s*=\s*true', block))
+        if "id" in e and "chapter" in e and "trig_pt" in e:
+            entries.append(e)
     return entries
 
 
-def group_by_character(entries):
-    seen = {}
-    ordered = []
+def group_characters(entries):
+    seen, order = {}, []
     for e in entries:
         if e["id"] not in seen:
-            seen[e["id"]] = []
-            ordered.append(e["id"])
-        seen[e["id"]].append(e)
-    return [(k, seen[k]) for k in ordered]
+            seen[e["id"]] = {"name": e["name"], "chapters": []}
+            order.append(e["id"])
+        seen[e["id"]]["chapters"].append(e)
+    chars = [(cid, seen[cid]) for cid in order]
+    chars.sort(key=lambda x: (
+        PLANT_IDX[x[1]["chapters"][0]["trig_pt"]],
+        x[1]["chapters"][0]["trig_count"],
+    ))
+    return chars
 
 
-def is_pull(entry):
-    trigger = entry.get("trigger_type")
-    buys = entry.get("plant_type")
-    if trigger is None or buys is None:
-        return False
-    try:
-        return PLANT_ORDER.index(buys) > PLANT_ORDER.index(trigger)
-    except ValueError:
-        return False
+def compute_positions(chars):
+    """Return {char_id: {chapter_num: (x, y)}}."""
+    pos = {}
+    for row_i, (cid, cdata) in enumerate(chars):
+        pos[cid] = {}
+        ry = row_y(row_i)
+        by_col = {}
+        for ch in cdata["chapters"]:
+            by_col.setdefault(ch["trig_pt"], []).append(ch)
+        for pt, chs in by_col.items():
+            cx = col_x(pt)
+            n = len(chs)
+            offsets = [-(n - 1) * 22 + i * 44 for i in range(n)]
+            for ch, off in zip(chs, offsets):
+                pos[cid][ch["chapter"]] = (cx, ry + off)
+    return pos
 
 
-def print_pull_chain(entries):
-    pulls = [e for e in entries if is_pull(e)]
+# ── drawing ────────────────────────────────────────────────────────────────────
 
-    # Build a map: from_plant -> list of (to_plant, entry)
-    chain = {}
-    for e in pulls:
-        t = e["trigger_type"]
-        chain.setdefault(t, []).append(e)
-
-    print("=" * 60)
-    print("  PULL CHAIN")
-    print("=" * 60)
-
-    for i, plant_id in enumerate(PLANT_ORDER[:-1]):
-        from_name = PLANT_NAMES[plant_id].ljust(12)
-        to_name = PLANT_NAMES[PLANT_ORDER[i + 1]]
-        pulls_here = chain.get(plant_id, [])
-
-        if pulls_here:
-            for e in pulls_here:
-                label = f"{e['name']} Ch{e['chapter']}: {e['trigger_count']} sold"
-                buys_name = PLANT_NAMES.get(e["plant_type"], "?")
-                arrow = f"──[{label}]──▶  {buys_name}"
-                print(f"  {from_name} {arrow}")
-        else:
-            print(f"  {from_name} ── (no pull) ──▶  {to_name}  ⚠")
-
-    print()
+def draw_grid(cv, n_rows, cw, ch):
+    for i in range(len(PLANTS) + 1):
+        x = LEFT + i * COL_W
+        cv.create_line(x, 0, x, ch, fill="#ddd", dash=(3, 4))
+    for i in range(n_rows + 1):
+        y = TOP + i * ROW_H
+        cv.create_line(0, y, cw, y, fill="#ddd", dash=(3, 4))
 
 
-def print_character_details(groups):
-    print("=" * 60)
-    print("  CHARACTER DETAILS")
-    print("=" * 60)
+def draw_row_shading(cv, n_rows, cw):
+    for i in range(n_rows):
+        if i % 2 == 1:
+            y0 = TOP + i * ROW_H + 1
+            y1 = y0 + ROW_H - 1
+            cv.create_rectangle(0, y0, cw, y1, fill="#f0f0ec", outline="")
 
-    for char_id, chapters in groups:
-        name = chapters[0]["name"]
-        print(f"\n  {name}  ({len(chapters)} chapter{'s' if len(chapters) > 1 else ''})")
-        print(f"  {'-' * (len(name) + 14)}")
 
-        for e in chapters:
-            t_plant = PLANT_NAMES.get(e.get("trigger_type"), "?")
-            t_count = e.get("trigger_count", "?")
-            buys = PLANT_NAMES.get(e.get("plant_type"), "?")
-            pull = "  ← pull" if is_pull(e) else ""
-            no_dismiss = "  [no dismiss]" if e.get("no_dismiss") else ""
-            trigger_str = f"{t_count} {t_plant} sold" if t_count != "?" else "— (intro)"
-            print(f"    Ch{e['chapter']}  trigger: {trigger_str:<22} buys: {buys}{pull}{no_dismiss}")
+def draw_headers(cv):
+    for i, (pt, name) in enumerate(PLANTS):
+        x0 = LEFT + i * COL_W + 1
+        x1 = x0 + COL_W - 2
+        cv.create_rectangle(x0, 1, x1, TOP - 1, fill=NODE_FILL[pt], outline="")
+        cx = x0 + COL_W // 2 - 1
+        cv.create_text(cx, TOP // 2, text=name, font=("Helvetica", 11, "bold"), fill="#333")
 
-    print()
 
+def draw_char_labels(cv, chars):
+    for row_i, (cid, cdata) in enumerate(chars):
+        y = row_y(row_i)
+        cv.create_text(LEFT - 10, y, text=cdata["name"], anchor="e",
+                       font=("Helvetica", 10), fill="#333")
+
+
+def draw_arrows(cv, chars, pos):
+    for cid, cdata in chars:
+        chs = cdata["chapters"]
+        for i in range(len(chs) - 1):
+            a, b = chs[i], chs[i + 1]
+            ax, ay = pos[cid][a["chapter"]]
+            bx, by = pos[cid][b["chapter"]]
+
+            if ax == bx:                  # same column → vertical
+                x0, y0 = ax, ay + NH // 2 + 1
+                x1, y1 = bx, by - NH // 2 - 1
+            elif bx > ax:                 # going right
+                x0, y0 = ax + NW // 2 + 1, ay
+                x1, y1 = bx - NW // 2 - 1, by
+            else:                         # going left (regression)
+                x0, y0 = ax - NW // 2 - 1, ay
+                x1, y1 = bx + NW // 2 + 1, by
+
+            cv.create_line(x0, y0, x1, y1,
+                           arrow=tk.LAST, fill="#555", width=2,
+                           arrowshape=(9, 11, 4))
+
+
+def draw_nodes(cv, chars, pos, tip_var):
+    for cid, cdata in chars:
+        for ch in cdata["chapters"]:
+            nx, ny = pos[cid][ch["chapter"]]
+            trig_pt = ch["trig_pt"]
+            buy_pt  = ch.get("buy_pt", trig_pt)
+            is_pull = PLANT_IDX.get(buy_pt, 0) > PLANT_IDX.get(trig_pt, 0)
+
+            fill    = NODE_FILL.get(trig_pt, "#eee")
+            outline = PULL_OUTLINE if is_pull else "#888"
+            lw      = 2 if is_pull else 1
+
+            x0, y0 = nx - NW // 2, ny - NH // 2
+            x1, y1 = nx + NW // 2, ny + NH // 2
+            tag = f"node_{cid}_{ch['chapter']}"
+
+            rect = cv.create_rectangle(x0, y0, x1, y1,
+                                       fill=fill, outline=outline, width=lw, tags=tag)
+
+            line1 = f"Ch{ch['chapter']}  ≥{ch['trig_count']}"
+            line2 = f"→ {PLANT_NAME.get(buy_pt, '?')}" if is_pull else ""
+            label = line1 + ("\n" + line2 if line2 else "")
+
+            txt = cv.create_text(nx, ny, text=label, font=("Helvetica", 9),
+                                  justify=tk.CENTER, fill="#222", tags=tag)
+
+            tip = (f"{cdata['name']}  ch{ch['chapter']}  ·  "
+                   f"trigger: ≥{ch['trig_count']} {PLANT_NAME.get(trig_pt,'?')} sold  ·  "
+                   f"buys: {PLANT_NAME.get(buy_pt,'?')}")
+            if ch.get("first_msg"):
+                tip += f"  ·  \"{ch['first_msg']}\""
+
+            def on_enter(_, t=tip): tip_var.set(t)
+            def on_leave(_):        tip_var.set("")
+
+            for item in (rect, txt):
+                cv.tag_bind(item, "<Enter>", on_enter)
+                cv.tag_bind(item, "<Leave>", on_leave)
+
+
+def draw_legend(cv, cw, ch):
+    lx, ly = LEFT + 4, ch - 20
+    cv.create_rectangle(lx, ly - 8, lx + 14, ly + 8,
+                        fill="#eee", outline=PULL_OUTLINE, width=2)
+    cv.create_text(lx + 20, ly, text="pull  (triggers on earlier tier, buys next)",
+                   anchor="w", font=("Helvetica", 8), fill="#666")
+
+
+# ── main ───────────────────────────────────────────────────────────────────────
 
 def main():
-    path = sys.argv[1] if len(sys.argv) > 1 else SCRIPT_PATH
+    path    = sys.argv[1] if len(sys.argv) > 1 else SCRIPT_PATH
     entries = parse_scripts(path)
-    groups = group_by_character(entries)
+    chars   = group_characters(entries)
+    pos     = compute_positions(chars)
 
-    print()
-    print_pull_chain(entries)
-    print_character_details(groups)
+    cw = LEFT + len(PLANTS) * COL_W + 20
+    ch = TOP + len(chars) * ROW_H + 36
+
+    root = tk.Tk()
+    root.title("Quest Grid")
+    root.configure(bg=BG)
+    root.resizable(False, False)
+
+    cv = tk.Canvas(root, width=cw, height=ch, bg=BG, highlightthickness=0)
+    cv.pack()
+
+    draw_row_shading(cv, len(chars), cw)
+    draw_grid(cv, len(chars), cw, ch)
+    draw_headers(cv)
+    draw_char_labels(cv, chars)
+    draw_arrows(cv, chars, pos)
+
+    tip_var = tk.StringVar()
+    draw_nodes(cv, chars, pos, tip_var)
+    draw_legend(cv, cw, ch)
+
+    tip_bar = tk.Label(root, textvariable=tip_var, anchor="w", bg="#fffff0",
+                       fg="#444", font=("Helvetica", 9), relief="flat", padx=8, pady=3)
+    tip_bar.pack(fill=tk.X, side=tk.BOTTOM)
+
+    root.mainloop()
 
 
 if __name__ == "__main__":
