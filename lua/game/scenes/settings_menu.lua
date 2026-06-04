@@ -269,7 +269,7 @@ function SettingsMenu:draw()
             -- Value bar
             love.graphics.draw(img, BTN_X + LABEL_W + BAR_GAP, y, 0, VAL_SX, 1)
             if self._capturing == _ACTION_LIST[i] then
-                love.graphics.printf("press a key", BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
+                love.graphics.printf("hit key", BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
             else
                 love.graphics.printf((self._state.keybinds[_ACTION_LIST[i]] or "unbound"):upper(), BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
             end
@@ -316,7 +316,7 @@ function SettingsMenu:draw()
             love.graphics.draw(img, BTN_X, y, 0, LABEL_SX, 1)
             love.graphics.printf("SFX Volume", BTN_X, ty, LABEL_W, "center")
             -- Value bar
-            local vx = BTN_X + LABEL_W + BAR_GAP
+            local vx = BTN_X + LABEL_W + BAR_GAP + 5
             love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
             local vol = self._state.sfx_volume
             if vol > 0   then love.graphics.printf("<", vx,      ty, VAL_W, "left")  end
@@ -327,7 +327,7 @@ function SettingsMenu:draw()
             love.graphics.draw(img, BTN_X, y, 0, LABEL_SX, 1)
             love.graphics.printf("Music Volume", BTN_X, ty, LABEL_W, "center")
             -- Value bar
-            local vx = BTN_X + LABEL_W + BAR_GAP
+            local vx = BTN_X + LABEL_W + BAR_GAP + 5
             love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
             local vol = self._state.music_volume
             if vol > 0   then love.graphics.printf("<", vx,      ty, VAL_W, "left")  end
