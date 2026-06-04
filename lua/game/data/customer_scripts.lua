@@ -261,6 +261,7 @@ return {
     {
         id             = "sage",
         chapter        = 1,
+        no_dismiss     = true,
         accessory      = "monocle",
         trigger        = { plant_type = 1, count = 0 },
         name           = "Sir Moneyton",

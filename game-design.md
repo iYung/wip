@@ -178,6 +178,7 @@ Two kinds of customers can spawn:
 ### Cashier Rules
 
 - E key does nothing in the cashier zone (no putting items down)
+- E normally dismisses the current customer (they walk out and return after 3 other sales); the first quest (Sir Moneyton ch1) is undismissable — E is blocked and the "E: DISMISS" HUD label is hidden until the player completes or the session ends
 - F only triggers dialog/sale when the customer has fully arrived (`waiting` state)
 - Sale value shown live in the context HUD: `F: SELL TO CUSTOMER ($X)`
 

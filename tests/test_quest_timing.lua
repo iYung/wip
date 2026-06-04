@@ -272,4 +272,38 @@ for _, s in ipairs(SCRIPTS) do
     local key = s.id .. ":" .. s.chapter
     assert(milestones[key], "quest not reached: " .. key)
 end
+
+-- ── no-dismiss test for sage:1 ────────────────────────────────────────────
+do
+    local nd_ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local nd_elapsed = 0
+
+    -- sage:1 trigger count=0 fires immediately; wait for customer to arrive.
+    nd_elapsed = runner.fast_forward_until(nd_ctx, function()
+        return nd_ctx.sm.current._customer:arrived()
+    end, nd_elapsed, 600)
+
+    -- Move player into cashier zone (x < 0) so the E branch is reached.
+    nd_elapsed = walk_to(nd_ctx, CASHIER_X, nd_elapsed)
+
+    assert(nd_ctx.sm.current._active_script_key == "sage:1",
+        "expected sage:1 active, got: " .. tostring(nd_ctx.sm.current._active_script_key))
+
+    -- Press E — must not dismiss a no_dismiss quest.
+    nd_ctx.input:press("pick_up_down")
+    runner.tick(nd_ctx.input, nd_ctx.sm, 1, 1/60)
+    nd_elapsed = nd_elapsed + 1/60
+
+    assert(nd_ctx.sm.current._customer:arrived(),
+        "sage:1 customer was dismissed by E — no_dismiss should have blocked it")
+    assert(nd_ctx.sm.current._active_script_key == "sage:1",
+        "active_script_key was cleared by E — no_dismiss should have blocked it")
+    assert(not nd_ctx.sm.current._script_cooldowns["sage:1"],
+        "dismiss cooldown was set for no_dismiss quest — should not have been")
+
+    print("[no-dismiss] sage:1 E-key block: PASS")
+end
+
 print("PASS")
