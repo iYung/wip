@@ -160,6 +160,7 @@ for pt = 1, 6 do
     ctx2.gs.currency        = 999999
     ctx2.gs.unlocked_plants = { [pt] = true }
     ctx2.gs.store.slots[4].item = Plant.new(pt)
+    ctx2.gs.seen_scripts["sage:1"] = true  -- sage:1 is no_dismiss; skip it in sell loops
 
     local start_currency = ctx2.gs.currency
     local elapsed2 = 0
@@ -226,6 +227,7 @@ for _, tier in ipairs(growth_tiers) do
     ctx4.gs.currency        = 999999
     ctx4.gs.unlocked_plants = { [6] = true }
     ctx4.gs.store.slots[4].item = Plant.new(6)
+    ctx4.gs.seen_scripts["sage:1"] = true  -- sage:1 is no_dismiss; skip it in sell loops
 
     local start4        = ctx4.gs.currency
     local elapsed4      = 0
@@ -307,6 +309,7 @@ for tier_idx = 0, 3 do
     ctx5.gs.currency            = 999999
     ctx5.gs.unlocked_plants     = { [6] = true }
     ctx5.gs.store.slots[4].item = Plant.new(6)
+    ctx5.gs.seen_scripts["sage:1"] = true  -- sage:1 is no_dismiss; skip it in sell loops
 
     local start5        = ctx5.gs.currency
     local elapsed5      = 0
