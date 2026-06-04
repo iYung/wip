@@ -107,12 +107,12 @@ Plant types:
 
 | # | Name | Cost | Sell | Cooldowns |
 |---|------|------|------|-----------|
-| 1 | Grass | $1 | $5 | 1s, 1s |
-| 2 | Cactus | $3 | $8 | 8s, 12s |
-| 3 | Rose | $6 | $13 | 6s, 9s |
-| 4 | Tulip | $10 | $20 | 4s, 7s |
-| 5 | Daisy | $15 | $28 | 3s, 5s |
-| 6 | Golden Lotus | $20 | $40 | 2s, 3s |
+| 1 | Grass | $0 | $3 | 1s, 1s |
+| 2 | Cactus | $9 | $15 | 8s, 12s |
+| 3 | Rose | $30 | $50 | 6s, 9s |
+| 4 | Tulip | $60 | $90 | 4s, 7s |
+| 5 | Daisy | $90 | $140 | 3s, 5s |
+| 6 | Golden Lotus | $500 | $800 | 2s, 3s |
 
 Each growth stage has a cooldown timer. When the timer reaches zero the plant is ready to be watered. Watering a ready plant advances it to the next stage and resets the timer for the new stage. Watering a plant that is not ready does nothing.
 
@@ -145,7 +145,7 @@ Two kinds of customers can spawn:
 
 | Character | Plant | Chapters | Arc |
 |-----------|-------|----------|-----|
-| Sir Moneyton | Grass → Cactus | 2 | Guaranteed first customer; intro buy then pulls toward cactus; wears a monocle |
+| Sir Moneyton | Grass → Cactus → Grafter → Expand | 4 | Guaranteed first customer; teaches cactus, grafter, and store expansion in sequence; wears a monocle |
 | Mayor Bloom | Rose | 2 | Formal first visit; returns privately for himself; wears secretary glasses |
 | Agent Frogsby | Cactus → Rose | 2 | Comedy spy; buys cactus for close-quarters combat, returns needing rose thorns as barbed wire (pulls toward rose); wears a coat — *coat.png asset needed* |
 | Mira | Tulip | 2 | Kid with her dad's money; shows up after roses to buy a tulip (pulls toward tulip); forgets one more later |
@@ -157,11 +157,11 @@ Two kinds of customers can spawn:
 
 | Plant | Pull character | Trigger |
 |-------|---------------|---------|
-| Cactus | Sir Moneyton Ch2 | grass sold ≥ 3 |
-| Rose | Agent Frogsby Ch2 | cactus sold ≥ 10 |
-| Tulip | Mira Ch1 | rose sold ≥ 3 |
-| Daisy | Mechafrog Ch1 | tulip sold ≥ 5 |
-| Golden Lotus | The Collector Ch1 | daisy sold ≥ 30 |
+| Cactus | Sir Moneyton Ch2 | grass stage3 ≥ 3 |
+| Rose | Agent Frogsby Ch2 | cactus stage3 ≥ 6 |
+| Tulip | Mira Ch1 | rose stage3 ≥ 3 |
+| Daisy | Mechafrog Ch1 | tulip stage3 ≥ 5 |
+| Golden Lotus | The Collector Ch1 | daisy stage3 ≥ 30 |
 
 **Dialog flow:**
 - Scripted customers: F advances through messages one at a time; after the last message the plant-image bubble appears
