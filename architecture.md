@@ -529,22 +529,23 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 
 **Properties**
 - `selected` — index of the highlighted menu item (1 = New Game, 2 = Continue, 3 = Settings, 4 = Exit)
+- `_has_save` — bool set in `on_enter()` via `Save.exists()`; controls Continue availability and default selection
 - `open_settings` — callback provided by `main.lua`; called when Settings is confirmed; opens the `SettingsMenu` overlay
-- `_font_title`, `_font_btn` — Love2D fonts created in `on_enter()`; stored on the scene so they are not recreated every frame
 
 **Menu items**
-- **New Game** — constructs and switches to `StoreScene` (same as Continue for now)
-- **Continue** — constructs and switches to `StoreScene`
+- **New Game** — constructs a fresh `GameState.new()` and switches to `StoreScene`
+- **Continue** — loads `save.dat` via `GameState.from_save`, switches to `StoreScene` with `from_save=true`; rendered at 40% alpha and skipped by navigation when no save exists
 - **Settings** — calls `self.open_settings()` to open the `SettingsMenu` overlay
 - **Exit** — calls `love.event.quit()`
 
 **Navigation keys** (delegated to the passed-in `Input` instance via `self.input:pressed(action)`)
-- `move_up` (Up / W) — move selection up
-- `move_down` (Down / S) — move selection down
+- `move_up` (Up / W) — move selection up; skips Continue when `_has_save` is false
+- `move_down` (Down / S) — move selection down; skips Continue when `_has_save` is false
 - `menu_confirm` (Enter / Space / F) — confirm
 
 **Notes**
-- Fonts are saved and restored around `draw()` so the global Love2D font state is unchanged when `StoreScene` draws next frame
+- On `on_enter()`, if a save file exists, `selected` defaults to 2 (Continue); otherwise defaults to 1 (New Game)
+- Navigation uses `_next_selectable()` which steps past index 2 when `_has_save` is false, so Continue is unreachable without a save
 - `StoreScene` is `require`d lazily inside `_confirm()`, not at module load time, to avoid a circular load order
 
 ---
@@ -695,7 +696,8 @@ Three ways to run the game:
 | `test_settings_state.lua` | `SettingsState` defaults, `toggle_fullscreen`, `set_keybind` (basic + collision), `key_map` output and nil-skipping |
 | `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
 | `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op |
-| `test_start_scene.lua` | StartScene navigation (up/down/wrap), confirm callbacks (Settings, Exit), no legacy `_prev_*` fields |
+| `test_start_scene.lua` | StartScene navigation (up/down/wrap, Continue skipped when no save), confirm callbacks (New Game, Continue with/without save, Settings, Exit) |
+| `test_save.lua` | `Save` exists/write/read, corrupt-data nil return, scalar/item/held-item round-trips, `GameState.to_save`/`from_save` round-trip (scalars, plants, player position, slot count) |
 
 **CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.
 
