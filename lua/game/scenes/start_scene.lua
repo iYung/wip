@@ -49,16 +49,29 @@ function StartScene:on_enter()
         Sound.play_music("menu")
     end
     self._has_save = Save.exists()
+    if self._has_save then
+        self.selected = 2
+    end
+end
+
+local function _next_selectable(current, delta, has_save)
+    local n = #ITEMS
+    local s = current
+    for _ = 1, n do
+        s = ((s - 1 + delta) % n) + 1
+        if s ~= 2 or has_save then return s end
+    end
+    return current
 end
 
 function StartScene:update(dt)
     self._time = self._time + dt
     if self.input:pressed("move_up") then
-        self.selected = ((self.selected - 2) % #ITEMS) + 1
+        self.selected = _next_selectable(self.selected, -1, self._has_save)
         Sound.play("menu_navigate")
     end
     if self.input:pressed("move_down") then
-        self.selected = (self.selected % #ITEMS) + 1
+        self.selected = _next_selectable(self.selected, 1, self._has_save)
         Sound.play("menu_navigate")
     end
     if self.input:pressed("menu_confirm") then

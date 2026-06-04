@@ -34,35 +34,48 @@ assert(s._prev_down    == nil, "_prev_down should not exist on StartScene")
 assert(s._prev_confirm == nil, "_prev_confirm should not exist on StartScene")
 print("PASS: no _prev_* edge-detection fields")
 
--- Test 3: move_down 1 → 2
+-- Tests 3-7: navigation with no save (_has_save=false); Continue (2) is skipped
+
+-- Test 3: move_down 1 → 3 (skips 2)
 s.selected = 1
+s._has_save = false
 s.input = make_input("move_down")
 s:update(0)
-assert(s.selected == 2, "move_down from 1 should go to 2, got " .. s.selected)
-print("PASS: move_down 1->2")
+assert(s.selected == 3, "move_down from 1 (no save) should skip 2 and go to 3, got " .. s.selected)
+print("PASS: move_down 1->3 (skips disabled Continue)")
 
--- Test 4: move_down 2 → 3
+-- Test 4: move_down 3 → 4
 s:update(0)
-assert(s.selected == 3, "move_down from 2 should go to 3, got " .. s.selected)
-print("PASS: move_down 2->3")
+assert(s.selected == 4, "move_down from 3 should go to 4, got " .. s.selected)
+print("PASS: move_down 3->4")
 
 -- Test 5: move_down wraps from 4 → 1
-s.selected = 4
 s:update(0)
 assert(s.selected == 1, "move_down from 4 should wrap to 1, got " .. s.selected)
 print("PASS: move_down wrap 4->1")
 
--- Test 6: move_up 2 → 1
-s.selected = 2
+-- Test 6: move_up 1 → 4 (skips 2 going up)
+s.selected = 1
 s.input = make_input("move_up")
 s:update(0)
-assert(s.selected == 1, "move_up from 2 should go to 1, got " .. s.selected)
-print("PASS: move_up 2->1")
+assert(s.selected == 4, "move_up from 1 (no save) should wrap to 4, got " .. s.selected)
+print("PASS: move_up wrap 1->4 (skips disabled Continue)")
 
--- Test 7: move_up wraps from 1 → 4
+-- Test 7: move_up 3 → 1 (skips 2)
+s.selected = 3
 s:update(0)
-assert(s.selected == 4, "move_up from 1 should wrap to 4, got " .. s.selected)
-print("PASS: move_up wrap 1->4")
+assert(s.selected == 1, "move_up from 3 (no save) should skip 2 and go to 1, got " .. s.selected)
+print("PASS: move_up 3->1 (skips disabled Continue)")
+
+-- Test 7b: with save present, Continue is selectable normally
+do
+    local sw = make_scene("move_down")
+    sw._has_save = true
+    sw.selected = 1
+    sw:update(0)
+    assert(sw.selected == 2, "move_down from 1 (save present) should land on 2, got " .. sw.selected)
+    print("PASS: move_down 1->2 when save present")
+end
 
 -- Test 8: menu_confirm on item 4 (Exit) calls love.event.quit
 local s2 = make_scene("menu_confirm")
