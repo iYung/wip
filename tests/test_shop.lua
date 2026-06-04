@@ -28,7 +28,7 @@ do
     end)
     local buy = make_buy(ctx)
     ctx.gs.currency = 100
-    buy.selected = 2   -- Cactus, cost = PLANT_DATA[2].cost = 3
+    buy.selected = 2   -- Cactus, cost = PLANT_DATA[2].cost = 9
     buy:_confirm()
     assert(ctx.gs.unlocked_plants[2] == true,
         "Cactus should be unlocked after purchase")
@@ -42,10 +42,10 @@ do
     end)
     local buy = make_buy(ctx)
     ctx.gs.currency = 100
-    buy.selected = 2   -- Cactus, cost = 3
+    buy.selected = 2   -- Cactus, cost = 9
     buy:_confirm()
-    assert(ctx.gs.currency == 97,
-        "currency should be 97 after buying Cactus ($3), got " .. tostring(ctx.gs.currency))
+    assert(ctx.gs.currency == 91,
+        "currency should be 91 after buying Cactus ($9), got " .. tostring(ctx.gs.currency))
     print("PASS: shop: buy plant deducts correct cost")
 end
 
@@ -72,7 +72,7 @@ do
     end)
     local buy = make_buy(ctx)
     ctx.gs.currency = 0
-    buy.selected = 2   -- Cactus costs $3
+    buy.selected = 2   -- Cactus costs $9
     buy:_confirm()
     assert(ctx.gs.currency == 0, "currency should be unchanged when broke")
     assert(ctx.gs.player.held_item == nil,

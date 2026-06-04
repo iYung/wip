@@ -75,7 +75,7 @@ end
 local ctx = runner.setup(function(gs, input, sm)
     return StoreScene.new(gs, input, sm)
 end)
-ctx.gs.currency = 10
+ctx.gs.currency = 600
 local elapsed = 0
 
 for _ = 1, 3 do
@@ -129,8 +129,8 @@ for _ = 1, 3 do
     elapsed = sell_plant(ctx, 1, elapsed)
 end
 
-assert(ctx.gs.currency >= 20,
-    "currency should be >= 20 after 3 grass sales, got " .. tostring(ctx.gs.currency))
+assert(ctx.gs.currency >= 609,
+    "currency should be >= 609 after 3 grass sales (600 + 3x$3), got " .. tostring(ctx.gs.currency))
 
 -- Golden Lotus cycle
 elapsed = walk_to(ctx, 500, elapsed)
