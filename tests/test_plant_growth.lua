@@ -4,13 +4,16 @@ local StoreScene = require("lua/game/scenes/store_scene")
 local Plant      = require("lua/game/items/plant")
 local PLANT_DATA = require("lua/game/data/plant_data")
 
+local CD1 = PLANT_DATA[1].cooldowns[1]
+local CD2 = PLANT_DATA[1].cooldowns[2]
+
 -- Test: plant: stage-1 cooldown triggers ready
 do
     local p = Plant.new(1)
     assert(p.ready == false)
     assert(p.bubble.visible == false)
-    p:update(1.0)   -- tick exactly 1 second
-    assert(p.ready == true, "expected ready after 1s")
+    p:update(CD1)
+    assert(p.ready == true, "expected ready after stage-1 cooldown")
     assert(p.bubble.visible == true, "expected bubble visible after ready")
     print("PASS: plant: stage-1 cooldown triggers ready")
 end
@@ -18,7 +21,7 @@ end
 -- Test: plant: water advances stage 1→2
 do
     local p = Plant.new(1)
-    p:update(1.0)   -- make ready
+    p:update(CD1)
     assert(p.ready == true)
     p:water()
     assert(p.stage == 2, "expected stage 2 after water")
@@ -30,9 +33,9 @@ end
 -- Test: plant: stage-2 cooldown triggers ready
 do
     local p = Plant.new(1)
-    p:update(1.0)   -- stage-1 ready
+    p:update(CD1)   -- stage-1 ready
     p:water()       -- advance to stage 2
-    p:update(1.0)   -- stage-2 cooldown fires
+    p:update(CD2)   -- stage-2 cooldown fires
     assert(p.ready == true, "expected ready after stage-2 cooldown")
     assert(p.bubble.visible == true)
     print("PASS: plant: stage-2 cooldown triggers ready")
@@ -41,8 +44,8 @@ end
 -- Test: plant: water advances stage 2→3
 do
     local p = Plant.new(1)
-    p:update(1.0); p:water()   -- stage 2
-    p:update(1.0); p:water()   -- stage 3
+    p:update(CD1); p:water()   -- stage 2
+    p:update(CD2); p:water()   -- stage 3
     assert(p.stage == 3, "expected stage 3")
     print("PASS: plant: water advances stage 2->3")
 end
@@ -50,8 +53,8 @@ end
 -- Test: plant: stage-3 plant is not ready and cannot be watered
 do
     local p = Plant.new(1)
-    p:update(1.0); p:water()   -- stage 2
-    p:update(1.0); p:water()   -- stage 3
+    p:update(CD1); p:water()   -- stage 2
+    p:update(CD2); p:water()   -- stage 3
     -- tick a long time: stage-3 should never go ready
     for _ = 1, 100 do p:update(1.0) end
     assert(p.ready == false, "stage-3 should never be ready")
@@ -125,7 +128,7 @@ end
 -- Test: plant: water() returns true on successful advance
 do
     local p = Plant.new(1)
-    p:update(1.0)
+    p:update(CD1)
     assert(p:water() == true, "water() should return true on success")
     print("PASS: plant: water() returns true on successful advance")
 end
@@ -133,8 +136,8 @@ end
 -- Test: plant: water() returns false at stage 3
 do
     local p = Plant.new(1)
-    p:update(1.0); p:water()
-    p:update(1.0); p:water()
+    p:update(CD1); p:water()
+    p:update(CD2); p:water()
     assert(p.stage == 3)
     assert(p:water() == false, "water() should return false at stage 3")
     print("PASS: plant: water() returns false at stage 3")

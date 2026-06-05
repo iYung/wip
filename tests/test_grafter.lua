@@ -15,8 +15,9 @@ end)
 local grafter = Grafter.new()
 ctx.gs.player.held_item = grafter
 
+local PLANT_DATA = require("lua/game/data/plant_data")
 local plant = Plant.new(1)   -- stage 1 by default
-plant:update(1.0); plant:water()  -- advance to stage 2
+plant:update(PLANT_DATA[1].cooldowns[1]); plant:water()  -- advance to stage 2
 ctx.gs.store.slots[4].item = plant
 ctx.gs.player.x = 700        -- over slot 4
 
