@@ -43,6 +43,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `pc_store.lua` | interact() opens BuyScene; blocked if player is holding anything; `sellable = false`; blue-grey PNG |
 | `plant.lua` | 6 types, 3 stages each; per-type cooldown from `plant_data`; stage PNGs rendered as-is (no tinting); yellow bubble via `draw_bubble()` |
 | `grafter.lua` | Clones a stage-3 plant (resets original to stage 1); auto-spawns clone into nearest empty slot; no-space bubble (60×60, `grafter_no_space_bubble.png`) shown for 1.5 s when no slot available; always shows orange PNG |
+| `intercom.lua` | Purchasable tool ($50); shows the customer's plant request bubble above itself; `draw_bubble()` mirrors the customer's done-talking plant image; save/load safe via `_wire_intercom()` |
 | `sell_bin.lua` | Sell station; F while holding any sellable item sells it for currency; red PNG |
 
 ### Scenes (`lua/game/scenes/`)
@@ -53,7 +54,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `settings_menu.lua` | Pause overlay — six buttons (Fullscreen/Window, SFX Volume, Music Volume, Keybinds, Exit Settings, Leave Game); SFX and Music Volume rows each show `< XX% >` and respond to left/right keys in 10% steps; Keybinds opens a sub-screen listing all 6 actions with press-to-capture rebinding; navigation uses remapped move_up/move_down keys; `is_open` gates scene update in `main.lua`; drawn inside the canvas so it scales with the window; when opened opaque (from start screen), background alternates between `settings_pattern_1.png` and `settings_pattern_2.png` once per second |
 | `settings_state.lua` | Holds user settings: `fullscreen` bool, `sfx_volume`/`music_volume` integers (0–100), and `keybinds` table (6 actions); `set_sfx_volume`/`set_music_volume` clamp and call `Sound` directly; `set_keybind` clears collisions; `key_map()` produces `Input`-compatible map; passed to `SettingsMenu.new(ss, input)` at startup |
 | `store_scene.lua` | Main loop — player moves, camera follows on x then clamps to world bounds (left = -400+640, right = store width−640), pick up/interact handled here; cashier zone logic (F skips reveal → advances → sells, E dismisses); context HUD bottom-left shows F: SKIP while typing, F: NEXT when done, E: DISMISS when customer waiting; during `talking_after` (post-sale scripted lines) shows F: SKIP while typing, F: CONTINUE when line is done; `_active_script_key` tracks the current scripted customer (seen_scripts written on sale, not on spawn); `_script_cooldowns` counts down per completed sale — dismissed scripted customers return after 3 sales; unified parallax tiles `store_bg_*` across full world width pre-drawer; `Store:draw_bg` then stamps walls/windows on top; layered draw order for wall/bubbles |
-| `buy_scene.lua` | Carousel UI — 10 items (6 plants + Watering Can + Grafter + Expand Slot + Heat Lamps); A/D cycle, F buy, E cancel; per-type price and preview color; scene rendered to off-screen canvas and composited through CRT post-process shader |
+| `buy_scene.lua` | Carousel UI — 11 items (6 plants + Watering Can + Grafter + Expand Slot + Heat Lamps + Intercom); A/D cycle, F buy, E cancel; per-type price and preview color; scene rendered to off-screen canvas and composited through CRT post-process shader |
 
 ### Data (`lua/game/data/`)
 
@@ -136,6 +137,8 @@ Defaults — all remappable via Settings → Keybinds.
 See open questions in `game-design.md`.
 
 ### Recently completed
+
+- **Intercom item** — purchasable from the PC Store for $50; shows the current customer's plant request bubble (same 9-slice visual and same timing as the bubble above the customer) when placed in any slot or held, so the player can see what plant is needed without walking to the cashier zone; carriable and discardable in the garbage bin; save/load preserves it; `tests/test_intercom.lua` (11 tests)
 
 - **Speech bubble fix** — customer name prefix (`"Name: "`) removed from all dialogue lines (`make_full_text`, `serve`, `advance_after`); speech bubble now wraps long lines via `font:getWrap` with `MAX_BOX_W = 18 * U` (360px) so text never overflows the screen; bubble height grows to fit wrapped lines; typewriter reveal respects the same wrap limit
 

@@ -32,6 +32,7 @@ A.watering_can  = img("assets/watering_can.png")
 A.grafter_empty  = img("assets/grafter_empty.png")
 A.garbage_bin    = img("assets/garbage_bin.png")
 A.pc_store       = img("assets/pc_store.png")
+A.intercom = img("assets/intercom.png")
 
 A.slot         = img("assets/slot.png")
 A.cashier_wall = img("assets/cashier_wall.png")
