@@ -71,6 +71,13 @@ CATALOGUE[#CATALOGUE + 1] = {
     description = "More customers, faster!",
     kind        = "customer_cooldown",
 }
+CATALOGUE[#CATALOGUE + 1] = {
+    label       = "Water Drone",
+    description = "Auto-waters ready plants.",
+    cost        = 10,
+    kind        = "drone",
+    image       = A.water_drone,
+}
 
 local PREVIEW_SIZE = 160
 local CENTER_X     = 640
@@ -158,6 +165,16 @@ function BuyScene:_confirm()
         return
     end
 
+    if ent.kind == "drone" then
+        if gs.has_drone then return end
+        if gs.currency < ent.cost then return end
+        gs.currency  = gs.currency - ent.cost
+        gs.has_drone = true
+        Sound.play("shop_buy")
+        self.scene_manager:switch(self.store_scene)
+        return
+    end
+
     if gs.currency < ent.cost then return end
 
     gs.currency = gs.currency - ent.cost
@@ -229,6 +246,16 @@ function BuyScene:draw()
             display_cost = "$" .. tier.cost
             display_desc = ent.description .. "\n" .. tier.label
             can_buy      = gs.currency >= tier.cost
+        end
+    elseif ent.kind == "drone" then
+        if gs.has_drone then
+            display_cost = "---"
+            display_desc = "Already installed."
+            can_buy      = false
+        else
+            display_cost = "$" .. ent.cost
+            display_desc = ent.description
+            can_buy      = gs.currency >= ent.cost
         end
     else
         display_cost = "$" .. ent.cost
