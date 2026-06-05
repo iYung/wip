@@ -108,4 +108,44 @@ do
     print("PASS: sound: Sound.play_animalese() runs without error at extreme pitches")
 end
 
+-- Test: play_animalese cooldown suppresses notes fired within 50ms
+do
+    local play_count = 0
+    local orig_play    = love.audio.play
+    local orig_getInfo = love.filesystem.getInfo
+    local orig_timer   = love.timer
+    love.audio.play = function() play_count = play_count + 1 end
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" and p:find("animalese") then return true end
+        return nil
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+
+    local fake_time = 1.0
+    love.timer = { getTime = function() return fake_time end }
+
+    S.play_animalese(1.0)
+    assert(play_count == 1, "expected first play to fire, got " .. play_count)
+
+    S.play_animalese(1.0)
+    assert(play_count == 1, "expected cooldown to suppress 0ms re-trigger, got " .. play_count)
+
+    fake_time = 1.030
+    S.play_animalese(1.0)
+    assert(play_count == 1, "expected cooldown to suppress 30ms re-trigger, got " .. play_count)
+
+    fake_time = 1.055
+    S.play_animalese(1.0)
+    assert(play_count == 2, "expected play at 55ms past cooldown, got " .. play_count)
+
+    love.audio.play         = orig_play
+    love.filesystem.getInfo = orig_getInfo
+    love.timer              = orig_timer
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: sound: play_animalese cooldown suppresses notes within 50ms")
+end
+
 print("ALL TESTS PASSED")
