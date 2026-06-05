@@ -14,6 +14,7 @@ local WallPattern  = require("lua/game/shaders/wall_pattern")
 local Sway         = require("lua/game/shaders/sway")
 local A            = require("lua/game/assets")
 local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
+local WaterDrone     = require("lua/game/water_drone")
 
 local function spawn_cooldown(gs)
     if gs.cooldown_level == 0 then return 4 end
@@ -65,6 +66,9 @@ function StoreScene:on_enter()
         self:_setup_store()
     end
 
+    if gs.has_drone and not self._drone then
+        self._drone = WaterDrone.new(gs.store, 0)
+    end
     self.drawer:clear()
     self.drawer:add(gs.store,              0)
     self.drawer:add(self._customer,        1)
@@ -72,6 +76,9 @@ function StoreScene:on_enter()
     self.drawer:add(self._wall,            2)
     self.drawer:add(self._cashier_floor,   2.5)
     self.drawer:add(self._plant_bubbles,   3)
+    if self._drone then
+        self.drawer:add(self._drone, 3.5)
+    end
     self.drawer:add(gs.player,             4)
     self.drawer:add(self._customer_bubble, 5)
 
@@ -171,6 +178,7 @@ function StoreScene:_setup_store()
     if self._from_save then
         self:_wire_pc_store()
         self:_wire_intercom()
+        self:_wire_drone()
     end
 end
 
@@ -204,6 +212,13 @@ function StoreScene:_wire_intercom()
     end
     if gs.player.held_item and gs.player.held_item.name == "Intercom" then
         gs.player.held_item:set_customer_getter(getter)
+    end
+end
+
+function StoreScene:_wire_drone()
+    local gs = self.game_state
+    if gs.has_drone and not self._drone then
+        self._drone = WaterDrone.new(gs.store, 0)
     end
 end
 
@@ -265,6 +280,9 @@ function StoreScene:update(dt)
     gs.store:update(dt * gs.growth_mult)
     gs.player:update(dt, input, gs.store)
     self._customer:update(dt)
+    if self._drone then
+        self._drone:update(dt)
+    end
 
     for _, slot in ipairs(gs.store.slots) do
         slot.highlighted = false

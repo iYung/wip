@@ -87,6 +87,15 @@ The player can increase the number of slots. Adding a slot expands the store wid
 
 ---
 
+### Water Drone
+
+- One-time purchase from the PC Store ($10)
+- After purchase, a drone appears in the store scene at a fixed elevation above the heat lamps
+- Each frame it scans all slots for a plant with a water-ready bubble; flies to the first one found (leftmost), centers over it, waits 0.5 s, waters it, and plays the water sound
+- Idles in place after watering — no return to a home position
+- Only one drone can be purchased; the PC Store entry shows "Already installed." after purchase
+- Sprite: 120×120, 2-frame animation (20fps)
+
 ### PC Store
 
 - Can be picked up and carried

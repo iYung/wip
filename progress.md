@@ -25,10 +25,10 @@ Completed step files are moved to [`archive/`](archive/).
 
 | File | What it does |
 |------|-------------|
-| `assets.lua` | Loads all PNGs once at startup; require-cached so every file can `require` it cheaply; `sneakers` and `expand_slot` loaded conditionally via `try_img` (art not yet created); all other assets use `img()` and are required to exist |
+| `assets.lua` | Loads all PNGs once at startup; require-cached so every file can `require` it cheaply; `sneakers`, `expand_slot`, `water_drone`, and `water_drone2` loaded conditionally via `try_img` (art not yet created); all other assets use `img()` and are required to exist |
 | `config.lua` | Shared constants — `U`, `SLOT_COST`, `ZONE_WIDTH` (400px cashier zone) |
 | `input.lua` | Polls keyboard each frame; A/D or arrows = move, E = pick up/down, F = interact |
-| `game_state.lua` | Holds store, player, currency, `unlocked_plants`, `stage3_counts`, `seen_scripts`, `speed_level`, `growth_level`, `growth_mult`; survives scene switches |
+| `game_state.lua` | Holds store, player, currency, `unlocked_plants`, `stage3_counts`, `seen_scripts`, `speed_level`, `growth_level`, `growth_mult`, `has_drone`; survives scene switches |
 | `player.lua` | Moves left/right into cashier zone; holds one item; 4-variant SpriteSet (idle/walk × no-held/held), each backed by a PNG; `speed` upgradeable via shop; uses `ColorReplace` shader to swap pure-red mask pixels to the current speed tier color on draw |
 | `slot.lua` | One store cell; single `slot.png` background sprite; positions its item every frame |
 | `store.lua` | Array of slots; `slot_at(x)`, `grow()`, `draw_bubbles()` for high-priority bubble rendering; `draw_bg(A)` draws wall tiles and window frames using group-of-4 rule; all wall draws go through a `draw_wall(img, x)` helper that applies the `WallPattern` shader when `A.wall_pattern` is set |
@@ -44,6 +44,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `plant.lua` | 6 types, 3 stages each; per-type cooldown from `plant_data`; stage PNGs rendered as-is (no tinting); yellow bubble via `draw_bubble()` |
 | `grafter.lua` | Clones a stage-3 plant (resets original to stage 1); auto-spawns clone into nearest empty slot; no-space bubble (60×60, `grafter_no_space_bubble.png`) shown for 1.5 s when no slot available; always shows orange PNG |
 | `intercom.lua` | Purchasable tool ($50); shows the customer's plant request bubble above itself; `draw_bubble()` mirrors the customer's done-talking plant image; save/load safe via `_wire_intercom()` |
+| `water_drone.lua` | One-time purchase ($10); autonomous drone that scans for water-ready plants, flies to them at a fixed elevation, waters them, and idles in place; 2-frame sprite animation (10fps flip); drawn above heat lamps and below the player |
 | `sell_bin.lua` | Sell station; F while holding any sellable item sells it for currency; red PNG |
 
 ### Scenes (`lua/game/scenes/`)
@@ -54,7 +55,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `settings_menu.lua` | Pause overlay — six buttons (Fullscreen/Window, SFX Volume, Music Volume, Keybinds, Exit Settings, Leave Game); SFX and Music Volume rows each show `< XX% >` and respond to left/right keys in 10% steps; Keybinds opens a sub-screen listing all 6 actions with press-to-capture rebinding; navigation uses remapped move_up/move_down keys; `is_open` gates scene update in `main.lua`; drawn inside the canvas so it scales with the window; when opened opaque (from start screen), background alternates between `settings_pattern_1.png` and `settings_pattern_2.png` once per second |
 | `settings_state.lua` | Holds user settings: `fullscreen` bool, `sfx_volume`/`music_volume` integers (0–100), and `keybinds` table (6 actions); `set_sfx_volume`/`set_music_volume` clamp and call `Sound` directly; `set_keybind` clears collisions; `key_map()` produces `Input`-compatible map; passed to `SettingsMenu.new(ss, input)` at startup |
 | `store_scene.lua` | Main loop — player moves, camera follows on x then clamps to world bounds (left = -400+640, right = store width−640), pick up/interact handled here; cashier zone logic (F skips reveal → advances → sells, E dismisses); context HUD bottom-left shows F: SKIP while typing, F: NEXT when done, E: DISMISS when customer waiting; during `talking_after` (post-sale scripted lines) shows F: SKIP while typing, F: CONTINUE when line is done; `_active_script_key` tracks the current scripted customer (seen_scripts written on sale, not on spawn); `_script_cooldowns` counts down per completed sale — dismissed scripted customers return after 3 sales; unified parallax tiles `store_bg_*` across full world width pre-drawer; `Store:draw_bg` then stamps walls/windows on top; layered draw order for wall/bubbles |
-| `buy_scene.lua` | Carousel UI — 11 items (6 plants + Watering Can + Grafter + Expand Slot + Heat Lamps + Intercom); A/D cycle, F buy, E cancel; per-type price and preview color; scene rendered to off-screen canvas and composited through CRT post-process shader |
+| `buy_scene.lua` | Carousel UI — 14 items (6 plants + Watering Can + Grafter + Intercom + Expand Slot + Sneakers + Heat Lamps + Marketing + Water Drone); A/D cycle, F buy, E cancel; per-type price and preview color; one-time purchases show sold-out state after purchase; scene rendered to off-screen canvas and composited through CRT post-process shader |
 
 ### Data (`lua/game/data/`)
 
@@ -137,6 +138,8 @@ Defaults — all remappable via Settings → Keybinds.
 See open questions in `game-design.md`.
 
 ### Recently completed
+
+- **Water Drone** — one-time purchase ($10) from the PC Store; autonomous drone flies at a fixed elevation (y=180) above heat lamps, scans for water-ready plants each frame, centers over the target slot, waters it and plays `"water_plant"` sound, then idles in place; 2-frame sprite animation swapping between `water_drone.png` and `water_drone2.png` at 20fps; drawn at priority 3.5 (above plant bubbles, below player); save/load safe via `_wire_drone()`; `has_drone` persists in `GameState`; 4 headless tests in `tests/test_water_drone.lua`
 
 - **Intercom item** — purchasable from the PC Store for $50; shows the current customer's plant request bubble (same 9-slice visual and same timing as the bubble above the customer) when placed in any slot or held, so the player can see what plant is needed without walking to the cashier zone; carriable and discardable in the garbage bin; save/load preserves it; `tests/test_intercom.lua` (11 tests)
 
