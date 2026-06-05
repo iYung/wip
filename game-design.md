@@ -159,10 +159,10 @@ Two kinds of customers can spawn:
 | Plant | Pull character | Trigger |
 |-------|---------------|---------|
 | Cactus | Sir Moneyton Ch2 | grass stage3 ≥ 3 |
-| Rose | Agent Frogsby Ch2 | cactus stage3 ≥ 4 |
-| Tulip | Mira Ch1 | rose stage3 ≥ 3 |
-| Daisy | Mechafrog Ch1 | daisy stage3 ≥ 3 |
-| Golden Lotus | The Collector Ch1 | daisy stage3 ≥ 30 |
+| Rose | Agent Frogsby Ch2 | cactus stage3 ≥ 6 |
+| Tulip | Mira Ch1 | rose stage3 ≥ 4 |
+| Daisy | Mechafrog Ch1 | daisy stage3 ≥ 2 |
+| Golden Lotus | The Collector Ch1 | daisy stage3 ≥ 20 |
 
 **Dialog flow:**
 - Scripted customers: F advances through messages one at a time; after the last message the plant-image bubble appears
