@@ -400,7 +400,7 @@ return {
         id              = "glen",
         chapter         = 2,
         accessory       = "flat_cap",
-        trigger         = { plant_type = 4, count = 6 },
+        trigger         = { plant_type = 4, count = 8 },
         name            = "Glen",
         voice_pitch     = 1.05,
         primary_color   = {0.55, 0.45, 0.35, 1},
