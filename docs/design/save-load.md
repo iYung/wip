@@ -61,7 +61,7 @@ Add two functions:
 
 **`GameState.to_save(game_state)`** — extracts a plain serializable table from a live GameState. Iterates `store.slots` and `player.held_item`, converting each item to a `{ type=... }` record.
 
-**`GameState.from_save(data)`** — reconstructs a live GameState from a plain save table. Creates Store with `#data.slots` slots. Reconstructs each item using a local `_item_from_data(d)` helper:
+**`GameState.from_save(data)`** — reconstructs a live GameState from a plain save table. Creates Store with `#data.slots` slots. After constructing the player, applies the saved `speed_level` tier (speed value and color) if `speed_level > 0`. Reconstructs each item using a local `_item_from_data(d)` helper:
 - `"plant"` → `Plant.new(d.plant_type)`, then set `stage`, call `sprite:set(tostring(stage))`
 - `"watering_can"` → `WateringCan.new()`
 - `"grafter"` → `Grafter.new()`

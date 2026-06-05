@@ -8,6 +8,7 @@ local Grafter    = require("lua/game/items/grafter")
 local GarbageBin = require("lua/game/items/garbage_bin")
 local PCStore    = require("lua/game/items/pc_store")
 local Intercom   = require("lua/game/items/intercom")
+local SPEED_TIERS = require("lua/game/data/speed_tiers")
 
 local SLOT_WIDTH    = 10 * U  -- 200
 local INITIAL_SLOTS = 5
@@ -125,6 +126,11 @@ function GameState.from_save(data)
     self.player = Player.new(data.player.x)
     self.player.facing    = data.player.facing
     self.player.held_item = _item_from_data(data.player.held_item)
+    if self.speed_level > 0 then
+        local tier = SPEED_TIERS[self.speed_level]
+        self.player.speed = tier.speed
+        self.player:set_speed_color(tier.color)
+    end
 
     return self
 end
