@@ -138,6 +138,8 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
+- **Plant growth rebalance** — cooldowns rewritten so grow time scales with value (Grass 7 s → Golden Lotus 90 s) instead of the old inverted curve where Golden Lotus was among the fastest; each plant now has a distinct stage-shape (e.g. Cactus slow-start/fast-bloom, Tulip fast-start/slow-bloom) to make them feel different at a glance; Heat Lamps remain the key upgrade for unlocking high-value plants at a competitive rate; `tests/test_plant_growth.lua` and `tests/test_grafter.lua` updated to drive timing from `PLANT_DATA` rather than hardcoded seconds
+
 - **Intercom item** — purchasable from the PC Store for $50; shows the current customer's plant request bubble (same 9-slice visual and same timing as the bubble above the customer) when placed in any slot or held, so the player can see what plant is needed without walking to the cashier zone; carriable and discardable in the garbage bin; save/load preserves it; `tests/test_intercom.lua` (11 tests)
 
 - **Speech bubble fix** — customer name prefix (`"Name: "`) removed from all dialogue lines (`make_full_text`, `serve`, `advance_after`); speech bubble now wraps long lines via `font:getWrap` with `MAX_BOX_W = 18 * U` (360px) so text never overflows the screen; bubble height grows to fit wrapped lines; typewriter reveal respects the same wrap limit
