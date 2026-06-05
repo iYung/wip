@@ -66,7 +66,7 @@ Completed step files are moved to [`archive/`](archive/).
 
 PNG files for all sprites — player variants, plants (18 total: 6 types × 3 stages, rendered without tinting), items, UI elements, backgrounds, and speech bubbles.
 
-Accessory PNGs for named customers (120×120, transparent background) live alongside other assets in `assets/`. Loaded lazily by `A.load_accessory(name)`; missing files are cached as `false` so no disk re-check occurs. Contains `monocle.png` (Sir Moneyton), `secretary_glasses.png` (Mayor Bloom), `shades.png` (The Collector), `hair_bow.png` (Mira), `antenna.png` (Mechafrog), `clown.png` (Dottie), `coat.png` (Agent Frogsby), `flat_cap.png` (Glen).
+Accessory PNGs for named customers (120×120, transparent background) live alongside other assets in `assets/`. Loaded lazily by `A.load_accessory(name)`; missing files are cached as `false` so no disk re-check occurs. Contains `monocle.png` (Sir Moneyton), `secretary_glasses.png` (Mayor Bloom), `shades.png` (The Collector), `hair_bow.png` (Mira), `antenna.png` (Mechafrog), `clown.png` (Dottie), `coat.png` (Agent Frogsby), `headphones.png` (Glen).
 
 ---
 

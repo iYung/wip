@@ -149,10 +149,10 @@ Two kinds of customers can spawn:
 | Mayor Bloom | Rose → Tulip → Daisy | 3 | Running for office; each visit is a campaign rebrand on the campaign manager's advice — rose for elegance, tulip for approachability, daisy to appeal to kids; wears secretary glasses |
 | Agent Frogsby | Cactus → Rose → Tulip | 3 | Comedy spy; buys cactus for close-quarters combat, returns needing rose thorns as barbed wire, then needs a tulip for a diplomatic mission to the Toad Nation; wears a coat |
 | Mira | Tulip | 2 | Kid with her dad's money; shows up after roses to buy a tulip (pulls toward tulip); forgets one more later |
-| Dottie | Daisy | 3 | Cheerful regular; presses flowers in books; brings one back as a gift; wears a clown nose |
+| Dottie | Tulip → Daisy → Daisy | 3 | Circus clown; graduates clown school and wants a tulip for good luck at her interview; gets the job but breaks things and thinks her boss wants a daisy as apology; returns after a clown horror movie traumatizes the kids and tries flowers as a solution; wears a clown nose |
 | Mechafrog | Daisy → Grass → Tulip | 3 | Recently unemployed robot; seeks forgiveness via daisy; returns as a new gardener wanting grass; returns again as head gardener wanting a tulip to celebrate; wears an antenna |
 | The Collector | Golden Lotus | 2 | Mysterious; shows up after 20 daisies asking for golden lotus (pulls toward lotus); hints at what he did with the first one; wears shades |
-| Glen | Cactus → Tulip → Grass | 3 | Gullible podcast listener; chases every Joe Froggan health trend until his family stages an intervention and tells him to touch grass; wears a flat cap |
+| Glen | Cactus → Tulip → Grass | 3 | Gullible podcast listener; chases every Joe Froggan health trend until his family stages an intervention and tells him to touch grass; wears headphones |
 
 **Pull characters by plant tier:**
 

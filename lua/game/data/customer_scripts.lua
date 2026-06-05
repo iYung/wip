@@ -198,10 +198,29 @@ return {
         },
     },
 
-    -- Dottie (daisy regular, 3-chapter arc)
+    -- Dottie (circus clown job arc, 3-chapter arc)
     {
         id             = "dottie",
         chapter        = 1,
+        accessory      = "clown",
+        trigger        = { plant_type = 4, count = 2 },
+        name           = "Dottie",
+        voice_pitch    = 1.28,
+        primary_color     = {0.70, 0.50, 0.85, 1},
+        secondary_color = {0.40, 0.70, 0.55, 1},
+        plant_type     = 4,
+        messages       = {
+            "I just graduated clown school, going to an interview at the local circus.",
+            "I'm hoping to clown around!",
+            "Can I get a flower for good luck?",
+        },
+        after_messages = {
+            "This is my lucky flower.",
+        },
+    },
+    {
+        id             = "dottie",
+        chapter        = 2,
         accessory      = "clown",
         trigger        = { plant_type = 4, count = 4 },
         name           = "Dottie",
@@ -210,50 +229,30 @@ return {
         secondary_color = {0.40, 0.70, 0.55, 1},
         plant_type     = 5,
         messages       = {
-            "Oh! You have daisies!",
-            "I've been looking everywhere for this.",
-            "I'll take one, please. I'm so glad I found you.",
+            "I just started my job at the circus but I messed up real bad.",
+            "I broke stuff and my boss went \"oopsie daisy\".",
+            "I think he wanted me to get him a daisy!",
         },
         after_messages = {
-            "Thank you! Really, thank you.",
-        },
-    },
-    {
-        id             = "dottie",
-        chapter        = 2,
-        accessory      = "clown",
-        trigger        = { plant_type = 5, count = 4 },
-        name           = "Dottie",
-        voice_pitch    = 1.28,
-        primary_color     = {0.70, 0.50, 0.85, 1},
-        secondary_color = {0.40, 0.70, 0.55, 1},
-        plant_type     = 5,
-        messages       = {
-            "I pressed the last one in a book.",
-            "It's still there. Page forty-something.",
-            "Could I have another? I have more books.",
-        },
-        after_messages = {
-            "I know exactly which page this one gets.",
+            "He'll love it, I just know it.",
         },
     },
     {
         id             = "dottie",
         chapter        = 3,
         accessory      = "clown",
-        trigger        = { plant_type = 5, count = 6 },
+        trigger        = { plant_type = 5, count = 3 },
         name           = "Dottie",
         voice_pitch    = 1.28,
         primary_color     = {0.70, 0.50, 0.85, 1},
         secondary_color = {0.40, 0.70, 0.55, 1},
         plant_type     = 5,
         messages       = {
-            "I brought you something.",
-            "From the first one you sold me. I pressed it.",
-            "It's yours now. And I'll take one more, if that's alright.",
+            "Tough day at work today. A clown horror movie came out so now all the kids are terrified.",
+            "Do you think I can win them back if I give them flowers?",
         },
         after_messages = {
-            "We've both got one now.",
+            "Maybe flowers are the answer.",
         },
     },
 
