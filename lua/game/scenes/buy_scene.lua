@@ -41,6 +41,13 @@ CATALOGUE[#CATALOGUE + 1] = {
     image       = A.grafter_empty,
 }
 CATALOGUE[#CATALOGUE + 1] = {
+    label       = "Intercom",
+    description = "See the plant order\nfrom anywhere.",
+    cost        = 50,
+    kind        = "tool_intercom",
+    image       = A.intercom,
+}
+CATALOGUE[#CATALOGUE + 1] = {
     label       = "Expand Slot",
     description = "Adds one new slot to the\nright end of the store.",
     cost        = config.SLOT_COST,
@@ -63,13 +70,6 @@ CATALOGUE[#CATALOGUE + 1] = {
     label       = "Marketing",
     description = "More customers, faster!",
     kind        = "customer_cooldown",
-}
-CATALOGUE[#CATALOGUE + 1] = {
-    label       = "Intercom",
-    description = "See the plant order\nfrom anywhere.",
-    cost        = 50,
-    kind        = "tool_intercom",
-    image       = A.intercom,
 }
 
 local PREVIEW_SIZE = 160

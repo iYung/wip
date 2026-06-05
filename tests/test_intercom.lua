@@ -7,10 +7,10 @@ local GameState  = require("lua/game/game_state")
 local GarbageBin = require("lua/game/items/garbage_bin")
 
 -- CATALOGUE indices:
--- 1-6: plant types, 7: Watering Can, 8: Grafter, 9: Expand Slot,
--- 10: Sneakers, 11: Heat Lamps, 12: Marketing, 13: Intercom
+-- 1-6: plant types, 7: Watering Can, 8: Grafter, 9: Intercom,
+-- 10: Expand Slot, 11: Sneakers, 12: Heat Lamps, 13: Marketing
 
-local INTERCOM_IDX = 13
+local INTERCOM_IDX = 9
 
 local function make_buy(ctx)
     return BuyScene.new(ctx.gs, ctx.input, ctx.sm, ctx.sm.current)

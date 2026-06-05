@@ -12,10 +12,11 @@ local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 -- 1-6: plant types 1-6
 -- 7:   Watering Can
 -- 8:   Grafter
--- 9:   Expand Slot
--- 10:  Sneakers (speed_boost)
--- 11:  Heat Lamps (growth_boost)
--- 12:  Marketing (customer_cooldown)
+-- 9:   Intercom (tool_intercom)
+-- 10:  Expand Slot
+-- 11:  Sneakers (speed_boost)
+-- 12:  Heat Lamps (growth_boost)
+-- 13:  Marketing (customer_cooldown)
 
 local function make_buy(ctx)
     return BuyScene.new(ctx.gs, ctx.input, ctx.sm, ctx.sm.current)
@@ -88,7 +89,7 @@ do
     local buy = make_buy(ctx)
     ctx.gs.currency = 100
     ctx.gs.speed_level = 0   -- tier 1 costs 15, speed = 320
-    buy.selected = 10        -- Sneakers
+    buy.selected = 11        -- Sneakers
     buy:_confirm()
     assert(ctx.gs.currency == 85,
         "currency should be 85 after Sneakers ($15), got " .. tostring(ctx.gs.currency))
@@ -107,7 +108,7 @@ do
     local buy = make_buy(ctx)
     ctx.gs.currency = 100
     ctx.gs.speed_level = 0
-    buy.selected = 10   -- Sneakers → tier 1
+    buy.selected = 11   -- Sneakers → tier 1
     buy:_confirm()
     local expected = SPEED_TIERS[1].color
     local actual   = ctx.gs.player._speed_color
@@ -124,7 +125,7 @@ do
     local buy = make_buy(ctx)
     ctx.gs.currency = 100
     ctx.gs.growth_level = 0
-    buy.selected = 11        -- Heat Lamps
+    buy.selected = 12        -- Heat Lamps
     buy:_confirm()
     assert(ctx.gs.currency == 80,
         "currency should be 80 after Heat Lamps ($20), got " .. tostring(ctx.gs.currency))
@@ -143,7 +144,7 @@ do
     local buy = make_buy(ctx)
     ctx.gs.currency = 100
     local before_count = #ctx.gs.store.slots
-    buy.selected = 9   -- Expand Slot
+    buy.selected = 10   -- Expand Slot
     buy:_confirm()
     assert(#ctx.gs.store.slots == before_count + 1,
         "store should have one more slot after Expand Slot, before=" .. before_count .. " after=" .. #ctx.gs.store.slots)
@@ -157,7 +158,7 @@ do
     end)
     local buy = make_buy(ctx)
     ctx.gs.currency = 100
-    buy.selected = 9
+    buy.selected = 10
     buy:_confirm()
     assert(ctx.gs.currency == 100 - config.SLOT_COST,
         "currency should decrease by SLOT_COST=" .. config.SLOT_COST .. ", got " .. tostring(ctx.gs.currency))
@@ -172,7 +173,7 @@ do
     local buy = make_buy(ctx)
     ctx.gs.currency = 9999
     ctx.gs.speed_level = #SPEED_TIERS   -- max (3)
-    buy.selected = 10
+    buy.selected = 11
     buy:_confirm()
     assert(ctx.gs.speed_level == #SPEED_TIERS,
         "speed_level should remain at max, got " .. tostring(ctx.gs.speed_level))
@@ -189,7 +190,7 @@ do
     local buy = make_buy(ctx)
     ctx.gs.currency = 9999
     ctx.gs.growth_level = #GROWTH_TIERS   -- max (3)
-    buy.selected = 11
+    buy.selected = 12
     buy:_confirm()
     assert(ctx.gs.growth_level == #GROWTH_TIERS,
         "growth_level should remain at max, got " .. tostring(ctx.gs.growth_level))
@@ -206,7 +207,7 @@ do
     local buy = make_buy(ctx)
     ctx.gs.currency = 100
     ctx.gs.cooldown_level = 0
-    buy.selected = 12   -- Marketing, tier 1 costs $10
+    buy.selected = 13   -- Marketing, tier 1 costs $10
     buy:_confirm()
     assert(ctx.gs.currency == 90,
         "currency should be 90 after Marketing tier 1 ($10), got " .. tostring(ctx.gs.currency))
@@ -222,7 +223,7 @@ do
     end)
     local buy = make_buy(ctx)
     ctx.gs.currency = 9999
-    buy.selected = 12
+    buy.selected = 13
     for i = 1, #COOLDOWN_TIERS do
         buy:_confirm()
         assert(ctx.gs.cooldown_level == i,
@@ -239,7 +240,7 @@ do
     local buy = make_buy(ctx)
     ctx.gs.currency = 9999
     ctx.gs.cooldown_level = #COOLDOWN_TIERS
-    buy.selected = 12
+    buy.selected = 13
     buy:_confirm()
     assert(ctx.gs.cooldown_level == #COOLDOWN_TIERS,
         "cooldown_level should remain at max, got " .. tostring(ctx.gs.cooldown_level))
@@ -256,7 +257,7 @@ do
     local buy = make_buy(ctx)
     ctx.gs.currency = 0
     ctx.gs.cooldown_level = 0
-    buy.selected = 12
+    buy.selected = 13
     buy:_confirm()
     assert(ctx.gs.cooldown_level == 0,
         "cooldown_level should be unchanged when broke, got " .. tostring(ctx.gs.cooldown_level))
