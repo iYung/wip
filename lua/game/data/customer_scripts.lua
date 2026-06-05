@@ -400,7 +400,7 @@ return {
     {
         id              = "glen",
         chapter         = 1,
-        accessory       = "flat_cap",
+        accessory       = "headphones",
         trigger         = { plant_type = 2, count = 6 },
         name            = "Glen",
         voice_pitch     = 1.05,
@@ -419,7 +419,7 @@ return {
     {
         id              = "glen",
         chapter         = 2,
-        accessory       = "flat_cap",
+        accessory       = "headphones",
         trigger         = { plant_type = 4, count = 8 },
         name            = "Glen",
         voice_pitch     = 1.05,
@@ -438,7 +438,7 @@ return {
     {
         id              = "glen",
         chapter         = 3,
-        accessory       = "flat_cap",
+        accessory       = "headphones",
         trigger         = { plant_type = 5, count = 8 },
         name            = "Glen",
         voice_pitch     = 1.05,
