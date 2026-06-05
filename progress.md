@@ -66,7 +66,7 @@ Completed step files are moved to [`archive/`](archive/).
 
 PNG files for all sprites — player variants, plants (18 total: 6 types × 3 stages, rendered without tinting), items, UI elements, backgrounds, and speech bubbles.
 
-Accessory PNGs for named customers (120×120, transparent background) live alongside other assets in `assets/`. Loaded lazily by `A.load_accessory(name)`; missing files are cached as `false` so no disk re-check occurs. Contains `flat_cap.png` (Old Pete), `monocle.png` (Sir Moneyton), `secretary_glasses.png` (Mayor Bloom), `wide_brim_hat.png` (The Collector), `flower_pin.png` (Dottie), `hair_bow.png` (Mira).
+Accessory PNGs for named customers (120×120, transparent background) live alongside other assets in `assets/`. Loaded lazily by `A.load_accessory(name)`; missing files are cached as `false` so no disk re-check occurs. Contains `monocle.png` (Sir Moneyton), `secretary_glasses.png` (Mayor Bloom), `shades.png` (The Collector), `hair_bow.png` (Mira), `antenna.png` (Mechafrog), `clown.png` (Dottie), `coat.png` (Agent Frogsby), `flat_cap.png` (Glen).
 
 ---
 
@@ -155,7 +155,7 @@ See open questions in `game-design.md`.
 
 - **Tutorial character (Sir Moneyton)** — 4-chapter scripted mentor; guaranteed first customer via `count=0` trigger; each chapter fires at a natural milestone (first grass, 3 grass sold, 3 cactus sold, 2 roses sold) and teaches a core mechanic (grow loop, PC store, store expansion, grafter); grafter tutorial comes after roses because roses cost $150 — grafting is how the player makes them profitable
 
-- **Character accessories** — all scripted characters now have accessories as a visual signal distinguishing them from random customers; PNGs in `assets/` (`monocle`, `secretary_glasses`, `shades`, `clown`, `hair_bow`)
+- **Character accessories** — all scripted characters now have accessories as a visual signal distinguishing them from random customers; PNGs in `assets/` (`monocle`, `secretary_glasses`, `shades`, `clown`, `hair_bow`, `antenna`, `coat`, `flat_cap`)
 
 - **Menu background shader** — `assets/shaders/menu_bg.glsl` + `lua/game/shaders/menu_bg.lua`; tiles a scrolling pattern texture over pure-red masked pixels in `start_bg.png`; scroll offset advances with time (60px/s horizontal, 30px/s vertical); pattern loaded from `assets/start_pattern.png` and gracefully disabled when absent; `_time` initialised in `StartScene.new()` so tests can call `update()` without `on_enter()`
 

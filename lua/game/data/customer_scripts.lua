@@ -117,7 +117,7 @@ return {
         },
     },
 
-    -- Mechafrog (daisy pull, 1-chapter arc)
+    -- Mechafrog (daisy → grass → tulip, 3-chapter arc)
     {
         id              = "mechafrog",
         chapter         = 1,
@@ -155,6 +155,26 @@ return {
         },
         after_messages  = {
             "Gardening suits this unit.",
+        },
+    },
+
+    {
+        id              = "mechafrog",
+        chapter         = 3,
+        accessory       = "antenna",
+        trigger         = { plant_type = 2, count = 24 },
+        name            = "Mechafrog",
+        voice_pitch     = 0.70,
+        primary_color   = {0.40, 0.55, 0.35, 1},
+        secondary_color = {0.60, 0.65, 0.60, 1},
+        plant_type      = 4,
+        messages        = {
+            "PROMOTION ACHIEVED. Title: Head Gardener.",
+            "This unit now oversees the whole garden. Many plants. Much responsibility.",
+            "A celebration is appropriate. I would like a tulip.",
+        },
+        after_messages  = {
+            "Excellent. It will go in the center.",
         },
     },
 
@@ -217,7 +237,7 @@ return {
         },
     },
 
-    -- Agent Frogsby (comedy spy, 2-chapter arc; cactus then rose pull)
+    -- Agent Frogsby (comedy spy, 3-chapter arc; cactus → rose → tulip)
     {
         id              = "agent_frogsby",
         chapter         = 1,
@@ -254,6 +274,26 @@ return {
         },
         after_messages  = {
             "Highly effective. Field-tested.",
+        },
+    },
+
+    {
+        id              = "agent_frogsby",
+        chapter         = 3,
+        accessory       = "coat",
+        trigger         = { plant_type = 4, count = 6 },
+        name            = "Agent Frogsby",
+        voice_pitch     = 0.75,
+        primary_color   = {0.22, 0.28, 0.22, 1},
+        secondary_color = {0.40, 0.32, 0.20, 1},
+        plant_type      = 4,
+        messages        = {
+            "Diplomatic mission. Can't go into detail.",
+            "The Toad Nation is tough to sweet talk. Long history of grievances.",
+            "I just need one tulip. Something soft. Non-threatening.",
+        },
+        after_messages  = {
+            "I'll do the rest.",
         },
     },
 
@@ -333,6 +373,65 @@ return {
         },
         after_messages = {
             "One cut. Double the output. Think about it.",
+        },
+    },
+
+    -- Glen (podcast believer, 3-chapter arc)
+    {
+        id              = "glen",
+        chapter         = 1,
+        accessory       = "flat_cap",
+        trigger         = { plant_type = 2, count = 6 },
+        name            = "Glen",
+        voice_pitch     = 1.05,
+        primary_color   = {0.55, 0.45, 0.35, 1},
+        secondary_color = {0.75, 0.65, 0.50, 1},
+        plant_type      = 2,
+        messages        = {
+            "Joe Froggan did a four-hour episode on cactuses.",
+            "Ancient cultures, immune system, longevity. All of it.",
+            "I need to start. One cactus. Just to try it.",
+        },
+        after_messages  = {
+            "This is going to change everything for me.",
+        },
+    },
+    {
+        id              = "glen",
+        chapter         = 2,
+        accessory       = "flat_cap",
+        trigger         = { plant_type = 4, count = 6 },
+        name            = "Glen",
+        voice_pitch     = 1.05,
+        primary_color   = {0.55, 0.45, 0.35, 1},
+        secondary_color = {0.75, 0.65, 0.50, 1},
+        plant_type      = 4,
+        messages        = {
+            "Joe Froggan's moved on. New episode: DMT.",
+            "Diet of Many Tulips. Completely different energy than the cactus.",
+            "I need to pivot. One tulip to start.",
+        },
+        after_messages  = {
+            "He had a doctor on and everything.",
+        },
+    },
+    {
+        id              = "glen",
+        chapter         = 3,
+        accessory       = "flat_cap",
+        trigger         = { plant_type = 5, count = 8 },
+        name            = "Glen",
+        voice_pitch     = 1.05,
+        primary_color   = {0.55, 0.45, 0.35, 1},
+        secondary_color = {0.75, 0.65, 0.50, 1},
+        plant_type      = 1,
+        messages        = {
+            "So. My family sat me down.",
+            "I may have told a lot of people about Joe Froggan. Everyone, actually.",
+            "They said I need to touch grass. So. Here I am. One grass please.",
+        },
+        after_messages  = {
+            "This one I actually believe in.",
         },
     },
 }
