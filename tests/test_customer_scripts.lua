@@ -38,7 +38,7 @@ do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
     end)
-    ctx.gs.stage3_counts[5] = 3   -- Dottie ch2: trigger plant_type=5, count=3
+    ctx.gs.stage3_counts[5] = 4   -- Dottie ch2: trigger plant_type=5, count=4
     ctx.gs.seen_scripts = {}
     ctx.gs.unlocked_plants = {}
     local cfg = ctx.sm.current:_next_customer_cfg()
@@ -53,7 +53,7 @@ do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
     end)
-    ctx.gs.stage3_counts[5] = 3
+    ctx.gs.stage3_counts[4] = 4
     ctx.gs.seen_scripts = { ["dottie:1"] = true }
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true

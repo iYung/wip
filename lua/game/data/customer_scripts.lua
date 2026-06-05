@@ -1,21 +1,22 @@
 return {
-    -- Mayor Bloom (rose questline, 2 chapters)
+    -- Mayor Bloom (rebranding campaign, 3 chapters)
     {
         id             = "mayor_bloom",
         chapter        = 1,
         accessory      = "secretary_glasses",
-        trigger        = { plant_type = 3, count = 5 },
+        trigger        = { plant_type = 3, count = 6 },
         name           = "Mayor Bloom",
         voice_pitch    = 0.82,
         primary_color     = {0.75, 0.25, 0.40, 1},
         secondary_color = {0.15, 0.25, 0.50, 1},
         plant_type     = 3,
         messages       = {
-            "The town council is watching this place.",
-            "Only the finest rose will do.",
+            "Hello, neighbor. I'm running for office.",
+            "I'd like you to keep me in mind.",
+            "I want to be elegant. But still willing to fight. A rose feels right.",
         },
         after_messages = {
-            "You'll be hearing from us.",
+            "Remember the name.",
         },
     },
     {
@@ -27,14 +28,33 @@ return {
         voice_pitch    = 0.82,
         primary_color     = {0.75, 0.25, 0.40, 1},
         secondary_color = {0.15, 0.25, 0.50, 1},
-        plant_type     = 3,
+        plant_type     = 4,
         messages       = {
-            "I'm not here on council business today.",
-            "The last rose... it was for me. Just for me.",
-            "Could I have another? Don't make it strange.",
+            "My campaign manager says the rose was a mistake.",
+            "Too tough. Too pointed. Wrong message.",
+            "We're going softer. Can I get a tulip?",
         },
         after_messages = {
-            "This doesn't leave the shop.",
+            "Approachable. That's the word she used.",
+        },
+    },
+    {
+        id             = "mayor_bloom",
+        chapter        = 3,
+        accessory      = "secretary_glasses",
+        trigger        = { plant_type = 3, count = 20 },
+        name           = "Mayor Bloom",
+        voice_pitch    = 0.82,
+        primary_color     = {0.75, 0.25, 0.40, 1},
+        secondary_color = {0.15, 0.25, 0.50, 1},
+        plant_type     = 5,
+        messages       = {
+            "Another rebrand. Campaign manager's orders.",
+            "We need to appeal to the kids.",
+            "She says daisies poll well with the youth demographic.",
+        },
+        after_messages = {
+            "I just go where the numbers point.",
         },
     },
 
@@ -43,7 +63,7 @@ return {
         id             = "the_collector",
         chapter        = 1,
         accessory      = "shades",
-        trigger        = { plant_type = 5, count = 30 },
+        trigger        = { plant_type = 5, count = 20 },
         name           = "The Collector",
         voice_pitch    = 0.78,
         primary_color     = {0.85, 0.75, 0.10, 1},
@@ -84,7 +104,7 @@ return {
         id              = "mira",
         chapter         = 1,
         accessory       = "hair_bow",
-        trigger         = { plant_type = 3, count = 3 },
+        trigger         = { plant_type = 3, count = 4 },
         name            = "Mira",
         voice_pitch     = 1.35,
         primary_color   = {0.95, 0.80, 0.30, 1},
@@ -102,7 +122,7 @@ return {
         id              = "mira",
         chapter         = 2,
         accessory       = "hair_bow",
-        trigger         = { plant_type = 4, count = 3 },
+        trigger         = { plant_type = 4, count = 2 },
         name            = "Mira",
         voice_pitch     = 1.35,
         primary_color   = {0.95, 0.80, 0.30, 1},
@@ -117,12 +137,12 @@ return {
         },
     },
 
-    -- Mechafrog (daisy pull, 1-chapter arc)
+    -- Mechafrog (daisy → grass → tulip, 3-chapter arc)
     {
         id              = "mechafrog",
         chapter         = 1,
         accessory       = "antenna",
-        trigger         = { plant_type = 5, count = 3 },
+        trigger         = { plant_type = 5, count = 2 },
         name            = "Mechafrog",
         voice_pitch     = 0.70,
         primary_color   = {0.40, 0.55, 0.35, 1},
@@ -158,10 +178,49 @@ return {
         },
     },
 
-    -- Dottie (daisy regular, 3-chapter arc)
+    {
+        id              = "mechafrog",
+        chapter         = 3,
+        accessory       = "antenna",
+        trigger         = { plant_type = 2, count = 24 },
+        name            = "Mechafrog",
+        voice_pitch     = 0.70,
+        primary_color   = {0.40, 0.55, 0.35, 1},
+        secondary_color = {0.60, 0.65, 0.60, 1},
+        plant_type      = 4,
+        messages        = {
+            "PROMOTION ACHIEVED. Title: Head Gardener.",
+            "This unit now oversees the whole garden. Many plants. Much responsibility.",
+            "A celebration is appropriate. I would like a tulip.",
+        },
+        after_messages  = {
+            "Excellent. It will go in the center.",
+        },
+    },
+
+    -- Dottie (circus clown job arc, 3-chapter arc)
     {
         id             = "dottie",
         chapter        = 1,
+        accessory      = "clown",
+        trigger        = { plant_type = 4, count = 2 },
+        name           = "Dottie",
+        voice_pitch    = 1.28,
+        primary_color     = {0.70, 0.50, 0.85, 1},
+        secondary_color = {0.40, 0.70, 0.55, 1},
+        plant_type     = 4,
+        messages       = {
+            "I just graduated clown school, going to an interview at the local circus.",
+            "I'm hoping to clown around!",
+            "Can I get a flower for good luck?",
+        },
+        after_messages = {
+            "This is my lucky flower.",
+        },
+    },
+    {
+        id             = "dottie",
+        chapter        = 2,
         accessory      = "clown",
         trigger        = { plant_type = 4, count = 4 },
         name           = "Dottie",
@@ -170,17 +229,17 @@ return {
         secondary_color = {0.40, 0.70, 0.55, 1},
         plant_type     = 5,
         messages       = {
-            "Oh! You have daisies!",
-            "I've been looking everywhere for this.",
-            "I'll take one, please. I'm so glad I found you.",
+            "I just started my job at the circus but I messed up real bad.",
+            "I broke stuff and my boss went \"oopsie daisy\".",
+            "I think he wanted me to get him a daisy!",
         },
         after_messages = {
-            "Thank you! Really, thank you.",
+            "He'll love it, I just know it.",
         },
     },
     {
         id             = "dottie",
-        chapter        = 2,
+        chapter        = 3,
         accessory      = "clown",
         trigger        = { plant_type = 5, count = 3 },
         name           = "Dottie",
@@ -189,35 +248,15 @@ return {
         secondary_color = {0.40, 0.70, 0.55, 1},
         plant_type     = 5,
         messages       = {
-            "I pressed the last one in a book.",
-            "It's still there. Page forty-something.",
-            "Could I have another? I have more books.",
+            "Tough day at work today. A clown horror movie came out so now all the kids are terrified.",
+            "Do you think I can win them back if I give them flowers?",
         },
         after_messages = {
-            "I know exactly which page this one gets.",
-        },
-    },
-    {
-        id             = "dottie",
-        chapter        = 3,
-        accessory      = "clown",
-        trigger        = { plant_type = 5, count = 6 },
-        name           = "Dottie",
-        voice_pitch    = 1.28,
-        primary_color     = {0.70, 0.50, 0.85, 1},
-        secondary_color = {0.40, 0.70, 0.55, 1},
-        plant_type     = 5,
-        messages       = {
-            "I brought you something.",
-            "From the first one you sold me. I pressed it.",
-            "It's yours now. And I'll take one more, if that's alright.",
-        },
-        after_messages = {
-            "We've both got one now.",
+            "Maybe flowers are the answer.",
         },
     },
 
-    -- Agent Frogsby (comedy spy, 2-chapter arc; cactus then rose pull)
+    -- Agent Frogsby (comedy spy, 3-chapter arc; cactus → rose → tulip)
     {
         id              = "agent_frogsby",
         chapter         = 1,
@@ -241,7 +280,7 @@ return {
         id              = "agent_frogsby",
         chapter         = 2,
         accessory       = "coat",
-        trigger         = { plant_type = 2, count = 4 },
+        trigger         = { plant_type = 2, count = 6 },
         name            = "Agent Frogsby",
         voice_pitch     = 0.75,
         primary_color   = {0.22, 0.28, 0.22, 1},
@@ -254,6 +293,26 @@ return {
         },
         after_messages  = {
             "Highly effective. Field-tested.",
+        },
+    },
+
+    {
+        id              = "agent_frogsby",
+        chapter         = 3,
+        accessory       = "coat",
+        trigger         = { plant_type = 4, count = 6 },
+        name            = "Agent Frogsby",
+        voice_pitch     = 0.75,
+        primary_color   = {0.22, 0.28, 0.22, 1},
+        secondary_color = {0.40, 0.32, 0.20, 1},
+        plant_type      = 4,
+        messages        = {
+            "Diplomatic mission. Can't go into detail.",
+            "The Toad Nation is tough to sweet talk. Long history of grievances.",
+            "I just need one tulip. Something soft. Non-threatening.",
+        },
+        after_messages  = {
+            "I'll do the rest.",
         },
     },
 
@@ -301,7 +360,7 @@ return {
         id             = "sage",
         chapter        = 3,
         accessory      = "monocle",
-        trigger        = { plant_type = 2, count = 3 },
+        trigger        = { plant_type = 2, count = 4 },
         name           = "Sir Moneyton",
         voice_pitch    = 0.88,
         primary_color     = {0.35, 0.58, 0.38, 1},
@@ -333,6 +392,65 @@ return {
         },
         after_messages = {
             "One cut. Double the output. Think about it.",
+        },
+    },
+
+    -- Glen (podcast believer, 3-chapter arc)
+    {
+        id              = "glen",
+        chapter         = 1,
+        accessory       = "headphones",
+        trigger         = { plant_type = 2, count = 6 },
+        name            = "Glen",
+        voice_pitch     = 1.05,
+        primary_color   = {0.55, 0.45, 0.35, 1},
+        secondary_color = {0.75, 0.65, 0.50, 1},
+        plant_type      = 2,
+        messages        = {
+            "Joe Froggan did a four-hour episode on cactuses.",
+            "Ancient cultures, immune system, longevity. All of it.",
+            "I need to start. One cactus. Just to try it.",
+        },
+        after_messages  = {
+            "This is going to change everything for me.",
+        },
+    },
+    {
+        id              = "glen",
+        chapter         = 2,
+        accessory       = "headphones",
+        trigger         = { plant_type = 4, count = 8 },
+        name            = "Glen",
+        voice_pitch     = 1.05,
+        primary_color   = {0.55, 0.45, 0.35, 1},
+        secondary_color = {0.75, 0.65, 0.50, 1},
+        plant_type      = 4,
+        messages        = {
+            "Joe Froggan's moved on. New episode: DMT.",
+            "Diet of Many Tulips. Completely different energy than the cactus.",
+            "I need to pivot. One tulip to start.",
+        },
+        after_messages  = {
+            "He had a doctor on and everything.",
+        },
+    },
+    {
+        id              = "glen",
+        chapter         = 3,
+        accessory       = "headphones",
+        trigger         = { plant_type = 5, count = 8 },
+        name            = "Glen",
+        voice_pitch     = 1.05,
+        primary_color   = {0.55, 0.45, 0.35, 1},
+        secondary_color = {0.75, 0.65, 0.50, 1},
+        plant_type      = 1,
+        messages        = {
+            "So. My family sat me down.",
+            "I may have told a lot of people about Joe Froggan. Everyone, actually.",
+            "They said I need to touch grass. So. Here I am. One grass please.",
+        },
+        after_messages  = {
+            "This one I actually believe in.",
         },
     },
 }

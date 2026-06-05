@@ -146,22 +146,23 @@ Two kinds of customers can spawn:
 | Character | Plant | Chapters | Arc |
 |-----------|-------|----------|-----|
 | Sir Moneyton | Grass → Cactus → Expand → Grafter | 4 | Guaranteed first customer; teaches cactus, store expansion, then grafter (after roses — because roses are expensive, grafting is how you scale them); wears a monocle |
-| Mayor Bloom | Rose | 2 | Formal first visit; returns privately for himself; wears secretary glasses |
-| Agent Frogsby | Cactus → Rose | 2 | Comedy spy; buys cactus for close-quarters combat, returns needing rose thorns as barbed wire (pulls toward rose); wears a coat — *coat.png asset needed* |
+| Mayor Bloom | Rose → Tulip → Daisy | 3 | Running for office; each visit is a campaign rebrand on the campaign manager's advice — rose for elegance, tulip for approachability, daisy to appeal to kids; wears secretary glasses |
+| Agent Frogsby | Cactus → Rose → Tulip | 3 | Comedy spy; buys cactus for close-quarters combat, returns needing rose thorns as barbed wire, then needs a tulip for a diplomatic mission to the Toad Nation; wears a coat |
 | Mira | Tulip | 2 | Kid with her dad's money; shows up after roses to buy a tulip (pulls toward tulip); forgets one more later |
-| Dottie | Daisy | 3 | Cheerful regular; presses flowers in books; brings one back as a gift; wears a flower pin |
-| Mechafrog | Daisy → Grass | 2 | Recently unemployed robot; their org was defeated by a prickly ball and barbed wire (Frogsby); seeks forgiveness via daisy (pulls toward daisy); returns later as a gardener wanting grass; wears an antenna — *antenna.png asset needed* |
-| The Collector | Golden Lotus | 2 | Mysterious; shows up after 30 daisies asking for golden lotus (pulls toward lotus); hints at what he did with the first one; wears shades |
+| Dottie | Tulip → Daisy → Daisy | 3 | Circus clown; graduates clown school and wants a tulip for good luck at her interview; gets the job but breaks things and thinks her boss wants a daisy as apology; returns after a clown horror movie traumatizes the kids and tries flowers as a solution; wears a clown nose |
+| Mechafrog | Daisy → Grass → Tulip | 3 | Recently unemployed robot; seeks forgiveness via daisy; returns as a new gardener wanting grass; returns again as head gardener wanting a tulip to celebrate; wears an antenna |
+| The Collector | Golden Lotus | 2 | Mysterious; shows up after 20 daisies asking for golden lotus (pulls toward lotus); hints at what he did with the first one; wears shades |
+| Glen | Cactus → Tulip → Grass | 3 | Gullible podcast listener; chases every Joe Froggan health trend until his family stages an intervention and tells him to touch grass; wears headphones |
 
 **Pull characters by plant tier:**
 
 | Plant | Pull character | Trigger |
 |-------|---------------|---------|
 | Cactus | Sir Moneyton Ch2 | grass stage3 ≥ 3 |
-| Rose | Agent Frogsby Ch2 | cactus stage3 ≥ 4 |
-| Tulip | Mira Ch1 | rose stage3 ≥ 3 |
-| Daisy | Mechafrog Ch1 | daisy stage3 ≥ 3 |
-| Golden Lotus | The Collector Ch1 | daisy stage3 ≥ 30 |
+| Rose | Agent Frogsby Ch2 | cactus stage3 ≥ 6 |
+| Tulip | Mira Ch1 | rose stage3 ≥ 4 |
+| Daisy | Mechafrog Ch1 | daisy stage3 ≥ 2 |
+| Golden Lotus | The Collector Ch1 | daisy stage3 ≥ 20 |
 
 **Dialog flow:**
 - Scripted customers: F advances through messages one at a time; after the last message the plant-image bubble appears
