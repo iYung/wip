@@ -320,7 +320,6 @@ function Customer:draw_bubble()
         if (string.byte(self._full_text, idx) or 0) >= 0xC0 then
             idx = idx - 1
         end
-        local revealed = string.sub(self._full_text, 1, idx)
         local text_h   = font:getHeight()
         local _, lines = font:getWrap(self._full_text, MAX_BOX_W - PAD * 2)
         local widest_line_width = 0
@@ -333,14 +332,23 @@ function Customer:draw_bubble()
         local box_x = self.bubble.x + BW / 2 - box_w / 2
         local box_y = self.bubble.y - box_h - TAIL_H + 4
 
-        local _, revealed_lines = font:getWrap(revealed, MAX_BOX_W - PAD * 2)
+        -- Build rendered_lines by walking the full-text wrap points with a byte
+        -- offset, so partial words never cause line-break flicker.
+        local rendered_lines = {}
+        local remaining = idx
+        for _, line in ipairs(lines) do
+            if remaining <= 0 then break end
+            local visible = math.min(remaining, #line)
+            rendered_lines[#rendered_lines + 1] = string.sub(line, 1, visible)
+            remaining = remaining - #line - 1
+        end
 
         love.graphics.setColor(1, 1, 1, 1)
         draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
         local tw = A.speech_bubble_tail:getWidth()
         love.graphics.draw(A.speech_bubble_tail, box_x + box_w / 2 - tw / 2, box_y + box_h - 10)
         love.graphics.setColor(0.08, 0.07, 0.10, 0.95)
-        for i, line in ipairs(revealed_lines) do
+        for i, line in ipairs(rendered_lines) do
             love.graphics.print(line, box_x + PAD, box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h)
         end
         love.graphics.setColor(1, 1, 1, 1)
