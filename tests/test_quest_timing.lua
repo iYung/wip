@@ -105,12 +105,12 @@ local PLANT_DATA = require("lua/game/data/plant_data")
 
 local schedule = {
     { pt = 1, target = 3  },   -- Grass  >= 3   → sage:1 (immediate), sage:2
-    { pt = 2, target = 24 },   -- Cactus >= 24  → frogsby:1 (>=2), sage:3 (>=4), frogsby:2 (>=6), glen:1 (>=6), mechafrog:3 (>=24)
-    { pt = 3, target = 20 },   -- Rose   >= 20  → sage:4 (>=2), mira:1 (>=4), mayor_bloom:1 (>=6), mayor_bloom:2 (>=8), mayor_bloom:3 (>=20)
-    { pt = 4, target = 8  },   -- Tulip  >= 8   → mira:2 (>=2), dottie:1 (>=4), frogsby:3 (>=6), glen:2 (>=8)
-    { pt = 5, target = 30 },   -- Daisy  >= 30  → mechafrog:1 (>=2), dottie:2 (>=4), dottie:3 (>=6), glen:3 (>=8), collector:1 (>=20)
-    { pt = 6, target = 3  },   -- Lotus  >= 3   → collector:2
-    { pt = 1, target = 50 },   -- Grass  >= 50  → mechafrog:2 (>=40)
+    { pt = 2, target = 36 },   -- Cactus >= 36  → frogsby:1 (>=2), sage:3 (>=4), frogsby:2 (>=9), glen:1 (>=9), mechafrog:3 (>=36)
+    { pt = 3, target = 30 },   -- Rose   >= 30  → sage:4 (>=2), mira:1 (>=6), mayor_bloom:1 (>=9), mayor_bloom:2 (>=12), mayor_bloom:3 (>=30)
+    { pt = 4, target = 12 },   -- Tulip  >= 12  → mira:2 (>=3), dottie:1 (>=3), dottie:2 (>=6), frogsby:3 (>=9), glen:2 (>=12)
+    { pt = 5, target = 30 },   -- Daisy  >= 30  → mechafrog:1 (>=3), dottie:3 (>=5), glen:3 (>=12), collector:1 (>=30)
+    { pt = 6, target = 5  },   -- Lotus  >= 5   → collector:2 (>=5)
+    { pt = 1, target = 60 },   -- Grass  >= 60  → mechafrog:2 (>=60)
 }
 
 check_milestones()  -- sage:1 triggers at count=0, fires before first grow
