@@ -146,7 +146,7 @@ Two kinds of customers can spawn:
 | Character | Plant | Chapters | Arc |
 |-----------|-------|----------|-----|
 | Sir Moneyton | Grass → Cactus → Expand → Grafter | 4 | Guaranteed first customer; teaches cactus, store expansion, then grafter (after roses — because roses are expensive, grafting is how you scale them); wears a monocle |
-| Mayor Bloom | Rose | 2 | Formal first visit; returns privately for himself; wears secretary glasses |
+| Mayor Bloom | Rose → Tulip → Daisy | 3 | Running for office; each visit is a campaign rebrand on the campaign manager's advice — rose for elegance, tulip for approachability, daisy to appeal to kids; wears secretary glasses |
 | Agent Frogsby | Cactus → Rose → Tulip | 3 | Comedy spy; buys cactus for close-quarters combat, returns needing rose thorns as barbed wire, then needs a tulip for a diplomatic mission to the Toad Nation; wears a coat |
 | Mira | Tulip | 2 | Kid with her dad's money; shows up after roses to buy a tulip (pulls toward tulip); forgets one more later |
 | Dottie | Daisy | 3 | Cheerful regular; presses flowers in books; brings one back as a gift; wears a clown nose |

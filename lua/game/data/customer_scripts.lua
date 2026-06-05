@@ -1,5 +1,5 @@
 return {
-    -- Mayor Bloom (rose questline, 2 chapters)
+    -- Mayor Bloom (rebranding campaign, 3 chapters)
     {
         id             = "mayor_bloom",
         chapter        = 1,
@@ -11,11 +11,12 @@ return {
         secondary_color = {0.15, 0.25, 0.50, 1},
         plant_type     = 3,
         messages       = {
-            "The town council is watching this place.",
-            "Only the finest rose will do.",
+            "Hello, neighbor. I'm running for office.",
+            "I'd like you to keep me in mind.",
+            "I want to be elegant. But still willing to fight. A rose feels right.",
         },
         after_messages = {
-            "You'll be hearing from us.",
+            "Remember the name.",
         },
     },
     {
@@ -27,14 +28,33 @@ return {
         voice_pitch    = 0.82,
         primary_color     = {0.75, 0.25, 0.40, 1},
         secondary_color = {0.15, 0.25, 0.50, 1},
-        plant_type     = 3,
+        plant_type     = 4,
         messages       = {
-            "I'm not here on council business today.",
-            "The last rose... it was for me. Just for me.",
-            "Could I have another? Don't make it strange.",
+            "My campaign manager says the rose was a mistake.",
+            "Too tough. Too pointed. Wrong message.",
+            "We're going softer. Can I get a tulip?",
         },
         after_messages = {
-            "This doesn't leave the shop.",
+            "Approachable. That's the word she used.",
+        },
+    },
+    {
+        id             = "mayor_bloom",
+        chapter        = 3,
+        accessory      = "secretary_glasses",
+        trigger        = { plant_type = 3, count = 20 },
+        name           = "Mayor Bloom",
+        voice_pitch    = 0.82,
+        primary_color     = {0.75, 0.25, 0.40, 1},
+        secondary_color = {0.15, 0.25, 0.50, 1},
+        plant_type     = 5,
+        messages       = {
+            "Another rebrand. Campaign manager's orders.",
+            "We need to appeal to the kids.",
+            "She says daisies poll well with the youth demographic.",
+        },
+        after_messages = {
+            "I just go where the numbers point.",
         },
     },
 
