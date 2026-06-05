@@ -67,7 +67,7 @@ function StoreScene:on_enter()
     end
 
     if gs.has_drone and not self._drone then
-        self._drone = WaterDrone.new(gs.store, 0)
+        self._drone = WaterDrone.new(gs.store, 0, gs)
     end
     self.drawer:clear()
     self.drawer:add(gs.store,              0)
@@ -218,7 +218,7 @@ end
 function StoreScene:_wire_drone()
     local gs = self.game_state
     if gs.has_drone and not self._drone then
-        self._drone = WaterDrone.new(gs.store, 0)
+        self._drone = WaterDrone.new(gs.store, 0, gs)
     end
 end
 

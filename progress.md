@@ -44,7 +44,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `plant.lua` | 6 types, 3 stages each; per-type cooldown from `plant_data`; stage PNGs rendered as-is (no tinting); yellow bubble via `draw_bubble()` |
 | `grafter.lua` | Clones a stage-3 plant (resets original to stage 1); auto-spawns clone into nearest empty slot; no-space bubble (60×60, `grafter_no_space_bubble.png`) shown for 1.5 s when no slot available; always shows orange PNG |
 | `intercom.lua` | Purchasable tool ($50); shows the customer's plant request bubble above itself; `draw_bubble()` mirrors the customer's done-talking plant image; save/load safe via `_wire_intercom()` |
-| `water_drone.lua` | One-time purchase ($10); autonomous drone that scans for water-ready plants, flies to them at a fixed elevation, waters them, and idles in place; 2-frame sprite animation (10fps flip); drawn above heat lamps and below the player |
+| `water_drone.lua` | One-time purchase ($10); autonomous drone that scans for water-ready plants, flies to them at a fixed elevation, waters them, idles in place, and increments `stage3_counts` when a plant reaches stage 3 (same as the player path); 2-frame sprite animation (10fps flip); drawn above heat lamps and below the player |
 | `sell_bin.lua` | Sell station; F while holding any sellable item sells it for currency; red PNG |
 
 ### Scenes (`lua/game/scenes/`)
@@ -139,7 +139,9 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
-- **Water Drone** — one-time purchase ($10) from the PC Store; autonomous drone flies at a fixed elevation (y=180) above heat lamps, scans for water-ready plants each frame, centers over the target slot, waters it and plays `"water_plant"` sound, then idles in place; 2-frame sprite animation swapping between `water_drone.png` and `water_drone2.png` at 20fps; drawn at priority 3.5 (above plant bubbles, below player); save/load safe via `_wire_drone()`; `has_drone` persists in `GameState`; 4 headless tests in `tests/test_water_drone.lua`
+- **Water drone stage3_counts fix** — drone was calling `item:water()` directly without the stage-3 check that the player's interact handler does, so plants the drone advanced to stage 3 never incremented `gs.stage3_counts`; scripted customer triggers compare against those counts, so characters stopped spawning in drone-heavy runs; fix: `WaterDrone.new` now accepts `game_state` as a third arg and increments `stage3_counts[plant_type]` when `item.stage == 3` after a successful water; E5/E6 added to `test_water_drone.lua`; pre-existing E2 stub bug (missing `slot_width`) also fixed
+
+- **Water Drone** — one-time purchase ($10) from the PC Store; autonomous drone flies at a fixed elevation (y=180) above heat lamps, scans for water-ready plants each frame, centers over the target slot, waters it and plays `"water_plant"` sound, then idles in place; 2-frame sprite animation swapping between `water_drone.png` and `water_drone2.png` at 20fps; drawn at priority 3.5 (above plant bubbles, below player); save/load safe via `_wire_drone()`; `has_drone` persists in `GameState`; 6 headless tests in `tests/test_water_drone.lua`
 
 - **Plant growth rebalance** — cooldowns rewritten so grow time scales with value (Grass 7 s → Golden Lotus 90 s) instead of the old inverted curve where Golden Lotus was among the fastest; each plant now has a distinct stage-shape (e.g. Cactus slow-start/fast-bloom, Tulip fast-start/slow-bloom) to make them feel different at a glance; Heat Lamps remain the key upgrade for unlocking high-value plants at a competitive rate; `tests/test_plant_growth.lua` and `tests/test_grafter.lua` updated to drive timing from `PLANT_DATA` rather than hardcoded seconds
 

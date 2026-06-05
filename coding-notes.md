@@ -10,18 +10,25 @@ luagame/
 ├── assets/              ← PNG images (player, customer, plants, items, slot, wall)
 │   └── shaders/         ← GLSL shader source files
 ├── tests/               ← test files run via --headless or --visual
-│   ├── test_basics.lua
 │   ├── test_balance.lua
+│   ├── test_basics.lua
 │   ├── test_carrying.lua
 │   ├── test_customer_scripts.lua
+│   ├── test_dialogue_wrap.lua
 │   ├── test_golden_lotus.lua
 │   ├── test_grafter.lua
+│   ├── test_intercom.lua
 │   ├── test_plant_growth.lua
+│   ├── test_quest_timing.lua
+│   ├── test_save.lua
+│   ├── test_scene_manager.lua
 │   ├── test_selling.lua
 │   ├── test_settings_menu.lua
 │   ├── test_settings_state.lua
 │   ├── test_shop.lua
-│   └── test_start_scene.lua
+│   ├── test_sound.lua
+│   ├── test_start_scene.lua
+│   └── test_water_drone.lua
 └── lua/
     ├── core/
     │   ├── sprite.lua

@@ -8,7 +8,7 @@ WaterDrone.__index = WaterDrone
 local drone_y     = 180
 local DRONE_W     = 120
 
-function WaterDrone.new(store, start_x)
+function WaterDrone.new(store, start_x, game_state)
     local self         = setmetatable({}, WaterDrone)
     self.state         = "idle"
     self.x             = start_x or 0
@@ -19,6 +19,7 @@ function WaterDrone.new(store, start_x)
     self.speed         = 300
     self._water_timer  = 0
     self._store_ref    = store
+    self._game_state   = game_state
     self._frame_timer  = 0
     self._frame        = 1
     self.sprite        = Sprite.new(0, 0, 120, 120)
@@ -63,8 +64,16 @@ function WaterDrone:update(dt)
     elseif self.state == "watering" then
         self._water_timer = self._water_timer - dt
         if self._water_timer <= 0 then
-            local ok = self.target_slot.item ~= nil and self.target_slot.item:water()
-            if ok then Sound.play("water_plant") end
+            local item = self.target_slot.item
+            local ok = item ~= nil and item:water()
+            if ok then
+                Sound.play("water_plant")
+                if self._game_state and item.stage == 3 then
+                    local gs = self._game_state
+                    local pt = item.plant_type
+                    gs.stage3_counts[pt] = (gs.stage3_counts[pt] or 0) + 1
+                end
+            end
             self.target_slot = nil
             self.state = "idle"
         end
