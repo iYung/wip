@@ -170,4 +170,25 @@ local gs8 = GameState.from_save(Save.read())
 assert(#gs8.store.slots == 7, "from_save: slot count restored, got " .. #gs8.store.slots)
 print("PASS: save: slot count restored")
 
+-- Test 12: from_save applies speed tier to player when speed_level > 0
+reset_fs()
+local SPEED_TIERS = require("lua/game/data/speed_tiers")
+local gs_sp = GameState.new()
+gs_sp.speed_level = 2
+gs_sp.player.speed = SPEED_TIERS[2].speed
+Save.write(GameState.to_save(gs_sp))
+local gs_sp2 = GameState.from_save(Save.read())
+assert(gs_sp2.player.speed == SPEED_TIERS[2].speed,
+    "from_save: player speed should match speed_level 2, got " .. tostring(gs_sp2.player.speed))
+print("PASS: save: from_save applies speed tier to player")
+
+-- Test 13: from_save keeps base speed when speed_level == 0
+reset_fs()
+local gs_base = GameState.new()
+Save.write(GameState.to_save(gs_base))
+local gs_base2 = GameState.from_save(Save.read())
+assert(gs_base2.player.speed == 220,
+    "from_save: player speed should be 220 at speed_level 0, got " .. tostring(gs_base2.player.speed))
+print("PASS: save: from_save keeps base speed when speed_level is 0")
+
 print("ALL TESTS PASSED")
