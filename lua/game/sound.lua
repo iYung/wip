@@ -2,6 +2,7 @@ local Sound = {}
 
 local _src = {}
 local _animalese_src = nil
+local _animalese_last_t = 0
 local _sfx_volume = 1.0
 local _music_volume = 1.0
 local _music_tracks = {}
@@ -70,7 +71,9 @@ end
 
 function Sound.play_animalese(pitch)
     if not love.audio then return end
+    if love.timer and love.timer.getTime() - _animalese_last_t < 0.05 then return end
     if _animalese_src then
+        _animalese_last_t = love.timer and love.timer.getTime() or 0
         local clone = _animalese_src:clone()
         clone:setVolume(_sfx_volume)
         clone:setPitch(pitch)
