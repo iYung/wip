@@ -7,7 +7,7 @@ luagame/
 ├── main.lua
 ├── conf.lua
 ├── generate_assets.py   ← regenerates assets/ as solid-color PNGs
-├── assets/              ← PNG images (player, customer, plants, items, slot, wall)
+├── assets/images/       ← PNG images (player, customer, plants, items, slot, wall)
 │   └── shaders/         ← GLSL shader source files
 ├── tests/               ← test files run via --headless or --visual
 │   ├── test_balance.lua
@@ -250,7 +250,7 @@ return {
         primary_color   = {0.25, 0.45, 0.80, 1},
         secondary_color = {0.55, 0.40, 0.25, 1},
         plant_type      = 2,            -- plant the customer wants
-        accessory       = "flat_cap",   -- optional; key into assets/
+        accessory       = "flat_cap",   -- optional; key into assets/images/
         messages        = { "...", "...", "..." },
         after_messages  = { "..." },    -- optional; lines shown after the sale, before walk-out
     },

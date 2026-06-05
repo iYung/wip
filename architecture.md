@@ -168,11 +168,11 @@ Loads every PNG once at startup and returns a shared table. All other modules `r
 - `speech_bubble` — 9-slice speech bubble image (96×72, margins top=12 right=12 bottom=24 left=12)
 - `speech_bubble_tail` — tail graphic drawn below the speech bubble
 - `sneakers`, `expand_slot` — buy-scene preview images; loaded conditionally via `try_img` (art not yet created; fall back to grey rectangle in preview)
-- `wall_pattern` — optional repeating pattern texture (`assets/wall_pattern.png`); loaded with `setWrap("repeat","repeat")`; nil if the file is absent; used by the `WallPattern` shader on every wall draw
+- `wall_pattern` — optional repeating pattern texture (`assets/images/wall_pattern.png`); loaded with `setWrap("repeat","repeat")`; nil if the file is absent; used by the `WallPattern` shader on every wall draw
 - `accessories` — table of lazily-loaded accessory images, keyed by name
 
 **Methods**
-- `load_accessory(name)` — loads `assets/<name>.png` on first call and caches the result; returns `false` (not nil) on a missing file so the cache entry is set and the disk is not re-checked
+- `load_accessory(name)` — loads `assets/images/<name>.png` on first call and caches the result; returns `false` (not nil) on a missing file so the cache entry is set and the disk is not re-checked
 
 ---
 
@@ -457,7 +457,7 @@ Tiles a repeating pattern texture over wall and window images. Applied to every 
 - `clear()` — resets to the default Love2D shader
 
 **Assets**
-- `assets/wall_pattern.png` — loaded with `setWrap("repeat", "repeat")`; optional (`try_img`); `A.wall_pattern` is nil if the file is absent
+- `assets/images/wall_pattern.png` — loaded with `setWrap("repeat", "repeat")`; optional (`try_img`); `A.wall_pattern` is nil if the file is absent
 
 ---
 
