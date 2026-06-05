@@ -7,6 +7,7 @@ local WateringCan = require("lua/game/items/watering_can")
 local Grafter    = require("lua/game/items/grafter")
 local GarbageBin = require("lua/game/items/garbage_bin")
 local PCStore    = require("lua/game/items/pc_store")
+local Intercom   = require("lua/game/items/intercom")
 
 local SLOT_WIDTH    = 10 * U  -- 200
 local INITIAL_SLOTS = 5
@@ -23,6 +24,8 @@ local function _item_to_data(item)
         return { type = "garbage_bin" }
     elseif item.name == "PC Store" then
         return { type = "pc_store" }
+    elseif item.name == "Intercom" then
+        return { type = "intercom" }
     else
         return nil
     end
@@ -44,6 +47,8 @@ local function _item_from_data(d)
         return GarbageBin.new()
     elseif d.type == "pc_store" then
         return PCStore.new(nil)
+    elseif d.type == "intercom" then
+        return Intercom.new(nil)
     else
         return nil
     end

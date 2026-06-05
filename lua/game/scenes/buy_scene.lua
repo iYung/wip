@@ -2,6 +2,7 @@ local Scene       = require("lua/core/scene")
 local Plant       = require("lua/game/items/plant")
 local WateringCan = require("lua/game/items/watering_can")
 local Grafter     = require("lua/game/items/grafter")
+local Intercom    = require("lua/game/items/intercom")
 local config      = require("lua/game/config")
 local PLANT_DATA  = require("lua/game/data/plant_data")
 local A           = require("lua/game/assets")
@@ -38,6 +39,13 @@ CATALOGUE[#CATALOGUE + 1] = {
     cost        = 0,
     kind        = "tool_grafter",
     image       = A.grafter_empty,
+}
+CATALOGUE[#CATALOGUE + 1] = {
+    label       = "Intercom",
+    description = "See the plant order\nfrom anywhere.",
+    cost        = 50,
+    kind        = "tool_intercom",
+    image       = A.intercom,
 }
 CATALOGUE[#CATALOGUE + 1] = {
     label       = "Expand Slot",
@@ -166,6 +174,11 @@ function BuyScene:_confirm()
         self.scene_manager:switch(self.store_scene)
     elseif kind == "tool_grafter" then
         gs.player.held_item = Grafter.new()
+        Sound.play("shop_buy")
+        self.scene_manager:switch(self.store_scene)
+    elseif kind == "tool_intercom" then
+        local scene = self.store_scene
+        gs.player.held_item = Intercom.new(function() return scene._customer end)
         Sound.play("shop_buy")
         self.scene_manager:switch(self.store_scene)
     elseif kind == "expand" then

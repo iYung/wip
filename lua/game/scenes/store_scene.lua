@@ -4,6 +4,7 @@ local Sound        = require("lua/game/sound")
 local WateringCan  = require("lua/game/items/watering_can")
 local PCStore      = require("lua/game/items/pc_store")
 local GarbageBin   = require("lua/game/items/garbage_bin")
+local Intercom     = require("lua/game/items/intercom")
 local BuyScene     = require("lua/game/scenes/buy_scene")
 local PLANT_DATA        = require("lua/game/data/plant_data")
 local CUSTOMER_SCRIPTS  = require("lua/game/data/customer_scripts")
@@ -169,6 +170,7 @@ function StoreScene:_setup_store()
 
     if self._from_save then
         self:_wire_pc_store()
+        self:_wire_intercom()
     end
 end
 
@@ -189,6 +191,19 @@ function StoreScene:_wire_pc_store()
     end
     if gs.player.held_item and gs.player.held_item.name == "PC Store" then
         gs.player.held_item.buy_scene_factory = factory
+    end
+end
+
+function StoreScene:_wire_intercom()
+    local gs = self.game_state
+    local getter = function() return self._customer end
+    for _, slot in ipairs(gs.store.slots) do
+        if slot.item and slot.item.name == "Intercom" then
+            slot.item:set_customer_getter(getter)
+        end
+    end
+    if gs.player.held_item and gs.player.held_item.name == "Intercom" then
+        gs.player.held_item:set_customer_getter(getter)
     end
 end
 
