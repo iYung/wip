@@ -106,7 +106,11 @@ function StoreScene:_setup_store()
     local exit_x     = -(ZONE_WIDTH + 200)
     local customer_y = 500
     self._customer          = Customer.new(target_x, exit_x, customer_y)
-    self._spawn_timer       = Timer.new(spawn_cooldown(gs))
+    -- Shorten only the very first wait on a brand new game so the opening
+    -- customer doesn't leave the player staring at an empty store; it resets
+    -- to the normal spawn_cooldown after firing once (see update()).
+    local initial_cooldown  = self._from_save and spawn_cooldown(gs) or 0.1
+    self._spawn_timer       = Timer.new(initial_cooldown)
     self._active_script_key = nil
     self._active_script     = nil
     self._script_cooldowns  = {}
