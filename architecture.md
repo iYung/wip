@@ -265,7 +265,7 @@ The player character. Moves left/right into the cashier zone, holds at most one 
 - `held_item` — the Item currently held, or `nil`
 - `speed` — movement speed in px/s; defaults to 220, increased by speed upgrades
 - `sprite` — SpriteSet with four variants: `idle`, `walk`, `idle_held`, `walk_held`; each backed by a PNG image
-- `_speed_color` — `{r,g,b,a}` primary replacement color for the current speed tier; defaults to `{1,1,1,1}` (white) at base level
+- `_speed_color` — `{r,g,b,a}` primary replacement color for the current speed tier; defaults to `{0.5, 0.75, 1.0, 1}` (pale sky blue) at base level so the tier 0→6 progression reads as a single blue→red gradient
 - `_speed_secondary` — `{r,g,b,a}` secondary replacement color for the current speed tier (sole/accent pixels), or `nil` at base level
 
 **Methods**

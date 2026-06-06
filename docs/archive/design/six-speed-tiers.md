@@ -18,7 +18,7 @@ Primary shoe color graduates from blue → red across all 6 tiers. The secondary
 
 | Tier | Speed | Cost | Primary color | Secondary |
 |------|-------|------|---------------|-----------|
-| 0    | —     | —    | white (base)  | — |
+| 0    | —     | —    | pale sky blue `{0.5, 0.75, 1.0}` (base) | — |
 | 1    | 320   | $15  | blue `{0.1, 0.4, 1.0}` | dark brown `{0.3, 0.15, 0.05}` |
 | 2    | 450   | $30  | blue-purple `{0.4, 0.1, 0.9}` | dark brown |
 | 3    | 590   | $55  | purple `{0.7, 0.1, 0.8}` | dark brown |
