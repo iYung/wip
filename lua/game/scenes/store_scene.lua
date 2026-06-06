@@ -106,7 +106,8 @@ function StoreScene:_setup_store()
     local exit_x     = -(ZONE_WIDTH + 200)
     local customer_y = 500
     self._customer          = Customer.new(target_x, exit_x, customer_y)
-    self._spawn_timer       = Timer.new(spawn_cooldown(gs))
+    local initial_cooldown  = self._from_save and spawn_cooldown(gs) or 1
+    self._spawn_timer       = Timer.new(initial_cooldown)
     self._active_script_key = nil
     self._active_script     = nil
     self._script_cooldowns  = {}
