@@ -89,11 +89,13 @@ A small module `lua/util/serialize.lua` that turns a plain table into a valid Lu
 
 ### 3. Trigger save
 
-**Save exclusively in `BuyScene:on_exit()`.**
+Save is triggered in two places:
 
-All three exit paths in `buy_scene.lua` (lines 99, 135, 138, 141) go through `switch(self.store_scene)`, which triggers `on_exit()`. This is the only moment where purchases are committed and the player is guaranteed to have no held item — state is always clean here.
+- **Settings menu "Save Game"** — calls `Save.write(GameState.to_save(gs))` via the `on_save` callback passed to `SettingsMenu.new()` in `main.lua`. Only fires in-game (guarded by `current.game_state`).
+- **`love.quit()`** — same guard: saves only if `scene_manager.current.game_state` is non-nil.
 
-> **This must be clearly documented in `buy_scene.lua` with a comment on `on_exit()`.** Any future developer adding a new exit path (a new button, an escape shortcut, etc.) needs to know that skipping `on_exit()` will silently drop a save. The comment should explain both *that* saving happens here and *why* this is the chosen save point.
+**Critical invariant: `StartScene` must NOT set `self.game_state`.**  
+`love.quit()` checks `scene_manager.current.game_state` to decide whether to save. If `StartScene` stored a `game_state` (even a fresh `GameState.new()`), quitting from the menu would overwrite the real save with an empty-slot state, making the store appear empty on the next Continue. `StartScene` has no use for `game_state` — it constructs a fresh one in `_confirm()` for New Game, and calls `GameState.from_save()` for Continue.
 
 ### 4. Wire up the start screen
 

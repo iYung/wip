@@ -168,5 +168,11 @@ s5:update(0.5)
 assert(s5._time == 1.5, "_time should be 1.5 after another update(0.5), got " .. tostring(s5._time))
 print("PASS: _time accumulates with dt")
 
+-- Test 14: StartScene must NOT expose game_state so love.quit() does not
+-- overwrite the save file with an empty GameState when quitting from the menu.
+local s6 = make_scene(nil)
+assert(s6.game_state == nil, "StartScene must not set game_state (would corrupt save on quit from menu)")
+print("PASS: StartScene does not expose game_state")
+
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")
