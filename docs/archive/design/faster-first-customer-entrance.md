@@ -24,3 +24,4 @@ On a brand new game, the first scripted customer (Sage / "Sir Moneyton", `sage:1
 
 - None outstanding — confirmed with the user that only the spawn-timer wait should shrink (not the off-screen walk distance), and that this should apply only to brand new games, not saves where this scripted moment hasn't fired yet.
 - The exact short interval (proposed `1` second) is a feel/pacing choice; the implementing task can tune it slightly if `1` feels off during manual testing, as long as it stays clearly shorter than the normal `4`-second cooldown.
+- **Final value shipped:** tuned down to `0.1` seconds per the user's follow-up feedback after reviewing the `1`-second feel.

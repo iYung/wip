@@ -543,7 +543,7 @@ do
     print("PASS: scripts: Frogsby ch2 does not trigger at 9 cactuses")
 end
 
--- Test: new game uses short 1-second initial spawn timer (sage:1 active within 2s)
+-- Test: new game uses short 0.1-second initial spawn timer (sage:1 active within 2s)
 do
     -- sage:1 trigger is count=0, satisfied immediately; do NOT mark it seen.
     local ctx = runner.setup(function(gs, input, sm)
@@ -551,14 +551,14 @@ do
     end)
 
     -- Fast-forward 2 simulated seconds (2 ticks of 1s each).
-    -- With the 1-second initial cooldown the timer fires on the first tick,
+    -- With the 0.1-second initial cooldown the timer fires on the first tick,
     -- so the customer should be active well before a normal 4-second cooldown.
     runner.tick(ctx.input, ctx.sm, 2, 1.0)
 
     assert(ctx.sm.current._customer:active(),
-        "new game: sage:1 should be active within 2s (1-second initial cooldown), got state="
+        "new game: sage:1 should be active within 2s (0.1-second initial cooldown), got state="
         .. tostring(ctx.sm.current._customer.state))
-    print("PASS: scripts: new game uses short 1-second initial spawn timer")
+    print("PASS: scripts: new game uses short 0.1-second initial spawn timer")
 end
 
 -- Test: loaded save uses normal 4-second initial spawn timer (sage:1 NOT active at 2s)
