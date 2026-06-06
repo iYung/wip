@@ -139,7 +139,7 @@ function BuyScene:_confirm()
         gs.currency     = gs.currency - tier.cost
         gs.speed_level  = gs.speed_level + 1
         gs.player.speed = tier.speed
-        gs.player:set_speed_color(tier.color)
+        gs.player:set_speed_color(tier.color, tier.secondary)
         Sound.play("shop_buy")
         return
     end
@@ -301,7 +301,7 @@ function BuyScene:draw()
             PREVIEW_SIZE / img:getHeight())
     elseif ent.kind == "speed_boost" and ent.image then
         local next_tier = SPEED_TIERS[gs.speed_level + 1]
-        if next_tier then ColorReplace.apply(next_tier.color) end
+        if next_tier then ColorReplace.apply(next_tier.color, next_tier.secondary) end
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(ent.image,
             CENTER_X - PREVIEW_SIZE / 2, y,

@@ -172,7 +172,7 @@ do
     end)
     local buy = make_buy(ctx)
     ctx.gs.currency = 9999
-    ctx.gs.speed_level = #SPEED_TIERS   -- max (3)
+    ctx.gs.speed_level = #SPEED_TIERS   -- max
     buy.selected = 11
     buy:_confirm()
     assert(ctx.gs.speed_level == #SPEED_TIERS,

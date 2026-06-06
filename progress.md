@@ -139,6 +139,8 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
+- **Six speed tiers** — expanded the speed upgrade from 3 to 6 purchasable tiers (320/450/590/720/960/1200 px/s at $15/$30/$55/$100/$200/$360); primary shoe color now graduates blue → red across all 6 tiers and every tier carries a `secondary` (dark brown sole/accent) color; `Player:set_speed_color(color, secondary)` (renamed from `set_speed_color(color)`) stores both and `draw()` passes both to `ColorReplace.apply`; `BuyScene` speed_boost preview updated to match; `tests/test_balance.lua` ROI loop now covers all 6 tiers, which surfaced and fixed a latent hang in the `walk_to` test helper (high-speed ticks could overshoot the 5px snap window and ping-pong forever — now exits as soon as the player crosses the target)
+
 - **Water drone stage3_counts fix** — drone was calling `item:water()` directly without the stage-3 check that the player's interact handler does, so plants the drone advanced to stage 3 never incremented `gs.stage3_counts`; scripted customer triggers compare against those counts, so characters stopped spawning in drone-heavy runs; fix: `WaterDrone.new` now accepts `game_state` as a third arg and increments `stage3_counts[plant_type]` when `item.stage == 3` after a successful water; E5/E6 added to `test_water_drone.lua`; pre-existing E2 stub bug (missing `slot_width`) also fixed
 
 - **Water Drone** — one-time purchase ($10) from the PC Store; autonomous drone flies at a fixed elevation (y=180) above heat lamps, scans for water-ready plants each frame, centers over the target slot, waters it and plays `"water_plant"` sound, then idles in place; 2-frame sprite animation swapping between `water_drone.png` and `water_drone2.png` at 20fps; drawn at priority 3.5 (above plant bubbles, below player); save/load safe via `_wire_drone()`; `has_drone` persists in `GameState`; 6 headless tests in `tests/test_water_drone.lua`
@@ -179,7 +181,7 @@ See open questions in `game-design.md`.
 
 - **Golden Lotus timing test** — `tests/test_golden_lotus.lua` simulation test that grows and sells three grass plants (to reach $20), then buys and sells a Golden Lotus; measures total simulated seconds elapsed and asserts currency increased; uses `walk_to`, `fast_forward_until`, and `sell_plant` helpers with `math.randomseed(42)` for a deterministic run
 
-- **Player speed sprites** — speed upgrades now apply a GLSL color-replace shader at draw time instead of swapping sprite sets; pure-red pixels in the player PNG are replaced with the tier's color (`speed_tiers.lua` now carries a `color` field per tier); `Player:set_speed_level(level, color)` stores the active color; no extra PNG assets needed
+- **Player speed sprites** — speed upgrades now apply a GLSL color-replace shader at draw time instead of swapping sprite sets; pure-red pixels in the player PNG are replaced with the tier's color (`speed_tiers.lua` now carries a `color` field per tier); `Player:set_speed_color(color, secondary)` stores the active colors; no extra PNG assets needed
 
 - **Start screen** — `StartScene` with New Game / Continue / Exit buttons; keyboard navigation (up/down/W/S + Enter/Space/F); `main.lua` now opens `StartScene` first; `StoreScene` constructed lazily on confirm; font state saved/restored so store rendering is unaffected
 
