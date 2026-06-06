@@ -259,7 +259,7 @@ function Customer:update(dt)
     self.sprite.x = self.x - CW / 2
     self.sprite.y = self.y - CH / 2 - 20
     self.bubble.x = self.x - BW / 2
-    self.bubble.y = self.sprite.y - BH - 4
+    self.bubble.y = self.sprite.y - 9
     self.heart_bubble.x = self.x - BW / 2
     self.heart_bubble.y = self.sprite.y - BH - 4
     if self.accessory_sprite then
@@ -347,6 +347,7 @@ function Customer:draw_bubble()
         draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
         local tw = A.speech_bubble_tail:getWidth()
         love.graphics.draw(A.speech_bubble_tail, box_x + box_w / 2 - tw / 2, box_y + box_h - 10)
+
         love.graphics.setColor(0.08, 0.07, 0.10, 0.95)
         for i, line in ipairs(rendered_lines) do
             love.graphics.print(line, box_x + PAD, box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h)
