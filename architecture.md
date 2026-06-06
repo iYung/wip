@@ -265,14 +265,15 @@ The player character. Moves left/right into the cashier zone, holds at most one 
 - `held_item` — the Item currently held, or `nil`
 - `speed` — movement speed in px/s; defaults to 220, increased by speed upgrades
 - `sprite` — SpriteSet with four variants: `idle`, `walk`, `idle_held`, `walk_held`; each backed by a PNG image
-- `_speed_color` — `{r,g,b,a}` replacement color for the current speed tier; defaults to `{1,1,1,1}` (white) at base level
+- `_speed_color` — `{r,g,b,a}` primary replacement color for the current speed tier; defaults to `{0.5, 0.75, 1.0, 1}` (pale sky blue) at base level so the tier 0→6 progression reads as a single blue→red gradient
+- `_speed_secondary` — `{r,g,b,a}` secondary replacement color for the current speed tier (sole/accent pixels), or `nil` at base level
 
 **Methods**
 - `new(x)` — constructor
-- `set_speed_level(level, color)` — stores `color` as `_speed_color`; called by BuyScene after a speed purchase
+- `set_speed_color(color, secondary)` — stores `color` as `_speed_color` and `secondary` as `_speed_secondary`; called by BuyScene after a speed purchase
 - `update(dt, input, store)` — handle movement and animation frame switching
 - `active_slot(store)` — returns the slot the player is standing over
-- `draw()` — applies `ColorReplace` with `_speed_color` as primary (no secondary); draws sprite; clears shader; then draws held item above the player
+- `draw()` — applies `ColorReplace` with `_speed_color` as primary and `_speed_secondary` as secondary; draws sprite; clears shader; then draws held item above the player
 
 ---
 
@@ -434,7 +435,7 @@ Replaces pure-red or pure-blue pixels in a sprite with runtime colors. Used by P
 - `clear()` — resets to the default Love2D shader
 
 **Usage**
-- Player: `apply(speed_tier_color)` — red mask pixels show the current speed tier color
+- Player: `apply(primary, secondary)` — red mask pixels show the current speed tier's primary color, blue mask pixels show its secondary (sole/accent) color
 - Customer: `apply(primary, secondary)` — red pixels = body color, blue pixels = secondary (shadow/detail) color
 
 ---

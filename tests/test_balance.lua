@@ -6,6 +6,7 @@ local Plant      = require("lua/game/items/plant")
 
 local function walk_to(ctx, target_x, elapsed)
     while math.abs(ctx.gs.player.x - target_x) > 5 do
+        local before = ctx.gs.player.x - target_x
         if ctx.gs.player.x < target_x then
             ctx.input:hold("move_right")
             ctx.input:release("move_left")
@@ -15,6 +16,12 @@ local function walk_to(ctx, target_x, elapsed)
         end
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
+        -- at high speed tiers a single tick can step past the 5px snap
+        -- window and ping-pong forever; crossing the target counts as arrived
+        local after = ctx.gs.player.x - target_x
+        if before * after < 0 then
+            break
+        end
     end
     ctx.input:release("move_right")
     ctx.input:release("move_left")
@@ -293,13 +300,13 @@ for _, tier in ipairs(growth_tiers) do
 end
 
 -- Test 5: Speed upgrade ROI
-local speeds = { [0] = 220, [1] = 320, [2] = 480, [3] = 720 }
-local speed_costs = { [1] = 15, [2] = 40, [3] = 100 }
+local speeds = { [0] = 220, [1] = 320, [2] = 450, [3] = 590, [4] = 720, [5] = 960, [6] = 1200 }
+local speed_costs = { [1] = 15, [2] = 30, [3] = 55, [4] = 100, [5] = 200, [6] = 360 }
 
 local base_gold_3600 = nil
 
 print("[balance] speed upgrade ROI (3600s window, golden lotus):")
-for tier_idx = 0, 3 do
+for tier_idx = 0, 6 do
     math.randomseed(42)
     local ctx5 = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)

@@ -24,6 +24,7 @@ function Player.new(x)
     self.held_item   = nil
     self.speed       = BASE_SPEED
     self._speed_color = SPEED_TIERS[0].color
+    self._speed_secondary = nil
 
     local idle      = Sprite.new(0, 0, W, H); idle.image      = A.player_idle
     local walk      = Sprite.new(0, 0, W, H); walk.image      = A.player_walk
@@ -44,8 +45,9 @@ function Player.new(x)
     return self
 end
 
-function Player:set_speed_color(color)
+function Player:set_speed_color(color, secondary)
     self._speed_color = color
+    self._speed_secondary = secondary
 end
 
 function Player:update(dt, input, store)
@@ -101,7 +103,7 @@ end
 
 function Player:draw()
     if self._speed_color then
-        ColorReplace.apply(self._speed_color)
+        ColorReplace.apply(self._speed_color, self._speed_secondary)
     end
     self.sprite:draw()
     if self._speed_color then

@@ -9,6 +9,7 @@ local SCRIPTS    = require("lua/game/data/customer_scripts")
 
 local function walk_to(ctx, target_x, elapsed)
     while math.abs(ctx.gs.player.x - target_x) > 5 do
+        local before = ctx.gs.player.x - target_x
         if ctx.gs.player.x < target_x then
             ctx.input:hold("move_right")
             ctx.input:release("move_left")
@@ -18,6 +19,12 @@ local function walk_to(ctx, target_x, elapsed)
         end
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
+        -- at high speed tiers a single tick can step past the 5px snap
+        -- window and ping-pong forever; crossing the target counts as arrived
+        local after = ctx.gs.player.x - target_x
+        if before * after < 0 then
+            break
+        end
     end
     ctx.input:release("move_right")
     ctx.input:release("move_left")
