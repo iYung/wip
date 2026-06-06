@@ -34,13 +34,13 @@ end
 function StartScene:on_enter()
     self._font_btn      = love.graphics.newFont(22)
     self._font_tagline  = love.graphics.newFont(16, "mono")
-    self._img_bg      = love.graphics.newImage("assets/start_bg.png")
-    self._img_logo     = love.graphics.newImage("assets/start_logo.png")
-    self._img_sub_logo = love.graphics.newImage("assets/sub_logo.png")
-    self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
-    self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
-    if love.filesystem.getInfo("assets/start_pattern.png") then
-        local img = love.graphics.newImage("assets/start_pattern.png")
+    self._img_bg      = love.graphics.newImage("assets/images/start_bg.png")
+    self._img_logo     = love.graphics.newImage("assets/images/start_logo.png")
+    self._img_sub_logo = love.graphics.newImage("assets/images/sub_logo.png")
+    self._img_btn     = love.graphics.newImage("assets/images/menu_btn.png")
+    self._img_btn_sel = love.graphics.newImage("assets/images/menu_btn_selected.png")
+    if love.filesystem.getInfo("assets/images/start_pattern.png") then
+        local img = love.graphics.newImage("assets/images/start_pattern.png")
         img:setWrap("repeat", "repeat")
         self._img_pattern = img
     end

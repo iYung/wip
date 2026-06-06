@@ -68,7 +68,7 @@ Completed step files are moved to [`archive/`](archive/).
 
 PNG files for all sprites — player variants, plants (18 total: 6 types × 3 stages, rendered without tinting), items, UI elements, backgrounds, and speech bubbles.
 
-Accessory PNGs for named customers (120×120, transparent background) live alongside other assets in `assets/`. Loaded lazily by `A.load_accessory(name)`; missing files are cached as `false` so no disk re-check occurs. Contains `monocle.png` (Sir Moneyton), `secretary_glasses.png` (Mayor Bloom), `shades.png` (The Collector), `hair_bow.png` (Mira), `antenna.png` (Mechafrog), `clown.png` (Dottie), `coat.png` (Agent Frogsby), `headphones.png` (Glen).
+Accessory PNGs for named customers (120×120, transparent background) live in `assets/images/`. Loaded lazily by `A.load_accessory(name)`; missing files are cached as `false` so no disk re-check occurs. Contains `monocle.png` (Sir Moneyton), `secretary_glasses.png` (Mayor Bloom), `shades.png` (The Collector), `hair_bow.png` (Mira), `antenna.png` (Mechafrog), `clown.png` (Dottie), `coat.png` (Agent Frogsby), `headphones.png` (Glen).
 
 ---
 
@@ -169,9 +169,9 @@ See open questions in `game-design.md`.
 
 - **Character accessories** — all scripted characters now have accessories as a visual signal distinguishing them from random customers; PNGs in `assets/` (`monocle`, `secretary_glasses`, `shades`, `clown`, `hair_bow`, `antenna`, `coat`, `flat_cap`)
 
-- **Menu background shader** — `assets/shaders/menu_bg.glsl` + `lua/game/shaders/menu_bg.lua`; tiles a scrolling pattern texture over pure-red masked pixels in `start_bg.png`; scroll offset advances with time (60px/s horizontal, 30px/s vertical); pattern loaded from `assets/start_pattern.png` and gracefully disabled when absent; `_time` initialised in `StartScene.new()` so tests can call `update()` without `on_enter()`
+- **Menu background shader** — `assets/shaders/menu_bg.glsl` + `lua/game/shaders/menu_bg.lua`; tiles a scrolling pattern texture over pure-red masked pixels in `start_bg.png`; scroll offset advances with time (60px/s horizontal, 30px/s vertical); pattern loaded from `assets/images/start_pattern.png` and gracefully disabled when absent; `_time` initialised in `StartScene.new()` so tests can call `update()` without `on_enter()`
 
-- **Wall pattern shader** — `assets/shaders/wall_pattern.glsl` + `lua/game/shaders/wall_pattern.lua`; tiles a repeating pattern texture over pure-red pixels in wall/window images; world-space UV math keeps the pattern seamless across adjacent tiles; applied in both `Store:draw_bg` and the cashier wall in `StoreScene`; gracefully disabled when `assets/wall_pattern.png` is absent
+- **Wall pattern shader** — `assets/shaders/wall_pattern.glsl` + `lua/game/shaders/wall_pattern.lua`; tiles a repeating pattern texture over pure-red pixels in wall/window images; world-space UV math keeps the pattern seamless across adjacent tiles; applied in both `Store:draw_bg` and the cashier wall in `StoreScene`; gracefully disabled when `assets/images/wall_pattern.png` is absent
 
 - **CRT post-process shader (BuyScene)** — `assets/shaders/crt.glsl` + `lua/game/shaders/crt.lua`; BuyScene renders into a 1280×720 canvas then composites through the shader; effects: barrel distortion, chromatic aberration, scanlines, vignette; canvas pattern saves/restores `prev_canvas` so it works correctly inside main.lua's existing canvas wrapper
 

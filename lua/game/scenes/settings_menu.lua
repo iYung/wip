@@ -56,12 +56,12 @@ function SettingsMenu.new(settings_state, input, on_save)
     self._prev_sub_down    = false
     self._prev_sub_confirm = false
     self._prev_sub_escape  = false
-    self._img_btn     = love.graphics.newImage("assets/menu_btn.png")
-    self._img_btn_sel = love.graphics.newImage("assets/menu_btn_selected.png")
+    self._img_btn     = love.graphics.newImage("assets/images/menu_btn.png")
+    self._img_btn_sel = love.graphics.newImage("assets/images/menu_btn_selected.png")
 
     self._img_bgs     = {
-        love.graphics.newImage("assets/settings_pattern_1.png"),
-        love.graphics.newImage("assets/settings_pattern_2.png"),
+        love.graphics.newImage("assets/images/settings_pattern_1.png"),
+        love.graphics.newImage("assets/images/settings_pattern_2.png"),
     }
     self._bg_frame    = 1
     self._bg_timer    = 0
