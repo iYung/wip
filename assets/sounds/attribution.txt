@@ -1,8 +1,10 @@
 water_plant is https://freesound.org/people/qubodup/sounds/792931/ by qubodup
-menu_navigate is https://freesound.org/people/qubodup/sounds/844186/ by qubodup
+menu_navigate is https://freesound.org/people/qubodup/sounds/844185/ by qubodup
 menu_confirm is https://freesound.org/people/qubodup/sounds/844184/ by qubodup
 put_down is https://freesound.org/people/qubodup/sounds/792930/ by qubodup
 shop_navigate is https://freesound.org/people/qubodup/sounds/140773/ by qubodup
+clone_success is https://freesound.org/people/qubodup/sounds/159697/ by qubodup
+fail is https://freesound.org/people/qubodup/sounds/844191/ by qubodup
 
 Menu music is 10 AM from Lud and Schlatts Music Emporium
 Background music is from https://www.youtube.com/watch?v=ukwgsO9ooO4 Liborio Conti

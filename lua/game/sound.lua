@@ -13,9 +13,9 @@ local _EVENT_NAMES = {
     "water_plant",
     "plant_ready",
     "clone_success",
-    "clone_fail",
 "shop_navigate",
     "shop_buy",
+    "fail",
 "menu_navigate",
     "menu_confirm",
 }
