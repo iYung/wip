@@ -406,7 +406,7 @@ function StoreScene:_handle_interact()
     end
 
     -- held item + garbage bin → discard
-    if player.held_item and player.held_item.sellable ~= false and slot and slot.item and slot.item.is_garbage_bin then
+    if player.x >= 0 and player.held_item and player.held_item.sellable ~= false and slot and slot.item and slot.item.is_garbage_bin then
         player.held_item = nil
         Sound.play("put_down")
         return

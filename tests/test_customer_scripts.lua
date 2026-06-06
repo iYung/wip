@@ -2,6 +2,7 @@ math.randomseed(42)
 local runner     = require("lua/headless/runner")
 local StoreScene = require("lua/game/scenes/store_scene")
 local Plant      = require("lua/game/items/plant")
+local GarbageBin = require("lua/game/items/garbage_bin")
 
 -- Test: scripted customer spawned when trigger met
 do
@@ -583,6 +584,44 @@ do
         "loaded save: sage:1 should be active by 5s (4-second initial cooldown), got state="
         .. tostring(ctx.sm.current._customer.state))
     print("PASS: scripts: loaded save uses normal 4-second initial spawn timer")
+end
+
+-- Test: garbage bin in slot 1 does NOT discard item when player is in cashier zone
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    -- place garbage bin in slot 1 (leftmost slot)
+    ctx.gs.store.slots[1].item = GarbageBin.new()
+    -- give the player a sellable item
+    local plant = Plant.new(1); plant.stage = 3
+    ctx.gs.player.held_item = plant
+    -- position player in the cashier zone (x < 0)
+    ctx.gs.player.x = -200
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+    assert(ctx.gs.player.held_item ~= nil,
+        "held item should NOT be discarded when player is in cashier zone (x < 0), even with bin in slot 1")
+    print("PASS: garbage bin: cashier zone does not discard when bin is in slot 1")
+end
+
+-- Test: garbage bin in slot 1 DOES discard item when player is in shop area over slot 1
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    -- place garbage bin in slot 1 (leftmost slot)
+    ctx.gs.store.slots[1].item = GarbageBin.new()
+    -- give the player a sellable item
+    local plant = Plant.new(1); plant.stage = 3
+    ctx.gs.player.held_item = plant
+    -- position player in the shop area over slot 1 (x >= 0, within the first 200px slot)
+    ctx.gs.player.x = 100
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+    assert(ctx.gs.player.held_item == nil,
+        "held item should be discarded when player is in shop area (x >= 0) over bin in slot 1")
+    print("PASS: garbage bin: shop area discards item when bin is in slot 1")
 end
 
 print("ALL TESTS PASSED")

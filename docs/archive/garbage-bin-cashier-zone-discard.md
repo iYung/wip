@@ -1,0 +1,4 @@
+## Garbage Bin Cashier Zone Discard Checklist
+
+- [x] Task A — `lua/game/scenes/store_scene.lua` — In `StoreScene:_handle_interact`, add a `player.x >= 0 and` guard to the discard branch around line 409 (`if player.held_item and player.held_item.sellable ~= false and slot and slot.item and slot.item.is_garbage_bin then`), so discarding can only happen in the main shop area, matching the existing `player.x < 0` / `player.x >= 0` zone guards used on lines 372 and 377 of the same function.
+- [x] Task B — `tests/test_customer_scripts.lua` — Add a regression test that places the garbage bin in slot 1 (leftmost), positions the player in the cashier zone (`player.x < 0`) holding a sellable item, triggers interact, and asserts the held item is NOT discarded (i.e. `player.held_item` remains set). Also keep/add a companion case confirming discard still works when the player is in the main shop area (`player.x >= 0`) with the bin in slot 1.
