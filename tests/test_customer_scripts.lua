@@ -474,4 +474,73 @@ do
     print("PASS: scripts: _full_text has no name prefix after advance_after()")
 end
 
+-- Test: Romeo ch1 spawns at 6 cactuses
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx.gs.stage3_counts[2] = 6   -- Romeo ch1: trigger plant_type=2, count=6
+    -- mark all sage chapters seen (sage:3 triggers at 4 cactuses)
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    assert(cfg ~= nil and cfg.id == "romeo" and cfg.chapter == 1,
+        "Romeo ch1 should spawn at 6 cactuses, got " .. tostring(cfg and cfg.id))
+    print("PASS: scripts: Romeo ch1 spawns at 6 cactuses")
+end
+
+-- Test: Romeo ch1 does not spawn before 6 cactuses
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx.gs.stage3_counts[2] = 5
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    local is_romeo = cfg and cfg.id == "romeo" and cfg.chapter == 1
+    assert(not is_romeo, "Romeo ch1 should not spawn before 6 cactuses")
+    print("PASS: scripts: Romeo ch1 does not spawn before 6 cactuses")
+end
+
+-- Test: Frogsby ch2 triggers at 4 roses (not 9 cactuses)
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx.gs.stage3_counts[3] = 4   -- Frogsby ch2: trigger plant_type=3, count=4
+    ctx.gs.seen_scripts["agent_frogsby:1"] = true
+    -- mark all sage chapters seen (sage:4 triggers at 2 roses)
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    assert(cfg ~= nil and cfg.id == "agent_frogsby" and cfg.chapter == 2,
+        "Frogsby ch2 should trigger at 4 roses, got " .. tostring(cfg and cfg.id))
+    print("PASS: scripts: Frogsby ch2 triggers at 4 roses")
+end
+
+-- Test: Frogsby ch2 does not trigger at 9 cactuses (old trigger removed)
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx.gs.stage3_counts[2] = 9   -- old trigger: 9 cactuses
+    ctx.gs.seen_scripts["agent_frogsby:1"] = true
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    local is_frogsby_ch2 = cfg and cfg.id == "agent_frogsby" and cfg.chapter == 2
+    assert(not is_frogsby_ch2, "Frogsby ch2 should no longer trigger at 9 cactuses")
+    print("PASS: scripts: Frogsby ch2 does not trigger at 9 cactuses")
+end
+
 print("ALL TESTS PASSED")

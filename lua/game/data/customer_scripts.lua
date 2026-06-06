@@ -280,7 +280,7 @@ return {
         id              = "agent_frogsby",
         chapter         = 2,
         accessory       = "coat",
-        trigger         = { plant_type = 2, count = 9 },
+        trigger         = { plant_type = 3, count = 4 },
         name            = "Agent Frogsby",
         voice_pitch     = 0.75,
         primary_color   = {0.22, 0.28, 0.22, 1},
@@ -392,6 +392,65 @@ return {
         },
         after_messages = {
             "One cut. Double the output. Think about it.",
+        },
+    },
+
+    -- Romeo (hopeless romantic, 3-chapter arc; cactus → cactus → tulip, always wants a rose)
+    {
+        id              = "romeo",
+        chapter         = 1,
+        accessory       = "mustache",
+        trigger         = { plant_type = 2, count = 6 },
+        name            = "Romeo",
+        voice_pitch     = 0.90,
+        primary_color   = {0.85, 0.20, 0.25, 1},
+        secondary_color = {0.90, 0.60, 0.60, 1},
+        plant_type      = 3,
+        messages        = {
+            "I'm on a first date tonight.",
+            "She sat down. I saw her legs.",
+            "I need a rose. Right now.",
+        },
+        after_messages  = {
+            "I'm in love. There's no other explanation.",
+        },
+    },
+    {
+        id              = "romeo",
+        chapter         = 2,
+        accessory       = "mustache",
+        trigger         = { plant_type = 2, count = 12 },
+        name            = "Romeo",
+        voice_pitch     = 0.90,
+        primary_color   = {0.85, 0.20, 0.25, 1},
+        secondary_color = {0.90, 0.60, 0.60, 1},
+        plant_type      = 3,
+        messages        = {
+            "Still on the date. Same date.",
+            "She ordered dessert. She stuck out her tongue to taste it.",
+            "I need another rose. Immediately.",
+        },
+        after_messages  = {
+            "I have never felt this way about a tongue before.",
+        },
+    },
+    {
+        id              = "romeo",
+        chapter         = 3,
+        accessory       = "mustache",
+        trigger         = { plant_type = 4, count = 4 },
+        name            = "Romeo",
+        voice_pitch     = 0.90,
+        primary_color   = {0.85, 0.20, 0.25, 1},
+        secondary_color = {0.90, 0.60, 0.60, 1},
+        plant_type      = 3,
+        messages        = {
+            "Two weeks together. Our anniversary.",
+            "I can see it all. A pond. A home. A hundred tadpoles.",
+            "I need a rose. To celebrate what we have.",
+        },
+        after_messages  = {
+            "She doesn't know about the hundred tadpoles yet. Soon.",
         },
     },
 
