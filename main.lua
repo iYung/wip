@@ -82,7 +82,6 @@ function love.load()
             end
         end
     else
-        local gs = GameState.new()
         scene_manager = SceneManager.new()
         local ss = SettingsState.new()
         settings_menu = SettingsMenu.new(ss, input, function()
@@ -91,7 +90,7 @@ function love.load()
                 Save.write(GameState.to_save(current.game_state))
             end
         end)
-        scene_manager:switch(StartScene.new(gs, input, scene_manager, function() settings_menu:open(true) end))
+        scene_manager:switch(StartScene.new(nil, input, scene_manager, function() settings_menu:open(true) end))
         Sound.load()
     end
 end

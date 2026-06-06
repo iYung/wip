@@ -22,7 +22,6 @@ StartScene.__index = StartScene
 function StartScene.new(game_state, input, scene_manager, open_settings)
     local self          = Scene.new()
     setmetatable(self, StartScene)
-    self.game_state     = game_state
     self.input          = input
     self.scene_manager  = scene_manager
     self.open_settings  = open_settings
