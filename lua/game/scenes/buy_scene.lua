@@ -135,7 +135,7 @@ function BuyScene:_confirm()
     if ent.kind == "speed_boost" then
         if gs.speed_level >= #SPEED_TIERS then return end
         local tier = SPEED_TIERS[gs.speed_level + 1]
-        if gs.currency < tier.cost then return end
+        if gs.currency < tier.cost then Sound.play("fail"); return end
         gs.currency     = gs.currency - tier.cost
         gs.speed_level  = gs.speed_level + 1
         gs.player.speed = tier.speed
@@ -147,7 +147,7 @@ function BuyScene:_confirm()
     if ent.kind == "growth_boost" then
         if gs.growth_level >= #GROWTH_TIERS then return end
         local tier = GROWTH_TIERS[gs.growth_level + 1]
-        if gs.currency < tier.cost then return end
+        if gs.currency < tier.cost then Sound.play("fail"); return end
         gs.currency     = gs.currency - tier.cost
         gs.growth_level = gs.growth_level + 1
         gs.growth_mult  = tier.mult
@@ -158,7 +158,7 @@ function BuyScene:_confirm()
     if ent.kind == "customer_cooldown" then
         if gs.cooldown_level >= #COOLDOWN_TIERS then return end
         local tier = COOLDOWN_TIERS[gs.cooldown_level + 1]
-        if gs.currency < tier.cost then return end
+        if gs.currency < tier.cost then Sound.play("fail"); return end
         gs.currency       = gs.currency - tier.cost
         gs.cooldown_level = gs.cooldown_level + 1
         Sound.play("shop_buy")
@@ -167,7 +167,7 @@ function BuyScene:_confirm()
 
     if ent.kind == "drone" then
         if gs.has_drone then return end
-        if gs.currency < ent.cost then return end
+        if gs.currency < ent.cost then Sound.play("fail"); return end
         gs.currency  = gs.currency - ent.cost
         gs.has_drone = true
         Sound.play("shop_buy")
@@ -175,7 +175,7 @@ function BuyScene:_confirm()
         return
     end
 
-    if gs.currency < ent.cost then return end
+    if gs.currency < ent.cost then Sound.play("fail"); return end
 
     gs.currency = gs.currency - ent.cost
 

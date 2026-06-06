@@ -74,7 +74,7 @@ function Grafter:interact(player, store, scene_manager)
         -- No empty slot — show bubble
         self.bubble.visible = true
         self._bubble_timer  = 1.5
-        Sound.play("clone_fail")
+        Sound.play("fail")
     end
 end
 
