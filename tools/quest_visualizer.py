@@ -245,24 +245,40 @@ def main():
     root = tk.Tk()
     root.title("Quest Grid")
     root.configure(bg=BG)
-    root.resizable(False, False)
+    root.resizable(True, True)
 
-    cv = tk.Canvas(root, width=cw, height=ch, bg=BG, highlightthickness=0)
-    cv.pack()
+    tip_var = tk.StringVar()
+    tip_bar = tk.Label(root, textvariable=tip_var, anchor="w", bg="#fffff0",
+                       fg="#444", font=("Helvetica", 9), relief="flat", padx=8, pady=3)
+    tip_bar.pack(fill=tk.X, side=tk.BOTTOM)
+
+    frame = tk.Frame(root, bg=BG)
+    frame.pack(fill=tk.BOTH, expand=True)
+
+    vbar = tk.Scrollbar(frame, orient=tk.VERTICAL)
+    hbar = tk.Scrollbar(frame, orient=tk.HORIZONTAL)
+    vbar.pack(side=tk.RIGHT, fill=tk.Y)
+    hbar.pack(side=tk.BOTTOM, fill=tk.X)
+
+    cv = tk.Canvas(frame, bg=BG, highlightthickness=0,
+                   xscrollcommand=hbar.set, yscrollcommand=vbar.set)
+    cv.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    vbar.config(command=cv.yview)
+    hbar.config(command=cv.xview)
+    cv.config(scrollregion=(0, 0, cw, ch))
 
     draw_row_shading(cv, len(chars), cw)
     draw_grid(cv, len(chars), cw, ch)
     draw_headers(cv)
     draw_char_labels(cv, chars)
     draw_arrows(cv, chars, pos)
-
-    tip_var = tk.StringVar()
     draw_nodes(cv, chars, pos, tip_var)
     draw_legend(cv, cw, ch)
 
-    tip_bar = tk.Label(root, textvariable=tip_var, anchor="w", bg="#fffff0",
-                       fg="#444", font=("Helvetica", 9), relief="flat", padx=8, pady=3)
-    tip_bar.pack(fill=tk.X, side=tk.BOTTOM)
+    sw = root.winfo_screenwidth()
+    sh = root.winfo_screenheight()
+    root.geometry(f"{min(cw + 18, sw - 40)}x{min(ch + 36, sh - 80)}")
 
     root.mainloop()
 
