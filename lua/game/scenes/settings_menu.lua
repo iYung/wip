@@ -347,7 +347,9 @@ function SettingsMenu:draw()
             love.graphics.printf(tostring(vol) .. "%", vx, vty, VAL_W, "center")
             love.graphics.setFont(self._font_btn)
         else
-            local label = (i == 5 and self._saved) and "Saved!" or ITEMS[i]
+            local label = (i == 5 and self._saved) and "Saved!"
+                       or (i == 7 and not self._opaque) and "Main Menu"
+                       or ITEMS[i]
             love.graphics.printf(label, BTN_X, ty, BTN_W, "center")
         end
     end
