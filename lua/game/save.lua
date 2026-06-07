@@ -34,35 +34,18 @@ function Save.exists()
 end
 
 function Save.write(data)
-    local str = "return " .. serialize(data)
-    local ok, err = love.filesystem.write("save.dat", str)
-    print("[save] dir=" .. love.filesystem.getSaveDirectory()
-          .. " bytes=" .. #str
-          .. " ok=" .. tostring(ok)
-          .. (err and (" err=" .. tostring(err)) or ""))
+    love.filesystem.write("save.dat", "return " .. serialize(data))
 end
 
 function Save.read()
-    local info = love.filesystem.getInfo("save.dat")
-    print("[save] read: exists=" .. tostring(info ~= nil)
-          .. " dir=" .. love.filesystem.getSaveDirectory())
-    local content, err = love.filesystem.read("save.dat")
-    if not content then
-        print("[save] read failed: " .. tostring(err))
-        return nil
-    end
-    print("[save] read: " .. #content .. " bytes")
+    local content, _ = love.filesystem.read("save.dat")
+    if not content then return nil end
+    -- love.js uses Lua 5.1 (loadstring) while desktop uses LuaJIT (load accepts strings)
     local loader = loadstring or load
     local ok, result = pcall(function()
         return loader(content)()
     end)
-    if not ok then
-        print("[save] load() failed: " .. tostring(result))
-        return nil
-    end
-    if result == nil then
-        print("[save] load() returned nil (empty or bad content)")
-    end
+    if not ok then return nil end
     return result
 end
 
