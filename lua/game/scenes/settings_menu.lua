@@ -36,7 +36,7 @@ local VAL_SX   = VAL_W  / BTN_W    -- horizontal scale for value bar image
 local SettingsMenu = {}
 SettingsMenu.__index = SettingsMenu
 
-function SettingsMenu.new(settings_state, input, on_save)
+function SettingsMenu.new(settings_state, input, on_save, on_leave)
     local self = setmetatable({}, SettingsMenu)
     self.is_open = false
     self.selected = 1
@@ -48,7 +48,8 @@ function SettingsMenu.new(settings_state, input, on_save)
     self._prev_escape  = false
     self._state = settings_state
     self._input = input
-    self._on_save = on_save
+    self._on_save  = on_save
+    self._on_leave = on_leave
     self._subscreen = nil
     self._subscreen_selected = 1
     self._capturing = nil
@@ -221,7 +222,11 @@ function SettingsMenu:_confirm()
     elseif self.selected == 6 then
         self:close()
     elseif self.selected == 7 then
-        love.event.quit()
+        if self._on_leave then
+            self._on_leave()
+        else
+            love.event.quit()
+        end
     end
 end
 

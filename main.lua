@@ -86,12 +86,19 @@ function love.load()
     else
         scene_manager = SceneManager.new()
         local ss = SettingsState.new()
-        settings_menu = SettingsMenu.new(ss, input, function()
+        local function _on_save()
             local current = scene_manager and scene_manager.current
             if current and current.game_state then
                 Save.write(GameState.to_save(current.game_state))
             end
-        end)
+        end
+        local function _on_leave()
+            _on_save()
+            settings_menu:close()
+            Sound.fade_music("bg", 0, 1)
+            scene_manager:switch(StartScene.new(nil, input, scene_manager, function() settings_menu:open(true) end))
+        end
+        settings_menu = SettingsMenu.new(ss, input, _on_save, _on_leave)
         scene_manager:switch(StartScene.new(nil, input, scene_manager, function() settings_menu:open(true) end))
         Sound.load()
     end
