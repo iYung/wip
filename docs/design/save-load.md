@@ -143,7 +143,13 @@ end
 
 ## Web compatibility
 
-`love.filesystem.write()` uses browser IndexedDB on web builds (love.js). The same Lua code works unchanged. The auto-save on `love.quit()` may not fire reliably in browser tabs; the manual "Save Game" button is the primary save path for web players.
+`love.filesystem.write()` uses browser IndexedDB on web builds (love.js). Two web-specific issues required fixes beyond the original design:
+
+**Lua 5.1 / loadstring**: love.js embeds PUC-Rio Lua 5.1, where `load()` takes a reader function, not a string — `loadstring()` is the string variant. `save.lua` uses `local loader = loadstring or load` so it works on both runtimes (desktop LÖVE uses LuaJIT, which accepts strings for `load()`).
+
+**IDBFS sync**: love.js only flushes MEMFS → IndexedDB in a `beforeunload` handler, which is async and unreliable before page unload. `scripts/build_web.sh` patches the generated `web/love.js` post-build to hook `FS.close` and `FS.writeFile`: whenever `save.dat` is written, a 100 ms debounced `FS.syncfs(false)` call syncs data to IndexedDB immediately while the game is still running.
+
+**Leave Game on web**: `love.event.quit()` kills the WASM module on web. `SettingsMenu` accepts an `on_leave` callback; `main.lua` provides one that saves, closes the menu, and transitions back to StartScene instead of quitting.
 
 ---
 

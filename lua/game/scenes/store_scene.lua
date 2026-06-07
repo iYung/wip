@@ -1,8 +1,6 @@
 local Scene        = require("lua/core/scene")
 local Timer        = require("lua/core/timer")
 local Sound        = require("lua/game/sound")
-local Save         = require("lua/game/save")
-local GameState    = require("lua/game/game_state")
 local WateringCan  = require("lua/game/items/watering_can")
 local PCStore      = require("lua/game/items/pc_store")
 local GarbageBin   = require("lua/game/items/garbage_bin")
@@ -277,19 +275,11 @@ function StoreScene:on_exit()
     self.drawer:clear()
 end
 
-local _AUTOSAVE_INTERVAL = 60
-
 function StoreScene:update(dt)
     local gs    = self.game_state
     local input = self.input
 
     self._sway_time = self._sway_time + dt
-
-    self._autosave_t = (self._autosave_t or 0) + dt
-    if self._autosave_t >= _AUTOSAVE_INTERVAL then
-        self._autosave_t = 0
-        Save.write(GameState.to_save(gs))
-    end
 
     gs.store:update(dt * gs.growth_mult)
     gs.player:update(dt, input, gs.store)
