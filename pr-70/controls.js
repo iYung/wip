@@ -53,11 +53,6 @@
     '  grid-template-rows: repeat(2, 60px);',
     '  gap: 6px;',
     '}',
-    '#game-controls .cluster-mid {',
-    '  display: flex;',
-    '  align-items: flex-end;',
-    '  justify-content: center;',
-    '}',
     '#game-controls button {',
     '  min-width: 60px;',
     '  min-height: 60px;',
@@ -74,15 +69,23 @@
     '#game-controls button:active {',
     '  background: rgba(255,255,255,0.35);',
     '}',
-    '#game-controls .btn-clear-save {',
+    '#save-controls {',
+    '  display: flex;',
+    '  justify-content: center;',
+    '  padding: 8px 12px;',
+    '  background: rgba(0,0,0,0.5);',
+    '  width: 100%;',
+    '  box-sizing: border-box;',
+    '}',
+    '#save-controls .btn-clear-save {',
     '  min-width: unset;',
     '  min-height: unset;',
-    '  padding: 8px 14px;',
+    '  padding: 6px 16px;',
     '  font-size: 13px;',
     '  background: rgba(180,40,40,0.5);',
     '  border-color: rgba(255,80,80,0.5);',
     '}',
-    '#game-controls .btn-clear-save:active {',
+    '#save-controls .btn-clear-save:active {',
     '  background: rgba(220,60,60,0.75);',
     '}',
     '#game-controls .btn-up {',
@@ -217,9 +220,13 @@
     rightCluster.appendChild(btnF);
     rightCluster.appendChild(btnEsc);
 
-    // Middle cluster: utility buttons
-    var midCluster = document.createElement('div');
-    midCluster.className = 'cluster-mid';
+    controls.appendChild(leftCluster);
+    controls.appendChild(rightCluster);
+    document.body.appendChild(controls);
+
+    // Save controls bar below the main controls
+    var saveControls = document.createElement('div');
+    saveControls.id = 'save-controls';
 
     var btnClearSave = document.createElement('button');
     btnClearSave.className = 'btn-clear-save';
@@ -250,11 +257,7 @@
         }
       }
     });
-    midCluster.appendChild(btnClearSave);
-
-    controls.appendChild(leftCluster);
-    controls.appendChild(midCluster);
-    controls.appendChild(rightCluster);
-    document.body.appendChild(controls);
+    saveControls.appendChild(btnClearSave);
+    document.body.appendChild(saveControls);
   });
 }());
