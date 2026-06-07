@@ -40,8 +40,10 @@ end
 function Save.read()
     local content, _ = love.filesystem.read("save.dat")
     if not content then return nil end
+    -- love.js uses Lua 5.1 (loadstring) while desktop uses LuaJIT (load accepts strings)
+    local loader = loadstring or load
     local ok, result = pcall(function()
-        return load(content)()
+        return loader(content)()
     end)
     if not ok then return nil end
     return result

@@ -69,6 +69,25 @@
     '#game-controls button:active {',
     '  background: rgba(255,255,255,0.35);',
     '}',
+    '#save-controls {',
+    '  display: flex;',
+    '  justify-content: center;',
+    '  padding: 8px 12px;',
+    '  background: rgba(0,0,0,0.5);',
+    '  width: 100%;',
+    '  box-sizing: border-box;',
+    '}',
+    '#save-controls .btn-clear-save {',
+    '  min-width: unset;',
+    '  min-height: unset;',
+    '  padding: 6px 16px;',
+    '  font-size: 13px;',
+    '  background: rgba(180,40,40,0.5);',
+    '  border-color: rgba(255,80,80,0.5);',
+    '}',
+    '#save-controls .btn-clear-save:active {',
+    '  background: rgba(220,60,60,0.75);',
+    '}',
     '#game-controls .btn-up {',
     '  grid-column: 2;',
     '  grid-row: 1;',
@@ -204,5 +223,41 @@
     controls.appendChild(leftCluster);
     controls.appendChild(rightCluster);
     document.body.appendChild(controls);
+
+    // Save controls bar below the main controls
+    var saveControls = document.createElement('div');
+    saveControls.id = 'save-controls';
+
+    var btnClearSave = document.createElement('button');
+    btnClearSave.className = 'btn-clear-save';
+    btnClearSave.textContent = 'Clear Save';
+    btnClearSave.addEventListener('click', function () {
+      if (!confirm('Delete your save? This cannot be undone.')) return;
+      var savePath = '/home/web_user/love/game/save.dat';
+      try {
+        if (typeof Module !== 'undefined' && Module['FS_unlink']) {
+          Module['FS_unlink'](savePath);
+          if (Module['FS_syncfs']) {
+            Module['FS_syncfs'](false, function (err) {
+              if (err) console.warn('[clear-save] sync error:', err);
+              location.reload();
+            });
+          } else {
+            location.reload();
+          }
+        } else {
+          alert('Game not loaded yet — nothing to clear.');
+        }
+      } catch (e) {
+        // File not found is fine — just reload so the game sees no save
+        if (Module['FS_syncfs']) {
+          Module['FS_syncfs'](false, function () { location.reload(); });
+        } else {
+          location.reload();
+        }
+      }
+    });
+    saveControls.appendChild(btnClearSave);
+    document.body.appendChild(saveControls);
   });
 }());
