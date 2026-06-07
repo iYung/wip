@@ -97,6 +97,9 @@ function love.load()
             settings_menu:close()
             Sound.fade_music("bg", 0, 1)
             scene_manager:switch(StartScene.new(nil, input, scene_manager, function() settings_menu:open(true) end))
+            -- Prime _down with currently-held keys so the confirm key that
+            -- triggered this doesn't register as a fresh press in StartScene.
+            input:update()
         end
         settings_menu = SettingsMenu.new(ss, input, _on_save, _on_leave)
         scene_manager:switch(StartScene.new(nil, input, scene_manager, function() settings_menu:open(true) end))
