@@ -52,8 +52,9 @@ function Save.read()
         return nil
     end
     print("[save] read: " .. #content .. " bytes")
+    local loader = loadstring or load
     local ok, result = pcall(function()
-        return load(content)()
+        return loader(content)()
     end)
     if not ok then
         print("[save] load() failed: " .. tostring(result))
