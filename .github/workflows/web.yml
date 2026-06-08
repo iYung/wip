@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  pages: read
 
 jobs:
   build:
@@ -65,6 +66,9 @@ jobs:
           name: web-build
           path: web/
 
+      - name: Record deploy start time
+        run: echo "START_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+
       - name: Deploy PR preview to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -72,6 +76,24 @@ jobs:
           publish_dir: ./web
           keep_files: true
           destination_dir: pr-${{ github.event.pull_request.number }}
+
+      - name: Wait for Pages deployment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Waiting for Pages deployment triggered after $START_TIME..."
+          for i in $(seq 1 20); do
+            STATUS=$(gh api repos/${{ github.repository }}/pages/deployments \
+              --jq "[.[] | select(.created_at >= \"$START_TIME\")] | first | .status" 2>/dev/null || echo "")
+            echo "Attempt $i: status=$STATUS"
+            if [ "$STATUS" = "built" ]; then
+              echo "Pages deployment is live."
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Timed out waiting for Pages deployment."
+          exit 1
 
       - name: Post or update PR preview comment
         uses: peter-evans/create-or-update-comment@v4

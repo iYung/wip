@@ -1,0 +1,3 @@
+# PR Preview — Wait for Pages Before Posting Link
+
+- [x] Add Pages-ready wait step to `deploy-pr` job — `.github/workflows/web.yml` — before the `peaceiris/actions-gh-pages` step, capture `START_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)` and write it to `$GITHUB_ENV`. After the deploy step, insert a new `Wait for Pages deployment` step that uses `gh api` to poll `repos/${{ github.repository }}/pages/deployments` every 15 seconds, finds the entry with `created_at >= START_TIME`, and loops until its `status` is `built`; after 5 minutes (20 attempts) exit non-zero. Only once the poll succeeds does the existing `Post or update PR preview comment` step run.
