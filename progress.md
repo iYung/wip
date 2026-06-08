@@ -18,6 +18,7 @@ Completed step files are moved to [`archive/`](archive/).
 | `camera.lua` | Translates world → screen; follow(target, lerp) with 0=instant, 1=no movement |
 | `scene.lua` | Base class with drawer + camera; on_enter/on_exit lifecycle |
 | `scene_manager.lua` | Swaps scenes, calls on_exit/on_enter, delegates update/draw |
+| `fonts.lua` | Generic font factory — `from(path, hinting)` returns a `{new(size)}` object; no game-specific knowledge |
 
 ---
 
@@ -138,6 +139,8 @@ Defaults — all remappable via Settings → Keybinds.
 See open questions in `game-design.md`.
 
 ### Recently completed
+
+- **Inter font** — replaced Love2D's default Vera font with `assets/fonts/font.ttf` (Inter Variable) across all text-rendering sites; `lua/core/fonts.lua` is a generic `from(path, hinting)` factory; `lua/game/fonts.lua` binds it to the game's font file and `"light"` hinting; `main.lua` sets it as the default font so `StoreScene` HUD and customer speech bubbles inherit it automatically; `buy_scene`, `settings_menu`, and `start_scene` use `Fonts.new(size)` for their explicit fonts
 
 - **Six speed tiers** — expanded the speed upgrade from 3 to 6 purchasable tiers (320/450/590/720/960/1200 px/s at $15/$30/$55/$100/$200/$360); primary shoe color now graduates blue → red from tier 0 onward (base tier 0 is pale sky blue `{0.5, 0.75, 1.0}`, replacing the old placeholder white) and every tier carries a `secondary` (dark brown sole/accent) color; `Player:set_speed_color(color, secondary)` (renamed from `set_speed_color(color)`) stores both and `draw()` passes both to `ColorReplace.apply`; `BuyScene` speed_boost preview updated to match; `tests/test_balance.lua` ROI loop now covers all 6 tiers, which surfaced and fixed a latent hang in the `walk_to` test helper (high-speed ticks could overshoot the 5px snap window and ping-pong forever — now exits as soon as the player crosses the target)
 

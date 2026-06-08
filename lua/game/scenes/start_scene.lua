@@ -3,6 +3,7 @@ local Sound     = require("lua/game/sound")
 local MenuBg    = require("lua/game/shaders/menu_bg")
 local Save      = require("lua/game/save")
 local GameState = require("lua/game/game_state")
+local Fonts     = require("lua/game/fonts")
 
 local SCROLL_SPEED_X = 60
 local SCROLL_SPEED_Y = 30
@@ -32,8 +33,8 @@ function StartScene.new(game_state, input, scene_manager, open_settings)
 end
 
 function StartScene:on_enter()
-    self._font_btn      = love.graphics.newFont(22)
-    self._font_tagline  = love.graphics.newFont(16, "mono")
+    self._font_btn      = Fonts.new(22)
+    self._font_tagline  = Fonts.new(16)
     self._img_bg      = love.graphics.newImage("assets/images/start_bg.png")
     self._img_logo     = love.graphics.newImage("assets/images/start_logo.png")
     self._img_sub_logo = love.graphics.newImage("assets/images/sub_logo.png")
