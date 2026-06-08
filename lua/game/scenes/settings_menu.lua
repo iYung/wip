@@ -20,6 +20,13 @@ local _MODIFIERS = {
     capslock=true, numlock=true, scrolllock=true
 }
 
+local function _all_bound(keybinds)
+    for _, action in ipairs(_ACTION_LIST) do
+        if keybinds[action] == nil then return false end
+    end
+    return true
+end
+
 local W       = 1280
 local H       = 720
 local BTN_W   = 300
@@ -126,13 +133,17 @@ function SettingsMenu:update(dt)
         if confirm and not self._prev_sub_confirm then
             Sound.play("menu_confirm")
             if self._subscreen_selected == sub_count then
-                self._subscreen = nil
+                if _all_bound(self._state.keybinds) then
+                    self._subscreen = nil
+                end
             else
                 self._capturing = _ACTION_LIST[self._subscreen_selected]
             end
         end
         if escape and not self._prev_sub_escape then
-            self._subscreen = nil
+            if _all_bound(self._state.keybinds) then
+                self._subscreen = nil
+            end
         end
 
         self._prev_sub_up      = up
@@ -234,8 +245,11 @@ end
 function SettingsMenu:keypressed(key)
     if self._subscreen == "keybinds" and self._capturing == nil then
         if key == "escape" then
-            self._subscreen = nil
-            return true
+            if _all_bound(self._state.keybinds) then
+                self._subscreen = nil
+                return true
+            end
+            return false
         end
         return false
     end
@@ -278,16 +292,34 @@ function SettingsMenu:draw()
             love.graphics.draw(img, BTN_X + LABEL_W + BAR_GAP, y, 0, VAL_SX, 1)
             if self._capturing == _ACTION_LIST[i] then
                 love.graphics.printf("hit key", BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
+            elseif self._state.keybinds[_ACTION_LIST[i]] then
+                love.graphics.printf(self._state.keybinds[_ACTION_LIST[i]]:upper(), BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
             else
-                love.graphics.printf((self._state.keybinds[_ACTION_LIST[i]] or "unbound"):upper(), BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
+                love.graphics.setFont(self._font_vol)
+                local vty = y + (BTN_H - self._font_vol:getHeight()) / 2
+                love.graphics.printf("UNBOUND", BTN_X + LABEL_W + BAR_GAP, vty, VAL_W, "center")
+                love.graphics.setFont(self._font_btn)
             end
         end
 
-        local ry  = self._sub_btn_y0 + #_ACTION_LIST * BTN_GAP
-        local img = sub_count == self._subscreen_selected and self._img_btn_sel or self._img_btn
-        love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(img, BTN_X, ry)
-        love.graphics.printf("Return", BTN_X, ry + (BTN_H - self._font_btn:getHeight()) / 2, BTN_W, "center")
+        local ry     = self._sub_btn_y0 + #_ACTION_LIST * BTN_GAP
+        local all_ok = _all_bound(self._state.keybinds)
+        if not all_ok then
+            love.graphics.setColor(1, 1, 1, 0.4)
+            love.graphics.draw(self._img_btn, BTN_X, ry)
+            love.graphics.printf("Return", BTN_X, ry + (BTN_H - self._font_btn:getHeight()) / 2, BTN_W, "center")
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.setFont(self._font_vol)
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.printf("all keys must be bound", BTN_X, ry + BTN_H + 6, BTN_W, "center")
+            love.graphics.setFont(self._font_btn)
+            love.graphics.setColor(1, 1, 1, 1)
+        else
+            local img = sub_count == self._subscreen_selected and self._img_btn_sel or self._img_btn
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(img, BTN_X, ry)
+            love.graphics.printf("Return", BTN_X, ry + (BTN_H - self._font_btn:getHeight()) / 2, BTN_W, "center")
+        end
 
         love.graphics.setFont(prev_font)
         love.graphics.setColor(1, 1, 1, 1)

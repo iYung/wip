@@ -284,6 +284,9 @@ sim_key(m, "up")
 assert(m._subscreen_selected == 7, "up from row 1 should wrap to row 7, got " .. m._subscreen_selected)
 print("PASS: sub-screen up wrap to Return")
 
+-- Restore move_up cleared by the collision test (Test 26) so _all_bound passes
+state.keybinds.move_up = "w"
+
 -- Test 30: Confirming Return button (row 7) exits sub-screen, menu stays open
 open_clean(m)
 m._subscreen = "keybinds"
@@ -459,6 +462,65 @@ clear_sounds()
 sim_key(m, "f")
 assert(last_sound() == "menu_confirm", "keybinds confirm should play menu_confirm, got " .. tostring(last_sound()))
 print("PASS: keybinds subscreen confirm plays menu_confirm")
+
+-- Test 48: All bound — confirm Return closes sub-screen
+do
+    local s48 = SettingsState.new()
+    local m48 = SettingsMenu.new(s48, {_map={}})
+    m48:open(true)
+    m48._subscreen = "keybinds"
+    m48._subscreen_selected = 7   -- Return row = #_ACTION_LIST + 1
+    m48._prev_sub_confirm = false
+    sim_key(m48, "f")
+    assert(m48._subscreen == nil, "all bound: confirm Return should close sub-screen, got " .. tostring(m48._subscreen))
+    print("PASS: all bound — confirm Return closes sub-screen")
+end
+
+-- Test 49: Missing keybind — confirm Return does NOT close sub-screen
+do
+    local s49 = SettingsState.new()
+    local m49 = SettingsMenu.new(s49, {_map={}})
+    m49:open(true)
+    s49.keybinds.move_up = nil
+    m49._subscreen = "keybinds"
+    m49._subscreen_selected = 7
+    m49._prev_sub_confirm = false
+    sim_key(m49, "f")
+    assert(m49._subscreen == "keybinds", "missing keybind: confirm Return should NOT close sub-screen, got " .. tostring(m49._subscreen))
+    print("PASS: missing keybind — confirm Return does NOT close sub-screen")
+end
+
+-- Test 50: Missing keybind — escape (keypressed) does NOT close sub-screen
+do
+    local s50 = SettingsState.new()
+    local m50 = SettingsMenu.new(s50, {_map={}})
+    m50:open(true)
+    s50.keybinds.move_up = nil
+    m50._subscreen = "keybinds"
+    m50._capturing = nil
+    m50:keypressed("escape")
+    assert(m50._subscreen == "keybinds", "missing keybind: keypressed escape should NOT close sub-screen, got " .. tostring(m50._subscreen))
+    print("PASS: missing keybind — escape (keypressed) does NOT close sub-screen")
+end
+
+-- Test 51: Rebind restores — confirm Return now closes sub-screen
+do
+    local s51 = SettingsState.new()
+    local m51 = SettingsMenu.new(s51, {_map={}})
+    m51:open(true)
+    s51.keybinds.move_up = nil
+    m51._subscreen = "keybinds"
+    m51._subscreen_selected = 7
+    m51._prev_sub_confirm = false
+    sim_key(m51, "f")
+    assert(m51._subscreen == "keybinds", "precondition: missing keybind should keep sub-screen open")
+    s51.keybinds.move_up = "t"
+    m51._subscreen_selected = 7
+    m51._prev_sub_confirm = false
+    sim_key(m51, "f")
+    assert(m51._subscreen == nil, "rebind restores: confirm Return should now close sub-screen, got " .. tostring(m51._subscreen))
+    print("PASS: rebind restores — confirm Return now closes sub-screen")
+end
 
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")
