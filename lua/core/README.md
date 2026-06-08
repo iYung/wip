@@ -119,6 +119,20 @@ See also `lua/headless/runner.lua` (`setup`, `tick`, `run`) and `lua/headless/st
 
 ---
 
+## Fonts
+
+Generic font factory with no game-specific knowledge.
+
+- `Fonts.from(path, hinting)` — returns a `{ new(size) }` object; `hinting` defaults to `"light"`
+- `obj.new(size)` — calls `love.graphics.newFont(path, size, hinting)` and returns the font
+
+Game code binds a specific font file via `lua/game/fonts.lua`:
+```lua
+return require("lua/core/fonts").from("assets/fonts/font.ttf", "light")
+```
+
+---
+
 ## Shader
 
 Thin wrapper around Love2D shader loading.
