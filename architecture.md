@@ -416,6 +416,24 @@ NPC that appears in the cashier zone and requests a specific plant.
 
 ---
 
+---
+
+### Fonts
+
+Generic font factory with no game-specific knowledge.
+
+**Methods**
+- `Fonts.from(path, hinting)` — returns a `{ new(size) }` object; `hinting` defaults to `"light"`
+- `obj.new(size)` — calls `love.graphics.newFont(path, size, hinting)` and returns the font
+
+The game binds the factory to its font file in `lua/game/fonts.lua`:
+```lua
+return require("lua/core/fonts").from("assets/fonts/font.ttf", "light")
+```
+Any file that needs to create a font requires `lua/game/fonts` and calls `Fonts.new(size)`.
+
+---
+
 ## Shaders
 
 ### ColorReplace
