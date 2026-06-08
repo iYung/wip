@@ -57,7 +57,14 @@ end
 
 function StoreScene:on_enter()
     Sound.stop_music("menu")
-    Sound.fade_music("bg", 1, 2)
+    local _bg = {"bg1", "bg2", "bg3", "bg4"}
+    local _bg_playing = false
+    for _, name in ipairs(_bg) do
+        if Sound.is_music_playing(name) then _bg_playing = true; break end
+    end
+    if not _bg_playing then
+        Sound.play_random_music(_bg, 2)
+    end
 
     local gs = self.game_state
 
