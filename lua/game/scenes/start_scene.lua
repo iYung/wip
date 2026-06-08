@@ -129,10 +129,9 @@ function StartScene:draw()
     local th = self._font_tagline:getHeight()
     local tag_y = sub_y + (sh - th) / 2
     local tag   = "grows plants with increasing speed and quantity for profit"
-    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.setColor(1, 1, 1, 1)
     love.graphics.printf(tag, sub_x,     tag_y, sw, "center")
     love.graphics.printf(tag, sub_x + 1, tag_y, sw, "center")
-    love.graphics.setColor(1, 1, 1, 1)
 
     love.graphics.setFont(self._font_btn)
     for i, label in ipairs(ITEMS) do
