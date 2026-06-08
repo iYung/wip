@@ -522,5 +522,52 @@ do
     print("PASS: rebind restores — confirm Return now closes sub-screen")
 end
 
+-- Test 52: main menu respects custom move_up keybind for navigation
+do
+    local st52 = SettingsState.new()
+    st52:set_keybind("move_up", "q")
+    local m52 = SettingsMenu.new(st52, {_map={}})
+    open_clean(m52)
+    sim_key(m52, "down")   -- to row 2
+    assert(m52.selected == 2)
+    sim_key(m52, "q")      -- custom up key should go back to 1
+    assert(m52.selected == 1, "custom move_up keybind should navigate up in main menu, got " .. m52.selected)
+    -- old default "w" should no longer navigate
+    sim_key(m52, "w")
+    assert(m52.selected == 1, "old default 'w' should not navigate after rebind, got " .. m52.selected)
+    print("PASS: main menu respects custom move_up keybind")
+end
+
+-- Test 53: main menu respects custom interact keybind for confirm
+do
+    local st53 = SettingsState.new()
+    st53:set_keybind("interact", "x")
+    local m53 = SettingsMenu.new(st53, {_map={}})
+    open_clean(m53)
+    assert(m53.selected == 1)
+    st53.fullscreen = false
+    sim_key(m53, "x")   -- custom interact key should confirm
+    assert(st53.fullscreen == true, "custom interact keybind should confirm in main menu")
+    -- old default "f" should no longer confirm
+    st53.fullscreen = false
+    sim_key(m53, "f")
+    assert(st53.fullscreen == false, "old default 'f' should not confirm after rebind, got " .. tostring(st53.fullscreen))
+    print("PASS: main menu respects custom interact keybind")
+end
+
+-- Test 54: open() snapshot prevents ghost confirm when custom interact key is held at open time
+do
+    local st54 = SettingsState.new()
+    st54:set_keybind("interact", "x")
+    local m54 = SettingsMenu.new(st54, {_map={}})
+    st54.fullscreen = false
+    love.keyboard.isDown = function(k) return k == "x" end
+    m54:open()   -- snapshot should capture "x" as held
+    love.keyboard.isDown = function() return false end
+    m54:update(0)
+    assert(st54.fullscreen == false, "'x' held at open time should not ghost-confirm")
+    print("PASS: open() snapshot prevents ghost confirm with custom interact keybind")
+end
+
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")

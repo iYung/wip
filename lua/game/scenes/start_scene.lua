@@ -76,7 +76,7 @@ function StartScene:update(dt)
         self.selected = _next_selectable(self.selected, 1, self._has_save)
         Sound.play("menu_navigate")
     end
-    if self.input:pressed("menu_confirm") then
+    if self.input:pressed("interact") or self.input:pressed("pick_up_down") then
         self:_confirm()
     end
 end
