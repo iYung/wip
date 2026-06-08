@@ -292,8 +292,13 @@ function SettingsMenu:draw()
             love.graphics.draw(img, BTN_X + LABEL_W + BAR_GAP, y, 0, VAL_SX, 1)
             if self._capturing == _ACTION_LIST[i] then
                 love.graphics.printf("hit key", BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
+            elseif self._state.keybinds[_ACTION_LIST[i]] then
+                love.graphics.printf(self._state.keybinds[_ACTION_LIST[i]]:upper(), BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
             else
-                love.graphics.printf((self._state.keybinds[_ACTION_LIST[i]] or "unbound"):upper(), BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
+                love.graphics.setFont(self._font_vol)
+                local vty = y + (BTN_H - self._font_vol:getHeight()) / 2
+                love.graphics.printf("UNBOUND", BTN_X + LABEL_W + BAR_GAP, vty, VAL_W, "center")
+                love.graphics.setFont(self._font_btn)
             end
         end
 
@@ -305,7 +310,7 @@ function SettingsMenu:draw()
             love.graphics.printf("Return", BTN_X, ry + (BTN_H - self._font_btn:getHeight()) / 2, BTN_W, "center")
             love.graphics.setColor(1, 1, 1, 1)
             love.graphics.setFont(self._font_vol)
-            love.graphics.setColor(1, 0.35, 0.35, 1)
+            love.graphics.setColor(1, 1, 1, 1)
             love.graphics.printf("all keys must be bound", BTN_X, ry + BTN_H + 6, BTN_W, "center")
             love.graphics.setFont(self._font_btn)
             love.graphics.setColor(1, 1, 1, 1)
