@@ -31,8 +31,8 @@ function Sound.load()
     if love.filesystem.getInfo("assets/sounds/animalese.wav") then
         _animalese_src = love.audio.newSource("assets/sounds/animalese.wav", "static")
     end
-    if love.filesystem.getInfo("assets/music/menu.wav") then
-        local menu_src = love.audio.newSource("assets/music/menu.wav", "stream")
+    if love.filesystem.getInfo("assets/music/menu.mp3") then
+        local menu_src = love.audio.newSource("assets/music/menu.mp3", "stream")
         menu_src:setLooping(true)
         menu_src:setVolume(_music_volume)
         _music_tracks["menu"] = {

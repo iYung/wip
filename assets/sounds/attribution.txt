@@ -6,5 +6,8 @@ shop_navigate is https://freesound.org/people/qubodup/sounds/140773/ by qubodup
 clone_success is https://freesound.org/people/qubodup/sounds/159697/ by qubodup
 fail is https://freesound.org/people/qubodup/sounds/844191/ by qubodup
 
-Menu music is 10 AM from Lud and Schlatts Music Emporium
-Background music is from https://www.youtube.com/watch?v=ukwgsO9ooO4 Liborio Conti
+Menu music is kickback kroose trash kid
+background is sarcastic shop trash kid
+background2 is hillacious hiltops by thrash kid
+background3 is sassy shells by thrash kid
+background4 is nocturnal knoll by thrash kid

@@ -39,7 +39,7 @@ Re-randomization happens on every entry — no persistence between visits.
 
 ## What stays the same
 
-- Menu music behaviour (`menu.wav`, `Sound.play_music("menu")`, fade-out on New Game / Load Game) is untouched.
+- Menu music behaviour (`menu.mp3`, `Sound.play_music("menu")`, fade-out on New Game / Load Game) is untouched.
 - All other `Sound.*` functions and their call sites are untouched.
 - The fade system (rate, target, stop_on_done) is reused as-is.
 - Exit from the store does not stop the bg track (same as today).
