@@ -9,7 +9,7 @@ do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
     end)
-    ctx.gs.stage3_counts[4] = 4   -- Dottie ch1: trigger plant_type=4, count=4
+    ctx.gs.stage3_counts[4] = 5   -- Dottie ch1: trigger plant_type=4, count=5
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
     local cfg = ctx.sm.current:_next_customer_cfg()
@@ -54,7 +54,7 @@ do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
     end)
-    ctx.gs.stage3_counts[4] = 9
+    ctx.gs.stage3_counts[4] = 11
     ctx.gs.seen_scripts = { ["dottie:1"] = true }
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
@@ -71,7 +71,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     local elapsed = 0
-    ctx.gs.stage3_counts[4] = 4
+    ctx.gs.stage3_counts[4] = 5
 
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
@@ -108,7 +108,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     local elapsed = 0
-    ctx.gs.stage3_counts[4] = 4
+    ctx.gs.stage3_counts[4] = 5
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
 
@@ -133,7 +133,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     local elapsed = 0
-    ctx.gs.stage3_counts[4] = 4
+    ctx.gs.stage3_counts[4] = 5
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
 
@@ -158,7 +158,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     local elapsed = 0
-    ctx.gs.stage3_counts[4] = 4
+    ctx.gs.stage3_counts[4] = 5
     ctx.gs.unlocked_plants = { [1] = true }
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
@@ -215,7 +215,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     local elapsed = 0
-    ctx.gs.stage3_counts[4] = 4
+    ctx.gs.stage3_counts[4] = 5
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
 
@@ -265,7 +265,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     local elapsed = 0
-    ctx.gs.stage3_counts[4] = 4
+    ctx.gs.stage3_counts[4] = 5
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
 
@@ -305,7 +305,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     local elapsed = 0
-    ctx.gs.stage3_counts[4] = 4
+    ctx.gs.stage3_counts[4] = 5
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
 
@@ -337,7 +337,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     local elapsed = 0
-    ctx.gs.stage3_counts[4] = 4
+    ctx.gs.stage3_counts[4] = 5
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
 
