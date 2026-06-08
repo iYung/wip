@@ -96,7 +96,9 @@ function love.load()
         local function _on_leave()
             _on_save()
             settings_menu:close()
-            Sound.fade_music("bg", 0, 1)
+            for _, _bg_name in ipairs({"bg1", "bg2", "bg3", "bg4"}) do
+                Sound.fade_music(_bg_name, 0, 1)
+            end
             scene_manager:switch(StartScene.new(nil, input, scene_manager, function() settings_menu:open(true) end))
             -- Prime _down with currently-held keys so the confirm key that
             -- triggered this doesn't register as a fresh press in StartScene.
