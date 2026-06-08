@@ -214,4 +214,41 @@ do
     print("PASS: play_random_music handles empty list gracefully")
 end
 
+-- Regression: fading bg1-bg4 in a loop (store→start transition) works for all present tracks
+-- and a wrong track name ("bg") silently does nothing.
+do
+    local orig_getInfo = love.filesystem.getInfo
+
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" then
+            if p == "assets/music/background.mp3"  then return true end
+            if p == "assets/music/background2.mp3" then return true end
+            if p == "assets/music/background3.mp3" then return true end
+            if p == "assets/music/background4.mp3" then return true end
+        end
+        return nil
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+
+    -- Simulate bg music playing (play_random_music picks one; we start bg1 directly)
+    S.play_music("bg1")
+
+    -- The fixed _on_leave loop: all four names must be accepted without error
+    for _, name in ipairs({"bg1", "bg2", "bg3", "bg4"}) do
+        S.fade_music(name, 0, 1)
+    end
+    S.update(1.5)  -- advance past the fade duration; should not error
+
+    -- The old broken call with the wrong name must still be a silent no-op
+    S.fade_music("bg", 0, 1)
+    S.update(0.016)
+
+    love.filesystem.getInfo = orig_getInfo
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: fading bg1-bg4 loop (store->start transition) runs without error")
+end
+
 print("ALL TESTS PASSED")
