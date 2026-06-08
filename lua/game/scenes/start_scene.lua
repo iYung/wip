@@ -10,6 +10,7 @@ local SCROLL_SPEED_Y = 30
 local ITEMS = { "New Game", "Continue", "Settings", "Exit" }
 
 local W         = 1280
+local H         = 720
 local BTN_W     = 300
 local BTN_H     = 54
 local BTN_X     = (W - BTN_W) / 2
@@ -43,6 +44,7 @@ function StartScene:on_enter()
         img:setWrap("repeat", "repeat")
         self._img_pattern = img
     end
+    self._font_credit = love.graphics.newFont(12)
     self._time = 0
     if not Sound.is_music_playing("menu") then
         Sound.play_music("menu")
@@ -151,6 +153,12 @@ function StartScene:draw()
             love.graphics.printf(label, BTN_X, y + (BTN_H - th) / 2, BTN_W, "center")
         end
     end
+
+    love.graphics.setFont(self._font_credit)
+    love.graphics.setColor(1, 1, 1, 0.5)
+    local credit = "sounds by qubodup · music by trash kid"
+    local ch = self._font_credit:getHeight()
+    love.graphics.printf(credit, 0, H - ch - 8, W, "center")
 
     love.graphics.setFont(prev_font)
     love.graphics.setColor(1, 1, 1, 1)
