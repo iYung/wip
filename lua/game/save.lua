@@ -38,14 +38,19 @@ function Save.write(data)
 end
 
 function Save.read()
+    local content, _ = love.filesystem.read("save.dat")
+    if not content then return nil end
     -- love.js uses Lua 5.1 (loadstring) while desktop uses LuaJIT (load accepts strings)
+    local loader = loadstring or load
     local ok, result = pcall(function()
-        local content = love.filesystem.read("save.dat")
-        if not content then return nil end
-        local loader = loadstring or load
         return loader(content)()
     end)
-    return ok and result or nil
+    if not ok then return nil end
+    return result
+end
+
+function Save.settings_exist()
+    return love.filesystem.getInfo("settings.dat") ~= nil
 end
 
 function Save.write_settings(data)
@@ -53,13 +58,14 @@ function Save.write_settings(data)
 end
 
 function Save.read_settings()
+    local content, _ = love.filesystem.read("settings.dat")
+    if not content then return nil end
+    local loader = loadstring or load
     local ok, result = pcall(function()
-        local content = love.filesystem.read("settings.dat")
-        if not content then return nil end
-        local loader = loadstring or load
         return loader(content)()
     end)
-    return ok and result or nil
+    if not ok then return nil end
+    return result
 end
 
 return Save
