@@ -37,6 +37,7 @@ local LOGICAL_W, LOGICAL_H = 1280, 720
 local canvas
 local scene_manager
 local settings_menu
+local ss
 
 local _visual_coro
 local _visual_done      = false
@@ -86,7 +87,8 @@ function love.load()
         end
     else
         scene_manager = SceneManager.new()
-        local ss = SettingsState.new()
+        local _settings_data = Save.read_settings()
+        ss = _settings_data and SettingsState.from_save(_settings_data) or SettingsState.new()
         local function _on_save()
             local current = scene_manager and scene_manager.current
             if current and current.game_state then
@@ -95,6 +97,7 @@ function love.load()
         end
         local function _on_leave()
             _on_save()
+            Save.write_settings(ss:to_save())
             settings_menu:close()
             for _, _bg_name in ipairs({"bg1", "bg2", "bg3", "bg4"}) do
                 Sound.fade_music(_bg_name, 0, 1)
@@ -186,5 +189,8 @@ function love.quit()
     local current = scene_manager and scene_manager.current
     if current and current.game_state then
         Save.write(GameState.to_save(current.game_state))
+    end
+    if ss then
+        Save.write_settings(ss:to_save())
     end
 end

@@ -46,4 +46,41 @@ function SettingsState:key_map()
     return map
 end
 
+function SettingsState:to_save()
+    local keybinds_copy = {}
+    for action, key in pairs(self.keybinds) do
+        keybinds_copy[action] = key
+    end
+    return {
+        sfx_volume   = self.sfx_volume,
+        music_volume = self.music_volume,
+        fullscreen   = self.fullscreen,
+        keybinds     = keybinds_copy,
+    }
+end
+
+function SettingsState.from_save(data)
+    local self = SettingsState.new()
+    if type(data) ~= "table" then return self end
+
+    if type(data.sfx_volume) == "number" then
+        self:set_sfx_volume(data.sfx_volume)
+    end
+    if type(data.music_volume) == "number" then
+        self:set_music_volume(data.music_volume)
+    end
+    if data.fullscreen == true then
+        self:toggle_fullscreen()
+    end
+    if type(data.keybinds) == "table" then
+        for action, key in pairs(data.keybinds) do
+            if self.keybinds[action] ~= nil then
+                self.keybinds[action] = key
+            end
+        end
+    end
+
+    return self
+end
+
 return SettingsState
