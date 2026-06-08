@@ -183,7 +183,7 @@ Loads and plays named sound effects. Parallel singleton to `Assets` — required
 **Location:** `lua/game/sound.lua`
 
 **API**
-- `Sound.load()` — called once from `main.lua:love.load()`; iterates all 17 event names, loads each `assets/sounds/<name>.wav` via `love.audio.newSource(path, "static")` if the file exists; also loads music tracks (`menu`, `bg1`, `bg2`, `bg3`) as looping streams; no-ops if `love.audio` is nil (headless)
+- `Sound.load()` — called once from `main.lua:love.load()`; iterates all 17 event names, loads each `assets/sounds/<name>.wav` via `love.audio.newSource(path, "static")` if the file exists; also loads music tracks (`menu`, `bg1`, `bg2`, `bg3`, `bg4`) as looping streams; no-ops if `love.audio` is nil (headless)
 - `Sound.play(name)` — clones the pre-loaded source for `name` and plays it; cloning allows the same sound to overlap itself; no-ops if `love.audio` is nil or the name was not loaded
 - `Sound.play_random_music(names, fade_duration)` — stops any currently-playing tracks from `names`, picks one at random, then fades it in over `fade_duration` seconds; silently skips any name not present in `_music_tracks` so missing files never error
 

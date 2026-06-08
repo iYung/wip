@@ -57,7 +57,7 @@ end
 
 function StoreScene:on_enter()
     Sound.stop_music("menu")
-    Sound.play_random_music({"bg1", "bg2", "bg3"}, 2)
+    Sound.play_random_music({"bg1", "bg2", "bg3", "bg4"}, 2)
 
     local gs = self.game_state
 

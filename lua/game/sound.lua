@@ -83,6 +83,19 @@ function Sound.load()
         }
         -- bg3 track starts stopped and silent; do not call play
     end
+    if love.filesystem.getInfo("assets/music/background4.mp3") then
+        local bg4_src = love.audio.newSource("assets/music/background4.mp3", "stream")
+        bg4_src:setLooping(true)
+        bg4_src:setVolume(0)
+        _music_tracks["bg4"] = {
+            src = bg4_src,
+            fade_vol = 1,
+            fade_target = 1,
+            fade_rate = 0,
+            stop_on_done = false,
+        }
+        -- bg4 track starts stopped and silent; do not call play
+    end
 end
 
 function Sound.play(name)
