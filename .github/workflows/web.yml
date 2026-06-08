@@ -81,18 +81,19 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Waiting for Pages deployment triggered after $START_TIME..."
+          echo "Waiting for Pages build triggered after $START_TIME..."
           for i in $(seq 1 20); do
-            STATUS=$(gh api repos/${{ github.repository }}/pages/deployments \
-              --jq "[.[] | select(.created_at >= \"$START_TIME\")] | first | .status" 2>/dev/null || echo "")
-            echo "Attempt $i: status=$STATUS"
-            if [ "$STATUS" = "built" ]; then
-              echo "Pages deployment is live."
+            BUILD=$(gh api repos/${{ github.repository }}/pages/builds/latest 2>/dev/null || echo '{}')
+            STATUS=$(echo "$BUILD" | jq -r '.status // ""')
+            CREATED=$(echo "$BUILD" | jq -r '.created_at // ""')
+            echo "Attempt $i: status=$STATUS created_at=$CREATED"
+            if [ "$STATUS" = "built" ] && [[ "$CREATED" > "$START_TIME" || "$CREATED" = "$START_TIME" ]]; then
+              echo "Pages build is live."
               exit 0
             fi
             sleep 15
           done
-          echo "Timed out waiting for Pages deployment."
+          echo "Timed out waiting for Pages build."
           exit 1
 
       - name: Post or update PR preview comment
