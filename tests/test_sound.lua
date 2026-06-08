@@ -57,7 +57,7 @@ end
 -- Test: Sound.play_music runs without error for known and unknown names
 do
     Sound.play_music("menu")
-    Sound.play_music("bg")
+    Sound.play_music("bg1")
     Sound.play_music("nonexistent")
     print("PASS: Sound.play_music() runs without error")
 end
@@ -65,7 +65,7 @@ end
 -- Test: Sound.fade_music runs without error for fade in and fade out
 do
     Sound.fade_music("menu", 0, 2)
-    Sound.fade_music("bg", 1, 2)
+    Sound.fade_music("bg1", 1, 2)
     Sound.fade_music("nonexistent", 0, 1)
     print("PASS: Sound.fade_music() runs without error")
 end
@@ -73,7 +73,7 @@ end
 -- Test: Sound.stop_music runs without error
 do
     Sound.stop_music("menu")
-    Sound.stop_music("bg")
+    Sound.stop_music("bg1")
     Sound.stop_music("nonexistent")
     print("PASS: Sound.stop_music() runs without error")
 end
@@ -81,7 +81,7 @@ end
 -- Test: Sound.is_music_playing returns false in headless (stubs return false)
 do
     assert(Sound.is_music_playing("menu") == false, "is_music_playing should return false in headless")
-    assert(Sound.is_music_playing("bg") == false, "is_music_playing should return false in headless")
+    assert(Sound.is_music_playing("bg1") == false, "is_music_playing should return false in headless")
     assert(Sound.is_music_playing("nonexistent") == false, "is_music_playing for unknown name should return false")
     print("PASS: Sound.is_music_playing() returns false in headless")
 end
@@ -89,7 +89,7 @@ end
 -- Test: update runs cleanly after a fade_music call (no error from fade arithmetic)
 do
     Sound.load()
-    Sound.fade_music("bg", 1, 2)
+    Sound.fade_music("bg1", 1, 2)
     Sound.update(0.5)
     Sound.update(2.0)
     print("PASS: Sound.update() runs cleanly after fade_music")
@@ -146,6 +146,72 @@ do
     love.timer              = orig_timer
     package.loaded["lua/game/sound"] = nil
     print("PASS: sound: play_animalese cooldown suppresses notes within 50ms")
+end
+
+-- Test: play_random_music picks one track and fades it in (all three tracks present)
+do
+    local orig_play    = love.audio.play
+    local orig_newSrc  = love.audio.newSource
+    local orig_getInfo = love.filesystem.getInfo
+
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" then
+            if p == "assets/music/background.mp3"  then return true end
+            if p == "assets/music/background2.mp3" then return true end
+            if p == "assets/music/background3.mp3" then return true end
+        end
+        return nil
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+
+    S.play_random_music({"bg1", "bg2", "bg3"}, 2)
+    S.update(2)
+
+    love.audio.play    = orig_play
+    love.audio.newSource = orig_newSrc
+    love.filesystem.getInfo = orig_getInfo
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: play_random_music picks one track and fades it in")
+end
+
+-- Test: play_random_music handles missing tracks gracefully
+do
+    local orig_play    = love.audio.play
+    local orig_newSrc  = love.audio.newSource
+    local orig_getInfo = love.filesystem.getInfo
+
+    -- Only background.mp3 (bg1) is present; bg2 and bg3 are missing
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" then
+            if p == "assets/music/background.mp3" then return true end
+        end
+        return nil
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+
+    S.play_random_music({"bg1", "bg2", "bg3"}, 2)
+    S.update(2)
+
+    love.audio.play    = orig_play
+    love.audio.newSource = orig_newSrc
+    love.filesystem.getInfo = orig_getInfo
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: play_random_music handles missing tracks gracefully")
+
+    -- Empty list must also be a no-op
+    package.loaded["lua/game/sound"] = nil
+    local S2 = require("lua/game/sound")
+    S2.load()
+    S2.play_random_music({}, 2)
+    S2.update(2)
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: play_random_music handles empty list gracefully")
 end
 
 print("ALL TESTS PASSED")

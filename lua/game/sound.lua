@@ -48,14 +48,40 @@ function Sound.load()
         local bg_src = love.audio.newSource("assets/music/background.mp3", "stream")
         bg_src:setLooping(true)
         bg_src:setVolume(0)
-        _music_tracks["bg"] = {
+        _music_tracks["bg1"] = {
             src = bg_src,
             fade_vol = 1,
             fade_target = 1,
             fade_rate = 0,
             stop_on_done = false,
         }
-        -- bg track starts stopped and silent; do not call play
+        -- bg1 track starts stopped and silent; do not call play
+    end
+    if love.filesystem.getInfo("assets/music/background2.mp3") then
+        local bg2_src = love.audio.newSource("assets/music/background2.mp3", "stream")
+        bg2_src:setLooping(true)
+        bg2_src:setVolume(0)
+        _music_tracks["bg2"] = {
+            src = bg2_src,
+            fade_vol = 1,
+            fade_target = 1,
+            fade_rate = 0,
+            stop_on_done = false,
+        }
+        -- bg2 track starts stopped and silent; do not call play
+    end
+    if love.filesystem.getInfo("assets/music/background3.mp3") then
+        local bg3_src = love.audio.newSource("assets/music/background3.mp3", "stream")
+        bg3_src:setLooping(true)
+        bg3_src:setVolume(0)
+        _music_tracks["bg3"] = {
+            src = bg3_src,
+            fade_vol = 1,
+            fade_target = 1,
+            fade_rate = 0,
+            stop_on_done = false,
+        }
+        -- bg3 track starts stopped and silent; do not call play
     end
 end
 
@@ -152,6 +178,33 @@ function Sound.stop_music(name)
         entry.fade_rate = 0
         entry.stop_on_done = false
     end
+end
+
+function Sound.play_random_music(names, fade_duration)
+    -- Filter to only names that exist in _music_tracks
+    local valid = {}
+    for _, name in ipairs(names) do
+        if _music_tracks[name] then
+            valid[#valid + 1] = name
+        end
+    end
+    if #valid == 0 then return end
+
+    -- Stop any of the valid tracks that are currently playing
+    for _, name in ipairs(valid) do
+        local entry = _music_tracks[name]
+        if entry.src:isPlaying() then
+            entry.src:stop()
+            entry.fade_vol = 1
+            entry.fade_target = 1
+            entry.fade_rate = 0
+            entry.stop_on_done = false
+        end
+    end
+
+    -- Pick one at random and fade it in
+    local picked = valid[math.random(#valid)]
+    Sound.fade_music(picked, 1, fade_duration)
 end
 
 function Sound.is_music_playing(name)
