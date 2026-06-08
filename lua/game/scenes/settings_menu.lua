@@ -89,11 +89,13 @@ function SettingsMenu:open(opaque)
     self._capturing = nil
     self._saved = false
     -- Snapshot current key state so keys held at open time don't immediately fire
-    self._prev_up      = love.keyboard.isDown("up")    or love.keyboard.isDown("w")
-    self._prev_down    = love.keyboard.isDown("down")  or love.keyboard.isDown("s")
-    self._prev_left    = love.keyboard.isDown("left")  or love.keyboard.isDown("a")
-    self._prev_right   = love.keyboard.isDown("right") or love.keyboard.isDown("d")
-    self._prev_confirm = love.keyboard.isDown("e")     or love.keyboard.isDown("f")
+    local kb = self._state.keybinds
+    self._prev_up      = love.keyboard.isDown("up")    or love.keyboard.isDown(kb.move_up    or "w")
+    self._prev_down    = love.keyboard.isDown("down")  or love.keyboard.isDown(kb.move_down  or "s")
+    self._prev_left    = love.keyboard.isDown("left")  or love.keyboard.isDown(kb.move_left  or "a")
+    self._prev_right   = love.keyboard.isDown("right") or love.keyboard.isDown(kb.move_right or "d")
+    self._prev_confirm = love.keyboard.isDown(kb.interact     or "f")
+                      or love.keyboard.isDown(kb.pick_up_down or "e")
                       or love.keyboard.isDown("return") or love.keyboard.isDown("space")
     self._prev_escape  = love.keyboard.isDown("escape")
 end
@@ -153,11 +155,13 @@ function SettingsMenu:update(dt)
         return
     end
 
-    local up      = love.keyboard.isDown("up")    or love.keyboard.isDown("w")
-    local down    = love.keyboard.isDown("down")  or love.keyboard.isDown("s")
-    local left    = love.keyboard.isDown("left")  or love.keyboard.isDown("a")
-    local right   = love.keyboard.isDown("right") or love.keyboard.isDown("d")
-    local confirm = love.keyboard.isDown("e")      or love.keyboard.isDown("f")
+    local kb = self._state.keybinds
+    local up      = love.keyboard.isDown("up")    or love.keyboard.isDown(kb.move_up    or "w")
+    local down    = love.keyboard.isDown("down")  or love.keyboard.isDown(kb.move_down  or "s")
+    local left    = love.keyboard.isDown("left")  or love.keyboard.isDown(kb.move_left  or "a")
+    local right   = love.keyboard.isDown("right") or love.keyboard.isDown(kb.move_right or "d")
+    local confirm = love.keyboard.isDown(kb.interact     or "f")
+                 or love.keyboard.isDown(kb.pick_up_down or "e")
                  or love.keyboard.isDown("return") or love.keyboard.isDown("space")
     local escape  = love.keyboard.isDown("escape")
 
