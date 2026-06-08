@@ -644,6 +644,19 @@ Scenes set `self.esc_opens_settings = true` to opt into Esc-to-open. Currently `
 
 ---
 
+### StoreScene
+
+The main gameplay scene. Owns the store, player, customer, and all drawables.
+
+**Location:** `lua/game/scenes/store_scene.lua`
+
+**Music**
+- On `on_enter()`, stops the menu track and picks one of four bg tracks (`bg1`–`bg4`) at random via `Sound.play_random_music`, fading it in over 2 seconds.
+- The pick is skipped if any bg track is already playing — so returning from `BuyScene` leaves the current track uninterrupted.
+- bg tracks are loaded from `assets/music/background.mp3` through `background4.mp3`; missing files are silently skipped.
+
+---
+
 ### BuyScene
 
 The PC store carousel. Pure screen-space UI — overrides `draw()` entirely, no camera transform. Entire output is post-processed through the CRT shader.
