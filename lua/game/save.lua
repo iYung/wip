@@ -54,15 +54,13 @@ function Save.write_settings(data)
 end
 
 function Save.read_settings()
-    if not love.filesystem.getInfo("settings.dat") then return nil end
-    local content, _ = love.filesystem.read("settings.dat")
-    if not content then return nil end
-    local loader = loadstring or load
     local ok, result = pcall(function()
+        local content = love.filesystem.read("settings.dat")
+        if not content then return nil end
+        local loader = loadstring or load
         return loader(content)()
     end)
-    if not ok then return nil end
-    return result
+    return ok and result or nil
 end
 
 return Save
