@@ -1,2 +1,1 @@
-local PATH = "assets/fonts/font.ttf"
-return { new = function(size) return love.graphics.newFont(PATH, size, "light") end }
+return require("lua/core/fonts").from("assets/fonts/font.ttf", "light")
