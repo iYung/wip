@@ -12,6 +12,7 @@ local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local ColorReplace   = require("lua/game/shaders/color_replace")
 local CRT            = require("lua/game/shaders/crt")
 local Sound          = require("lua/game/sound")
+local Fonts          = require("lua/game/fonts")
 
 local CATALOGUE = {}
 
@@ -84,10 +85,10 @@ local CENTER_X     = 640
 local CENTER_Y     = 360
 local ARROW_SIZE   = 60
 
-local font_name  = love.graphics.newFont(32)
-local font_desc  = love.graphics.newFont(20)
-local font_price = love.graphics.newFont(26)
-local font_ui    = love.graphics.newFont(16)
+local font_name  = Fonts.new(32)
+local font_desc  = Fonts.new(20)
+local font_price = Fonts.new(26)
+local font_ui    = Fonts.new(16)
 
 local BuyScene = setmetatable({}, { __index = Scene })
 BuyScene.__index = BuyScene

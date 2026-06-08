@@ -62,6 +62,7 @@ function love.load()
 
     canvas = love.graphics.newCanvas(LOGICAL_W, LOGICAL_H)
     canvas:setFilter("nearest", "nearest")
+    love.graphics.setNewFont("assets/fonts/font.ttf", 16, "light")
 
     if _visual_mode then
         local runner = require("lua/headless/runner")

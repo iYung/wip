@@ -1,4 +1,5 @@
 local Sound = require("lua/game/sound")
+local Fonts = require("lua/game/fonts")
 
 local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Save Game", "Exit Settings", "Leave Game" }
 
@@ -66,8 +67,8 @@ function SettingsMenu.new(settings_state, input, on_save, on_leave)
     }
     self._bg_frame    = 1
     self._bg_timer    = 0
-    self._font_btn    = love.graphics.newFont(22)
-    self._font_vol    = love.graphics.newFont(15)
+    self._font_btn    = Fonts.new(22)
+    self._font_vol    = Fonts.new(15)
     self._btn_y0      = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
     self._sub_btn_y0  = H / 2 - #_ACTION_LIST * BTN_GAP / 2 - BTN_H / 2  -- centres 7 sub-screen rows
     return self
