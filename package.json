@@ -5,6 +5,7 @@
     "build": "bash scripts/build_web.sh"
   },
   "devDependencies": {
-    "love.js": "11.4.1"
+    "love.js": "11.4.1",
+    "wrangler": "^3"
   }
 }
