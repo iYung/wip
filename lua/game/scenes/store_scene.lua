@@ -528,7 +528,7 @@ function StoreScene:draw()
 
     UI.draw_hud_box(labels, love.graphics.getFont())
 
-    love.graphics.setColor(1, 1, 1, 0.8)
+    love.graphics.setColor(0, 0, 0, 1)
     local box_h = #labels * 20 + 28
     local y = 720 - 10 - box_h + 14
     for _, label in ipairs(labels) do
