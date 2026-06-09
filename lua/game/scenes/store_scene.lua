@@ -533,11 +533,7 @@ function StoreScene:draw()
     self.drawer:draw()
     self.camera:detach()
 
-    local cur_coin_h = 32
-    local cur_cw     = A.coin:getWidth() * (cur_coin_h / A.coin:getHeight())
-    love.graphics.setColor(1, 1, 1, 0.8)
-    love.graphics.draw(A.coin, 10, 10, 0, cur_coin_h / A.coin:getHeight(), cur_coin_h / A.coin:getHeight())
-    love.graphics.print(tostring(gs.currency), 10 + cur_cw + 4, 10 + (cur_coin_h - love.graphics.getFont():getHeight()) / 2)
+    UI.draw_currency_bubble(gs.currency, 10, 10, love.graphics.getFont())
 
     -- context HUD: bottom-left, stacked downward inside box
     local hud    = self:_hud_labels()

@@ -11,9 +11,9 @@ local GROWTH_TIERS   = require("lua/game/data/growth_tiers")
 local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local ColorReplace   = require("lua/game/shaders/color_replace")
 local CRT            = require("lua/game/shaders/crt")
+local UI             = require("lua/game/ui")
 local Sound          = require("lua/game/sound")
 local Fonts          = require("lua/game/fonts")
-local UI             = require("lua/game/ui")
 
 local CATALOGUE = {}
 
@@ -271,15 +271,6 @@ function BuyScene:draw()
 
     local prev_font = love.graphics.getFont()
 
-    -- currency top-left
-    love.graphics.setFont(font_ui)
-    local hud_coin_h = 32
-    local hud_cw     = A.coin:getWidth() * (hud_coin_h / A.coin:getHeight())
-    love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.draw(A.coin, 56, 44, 0, hud_coin_h / A.coin:getHeight(), hud_coin_h / A.coin:getHeight())
-    love.graphics.setColor(0.15, 0.15, 0.15, 1)
-    love.graphics.print(tostring(currency), 56 + hud_cw + 4, 44 + (hud_coin_h - font_ui:getHeight()) / 2)
-
     -- build desc lines early so we can measure total height
     local desc_lines = {}
     for line in (display_desc .. "\n"):gmatch("([^\n]*)\n") do
@@ -404,6 +395,8 @@ function BuyScene:draw()
     CRT.apply()
     love.graphics.draw(self.canvas, 0, 0)
     CRT.clear()
+
+    UI.draw_currency_bubble(currency, 10, 10, font_ui)
 
     local left_key  = (self.input:key_for("move_left")    or "a"):upper()
     local right_key = (self.input:key_for("move_right")   or "d"):upper()
