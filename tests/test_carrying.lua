@@ -69,7 +69,7 @@ do
     print("PASS: carry: cannot pick up non-carriable item")
 end
 
--- Test: cannot put down into occupied slot
+-- Test: swaps held item with carriable item in occupied slot
 do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
@@ -83,11 +83,11 @@ do
     ctx.input:press("pick_up_down")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
-    assert(ctx.gs.player.held_item == wc,
-        "player should still hold the watering can")
-    assert(ctx.gs.store.slots[4].item == plant,
-        "occupied slot should still contain the plant")
-    print("PASS: carry: cannot put down into occupied slot")
+    assert(ctx.gs.player.held_item == plant,
+        "player should now hold the plant after swap")
+    assert(ctx.gs.store.slots[4].item == wc,
+        "slot 4 should now contain the watering can after swap")
+    print("PASS: carry: swaps held item with carriable item in occupied slot")
 end
 
 -- Test: cannot open shop while holding item
