@@ -13,6 +13,7 @@ local ColorReplace   = require("lua/game/shaders/color_replace")
 local CRT            = require("lua/game/shaders/crt")
 local Sound          = require("lua/game/sound")
 local Fonts          = require("lua/game/fonts")
+local UI             = require("lua/game/ui")
 
 local CATALOGUE = {}
 
@@ -375,16 +376,6 @@ function BuyScene:draw()
         love.graphics.draw(img, dot_start + (i - 1) * dot_gap - dot_size / 2, CENTER_Y + 252)
     end
 
-    -- controls hint
-    love.graphics.setFont(font_ui)
-    love.graphics.setColor(0.35, 0.35, 0.35, 1)
-    local hints = { "A/D: CYCLE", "F: BUY", "E: CANCEL" }
-    local hint_y = 652
-    for _, hint in ipairs(hints) do
-        love.graphics.print(hint, 56, hint_y)
-        hint_y = hint_y - 20
-    end
-
     love.graphics.setFont(prev_font)
 
     love.graphics.setCanvas(prev_canvas)
@@ -392,6 +383,28 @@ function BuyScene:draw()
     CRT.apply()
     love.graphics.draw(self.canvas, 0, 0)
     CRT.clear()
+
+    local left_key  = (self.input:key_for("move_left")    or "a"):upper()
+    local right_key = (self.input:key_for("move_right")   or "d"):upper()
+    local f_key     = (self.input:key_for("interact")     or "f"):upper()
+    local e_key     = (self.input:key_for("pick_up_down") or "e"):upper()
+    local hints = {
+        left_key .. "/" .. right_key .. ": CYCLE",
+        f_key .. ": BUY",
+        e_key .. ": CANCEL",
+    }
+
+    UI.draw_hud_box(hints, font_ui)
+
+    love.graphics.setFont(font_ui)
+    love.graphics.setColor(0, 0, 0, 1)
+    local box_h = #hints * 20 + 28
+    local y = 720 - 10 - box_h + 14
+    for _, hint in ipairs(hints) do
+        love.graphics.print(hint, 10 + 14, y)
+        y = y + 20
+    end
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 return BuyScene
