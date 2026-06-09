@@ -3,7 +3,7 @@ local config = require("lua/game/config")
 local SceneManager = {}
 SceneManager.__index = SceneManager
 
-local FADE_DURATION = 0.3
+local FADE_DURATION = config.FADE_DURATION
 
 function SceneManager.new()
     local self        = setmetatable({}, SceneManager)

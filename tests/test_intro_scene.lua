@@ -1,6 +1,7 @@
 local IntroScene = require("lua/game/scenes/intro_scene")
+local config     = require("lua/game/config")
 
-local FADE_DURATION = 0.5
+local FADE_DURATION = config.FADE_DURATION
 local HOLD_DURATION = 2.0
 
 local function make_input(pressed_action)

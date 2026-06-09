@@ -1,7 +1,8 @@
 local Scene      = require("lua/core/scene")
 local Sound      = require("lua/game/sound")
+local config     = require("lua/game/config")
 
-local FADE_DURATION = 0.5
+local FADE_DURATION = config.FADE_DURATION
 local HOLD_DURATION = 2.0
 
 local W = 1280
