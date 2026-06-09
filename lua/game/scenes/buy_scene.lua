@@ -223,7 +223,7 @@ function BuyScene:draw()
             can_buy      = false
         else
             local tier   = SPEED_TIERS[gs.speed_level + 1]
-            display_cost = "$" .. tier.cost
+            display_cost = tostring(tier.cost)
             display_desc = ent.description
             can_buy      = currency >= tier.cost
         end
@@ -234,7 +234,7 @@ function BuyScene:draw()
             can_buy      = false
         else
             local tier   = GROWTH_TIERS[gs.growth_level + 1]
-            display_cost = "$" .. tier.cost
+            display_cost = tostring(tier.cost)
             display_desc = ent.description .. "\n" .. math.floor(tier.mult * 100 - 100) .. "% faster"
             can_buy      = currency >= tier.cost
         end
@@ -245,7 +245,7 @@ function BuyScene:draw()
             can_buy      = false
         else
             local tier   = COOLDOWN_TIERS[gs.cooldown_level + 1]
-            display_cost = "$" .. tier.cost
+            display_cost = tostring(tier.cost)
             display_desc = ent.description .. "\n" .. tier.label
             can_buy      = gs.currency >= tier.cost
         end
@@ -255,12 +255,12 @@ function BuyScene:draw()
             display_desc = "Already installed."
             can_buy      = false
         else
-            display_cost = "$" .. ent.cost
+            display_cost = tostring(ent.cost)
             display_desc = ent.description
             can_buy      = gs.currency >= ent.cost
         end
     else
-        display_cost = "$" .. ent.cost
+        display_cost = tostring(ent.cost)
         display_desc = ent.description
         can_buy      = currency >= ent.cost
     end
@@ -271,10 +271,14 @@ function BuyScene:draw()
 
     local prev_font = love.graphics.getFont()
 
-    -- currency top-right
+    -- currency top-left
     love.graphics.setFont(font_ui)
+    local hud_coin_h = 32
+    local hud_cw     = A.coin:getWidth() * (hud_coin_h / A.coin:getHeight())
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(A.coin, 56, 44, 0, hud_coin_h / A.coin:getHeight(), hud_coin_h / A.coin:getHeight())
     love.graphics.setColor(0.15, 0.15, 0.15, 1)
-    love.graphics.print("Currency: " .. currency, 56, 44)
+    love.graphics.print(tostring(currency), 56 + hud_cw + 4, 44 + (hud_coin_h - font_ui:getHeight()) / 2)
 
     -- build desc lines early so we can measure total height
     local desc_lines = {}
@@ -358,8 +362,25 @@ function BuyScene:draw()
     else
         love.graphics.setColor(0.5, 0.1, 0.1, 1)
     end
-    local price_w = font_price:getWidth(display_cost)
-    love.graphics.print(display_cost, CENTER_X - price_w / 2, y)
+    if display_cost == "---" then
+        local price_w = font_price:getWidth(display_cost)
+        love.graphics.print(display_cost, CENTER_X - price_w / 2, y)
+    else
+        local fh      = font_price:getHeight()
+        local coin_w  = A.coin:getWidth() * (fh / A.coin:getHeight())
+        local gap     = 6
+        local num_w   = font_price:getWidth(display_cost)
+        local total_w = coin_w + gap + num_w
+        local bx      = math.floor(CENTER_X - total_w / 2)
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(A.coin, bx, y, 0, fh / A.coin:getHeight(), fh / A.coin:getHeight())
+        if can_buy then
+            love.graphics.setColor(0.1, 0.45, 0.1, 1)
+        else
+            love.graphics.setColor(0.5, 0.1, 0.1, 1)
+        end
+        love.graphics.print(display_cost, bx + coin_w + gap, y)
+    end
 
     -- cycle arrows (unchanged)
     love.graphics.setColor(1, 1, 1, 1)
