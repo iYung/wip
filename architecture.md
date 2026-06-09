@@ -216,10 +216,10 @@ Loads and plays named sound effects. Parallel singleton to `Assets` — required
 Maps Love2D key events to game actions. Game logic calls Input, never Love2D directly. Key bindings are sourced from `SettingsState.keybinds` and can be remapped at runtime via the settings menu.
 
 **Actions**
-- `move_left` — default `left` / `a`
-- `move_right` — default `right` / `d`
-- `move_up` — default `up` / `w`
-- `move_down` — default `down` / `s`
+- `move_left` — default `a`
+- `move_right` — default `d`
+- `move_up` — default `w`
+- `move_down` — default `s`
 - `pick_up_down` — default `e`
 - `interact` — default `f`
 - `menu_confirm` — `return` / `space` / `f` (non-remappable; used by StartScene)
@@ -559,8 +559,8 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 - **Exit** — calls `love.event.quit()`
 
 **Navigation keys** (delegated to the passed-in `Input` instance via `self.input:pressed(action)`)
-- `move_up` (Up / W) — move selection up; skips Continue when `_has_save` is false
-- `move_down` (Down / S) — move selection down; skips Continue when `_has_save` is false
+- `move_up` (W) — move selection up; skips Continue when `_has_save` is false
+- `move_down` (S) — move selection down; skips Continue when `_has_save` is false
 - `menu_confirm` (Enter / Space / F) — confirm
 
 **Notes**

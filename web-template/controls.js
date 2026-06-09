@@ -123,7 +123,7 @@
   // determine which key was pressed. Synthetic events default to keyCode=0
   // which SDL maps to nothing, so all button presses are silently ignored.
   var KEY_CODES = {
-    'ArrowLeft': 37, 'ArrowRight': 39, 'ArrowUp': 38, 'ArrowDown': 40,
+    'w': 87, 'a': 65, 's': 83, 'd': 68,
     'e': 69, 'f': 70, 'Escape': 27
   };
 
@@ -174,23 +174,23 @@
 
     var btnUp = document.createElement('button');
     btnUp.className = 'btn-up';
-    btnUp.textContent = '↑';
-    attachButton(btnUp, 'ArrowUp', 'ArrowUp');
+    btnUp.textContent = 'W';
+    attachButton(btnUp, 'w', 'KeyW');
 
     var btnLeft = document.createElement('button');
     btnLeft.className = 'btn-left';
-    btnLeft.textContent = '←';
-    attachButton(btnLeft, 'ArrowLeft', 'ArrowLeft');
+    btnLeft.textContent = 'A';
+    attachButton(btnLeft, 'a', 'KeyA');
 
     var btnDown = document.createElement('button');
     btnDown.className = 'btn-down';
-    btnDown.textContent = '↓';
-    attachButton(btnDown, 'ArrowDown', 'ArrowDown');
+    btnDown.textContent = 'S';
+    attachButton(btnDown, 's', 'KeyS');
 
     var btnRight = document.createElement('button');
     btnRight.className = 'btn-right';
-    btnRight.textContent = '→';
-    attachButton(btnRight, 'ArrowRight', 'ArrowRight');
+    btnRight.textContent = 'D';
+    attachButton(btnRight, 'd', 'KeyD');
 
     leftCluster.appendChild(btnUp);
     leftCluster.appendChild(btnLeft);
