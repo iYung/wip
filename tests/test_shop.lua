@@ -189,7 +189,7 @@ do
     end)
     local buy = make_buy(ctx)
     ctx.gs.currency = 9999
-    ctx.gs.growth_level = #GROWTH_TIERS   -- max (3)
+    ctx.gs.growth_level = #GROWTH_TIERS   -- max (6)
     buy.selected = 12
     buy:_confirm()
     assert(ctx.gs.growth_level == #GROWTH_TIERS,
