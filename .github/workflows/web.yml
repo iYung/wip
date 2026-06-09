@@ -97,8 +97,8 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           DEPLOYMENTS=$(curl -s \
-            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/wip/deployments?branch=pr-$PR_NUMBER" \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" | jq -r '.result[].id')
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/wip/deployments" \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" | jq -r --arg branch "pr-$PR_NUMBER" '.result[] | select(.deployment_trigger.metadata.branch == $branch) | .id')
           for id in $DEPLOYMENTS; do
             curl -s -X DELETE \
               "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects/wip/deployments/$id?force=true" \
