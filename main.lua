@@ -193,3 +193,7 @@ function love.quit()
         Save.write_settings(ss:to_save())
     end
 end
+
+function love.focus(focused)
+    Sound.on_focus(focused)
+end
