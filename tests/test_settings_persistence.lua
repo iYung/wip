@@ -140,4 +140,46 @@ local rt10 = SettingsState.from_save(src10:to_save())
 assert(rt10.fullscreen == true, "round-trip: fullscreen=true should survive round-trip, got " .. tostring(rt10.fullscreen))
 print("PASS: round-trip preserves fullscreen=true")
 
+-- -------------------------------------------------------------------------
+-- Test 11: key_map() from a loaded SettingsState reflects saved keybinds
+-- -------------------------------------------------------------------------
+local ss11 = SettingsState.from_save({
+    keybinds = { pick_up_down = "q", interact = "r",
+                 move_up = "w", move_down = "s", move_left = "a", move_right = "d" }
+})
+local map11 = ss11:key_map()
+assert(type(map11.pick_up_down) == "table" and map11.pick_up_down[1] == "q",
+    "key_map: pick_up_down should be {'q'}, got " .. tostring(map11.pick_up_down and map11.pick_up_down[1]))
+assert(type(map11.interact) == "table" and map11.interact[1] == "r",
+    "key_map: interact should be {'r'}, got " .. tostring(map11.interact and map11.interact[1]))
+print("PASS: key_map() from loaded SettingsState reflects saved keybinds")
+
+-- -------------------------------------------------------------------------
+-- Test 12: assigning input._map from a loaded SettingsState makes Input
+--          respond to the rebound keys (simulates the main.lua startup fix)
+-- -------------------------------------------------------------------------
+do
+    local CoreInput = require("lua/core/input")
+    local inp = CoreInput.new({
+        pick_up_down = {"e"},
+        interact     = {"f"},
+    })
+    local ss12 = SettingsState.from_save({
+        keybinds = { pick_up_down = "q", interact = "r",
+                     move_up = "w", move_down = "s", move_left = "a", move_right = "d" }
+    })
+    -- Sync input map as main.lua now does on startup
+    inp._map = ss12:key_map()
+
+    -- Simulate "r" held down
+    local _orig_isDown = love.keyboard.isDown
+    love.keyboard.isDown = function(k) return k == "r" end
+    inp:update()
+    love.keyboard.isDown = _orig_isDown
+
+    assert(inp:pressed("interact"), "input: 'interact' should fire on rebound key 'r'")
+    assert(not inp:pressed("pick_up_down"), "input: 'pick_up_down' should not fire when 'q' is not held")
+    print("PASS: input._map sync from loaded SettingsState routes rebound keys correctly")
+end
+
 print("ALL TESTS PASSED")
