@@ -188,3 +188,7 @@ function love.quit()
         Save.write(GameState.to_save(current.game_state))
     end
 end
+
+function love.focus(focused)
+    Sound.on_focus(focused)
+end

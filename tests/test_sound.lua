@@ -251,4 +251,80 @@ do
     print("PASS: fading bg1-bg4 loop (store->start transition) runs without error")
 end
 
+-- Test: Sound.on_focus() does not error in headless mode (love.audio guard)
+do
+    Sound.load()
+    Sound.on_focus(true)
+    Sound.on_focus(false)
+    print("PASS: Sound.on_focus() runs without error in headless")
+end
+
+-- Test: on_focus(true) replays tracks with playing_intent=true; skips ones with playing_intent=false
+do
+    local orig_getInfo  = love.filesystem.getInfo
+    local orig_newSource = love.audio.newSource
+    local play_calls = 0
+
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" and p == "assets/music/menu.mp3" then return true end
+        return orig_getInfo(p)
+    end
+    love.audio.newSource = function(path, t)
+        local src = orig_newSource(path, t)
+        src.play = function(self) play_calls = play_calls + 1 end
+        return src
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+    -- load() plays menu immediately; reset counter so we only count on_focus calls
+    play_calls = 0
+
+    -- menu: playing_intent=true, isPlaying()=false → should replay
+    S.on_focus(true)
+    assert(play_calls == 1, "expected 1 replay on focus (menu), got " .. play_calls)
+
+    -- after stop, playing_intent=false → should not replay
+    S.stop_music("menu")
+    play_calls = 0
+    S.on_focus(true)
+    assert(play_calls == 0, "expected 0 replays after stop_music, got " .. play_calls)
+
+    love.filesystem.getInfo = orig_getInfo
+    love.audio.newSource    = orig_newSource
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: on_focus(true) replays only tracks with playing_intent=true")
+end
+
+-- Test: on_focus(false) does not replay any tracks
+do
+    local orig_getInfo   = love.filesystem.getInfo
+    local orig_newSource = love.audio.newSource
+    local play_calls = 0
+
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" and p == "assets/music/menu.mp3" then return true end
+        return orig_getInfo(p)
+    end
+    love.audio.newSource = function(path, t)
+        local src = orig_newSource(path, t)
+        src.play = function(self) play_calls = play_calls + 1 end
+        return src
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+    play_calls = 0
+
+    S.on_focus(false)
+    assert(play_calls == 0, "on_focus(false) must not play any sources, got " .. play_calls)
+
+    love.filesystem.getInfo = orig_getInfo
+    love.audio.newSource    = orig_newSource
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: on_focus(false) does not replay any tracks")
+end
+
 print("ALL TESTS PASSED")

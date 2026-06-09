@@ -186,6 +186,7 @@ Loads and plays named sound effects. Parallel singleton to `Assets` — required
 - `Sound.load()` — called once from `main.lua:love.load()`; iterates all 17 event names, loads each `assets/sounds/<name>.wav` via `love.audio.newSource(path, "static")` if the file exists; also loads music tracks (`menu`, `bg1`, `bg2`, `bg3`, `bg4`) as looping streams; no-ops if `love.audio` is nil (headless)
 - `Sound.play(name)` — clones the pre-loaded source for `name` and plays it; cloning allows the same sound to overlap itself; no-ops if `love.audio` is nil or the name was not loaded
 - `Sound.play_random_music(names, fade_duration)` — stops any currently-playing tracks from `names`, picks one at random, then fades it in over `fade_duration` seconds; silently skips any name not present in `_music_tracks` so missing files never error
+- `Sound.on_focus(focused)` — called from `main.lua:love.focus()`; when `focused` is true, restarts any music track whose `playing_intent` is true but whose source is no longer playing (covers OS-level audio interrupts on focus loss); no-ops on focus-out and in headless
 
 **Sound events**
 
@@ -731,7 +732,7 @@ Three ways to run the game:
 | `test_settings_menu.lua` | Settings menu open/close, navigation, fullscreen toggle, keybind sub-screen, press-to-capture flow, modifier rejection, collision clearing |
 | `test_settings_state.lua` | `SettingsState` defaults, `toggle_fullscreen`, `set_keybind` (basic + collision), `key_map` output and nil-skipping |
 | `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
-| `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op; `play_random_music` fades one track and skips missing tracks gracefully |
+| `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op; `play_random_music` fades one track and skips missing tracks gracefully; `on_focus(true)` replays tracks with `playing_intent=true`; `on_focus(false)` does not replay anything |
 | `test_start_scene.lua` | StartScene navigation (up/down/wrap, Continue skipped when no save), confirm callbacks (New Game, Continue with/without save, Settings, Exit) |
 | `test_save.lua` | `Save` exists/write/read, corrupt-data nil return, scalar/item/held-item round-trips, `GameState.to_save`/`from_save` round-trip (scalars, plants, player position, slot count) |
 
