@@ -6,6 +6,7 @@ local A            = require("lua/game/assets")
 local U            = require("lua/game/config").U
 local ColorReplace = require("lua/game/shaders/color_replace")
 local Sound        = require("lua/game/sound")
+local UI           = require("lua/game/ui")
 
 local CW    = 6 * U   -- 120
 local CH    = 12 * U  -- 240
@@ -17,26 +18,6 @@ local MIN_BOX_W     = 120
 local MAX_BOX_W     = 18 * U  -- 360
 local TAIL_H        = 24
 local BUBBLE_MARGIN = { top = 12, right = 12, bottom = 12, left = 12 }
-
-local function draw9(img, x, y, w, h, m)
-    local iw, ih = img:getDimensions()
-    local function q(qx, qy, qw, qh) return love.graphics.newQuad(qx, qy, qw, qh, iw, ih) end
-    local cx = iw - m.left - m.right
-    local cy = ih - m.top  - m.bottom
-    local dx = w  - m.left - m.right
-    local dy = h  - m.top  - m.bottom
-    local sx = dx / cx
-    local sy = dy / cy
-    love.graphics.draw(img, q(0,           0,           m.left,  m.top),    x,            y)
-    love.graphics.draw(img, q(iw-m.right,  0,           m.right, m.top),    x+w-m.right,  y)
-    love.graphics.draw(img, q(0,           ih-m.bottom, m.left,  m.bottom), x,            y+h-m.bottom)
-    love.graphics.draw(img, q(iw-m.right,  ih-m.bottom, m.right, m.bottom), x+w-m.right,  y+h-m.bottom)
-    love.graphics.draw(img, q(m.left, 0,           cx, m.top),    x+m.left, y,             0, sx, 1)
-    love.graphics.draw(img, q(m.left, ih-m.bottom, cx, m.bottom), x+m.left, y+h-m.bottom,  0, sx, 1)
-    love.graphics.draw(img, q(0,          m.top, m.left,  cy), x,            y+m.top, 0, 1, sy)
-    love.graphics.draw(img, q(iw-m.right, m.top, m.right, cy), x+w-m.right, y+m.top, 0, 1, sy)
-    love.graphics.draw(img, q(m.left, m.top, cx, cy), x+m.left, y+m.top, 0, sx, sy)
-end
 
 local function make_full_text(c)
     return c.messages[c.msg_index] or ""
@@ -293,7 +274,7 @@ function Customer:draw_bubble()
         local box_y = self.sprite.y - BOX_H - TAIL_H - 4
 
         love.graphics.setColor(1, 1, 1, 1)
-        draw9(A.speech_bubble, box_x, box_y, BOX_W, BOX_H, BUBBLE_MARGIN)
+        UI.draw9(A.speech_bubble, box_x, box_y, BOX_W, BOX_H, BUBBLE_MARGIN)
 
         local tw = A.speech_bubble_tail:getWidth()
         love.graphics.draw(
@@ -344,7 +325,7 @@ function Customer:draw_bubble()
         end
 
         love.graphics.setColor(1, 1, 1, 1)
-        draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
+        UI.draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
         local tw = A.speech_bubble_tail:getWidth()
         love.graphics.draw(A.speech_bubble_tail, box_x + box_w / 2 - tw / 2, box_y + box_h - 10)
 

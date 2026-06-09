@@ -176,6 +176,20 @@ Loads every PNG once at startup and returns a shared table. All other modules `r
 
 ---
 
+### UI utilities
+
+Shared rendering helpers used by multiple modules.
+
+**Location:** `lua/game/ui.lua`
+
+**API**
+- `UI.draw9(img, x, y, w, h, m)` — draws `img` as a 9-slice scaled rectangle at `(x, y)` with size `(w, h)`; `m` is a margins table `{ top, right, bottom, left }` that defines the fixed border regions
+- `UI.draw_hud_box(labels, font)` — draws a 9-slice `speech_bubble` box in the bottom-left corner (10 px from each edge) sized to fit `labels`; no-ops when `#labels == 0`; padding is 14 px on all sides; line height is 20 px
+
+`draw9` was extracted from `customer.lua` so it can be shared between the customer dialogue bubble and the HUD box. Call sites that draw the HUD text must still render text on top of the box after calling `draw_hud_box`.
+
+---
+
 ### Sound
 
 Loads and plays named sound effects. Parallel singleton to `Assets` — required directly by any module that needs to play audio.
