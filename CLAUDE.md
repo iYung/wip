@@ -36,7 +36,15 @@ This is a Love2D game written in Lua. The full architecture reference is in `arc
 
 **Scenes:** `StartScene` (title) → `StoreScene` (main gameplay) ↔ `BuyScene` (PC store carousel). `SettingsMenu` is a pause overlay, not a Scene subclass.
 
+**SceneManager is not a stack** — `switch(scene)` replaces the current scene outright, no push/pop. `BuyScene` holds a reference to the *same* `StoreScene` instance and calls `scene_manager:switch(self.store_scene)` to return, which re-fires `StoreScene:on_enter()`. Code that re-checks state in `on_enter()` (e.g. music restart, `_bg_playing` guard) therefore runs every time the player exits the buy screen. `StoreScene` uses a `self._initialized` flag to skip one-time setup on these re-entries.
+
 **Shared state:** `GameState` survives scene switches and is passed everywhere. It holds the `Store`, `Player`, `currency`, `unlocked_plants`, `stage3_counts` (quest triggers), `seen_scripts`, and upgrade levels.
+
+**Persistence:** `Save` (`lua/game/save.lua`) serializes `GameState` to `save.dat`. `SettingsState` (`lua/game/settings_state.lua`) manages keybinds, fullscreen, and volume levels; persisted to `settings.dat`. Both files use the same `pcall`-wrapped read pattern to handle missing or corrupt files gracefully.
+
+**Sound music system:** music tracks in `lua/game/sound.lua` carry a `playing_intent` flag that records whether the game wants the track playing, independent of whether the OS currently has the source active. `love.focus` in `main.lua` calls `Sound.on_focus(focused)` which restarts any track with `playing_intent = true` that the OS silently stopped. Use `Sound.play_music` / `Sound.fade_music` / `Sound.stop_music` — never call `entry.src:play()` directly — so `playing_intent` stays accurate.
+
+**Web audio:** audio does not work in the web build. See `docs/web-audio.md` for the full diagnosis and next steps to try. Do not spend time debugging it outside that document's scope.
 
 **Testing:** `lua/headless/stubs.lua` no-ops all Love2D graphics/audio globals so tests run without a window. `HeadlessInput` (`lua/headless/input.lua`) replaces the keyboard. Tests are plain Lua files in `tests/`; `runner.lua` drives them.
 
