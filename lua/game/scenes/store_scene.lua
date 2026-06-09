@@ -365,6 +365,7 @@ function StoreScene:_handle_pick_up_down()
             local tmp        = player.held_item
             player.held_item = slot.item
             slot.item        = tmp
+            Sound.play("put_down")
             Sound.play("pick_up")
         end
     else
