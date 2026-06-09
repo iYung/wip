@@ -438,7 +438,7 @@ function StoreScene:_hud_labels()
     local held      = player.held_item
     local slot_item = slot and slot.item
 
-    local slot_label = player.x >= 0 and slot_item and slot_item.name and ("HOVER: " .. slot_item.name:upper())
+    local slot_label = player.x >= 0 and slot_item and slot_item.name and ("HOVERING: " .. slot_item.name:upper())
 
     local e_label
     if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
