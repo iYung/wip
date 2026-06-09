@@ -15,6 +15,7 @@ local Sway         = require("lua/game/shaders/sway")
 local A            = require("lua/game/assets")
 local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local WaterDrone     = require("lua/game/water_drone")
+local UI             = require("lua/game/ui")
 
 local function spawn_cooldown(gs)
     if gs.cooldown_level == 0 then return 4 end
@@ -437,7 +438,7 @@ function StoreScene:_hud_labels()
     local held      = player.held_item
     local slot_item = slot and slot.item
 
-    local slot_label = player.x >= 0 and slot_item and slot_item.name and ("HOVER: " .. slot_item.name:upper())
+    local slot_label = player.x >= 0 and slot_item and slot_item.name and ("HOVERING " .. slot_item.name:upper())
 
     local e_label
     if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
@@ -518,17 +519,21 @@ function StoreScene:draw()
     local cur_text = "Currency: " .. gs.currency
     love.graphics.print(cur_text, 10, 10)
 
-    -- context HUD: bottom-left, stacked upward (hover at bottom, then f, then e)
+    -- context HUD: bottom-left, stacked downward inside box
     local hud    = self:_hud_labels()
     local labels = {}
     if hud.slot then table.insert(labels, hud.slot) end
     if hud.f    then table.insert(labels, hud.f) end
     if hud.e    then table.insert(labels, hud.e) end
 
-    local y = 700
+    UI.draw_hud_box(labels, love.graphics.getFont())
+
+    love.graphics.setColor(0, 0, 0, 1)
+    local box_h = #labels * 20 + 28
+    local y = 720 - 10 - box_h + 14
     for _, label in ipairs(labels) do
-        love.graphics.print(label, 10, y)
-        y = y - 20
+        love.graphics.print(label, 10 + 14, y)
+        y = y + 20
     end
 
     love.graphics.setColor(1, 1, 1, 1)
