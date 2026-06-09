@@ -446,7 +446,15 @@ function StoreScene:_hud_labels()
     local e_key = (self.input:key_for("pick_up_down") or "e"):upper()
     local f_key = (self.input:key_for("interact")     or "f"):upper()
 
-    local slot_label = player.x >= 0 and slot_item and slot_item.name and ("HOVERING " .. slot_item.name:upper())
+    local slot_label
+    if player.x >= 0 then
+        slot_label = slot_item and slot_item.name and ("HOVERING " .. slot_item.name:upper())
+    elseif self._customer and self._customer:active() then
+        local moving = self._customer.state == "walking_in" or self._customer.state == "walking_out"
+        if not moving then
+            slot_label = "HOVERING " .. self._customer.name:upper()
+        end
+    end
 
     local e_label
     if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
