@@ -1,7 +1,0 @@
-## Cloudflare Pages Migration Checklist
-
-- [x] Task A — `package.json` — add `wrangler` as a pinned dev dependency (e.g. `"wrangler": "^3"`) so `npx wrangler` in CI resolves from the local install rather than fetching latest each run
-- [x] Task B — `.github/workflows/web.yml` — replace the `deploy` job's `peaceiris/actions-gh-pages` step with a `wrangler pages deploy ./web --project-name=wip --branch=main` step; add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` env vars from secrets; update `permissions` block to remove `contents: write` and `pages: read` (keep `pull-requests: write`)
-- [x] Task C — `.github/workflows/web.yml` — replace the `deploy-pr` job's `peaceiris/actions-gh-pages` step and the entire "Wait for Pages deployment" polling loop with a single `wrangler pages deploy ./web --project-name=wip --branch=pr-${{ github.event.pull_request.number }}` step; update the PR comment URL from `https://iyung.github.io/wip/pr-<number>/` to `https://pr-${{ github.event.pull_request.number }}.wip.pages.dev`
-- [x] Task D — `.github/workflows/web.yml` — replace the `cleanup-pr` job's git-based cleanup (checkout gh-pages, git rm, push) with a shell script that calls the Cloudflare API to list and force-delete all deployments for branch `pr-<number>`; add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` env vars from secrets; remove the `contents: write` permission from this job if it has its own permissions block
-- [x] Task E — `README.md` — update any reference to `https://iyung.github.io/wip/` (production URL) to `https://wip.pages.dev`
