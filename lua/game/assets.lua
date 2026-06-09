@@ -57,7 +57,7 @@ A.expand_slot             = try_img("assets/images/expand_slot.png")
 A.heat_lamp_icon          = try_img("assets/images/heat_lamp_icon.png")
 A.grafter_no_space_bubble = try_img("assets/images/grafter_no_space_bubble.png")
 A.heat_lamps = {}
-for lvl = 1, 3 do
+for lvl = 1, 6 do
     A.heat_lamps[lvl] = try_img("assets/images/heat_lamp_" .. lvl .. ".png")
 end
 
