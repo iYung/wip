@@ -23,8 +23,9 @@ end
 local PAD         = 14
 local line_height = 20
 
-local function draw_hud_box(labels, font)
+local function draw_hud_box(labels, font, margin)
     if #labels == 0 then return end
+    margin = margin or 10
 
     local content_w = 0
     for _, label in ipairs(labels) do
@@ -35,8 +36,8 @@ local function draw_hud_box(labels, font)
     local content_h = #labels * line_height
     local box_w     = content_w + PAD * 2
     local box_h     = content_h + PAD * 2
-    local box_x     = 10
-    local box_y     = 720 - 10 - box_h
+    local box_x     = margin
+    local box_y     = 720 - margin - box_h
 
     love.graphics.setColor(1, 1, 1, 1)
     draw9(A.speech_bubble, box_x, box_y, box_w, box_h, { top = 12, right = 12, bottom = 12, left = 12 })

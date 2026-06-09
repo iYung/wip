@@ -396,7 +396,8 @@ function BuyScene:draw()
     love.graphics.draw(self.canvas, 0, 0)
     CRT.clear()
 
-    UI.draw_currency_bubble(currency, 10, 10, font_ui)
+    local hud_margin = 10
+    UI.draw_currency_bubble(currency, hud_margin, hud_margin, font_ui)
 
     local left_key  = (self.input:key_for("move_left")    or "a"):upper()
     local right_key = (self.input:key_for("move_right")   or "d"):upper()
@@ -408,14 +409,14 @@ function BuyScene:draw()
         e_key .. ": CANCEL",
     }
 
-    UI.draw_hud_box(hints, font_ui)
+    UI.draw_hud_box(hints, font_ui, hud_margin)
 
     love.graphics.setFont(font_ui)
     love.graphics.setColor(0, 0, 0, 1)
     local box_h = #hints * 20 + 28
-    local y = 720 - 10 - box_h + 14
+    local y = 720 - hud_margin - box_h + 14
     for _, hint in ipairs(hints) do
-        love.graphics.print(hint, 10 + 14, y)
+        love.graphics.print(hint, hud_margin + 14, y)
         y = y + 20
     end
     love.graphics.setColor(1, 1, 1, 1)
