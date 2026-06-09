@@ -49,4 +49,23 @@ function Save.read()
     return result
 end
 
+function Save.settings_exist()
+    return love.filesystem.getInfo("settings.dat") ~= nil
+end
+
+function Save.write_settings(data)
+    love.filesystem.write("settings.dat", "return " .. serialize(data))
+end
+
+function Save.read_settings()
+    local content, _ = love.filesystem.read("settings.dat")
+    if not content then return nil end
+    local loader = loadstring or load
+    local ok, result = pcall(function()
+        return loader(content)()
+    end)
+    if not ok then return nil end
+    return result
+end
+
 return Save
