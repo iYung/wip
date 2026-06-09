@@ -341,7 +341,7 @@ return {
         id             = "sage",
         chapter        = 2,
         accessory      = "monocle",
-        trigger        = { plant_type = 2, count = 3 },
+        trigger        = { plant_type = 1, count = 3 },
         name           = "Sir Moneyton",
         voice_pitch    = 0.88,
         primary_color     = {0.35, 0.58, 0.38, 1},
