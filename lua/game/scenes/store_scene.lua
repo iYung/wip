@@ -490,9 +490,9 @@ function StoreScene:_hud_labels()
         end
     elseif not held and slot_item and slot_item.buy_scene_factory then
         f_label = f_key .. ": OPEN SHOP"
-    elseif held and held.name == "Watering Can" and slot_item and slot_item.plant_type then
+    elseif held and held.name == "Watering Can" and slot_item and slot_item.plant_type and slot_item.ready then
         f_label = f_key .. ": WATER"
-    elseif held and held.name == "Grafter" and not held.loaded_plant and slot_item and slot_item.stage == 3 then
+    elseif held and held.name == "Grafter" and slot_item and slot_item.stage == 3 then
         f_label = f_key .. ": CLONE"
     elseif held and held.sellable ~= false and slot_item and slot_item.is_garbage_bin then
         f_label = f_key .. ": DISCARD"
