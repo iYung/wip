@@ -533,9 +533,7 @@ function StoreScene:draw()
     self.drawer:draw()
     self.camera:detach()
 
-    love.graphics.setColor(1, 1, 1, 0.8)
-    local cur_text = "Currency: " .. gs.currency
-    love.graphics.print(cur_text, 10, 10)
+    UI.draw_currency_bubble(gs.currency, 10, 10, love.graphics.getFont())
 
     -- context HUD: bottom-left, stacked downward inside box
     local hud    = self:_hud_labels()

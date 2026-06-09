@@ -11,9 +11,9 @@ local GROWTH_TIERS   = require("lua/game/data/growth_tiers")
 local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local ColorReplace   = require("lua/game/shaders/color_replace")
 local CRT            = require("lua/game/shaders/crt")
+local UI             = require("lua/game/ui")
 local Sound          = require("lua/game/sound")
 local Fonts          = require("lua/game/fonts")
-local UI             = require("lua/game/ui")
 
 local CATALOGUE = {}
 
@@ -223,7 +223,7 @@ function BuyScene:draw()
             can_buy      = false
         else
             local tier   = SPEED_TIERS[gs.speed_level + 1]
-            display_cost = "$" .. tier.cost
+            display_cost = tostring(tier.cost)
             display_desc = ent.description
             can_buy      = currency >= tier.cost
         end
@@ -234,7 +234,7 @@ function BuyScene:draw()
             can_buy      = false
         else
             local tier   = GROWTH_TIERS[gs.growth_level + 1]
-            display_cost = "$" .. tier.cost
+            display_cost = tostring(tier.cost)
             display_desc = ent.description .. "\n" .. math.floor(tier.mult * 100 - 100) .. "% faster"
             can_buy      = currency >= tier.cost
         end
@@ -245,7 +245,7 @@ function BuyScene:draw()
             can_buy      = false
         else
             local tier   = COOLDOWN_TIERS[gs.cooldown_level + 1]
-            display_cost = "$" .. tier.cost
+            display_cost = tostring(tier.cost)
             display_desc = ent.description .. "\n" .. tier.label
             can_buy      = gs.currency >= tier.cost
         end
@@ -255,12 +255,12 @@ function BuyScene:draw()
             display_desc = "Already installed."
             can_buy      = false
         else
-            display_cost = "$" .. ent.cost
+            display_cost = tostring(ent.cost)
             display_desc = ent.description
             can_buy      = gs.currency >= ent.cost
         end
     else
-        display_cost = "$" .. ent.cost
+        display_cost = tostring(ent.cost)
         display_desc = ent.description
         can_buy      = currency >= ent.cost
     end
@@ -270,11 +270,6 @@ function BuyScene:draw()
     love.graphics.draw(A.buy_bg, 0, 0)
 
     local prev_font = love.graphics.getFont()
-
-    -- currency top-right
-    love.graphics.setFont(font_ui)
-    love.graphics.setColor(0.15, 0.15, 0.15, 1)
-    love.graphics.print("Currency: " .. currency, 56, 44)
 
     -- build desc lines early so we can measure total height
     local desc_lines = {}
@@ -358,8 +353,25 @@ function BuyScene:draw()
     else
         love.graphics.setColor(0.5, 0.1, 0.1, 1)
     end
-    local price_w = font_price:getWidth(display_cost)
-    love.graphics.print(display_cost, CENTER_X - price_w / 2, y)
+    if display_cost == "---" then
+        local price_w = font_price:getWidth(display_cost)
+        love.graphics.print(display_cost, CENTER_X - price_w / 2, y)
+    else
+        local fh      = font_price:getHeight()
+        local coin_w  = A.coin:getWidth() * (fh / A.coin:getHeight())
+        local gap     = 6
+        local num_w   = font_price:getWidth(display_cost)
+        local total_w = coin_w + gap + num_w
+        local bx      = math.floor(CENTER_X - total_w / 2)
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(A.coin, bx, y, 0, fh / A.coin:getHeight(), fh / A.coin:getHeight())
+        if can_buy then
+            love.graphics.setColor(0.1, 0.45, 0.1, 1)
+        else
+            love.graphics.setColor(0.5, 0.1, 0.1, 1)
+        end
+        love.graphics.print(display_cost, bx + coin_w + gap, y)
+    end
 
     -- cycle arrows (unchanged)
     love.graphics.setColor(1, 1, 1, 1)
@@ -384,6 +396,9 @@ function BuyScene:draw()
     love.graphics.draw(self.canvas, 0, 0)
     CRT.clear()
 
+    local hud_margin = 10
+    UI.draw_currency_bubble(currency, hud_margin, hud_margin, font_ui)
+
     local left_key  = (self.input:key_for("move_left")    or "a"):upper()
     local right_key = (self.input:key_for("move_right")   or "d"):upper()
     local f_key     = (self.input:key_for("interact")     or "f"):upper()
@@ -394,14 +409,14 @@ function BuyScene:draw()
         e_key .. ": CANCEL",
     }
 
-    UI.draw_hud_box(hints, font_ui)
+    UI.draw_hud_box(hints, font_ui, hud_margin)
 
     love.graphics.setFont(font_ui)
     love.graphics.setColor(0, 0, 0, 1)
     local box_h = #hints * 20 + 28
-    local y = 720 - 10 - box_h + 14
+    local y = 720 - hud_margin - box_h + 14
     for _, hint in ipairs(hints) do
-        love.graphics.print(hint, 10 + 14, y)
+        love.graphics.print(hint, hud_margin + 14, y)
         y = y + 20
     end
     love.graphics.setColor(1, 1, 1, 1)

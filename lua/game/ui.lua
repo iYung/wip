@@ -23,8 +23,9 @@ end
 local PAD         = 14
 local line_height = 20
 
-local function draw_hud_box(labels, font)
+local function draw_hud_box(labels, font, margin)
     if #labels == 0 then return end
+    margin = margin or 10
 
     local content_w = 0
     for _, label in ipairs(labels) do
@@ -35,11 +36,35 @@ local function draw_hud_box(labels, font)
     local content_h = #labels * line_height
     local box_w     = content_w + PAD * 2
     local box_h     = content_h + PAD * 2
-    local box_x     = 10
-    local box_y     = 720 - 10 - box_h
+    local box_x     = margin
+    local box_y     = 720 - margin - box_h
 
     love.graphics.setColor(1, 1, 1, 1)
     draw9(A.speech_bubble, box_x, box_y, box_w, box_h, { top = 12, right = 12, bottom = 12, left = 12 })
 end
 
-return { draw9 = draw9, draw_hud_box = draw_hud_box }
+local COIN_SIZE = 32
+
+local function draw_currency_bubble(currency, x, y, font)
+    local coin_h    = COIN_SIZE
+    local coin_w    = A.coin:getWidth() * (coin_h / A.coin:getHeight())
+    local num_str   = tostring(currency)
+    local num_w     = font:getWidth(num_str)
+    local content_w = coin_w + 4 + num_w
+    local content_h = math.max(coin_h, font:getHeight())
+    local box_w     = content_w + PAD * 2
+    local box_h     = content_h + PAD * 2
+
+    love.graphics.setColor(1, 1, 1, 1)
+    draw9(A.speech_bubble, x, y, box_w, box_h, { top = 12, right = 12, bottom = 12, left = 12 })
+
+    local coin_y = math.floor(y + PAD + (content_h - coin_h) / 2)
+    love.graphics.draw(A.coin, x + PAD, coin_y, 0, coin_h / A.coin:getHeight(), coin_h / A.coin:getHeight())
+
+    love.graphics.setColor(0.1, 0.1, 0.1, 1)
+    local text_y = math.floor(y + PAD + (content_h - font:getHeight()) / 2)
+    love.graphics.print(num_str, x + PAD + coin_w + 4, text_y)
+    love.graphics.setColor(1, 1, 1, 1)
+end
+
+return { draw9 = draw9, draw_hud_box = draw_hud_box, draw_currency_bubble = draw_currency_bubble }
