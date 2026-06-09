@@ -103,8 +103,8 @@ function StartScene:_confirm()
         return
     end
     -- New Game (selected == 1)
-    Sound.fade_music("menu", 0, 2)
-    self.scene_manager:switch(StoreScene.new(GameState.new(), self.input, self.scene_manager, false))
+    local IntroScene = require("lua/game/scenes/intro_scene")
+    self.scene_manager:switch(IntroScene.new(GameState.new(), self.input, self.scene_manager))
 end
 
 function StartScene:draw()

@@ -1,0 +1,5 @@
+# Intro Slideshow Checklist
+
+- [x] Task A — `lua/game/scenes/intro_scene.lua` — create IntroScene: a Scene subclass that cycles through `assets/images/intro_1.png`…`intro_4.png` with a per-slide `fade_in → hold → fade_out` state machine (black overlay). Constants at top: `FADE_DURATION = 0.5`, `HOLD_DURATION = 2.0`. Skip allowed only during `hold` (`interact` or `pick_up_down` → jump to `fade_out`). After the fourth slide's fade_out completes, call `scene_manager:switch(StoreScene.new(self._game_state, self._input, self._scene_manager, false))`. Constructor signature: `IntroScene.new(game_state, input, scene_manager)`. In `on_enter`, call `Sound.fade_music("menu", 0, 2)`.
+
+- [x] Task B — `lua/game/scenes/start_scene.lua` — in `StartScene:_confirm()`, replace the New Game branch (selected == 1): remove the `Sound.fade_music` call and the direct `StoreScene` switch; instead require `lua/game/scenes/intro_scene` and call `scene_manager:switch(IntroScene.new(GameState.new(), self.input, self.scene_manager))`.
