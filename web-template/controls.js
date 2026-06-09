@@ -230,13 +230,19 @@
 
     var btnClearSave = document.createElement('button');
     btnClearSave.className = 'btn-clear-save';
-    btnClearSave.textContent = 'Clear Save';
+    btnClearSave.textContent = 'Clear All Data';
     btnClearSave.addEventListener('click', function () {
-      if (!confirm('Delete your save? This cannot be undone.')) return;
+      if (!confirm('Delete your save and settings? This cannot be undone.')) return;
       var savePath = '/home/web_user/love/game/save.dat';
+      var settingsPath = '/home/web_user/love/game/settings.dat';
       try {
         if (typeof Module !== 'undefined' && Module['FS_unlink']) {
           Module['FS_unlink'](savePath);
+          try {
+            Module['FS_unlink'](settingsPath);
+          } catch (e) {
+            // settings.dat not found — silently ignore
+          }
           if (Module['FS_syncfs']) {
             Module['FS_syncfs'](false, function (err) {
               if (err) console.warn('[clear-save] sync error:', err);
@@ -249,7 +255,8 @@
           alert('Game not loaded yet — nothing to clear.');
         }
       } catch (e) {
-        // File not found is fine — just reload so the game sees no save
+        // save.dat not found is fine — just reload so the game sees no save
+        try { Module['FS_unlink'](settingsPath); } catch (e2) { /* ignore */ }
         if (Module['FS_syncfs']) {
           Module['FS_syncfs'](false, function () { location.reload(); });
         } else {
