@@ -361,6 +361,11 @@ function StoreScene:_handle_pick_up_down()
             slot.item        = player.held_item
             player.held_item = nil
             Sound.play("put_down")
+        elseif slot and slot.item and slot.item.carriable then
+            local tmp        = player.held_item
+            player.held_item = slot.item
+            slot.item        = tmp
+            Sound.play("put_down")
         end
     else
         if slot and slot.item and slot.item.carriable then
@@ -438,46 +443,51 @@ function StoreScene:_hud_labels()
     local held      = player.held_item
     local slot_item = slot and slot.item
 
+    local e_key = (self.input:key_for("pick_up_down") or "e"):upper()
+    local f_key = (self.input:key_for("interact")     or "f"):upper()
+
     local slot_label = player.x >= 0 and slot_item and slot_item.name and ("HOVERING " .. slot_item.name:upper())
 
     local e_label
     if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
-        e_label = "E: DISMISS"
+        e_label = e_key .. ": DISMISS"
     elseif player.x >= 0 then
         if held and slot and not slot_item then
-            e_label = "E: PUT DOWN"
+            e_label = e_key .. ": PUT DOWN"
         elseif not held and slot_item and slot_item.carriable then
-            e_label = "E: PICK UP"
+            e_label = e_key .. ": PICK UP"
+        elseif held and slot_item and slot_item.carriable then
+            e_label = e_key .. ": SWAP WITH " .. held.name:upper()
         end
     end
 
     local f_label
     if player.x < 0 and self._customer and self._customer.state == "talking_after" then
         if not self._customer:line_complete() then
-            f_label = "F: SKIP"
+            f_label = f_key .. ": SKIP"
         else
-            f_label = "F: CONTINUE"
+            f_label = f_key .. ": CONTINUE"
         end
     elseif player.x < 0 and self._customer and self._customer:arrived() then
         if self._customer:on_last_message() then
             if held and held.plant_type == self._customer.plant_type and held.stage == 3 then
-                f_label = "F: SELL TO CUSTOMER ($" .. plant_sell_value(held) .. ")"
+                f_label = f_key .. ": SELL TO CUSTOMER ($" .. plant_sell_value(held) .. ")"
             end
         else
             if not self._customer:line_complete() then
-                f_label = "F: SKIP"
+                f_label = f_key .. ": SKIP"
             else
-                f_label = "F: NEXT"
+                f_label = f_key .. ": NEXT"
             end
         end
     elseif not held and slot_item and slot_item.buy_scene_factory then
-        f_label = "F: OPEN SHOP"
+        f_label = f_key .. ": OPEN SHOP"
     elseif held and held.name == "Watering Can" and slot_item and slot_item.plant_type then
-        f_label = "F: WATER"
+        f_label = f_key .. ": WATER"
     elseif held and held.name == "Grafter" and not held.loaded_plant and slot_item and slot_item.stage == 3 then
-        f_label = "F: CLONE"
+        f_label = f_key .. ": CLONE"
     elseif held and held.sellable ~= false and slot_item and slot_item.is_garbage_bin then
-        f_label = "F: DISCARD"
+        f_label = f_key .. ": DISCARD"
     end
 
     return { slot = slot_label, e = e_label, f = f_label }

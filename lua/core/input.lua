@@ -35,4 +35,9 @@ function Input:pressed(action)
     return self._pressed[action] == true
 end
 
+function Input:key_for(action)
+    local keys = self._map[action]
+    return keys and keys[1]
+end
+
 return Input
