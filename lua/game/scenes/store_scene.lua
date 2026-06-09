@@ -443,8 +443,8 @@ function StoreScene:_hud_labels()
     local held      = player.held_item
     local slot_item = slot and slot.item
 
-    local e_key = (self.input:key_for("pick_up_down") or "e"):upper()
-    local f_key = (self.input:key_for("interact")     or "f"):upper()
+    local e_key = (self.input:key_for("pick_up_down") or "o"):upper()
+    local f_key = (self.input:key_for("interact")     or "p"):upper()
 
     local slot_label
     if player.x >= 0 then
