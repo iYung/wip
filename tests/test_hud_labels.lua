@@ -10,7 +10,7 @@ local function make_scene()
         return StoreScene.new(gs, input, sm)
     end)
     local scene = ctx.sm.current
-    ctx.input._map = { pick_up_down = {"e"}, interact = {"f"} }
+    ctx.input._map = { pick_up_down = {"o"}, interact = {"p"} }
     ctx.input.key_for = function(self, action)
         local keys = self._map[action]
         return keys and keys[1]
@@ -52,7 +52,7 @@ do
     ctx.gs.store.slots[1].item = nil
 
     local hud = scene:_hud_labels()
-    assert(hud.f == "F: WATER",
+    assert(hud.f == "P: WATER",
         "WATER hint should show when plant is ready, got: " .. tostring(hud.f))
     print("PASS: hud: WATER hint shown when plant is ready")
 end
@@ -69,7 +69,7 @@ do
     ctx.gs.player.held_item = grafter
 
     local hud = scene:_hud_labels()
-    assert(hud.f == "F: CLONE",
+    assert(hud.f == "P: CLONE",
         "CLONE hint should show for stage-3 plant, got: " .. tostring(hud.f))
     print("PASS: hud: CLONE hint shown for stage-3 plant")
 end

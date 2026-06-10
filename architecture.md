@@ -593,7 +593,7 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 
 **Properties**
 - `fullscreen` — bool; current fullscreen state (default `false`)
-- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", pick_up_down="e", interact="f"}`
+- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", pick_up_down="o", interact="p"}`
 
 **Methods**
 - `new()` — constructor; sets `fullscreen = false` and populates default `keybinds`

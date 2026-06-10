@@ -61,7 +61,7 @@ assert(m.is_open == true, "escape held at open time should not close the menu")
 print("PASS: open() snapshots key state (escape)")
 
 -- Test 5: open() with confirm held does not immediately confirm
-love.keyboard.isDown = function(k) return k == "f" end
+love.keyboard.isDown = function(k) return k == "p" end
 m:open()  -- _prev_confirm snapshotted as true
 love.keyboard.isDown = function() return false end
 state.fullscreen = false
@@ -134,7 +134,7 @@ sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 assert(m.selected == 6)
-sim_key(m, "f")
+sim_key(m, "p")
 assert(m.is_open == false, "Exit Settings should close the menu")
 print("PASS: Exit Settings closes menu")
 
@@ -148,7 +148,7 @@ sim_key(m, "down")
 sim_key(m, "down")
 assert(m.selected == 7, "should be on Leave Game")
 _quit_called = false
-sim_key(m, "f")
+sim_key(m, "p")
 assert(_quit_called, "confirming Leave Game should call love.event.quit")
 print("PASS: Leave Game calls quit")
 
@@ -161,18 +161,18 @@ sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 _quit_called = false
-sim_key(m, "e")
-assert(_quit_called, "e key should also confirm")
-print("PASS: e key confirms")
+sim_key(m, "o")
+assert(_quit_called, "o key should also confirm")
+print("PASS: o key confirms")
 
 -- Test 17: Fullscreen/Window (index 1) toggles fullscreen, menu stays open
 open_clean(m)
 assert(m.selected == 1)
 state.fullscreen = false
-sim_key(m, "f")
+sim_key(m, "p")
 assert(state.fullscreen == true, "first confirm should toggle fullscreen on")
 assert(m.is_open == true, "menu should stay open after fullscreen toggle")
-sim_key(m, "f")
+sim_key(m, "p")
 assert(state.fullscreen == false, "second confirm should toggle fullscreen off")
 print("PASS: fullscreen toggle")
 
@@ -205,7 +205,7 @@ sim_key(m, "down")
 sim_key(m, "down")
 sim_key(m, "down")
 assert(m.selected == 4)
-sim_key(m, "f")
+sim_key(m, "p")
 assert(m._subscreen == "keybinds", "selecting item 4 should open keybinds sub-screen")
 assert(m._subscreen_selected == 1, "sub-screen should start at index 1")
 print("PASS: item 4 opens keybind sub-screen")
@@ -221,7 +221,7 @@ print("PASS: escape from sub-screen returns to main")
 open_clean(m)
 m._subscreen = "keybinds"
 m._subscreen_selected = 1
-sim_key(m, "f")
+sim_key(m, "p")
 assert(m._capturing == "move_up", "confirming first sub-screen item should set _capturing to move_up, got " .. tostring(m._capturing))
 print("PASS: confirm in sub-screen enters capture mode")
 
@@ -292,7 +292,7 @@ open_clean(m)
 m._subscreen = "keybinds"
 m._subscreen_selected = 7
 m._prev_sub_confirm = false
-sim_key(m, "f")
+sim_key(m, "p")
 assert(m._subscreen == nil, "confirming Return button should exit sub-screen")
 assert(m.is_open == true, "menu should stay open after Return")
 print("PASS: Return button exits sub-screen")
@@ -301,7 +301,7 @@ print("PASS: Return button exits sub-screen")
 open_clean(m)
 m._subscreen = nil
 m.selected = 4
-love.keyboard.isDown = function(k) return k == "f" end
+love.keyboard.isDown = function(k) return k == "p" end
 m:update(0)   -- enters sub-screen; _prev_sub_confirm snapshotted as true ("f" still down)
 m:update(0)   -- sub-screen: confirm held but _prev_sub_confirm=true → should not capture
 love.keyboard.isDown = function() return false end
@@ -340,7 +340,7 @@ m._subscreen = nil
 m._subscreen_selected = 4   -- dirty: simulate having navigated the sub-screen before
 m.selected = 4
 m._prev_confirm = false
-sim_key(m, "f")
+sim_key(m, "p")
 assert(m._subscreen == "keybinds", "should be in sub-screen")
 assert(m._subscreen_selected == 1, "_subscreen_selected should reset to 1 on re-entry, got " .. m._subscreen_selected)
 print("PASS: sub-screen selected resets to 1 on re-entry (item 4)")
@@ -413,7 +413,7 @@ print("PASS: up/down navigation plays menu_navigate")
 -- Test 43: confirm plays menu_confirm
 open_clean(m)
 clear_sounds()
-sim_key(m, "f")   -- confirm on Fullscreen/Window (index 1)
+sim_key(m, "p")   -- confirm on Fullscreen/Window (index 1)
 assert(last_sound() == "menu_confirm", "confirm should play menu_confirm, got " .. tostring(last_sound()))
 print("PASS: confirm plays menu_confirm")
 
@@ -459,7 +459,7 @@ open_clean(m)
 m._subscreen = "keybinds"
 m._subscreen_selected = 1
 clear_sounds()
-sim_key(m, "f")
+sim_key(m, "p")
 assert(last_sound() == "menu_confirm", "keybinds confirm should play menu_confirm, got " .. tostring(last_sound()))
 print("PASS: keybinds subscreen confirm plays menu_confirm")
 
@@ -471,7 +471,7 @@ do
     m48._subscreen = "keybinds"
     m48._subscreen_selected = 7   -- Return row = #_ACTION_LIST + 1
     m48._prev_sub_confirm = false
-    sim_key(m48, "f")
+    sim_key(m48, "p")
     assert(m48._subscreen == nil, "all bound: confirm Return should close sub-screen, got " .. tostring(m48._subscreen))
     print("PASS: all bound — confirm Return closes sub-screen")
 end
@@ -485,7 +485,7 @@ do
     m49._subscreen = "keybinds"
     m49._subscreen_selected = 7
     m49._prev_sub_confirm = false
-    sim_key(m49, "f")
+    sim_key(m49, "p")
     assert(m49._subscreen == "keybinds", "missing keybind: confirm Return should NOT close sub-screen, got " .. tostring(m49._subscreen))
     print("PASS: missing keybind — confirm Return does NOT close sub-screen")
 end
@@ -512,12 +512,12 @@ do
     m51._subscreen = "keybinds"
     m51._subscreen_selected = 7
     m51._prev_sub_confirm = false
-    sim_key(m51, "f")
+    sim_key(m51, "p")
     assert(m51._subscreen == "keybinds", "precondition: missing keybind should keep sub-screen open")
     s51.keybinds.move_up = "t"
     m51._subscreen_selected = 7
     m51._prev_sub_confirm = false
-    sim_key(m51, "f")
+    sim_key(m51, "p")
     assert(m51._subscreen == nil, "rebind restores: confirm Return should now close sub-screen, got " .. tostring(m51._subscreen))
     print("PASS: rebind restores — confirm Return now closes sub-screen")
 end

@@ -8,7 +8,7 @@ function SettingsState.new()
     self.fullscreen = false
     self.sfx_volume = 100
     self.music_volume = 100
-    self.keybinds = {move_up="w", move_down="s", move_left="a", move_right="d", pick_up_down="e", interact="f"}
+    self.keybinds = {move_up="w", move_down="s", move_left="a", move_right="d", pick_up_down="o", interact="p"}
     return self
 end
 
