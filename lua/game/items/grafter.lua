@@ -5,6 +5,14 @@ local PLANT_DATA = require("lua/game/data/plant_data")
 local A          = require("lua/game/assets")
 local U          = require("lua/game/config").U
 local Sound      = require("lua/game/sound")
+local UI         = require("lua/game/ui")
+
+local PD            = 12
+local IMG_SIZE      = 80
+local BOX_W         = IMG_SIZE + PD * 2
+local BOX_H         = IMG_SIZE + PD * 2
+local TAIL_H        = 24
+local BUBBLE_MARGIN = { top = 12, right = 12, bottom = 12, left = 12 }
 
 local Grafter = setmetatable({}, { __index = Item })
 Grafter.__index = Grafter
@@ -80,9 +88,21 @@ end
 
 function Grafter:draw_bubble()
     if not self.bubble.visible then return end
-    self.bubble.x = self.sprite.x + self.sprite.width / 2 - self.bubble.width / 2
-    self.bubble.y = self.sprite.y - self.bubble.height - 10
-    self.bubble:draw()
+    local cx    = self.sprite.x + self.sprite.width / 2
+    local box_x = cx - BOX_W / 2
+    local box_y = self.sprite.y - BOX_H - TAIL_H - 4
+
+    love.graphics.setColor(1, 1, 1, 1)
+    UI.draw9(A.speech_bubble, box_x, box_y, BOX_W, BOX_H, BUBBLE_MARGIN)
+
+    local tw = A.speech_bubble_tail:getWidth()
+    love.graphics.draw(A.speech_bubble_tail, cx - tw / 2, box_y + BOX_H - 10)
+
+    local img    = A.grafter_no_space_bubble
+    local iw, ih = img:getDimensions()
+    love.graphics.draw(img, box_x + PD, box_y + PD, 0, IMG_SIZE / iw, IMG_SIZE / ih)
+
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 function Grafter:draw()
