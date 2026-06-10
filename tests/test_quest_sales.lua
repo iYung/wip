@@ -4,14 +4,17 @@ local runner     = require("lua/headless/runner")
 local StoreScene = require("lua/game/scenes/store_scene")
 local Plant      = require("lua/game/items/plant")
 local SCRIPTS    = require("lua/game/data/customer_scripts")
+local PLANT_DATA = require("lua/game/data/plant_data")
 
--- ── counters (declared early so all closures can close over them) ──────────
+-- ── counters ────────────────────────────────────────────────────────────────
 
-local sales        = { n = 0 }
-local sales_by_pt  = {}
-local current_pt   = 1
+local sales       = { n = 0 }
+local earned      = { n = 0 }
+local sales_by_pt = {}
+local last_sold   = 1
+local available   = { [1] = true }
 
--- ── helpers ────────────────────────────────────────────────────────────────
+-- ── helpers ─────────────────────────────────────────────────────────────────
 
 local function walk_to(ctx, target_x, elapsed)
     while math.abs(ctx.gs.player.x - target_x) > 5 do
@@ -33,8 +36,7 @@ local function walk_to(ctx, target_x, elapsed)
     return elapsed
 end
 
--- Returns elapsed, and increments total_sales by reference via a wrapper table.
-local function sell_plant(ctx, plant_type, elapsed, sales_ref)
+local function sell_plant(ctx, plant_type, elapsed, sales_ref, earned_ref)
     while true do
         elapsed = runner.fast_forward_until(ctx, function()
             return ctx.sm.current._customer:arrived()
@@ -56,6 +58,7 @@ local function sell_plant(ctx, plant_type, elapsed, sales_ref)
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
             sales_ref.n = sales_ref.n + 1
+            earned_ref.n = earned_ref.n + PLANT_DATA[plant_type].sell
             sales_by_pt[plant_type] = (sales_by_pt[plant_type] or 0) + 1
             while ctx.sm.current._customer.state == "talking_after" do
                 elapsed = runner.fast_forward_until(ctx, function()
@@ -70,7 +73,7 @@ local function sell_plant(ctx, plant_type, elapsed, sales_ref)
     end
 end
 
--- ── setup ──────────────────────────────────────────────────────────────────
+-- ── setup ────────────────────────────────────────────────────────────────────
 
 local STARTING_CURRENCY = 10
 
@@ -80,13 +83,16 @@ end)
 ctx.gs.currency = STARTING_CURRENCY
 
 local elapsed    = 0
-local milestones = {}   -- "id:chapter" -> { n, pt, by_pt snapshot }
+local milestones = {}
 
 local WATERING_CAN_X = 100
 local PLANT_SLOT_X   = 700
 local CASHIER_X      = -200
 
+-- ── milestone and introduction tracking ─────────────────────────────────────
+
 local function check_milestones()
+    local fired = {}
     for _, s in ipairs(SCRIPTS) do
         local key = s.id .. ":" .. s.chapter
         if not milestones[key] then
@@ -101,96 +107,51 @@ local function check_milestones()
                 if ok then
                     local snap = {}
                     for p, c in pairs(sales_by_pt) do snap[p] = c end
-                    milestones[key] = { n = sales.n, pt = current_pt, by_pt = snap }
+                    milestones[key] = { n = sales.n, pt = last_sold, by_pt = snap, earned = earned.n }
                     ctx.gs.seen_scripts[key] = true
+                    fired[#fired + 1] = s
                 end
             end
         end
     end
+    return fired
 end
 
--- ── plant schedule ─────────────────────────────────────────────────────────
-
-local PLANT_DATA = require("lua/game/data/plant_data")
-
-local schedule = {
-    { pt = 1, target = 3  },
-    { pt = 2, target = 36 },
-    { pt = 3, target = 30 },
-    { pt = 4, target = 18 },
-    { pt = 5, target = 32 },
-    { pt = 6, target = 5  },
-    { pt = 1, target = 60 },
-}
-
-check_milestones()  -- sage:1 triggers at count=0, fires before first sale
-
-for _, step in ipairs(schedule) do
-    local pt     = step.pt
-    local target = step.target
-
-    if pt ~= current_pt then
-        local unlock_cost = PLANT_DATA[pt].cost
-        while ctx.gs.currency < unlock_cost do
-            ctx.gs.unlocked_plants = { [current_pt] = true }
-            if ctx.gs.store.slots[4].item == nil
-            or ctx.gs.store.slots[4].item.plant_type ~= current_pt then
-                ctx.gs.store.slots[4].item = Plant.new(current_pt)
-            end
-
-            elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-            ctx.input:press("pick_up_down")
-            runner.tick(ctx.input, ctx.sm, 1, 1/60)
-            elapsed = elapsed + 1/60
-
-            elapsed = walk_to(ctx, PLANT_SLOT_X, elapsed)
-            elapsed = runner.fast_forward_until(ctx, function()
-                return ctx.gs.store.slots[4].item ~= nil
-                   and ctx.gs.store.slots[4].item.ready
-            end, elapsed, 5000)
-            ctx.input:press("interact")
-            runner.tick(ctx.input, ctx.sm, 1, 1/60)
-            elapsed = elapsed + 1/60
-
-            elapsed = runner.fast_forward_until(ctx, function()
-                return ctx.gs.store.slots[4].item ~= nil
-                   and ctx.gs.store.slots[4].item.ready
-            end, elapsed, 5000)
-            ctx.input:press("interact")
-            runner.tick(ctx.input, ctx.sm, 1, 1/60)
-            elapsed = elapsed + 1/60
-
-            check_milestones()
-
-            elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-            ctx.input:press("pick_up_down")
-            runner.tick(ctx.input, ctx.sm, 1, 1/60)
-            elapsed = elapsed + 1/60
-
-            elapsed = walk_to(ctx, PLANT_SLOT_X, elapsed)
-            ctx.input:press("pick_up_down")
-            runner.tick(ctx.input, ctx.sm, 1, 1/60)
-            elapsed = elapsed + 1/60
-
-            elapsed = walk_to(ctx, CASHIER_X, elapsed)
-            elapsed = sell_plant(ctx, current_pt, elapsed, sales)
-
-            elapsed = walk_to(ctx, PLANT_SLOT_X, elapsed)
-            ctx.gs.store.slots[4].item = Plant.new(current_pt)
-
-            check_milestones()
+local function introduce_plants(fired_scripts)
+    for _, s in ipairs(fired_scripts) do
+        if not available[s.plant_type] then
+            available[s.plant_type] = true
+            ctx.gs.unlocked_plants[s.plant_type] = true
         end
-        ctx.gs.currency = ctx.gs.currency - unlock_cost
-        current_pt = pt
     end
+end
 
-    ctx.gs.unlocked_plants = { [pt] = true }
-    if ctx.gs.store.slots[4].item == nil
-    or ctx.gs.store.slots[4].item.plant_type ~= pt then
+local function all_done()
+    for _, s in ipairs(SCRIPTS) do
+        if not milestones[s.id .. ":" .. s.chapter] then return false end
+    end
+    return true
+end
+
+-- ── simulation ───────────────────────────────────────────────────────────────
+
+-- sage:1 triggers at count=0, fires before first customer
+introduce_plants(check_milestones())
+
+local MAX_VISITS = 10000
+local visits     = 0
+
+repeat
+    elapsed = runner.fast_forward_until(ctx, function()
+        return ctx.sm.current._customer:arrived()
+    end, elapsed, 2000)
+
+    visits = visits + 1
+    local pt = ctx.sm.current._customer.plant_type
+
+    if available[pt] then
         ctx.gs.store.slots[4].item = Plant.new(pt)
-    end
 
-    while (ctx.gs.stage3_counts[pt] or 0) < target do
         elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
         ctx.input:press("pick_up_down")
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
@@ -213,7 +174,7 @@ for _, step in ipairs(schedule) do
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
 
-        check_milestones()
+        introduce_plants(check_milestones())
 
         elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
         ctx.input:press("pick_up_down")
@@ -226,16 +187,24 @@ for _, step in ipairs(schedule) do
         elapsed = elapsed + 1/60
 
         elapsed = walk_to(ctx, CASHIER_X, elapsed)
-        elapsed = sell_plant(ctx, pt, elapsed, sales)
+        elapsed = sell_plant(ctx, pt, elapsed, sales, earned)
 
-        elapsed = walk_to(ctx, PLANT_SLOT_X, elapsed)
+        last_sold = pt
         ctx.gs.store.slots[4].item = Plant.new(pt)
 
-        check_milestones()
+        introduce_plants(check_milestones())
+    else
+        ctx.input:press("pick_up_down")
+        runner.tick(ctx.input, ctx.sm, 1, 1/60)
+        elapsed = elapsed + 1/60
+        elapsed = runner.fast_forward_until(ctx, function()
+            return not ctx.sm.current._customer:arrived()
+        end, elapsed, 300)
     end
-end
 
--- ── report ─────────────────────────────────────────────────────────────────
+until all_done() or visits >= MAX_VISITS
+
+-- ── report ───────────────────────────────────────────────────────────────────
 
 local PLANT_NAMES = { "Grass", "Cactus", "Rose", "Tulip", "Daisy", "Golden Lotus" }
 
@@ -247,6 +216,7 @@ for _, s in ipairs(SCRIPTS) do
         chapter = s.chapter,
         trigger = s.trigger,
         m       = milestones[s.id .. ":" .. s.chapter],
+        earned  = milestones[s.id .. ":" .. s.chapter] and milestones[s.id .. ":" .. s.chapter].earned or 0,
     }
 end
 table.sort(sorted, function(a, b)
@@ -254,16 +224,17 @@ table.sort(sorted, function(a, b)
 end)
 
 print("[quest-sales] chapter unlock curve  (total sales at trigger, single slot):")
-print(string.format("  %-20s  %-3s  %6s  %-12s  trigger", "name", "ch", "sales", "selling"))
-print(string.rep("-", 72))
+print(string.format("  %-20s  %-3s  %6s  %8s  %-12s  trigger", "name", "ch", "sales", "$earned", "selling"))
+print(string.rep("-", 80))
 local last_n = 0
 for _, q in ipairs(sorted) do
-    local n      = q.m and q.m.n  or 0
-    local pt     = q.m and q.m.pt or 0
-    local by_pt  = q.m and q.m.by_pt or {}
+    local n      = q.m and q.m.n      or 0
+    local e      = q.m and q.m.earned or 0
+    local pt     = q.m and q.m.pt     or 0
+    local by_pt  = q.m and q.m.by_pt  or {}
     if n > last_n then last_n = n end
-    print(string.format("  %-20s  ch%d  %6d  %-12s  %s >= %d",
-        q.name, q.chapter, n,
+    print(string.format("  %-20s  ch%d  %6d  %8s  %-12s  %s >= %d",
+        q.name, q.chapter, n, "$" .. e,
         PLANT_NAMES[pt] or "?",
         PLANT_NAMES[q.trigger.plant_type], q.trigger.count))
     local parts = {}
@@ -274,7 +245,7 @@ for _, q in ipairs(sorted) do
     end
     print(string.format("  %s", table.concat(parts, "  ")))
 end
-print(string.rep("-", 72))
+print(string.rep("-", 80))
 print(string.format("  All chapters by: %d sales", last_n))
 
 for _, s in ipairs(SCRIPTS) do
