@@ -514,4 +514,123 @@ return {
             "This one I actually believe in.",
         },
     },
+
+    -- Chef Brio (viral baker, 3-chapter arc; rose → rose → daisy)
+    {
+        id              = "chef_brio",
+        chapter         = 1,
+        accessory       = "chef_fit",
+        trigger         = { plant_type = 3, count = 7 },
+        name            = "Chef Brio",
+        voice_pitch     = 1.1,
+        primary_color   = {0.75, 0.45, 0.20, 1},
+        secondary_color = {0.95, 0.85, 0.65, 1},
+        plant_type      = 3,
+        messages        = {
+            "My sous chef says I need to modernize.",
+            "She said 'floral notes.' Apparently it's a thing.",
+            "One rose. I'm putting it in the bread.",
+        },
+        after_messages  = {
+            "I have no idea what I'm doing.",
+        },
+    },
+    {
+        id              = "chef_brio",
+        chapter         = 2,
+        accessory       = "chef_fit",
+        trigger         = { plant_type = 3, count = 13 },
+        name            = "Chef Brio",
+        voice_pitch     = 1.1,
+        primary_color   = {0.75, 0.45, 0.20, 1},
+        secondary_color = {0.95, 0.85, 0.65, 1},
+        plant_type      = 3,
+        messages        = {
+            "The rose bread. I can't keep up with demand.",
+            "Three weeks on the front page. My phone is broken from notifications.",
+            "Same thing. More of it.",
+        },
+        after_messages  = {
+            "I haven't slept in four days. It's fine.",
+        },
+    },
+    {
+        id              = "chef_brio",
+        chapter         = 3,
+        accessory       = "chef_fit",
+        trigger         = { plant_type = 5, count = 30 },
+        name            = "Chef Brio",
+        voice_pitch     = 1.1,
+        primary_color   = {0.75, 0.45, 0.20, 1},
+        secondary_color = {0.95, 0.85, 0.65, 1},
+        plant_type      = 5,
+        messages        = {
+            "The rose bread trend is over.",
+            "Everyone does it now. The gas station does it.",
+            "I need a new flower. Something they haven't ruined yet.",
+        },
+        after_messages  = {
+            "Daisy bread. I'm going to make it happen.",
+        },
+    },
+
+    -- Wallace (well-meaning disaster, 3-chapter arc; rose → daisy → daisy)
+    {
+        id              = "wallace",
+        chapter         = 1,
+        accessory       = "neckbeard",
+        trigger         = { plant_type = 3, count = 25 },
+        name            = "Wallace",
+        voice_pitch     = 0.95,
+        primary_color   = {0.65, 0.30, 0.25, 1},
+        secondary_color = {0.85, 0.70, 0.55, 1},
+        plant_type      = 3,
+        messages        = {
+            "I installed a zip line in the kitchen.",
+            "She did not see the vision.",
+            "I need something to smooth this over.",
+        },
+        after_messages  = {
+            "Worth it. The zip line was worth it.",
+        },
+    },
+    {
+        id              = "wallace",
+        chapter         = 2,
+        accessory       = "neckbeard",
+        trigger         = { plant_type = 5, count = 24 },
+        name            = "Wallace",
+        voice_pitch     = 0.95,
+        primary_color   = {0.65, 0.30, 0.25, 1},
+        secondary_color = {0.85, 0.70, 0.55, 1},
+        plant_type      = 5,
+        messages        = {
+            "I got a pet raccoon.",
+            "Temporary. It's definitely temporary.",
+            "She's not talking to me. Need another flower.",
+        },
+        after_messages  = {
+            "The raccoon is very clean, actually.",
+        },
+    },
+    {
+        id              = "wallace",
+        chapter         = 3,
+        accessory       = "neckbeard",
+        trigger         = { plant_type = 5, count = 28 },
+        name            = "Wallace",
+        voice_pitch     = 0.95,
+        primary_color   = {0.65, 0.30, 0.25, 1},
+        secondary_color = {0.85, 0.70, 0.55, 1},
+        plant_type      = 5,
+        messages        = {
+            "She found the second raccoon.",
+            "I want to be clear — I was keeping them separate.",
+            "A flower. Please. The usual.",
+        },
+        after_messages  = {
+            "She says she's not surprised anymore. That feels like progress.",
+        },
+    },
+
 }
