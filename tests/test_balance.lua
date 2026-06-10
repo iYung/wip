@@ -213,6 +213,69 @@ for pt = 1, 6 do
     print(string.format("  %-12s $%d/min", plant_names[pt], gpm))
 end
 
+-- Test 3: Grafter vs buy-loop comparison
+-- Grafter GPM = gross earn (no rebuy cost); buy-loop net = gross - cost * sales
+local PLANT_DATA = require("lua/game/data/plant_data")
+print("[balance] grafter vs buy-loop per plant (60s window):")
+print(string.format("  %-12s  %8s  %10s  %10s", "plant", "sales", "grafter/min", "buy-loop/min"))
+for pt = 1, 6 do
+    math.randomseed(42)
+    local ctx3 = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx3.gs.currency        = 999999
+    ctx3.gs.unlocked_plants = { [pt] = true }
+    ctx3.gs.store.slots[4].item = Plant.new(pt)
+    ctx3.gs.seen_scripts["sage:1"] = true
+
+    local start3   = ctx3.gs.currency
+    local elapsed3 = 0
+    local sales3   = 0
+
+    while elapsed3 < 60 do
+        elapsed3 = walk_to(ctx3, WATERING_CAN_X, elapsed3)
+        ctx3.input:press("pick_up_down")
+        runner.tick(ctx3.input, ctx3.sm, 1, 1/60)
+        elapsed3 = elapsed3 + 1/60
+
+        elapsed3 = walk_to(ctx3, PLANT_SLOT_X, elapsed3)
+        elapsed3 = runner.fast_forward_until(ctx3, function()
+            return ctx3.gs.store.slots[4].item ~= nil and ctx3.gs.store.slots[4].item.ready
+        end, elapsed3)
+        ctx3.input:press("interact")
+        runner.tick(ctx3.input, ctx3.sm, 1, 1/60)
+        elapsed3 = elapsed3 + 1/60
+
+        elapsed3 = runner.fast_forward_until(ctx3, function()
+            return ctx3.gs.store.slots[4].item ~= nil and ctx3.gs.store.slots[4].item.ready
+        end, elapsed3)
+        ctx3.input:press("interact")
+        runner.tick(ctx3.input, ctx3.sm, 1, 1/60)
+        elapsed3 = elapsed3 + 1/60
+
+        elapsed3 = walk_to(ctx3, WATERING_CAN_X, elapsed3)
+        ctx3.input:press("pick_up_down")
+        runner.tick(ctx3.input, ctx3.sm, 1, 1/60)
+        elapsed3 = elapsed3 + 1/60
+
+        elapsed3 = walk_to(ctx3, PLANT_SLOT_X, elapsed3)
+        ctx3.input:press("pick_up_down")
+        runner.tick(ctx3.input, ctx3.sm, 1, 1/60)
+        elapsed3 = elapsed3 + 1/60
+
+        elapsed3 = walk_to(ctx3, CASHIER_X, elapsed3)
+        local before3 = ctx3.gs.currency
+        elapsed3 = sell_plant(ctx3, pt, elapsed3)
+        if ctx3.gs.currency > before3 then sales3 = sales3 + 1 end
+
+        ctx3.gs.store.slots[4].item = Plant.new(pt)
+    end
+
+    local gross3    = ctx3.gs.currency - start3
+    local net3      = gross3 - sales3 * PLANT_DATA[pt].cost
+    print(string.format("  %-12s  %8d  %11d  %11d", plant_names[pt], sales3, gross3, net3))
+end
+
 -- Test 4: Growth multiplier value
 local growth_tiers = {
     { mult = 1.0,  level = 0, cost = 0   },

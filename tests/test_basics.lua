@@ -3,7 +3,7 @@ local StoreScene = require("lua/game/scenes/store_scene")
 
 -- Test 1: initial state
 local ctx = runner.setup()
-assert(ctx.gs.currency == 1000, "currency should start at 1000, got " .. tostring(ctx.gs.currency))
+assert(ctx.gs.currency == 0, "currency should start at 0, got " .. tostring(ctx.gs.currency))
 assert(ctx.gs.speed_level == 0, "speed_level should start at 0")
 assert(ctx.gs.growth_level == 0, "growth_level should start at 0")
 print("PASS: initial state")
@@ -41,7 +41,7 @@ local ctx4 = runner.setup(function(gs, input, sm)
 end)
 ctx4.input:hold("move_right")
 runner.tick(ctx4.input, ctx4.sm, 60)
-assert(ctx4.gs.currency == 1000, "currency should not change from movement")
+assert(ctx4.gs.currency == 0, "currency should not change from movement")
 print("PASS: currency unchanged by movement")
 
 print("ALL TESTS PASSED")

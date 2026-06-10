@@ -82,7 +82,7 @@ end
 local ctx = runner.setup(function(gs, input, sm)
     return StoreScene.new(gs, input, sm)
 end)
-ctx.gs.currency = 600
+ctx.gs.currency = 800
 local elapsed = 0
 
 for _ = 1, 3 do
