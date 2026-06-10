@@ -696,6 +696,9 @@ The PC store carousel. Pure screen-space UI — overrides `draw()` entirely, no 
 
 **Location:** `lua/game/scenes/buy_scene.lua`
 
+**Lifecycle**
+`StoreScene._setup_store` creates exactly one `BuyScene` instance and caches it as `self._buy_scene`. The `PCStore.buy_scene_factory` closure always returns this same instance, so `selected` naturally persists across visits within a session.
+
 **Properties**
 - `selected` — index of the currently highlighted catalogue entry
 - `canvas` — 1280×720 Love2D canvas; scene draws into this each frame, then it is composited to the main canvas via the CRT shader

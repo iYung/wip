@@ -99,9 +99,9 @@ function StoreScene:_setup_store()
     local store   = gs.store
     local self_ref = self
 
+    self_ref._buy_scene = BuyScene.new(gs, self_ref.input, self_ref.scene_manager, self_ref)
     local buy_scene_factory = function()
-        local slot = gs.player:active_slot(store)
-        return BuyScene.new(gs, self_ref.input, self_ref.scene_manager, self_ref)
+        return self_ref._buy_scene
     end
 
     if not self._from_save then
@@ -200,8 +200,7 @@ function StoreScene:_wire_pc_store()
     local self_ref = self
 
     local factory = function()
-        local slot = gs.player:active_slot(store)
-        return BuyScene.new(gs, self_ref.input, self_ref.scene_manager, self_ref)
+        return self_ref._buy_scene
     end
 
     for _, slot in ipairs(store.slots) do
