@@ -62,7 +62,7 @@ function GameState.new()
     local self    = setmetatable({}, GameState)
     self.store    = Store.new(INITIAL_SLOTS, SLOT_WIDTH)
     self.player   = Player.new(SLOT_WIDTH / 2)
-    self.currency        = 1000
+    self.currency        = 0
     self.speed_level     = 0
     self.growth_level    = 0
     self.cooldown_level  = 0

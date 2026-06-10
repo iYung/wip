@@ -43,10 +43,10 @@ do
     end)
     local buy = make_buy(ctx)
     ctx.gs.currency = 100
-    buy.selected = 2   -- Cactus, cost = 9
+    buy.selected = 2   -- Cactus
     buy:_confirm()
-    assert(ctx.gs.currency == 91,
-        "currency should be 91 after buying Cactus ($9), got " .. tostring(ctx.gs.currency))
+    assert(ctx.gs.currency == 100 - PLANT_DATA[2].cost,
+        "currency should be " .. (100 - PLANT_DATA[2].cost) .. " after buying Cactus, got " .. tostring(ctx.gs.currency))
     print("PASS: shop: buy plant deducts correct cost")
 end
 
