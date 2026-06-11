@@ -315,13 +315,19 @@ function Customer:draw_bubble()
 
         -- Build rendered_lines by walking the full-text wrap points with a byte
         -- offset, so partial words never cause line-break flicker.
+        -- LÖVE's getWrap returns non-last lines with a trailing space that acts
+        -- as the word-wrap separator (no separate separator byte).  Use #line
+        -- (including trailing space) for the remaining counter so the byte math
+        -- is correct, but trim trailing whitespace before computing visible width
+        -- and before rendering.
         local rendered_lines = {}
         local remaining = idx
         for _, line in ipairs(lines) do
             if remaining <= 0 then break end
-            local visible = math.min(remaining, #line)
-            rendered_lines[#rendered_lines + 1] = string.sub(line, 1, visible)
-            remaining = remaining - #line - 1
+            local trimmed = line:match("^(.-)%s*$") or line
+            local visible = math.min(remaining, #trimmed)
+            rendered_lines[#rendered_lines + 1] = string.sub(trimmed, 1, visible)
+            remaining = remaining - #line
         end
 
         love.graphics.setColor(1, 1, 1, 1)
@@ -331,7 +337,9 @@ function Customer:draw_bubble()
 
         love.graphics.setColor(0.08, 0.07, 0.10, 0.95)
         for i, line in ipairs(rendered_lines) do
-            love.graphics.print(line, box_x + PAD, box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h)
+            local lx = box_x + PAD
+            local ly = box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h
+            love.graphics.print(line, lx, ly)
         end
         love.graphics.setColor(1, 1, 1, 1)
     end

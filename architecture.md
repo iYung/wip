@@ -136,6 +136,8 @@ love.update(dt)
 love.draw()
   scene_manager:draw()
     -- internally: camera:attach() → drawer:draw() → camera:detach()
+  -- scene is rendered into a 1280×720 canvas, then composited to the
+  -- physical window via love.graphics.draw(canvas, ox, oy, 0, scale, scale).
 ```
 
 ---

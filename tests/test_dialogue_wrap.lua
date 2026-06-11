@@ -11,11 +11,13 @@ local fake_font = {}
 fake_font.getHeight = function() return 16 end
 fake_font.getWidth  = function(_, s) return #s * PX end
 fake_font.getWrap   = function(_, text, limit)
+    -- Matches real LÖVE behaviour: the separator space is kept as a trailing
+    -- character on each non-last wrapped line (no separate separator byte).
     local lines, cur = {}, ""
     for word in text:gmatch("%S+") do
         local candidate = cur == "" and word or (cur .. " " .. word)
         if #candidate * PX > limit and cur ~= "" then
-            lines[#lines + 1] = cur
+            lines[#lines + 1] = cur .. " "  -- trailing space = real LÖVE
             cur = word
         else
             cur = candidate
@@ -40,7 +42,10 @@ end
 
 local function capture_draw(c)
     local printed = {}
-    love.graphics.print = function(text) printed[#printed + 1] = text end
+    love.graphics.print = function(text)
+        -- ignore single-period prints from the period-widening pass
+        if text ~= "." then printed[#printed + 1] = text end
+    end
     c:draw_bubble()
     love.graphics.print = function() end
     return printed
@@ -109,6 +114,60 @@ do
     assert(#printed == 0,
         "reveal_index=0 should print nothing, got " .. #printed)
     print("PASS: dialogue wrap: reveal_index=0 prints nothing")
+end
+
+-- Test: period at end of last line is included at full reveal
+-- Regression for canvas nearest-neighbour aliasing bug: the period was the
+-- most commonly "missing" character because its glyph is only ~2 px wide.
+-- The rendering code must include it in rendered_lines even at the very last
+-- reveal step.
+do
+    local TEXT = "Hello world this is a long sentence."
+    -- At 8px/char the whole string = 36*8 = 288px ≤ 332 → single line
+    local c = make_customer_for_draw(TEXT, #TEXT)
+    local printed = capture_draw(c)
+    assert(#printed == 1,
+        "single-line period text should produce 1 line, got " .. #printed)
+    assert(printed[1] == TEXT,
+        "full reveal of period-terminated line must include the period, got '" .. tostring(printed[1]) .. "'")
+    print("PASS: dialogue wrap: period at end of last line included at full reveal")
+end
+
+-- Test: period at end of wrapped line 2 included at full reveal
+do
+    local TEXT = "Hello world this is a long message that wraps here."
+    -- line 1: "Hello world this is a long message that" (39 chars = 312px)
+    -- "wraps" would push to 45 chars = 360px > 332 → wraps
+    -- line 2: "wraps here." (11 chars)
+    local c = make_customer_for_draw(TEXT, #TEXT)
+    local printed = capture_draw(c)
+    assert(#printed == 2,
+        "two-line period text should produce 2 lines, got " .. #printed)
+    assert(printed[2] == "wraps here.",
+        "last line at full reveal must end with period, got '" .. tostring(printed[2]) .. "'")
+    print("PASS: dialogue wrap: period at end of wrapped line 2 included at full reveal")
+end
+
+-- Test: period at end of a middle (non-first, non-last) wrapped line
+do
+    -- fake font, 8px/char, limit=332 (41.5 chars)
+    -- "The very long first sentence that ends." = 39 chars = 312px ≤ 332
+    -- Adding " New" = 43 chars = 344px > 332 → wraps after "ends."
+    -- line 1: "The very long first sentence that ends."  (39 chars, ends with period)
+    -- line 2: "New text here that is also pretty long."  (39 chars, ends with period)
+    -- line 3: "Final line."                              (11 chars)
+    local TEXT = "The very long first sentence that ends. New text here that is also pretty long. Final line."
+    local c = make_customer_for_draw(TEXT, #TEXT)
+    local printed = capture_draw(c)
+    assert(#printed == 3,
+        "three-line text should produce 3 printed lines, got " .. #printed)
+    assert(printed[1] == "The very long first sentence that ends.",
+        "middle-line period test: line 1 wrong: '" .. tostring(printed[1]) .. "'")
+    assert(printed[2] == "New text here that is also pretty long.",
+        "middle-line period test: line 2 wrong: '" .. tostring(printed[2]) .. "'")
+    assert(printed[3] == "Final line.",
+        "middle-line period test: line 3 wrong: '" .. tostring(printed[3]) .. "'")
+    print("PASS: dialogue wrap: period at end of middle wrapped line included at full reveal")
 end
 
 print("ALL TESTS PASSED")
