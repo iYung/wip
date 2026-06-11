@@ -136,6 +136,12 @@ love.update(dt)
 love.draw()
   scene_manager:draw()
     -- internally: camera:attach() → drawer:draw() → camera:detach()
+  -- scene is rendered into a 1280×720 canvas, then composited to the
+  -- physical window via love.graphics.draw(canvas, ox, oy, 0, scale, scale).
+  -- canvas filter is ("linear", "nearest"): linear min-filter prevents
+  -- sub-pixel glyphs (e.g. the 2 px period at 16 px) from being dropped by
+  -- nearest-neighbour sampling when the window is smaller than 1280×720;
+  -- nearest mag-filter keeps the sharp pixel-art look at 2× and larger.
 ```
 
 ---
