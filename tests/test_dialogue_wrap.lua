@@ -40,7 +40,10 @@ end
 
 local function capture_draw(c)
     local printed = {}
-    love.graphics.print = function(text) printed[#printed + 1] = text end
+    love.graphics.print = function(text)
+        -- ignore single-period prints from the period-widening pass
+        if text ~= "." then printed[#printed + 1] = text end
+    end
     c:draw_bubble()
     love.graphics.print = function() end
     return printed

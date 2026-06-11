@@ -331,7 +331,18 @@ function Customer:draw_bubble()
 
         love.graphics.setColor(0.08, 0.07, 0.10, 0.95)
         for i, line in ipairs(rendered_lines) do
-            love.graphics.print(line, box_x + PAD, box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h)
+            local lx = box_x + PAD
+            local ly = box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h
+            love.graphics.print(line, lx, ly)
+            -- Re-draw each period 1 px to the right so the ~2 px glyph becomes
+            -- ~3 px wide, surviving nearest-neighbour canvas downsampling.
+            local cx = 0
+            for j = 1, #line do
+                if line:sub(j, j) == "." then
+                    love.graphics.print(".", lx + cx + 1, ly)
+                end
+                cx = cx + font:getWidth(line:sub(j, j))
+            end
         end
         love.graphics.setColor(1, 1, 1, 1)
     end
