@@ -323,6 +323,17 @@ function Customer:draw_bubble()
             rendered_lines[#rendered_lines + 1] = string.sub(line, 1, visible)
             remaining = remaining - #line - 1
         end
+        -- DEBUG: print rendered_lines once when fully revealed
+        if idx == #self._full_text and not self._debug_printed then
+            self._debug_printed = true
+            io.write("DBG lines(" .. #rendered_lines .. "):")
+            for di, dl in ipairs(rendered_lines) do
+                io.write(" [" .. di .. "]='" .. dl .. "'")
+            end
+            io.write("  full='" .. self._full_text .. "'\n")
+            io.flush()
+        end
+        if idx < #self._full_text then self._debug_printed = nil end
 
         love.graphics.setColor(1, 1, 1, 1)
         UI.draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
