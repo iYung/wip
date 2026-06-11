@@ -125,7 +125,7 @@ function BuyScene:update(dt)
 
     if input:pressed("interact") then
         self:_confirm()
-    elseif input:pressed("pick_up_down") then
+    elseif input:pressed("move_down") then
         self.scene_manager:switch(self.store_scene)
     end
 end
@@ -402,7 +402,7 @@ function BuyScene:draw()
     local left_key  = (self.input:key_for("move_left")    or "a"):upper()
     local right_key = (self.input:key_for("move_right")   or "d"):upper()
     local f_key     = (self.input:key_for("interact")     or "p"):upper()
-    local e_key     = (self.input:key_for("pick_up_down") or "o"):upper()
+    local e_key     = (self.input:key_for("move_down") or "o"):upper()
     local hints = {
         left_key .. "/" .. right_key .. ": CYCLE",
         f_key .. ": BUY",

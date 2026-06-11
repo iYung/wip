@@ -11,8 +11,8 @@ local function _visible_items(opaque)
     return result
 end
 
-local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","pick_up_down","interact"}
-local _ACTION_LABELS = {"move up","move down","move left","move right","pick up/down","interact"}
+local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","interact"}
+local _ACTION_LABELS = {"move up","move down","move left","move right","interact"}
 
 local _MODIFIERS = {
     lshift=true, rshift=true, lctrl=true, rctrl=true,
@@ -77,7 +77,7 @@ function SettingsMenu.new(settings_state, input, on_save, on_leave)
     self._font_btn    = Fonts.new(22)
     self._font_vol    = Fonts.new(15)
     self._btn_y0      = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
-    self._sub_btn_y0  = H / 2 - #_ACTION_LIST * BTN_GAP / 2 - BTN_H / 2  -- centres 7 sub-screen rows
+    self._sub_btn_y0  = H / 2 - #_ACTION_LIST * BTN_GAP / 2 - BTN_H / 2  -- centres 5 sub-screen rows
     return self
 end
 
@@ -95,7 +95,6 @@ function SettingsMenu:open(opaque)
     self._prev_left    = love.keyboard.isDown("left")  or love.keyboard.isDown(kb.move_left  or "a")
     self._prev_right   = love.keyboard.isDown("right") or love.keyboard.isDown(kb.move_right or "d")
     self._prev_confirm = love.keyboard.isDown(kb.interact     or "p")
-                      or love.keyboard.isDown(kb.pick_up_down or "o")
                       or love.keyboard.isDown("return") or love.keyboard.isDown("space")
     self._prev_escape  = love.keyboard.isDown("escape")
 end
@@ -118,8 +117,7 @@ function SettingsMenu:update(dt)
 
         local up      = love.keyboard.isDown("up")   or love.keyboard.isDown(self._state.keybinds.move_up   or "w")
         local down    = love.keyboard.isDown("down") or love.keyboard.isDown(self._state.keybinds.move_down or "s")
-        local confirm = love.keyboard.isDown(self._state.keybinds.pick_up_down or "o")
-                     or love.keyboard.isDown(self._state.keybinds.interact     or "p")
+        local confirm = love.keyboard.isDown(self._state.keybinds.interact     or "p")
                      or love.keyboard.isDown("return") or love.keyboard.isDown("space")
         local escape  = love.keyboard.isDown("escape")
 
@@ -161,7 +159,6 @@ function SettingsMenu:update(dt)
     local left    = love.keyboard.isDown("left")  or love.keyboard.isDown(kb.move_left  or "a")
     local right   = love.keyboard.isDown("right") or love.keyboard.isDown(kb.move_right or "d")
     local confirm = love.keyboard.isDown(kb.interact     or "p")
-                 or love.keyboard.isDown(kb.pick_up_down or "o")
                  or love.keyboard.isDown("return") or love.keyboard.isDown("space")
     local escape  = love.keyboard.isDown("escape")
 
@@ -226,8 +223,7 @@ function SettingsMenu:_confirm()
         -- Snapshot so keys held at transition time don't immediately fire in the sub-screen
         self._prev_sub_up      = love.keyboard.isDown("up")   or love.keyboard.isDown(self._state.keybinds.move_up   or "w")
         self._prev_sub_down    = love.keyboard.isDown("down") or love.keyboard.isDown(self._state.keybinds.move_down or "s")
-        self._prev_sub_confirm = love.keyboard.isDown(self._state.keybinds.pick_up_down or "o")
-                              or love.keyboard.isDown(self._state.keybinds.interact     or "p")
+        self._prev_sub_confirm = love.keyboard.isDown(self._state.keybinds.interact     or "p")
                               or love.keyboard.isDown("return") or love.keyboard.isDown("space")
         self._prev_sub_escape  = love.keyboard.isDown("escape")
     elseif self.selected == 5 then

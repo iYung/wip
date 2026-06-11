@@ -19,7 +19,7 @@ do
     assert(ctx.gs.store.slots[1].item ~= nil, "precondition: slot 1 has watering can")
     local wc = ctx.gs.store.slots[1].item
 
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.gs.player.held_item == wc,
@@ -39,7 +39,7 @@ do
     ctx.gs.store.slots[1].item = nil
     ctx.gs.player.x = 700   -- slot 4 center (empty)
 
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_down")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.gs.store.slots[4].item == wc,
@@ -59,7 +59,7 @@ do
     ctx.gs.store.slots[4].item = plant
     ctx.gs.player.x = 700
 
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.gs.player.held_item == nil,
@@ -80,7 +80,7 @@ do
     ctx.gs.store.slots[4].item = plant
     ctx.gs.player.x = 700
 
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.gs.player.held_item == plant,

@@ -26,13 +26,12 @@ assert(s.fullscreen == false, "second toggle should set fullscreen back to false
 assert(_setFullscreen_last == false, "second toggle should call love.window.setFullscreen(false)")
 print("PASS: toggle_fullscreen() turns fullscreen off")
 
--- Test 4: keybind defaults — all six bindings present on a fresh SettingsState
+-- Test 4: keybind defaults — all five bindings present on a fresh SettingsState
 local s2 = SettingsState.new()
 assert(s2.keybinds.move_up    == "w", "default move_up should be 'w'")
 assert(s2.keybinds.move_down  == "s", "default move_down should be 's'")
 assert(s2.keybinds.move_left  == "a", "default move_left should be 'a'")
 assert(s2.keybinds.move_right == "d", "default move_right should be 'd'")
-assert(s2.keybinds.pick_up_down == "o", "default pick_up_down should be 'o'")
 assert(s2.keybinds.interact   == "p", "default interact should be 'p'")
 print("PASS: keybind defaults are correct")
 

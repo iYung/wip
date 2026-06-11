@@ -14,7 +14,7 @@ do
     local wc = ctx.gs.store.slots[1].item
 
     -- Pick up the WateringCan from slot 1
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.gs.player.held_item == wc,
@@ -25,8 +25,8 @@ do
     -- Move player to x=300 (slot 2 center, GarbageBin)
     ctx.gs.player.x = 300
 
-    -- Press pick_up_down again to swap
-    ctx.input:press("pick_up_down")
+    -- Press move_up again to swap
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     local slot2 = ctx.gs.store.slots[2]
@@ -49,7 +49,7 @@ do
     local scene = ctx.sm.current
 
     -- Give ctx.input a _map and key_for method so _hud_labels can read key names
-    ctx.input._map = { pick_up_down = {"e"}, interact = {"f"} }
+    ctx.input._map = { move_up = {"e"}, move_down = {"s"}, interact = {"f"} }
     ctx.input.key_for = function(self, action)
         local keys = self._map[action]
         return keys and keys[1]
@@ -62,9 +62,11 @@ do
     ctx.gs.player.x = 300  -- slot 2: GarbageBin
 
     local hud = scene:_hud_labels()
-    assert(hud.e == "E: SWAP WITH WATERING CAN",
-        "e label should be 'E: SWAP WITH WATERING CAN', got " .. tostring(hud.e))
-    print("PASS: swap: _hud_labels shows SWAP label with default key")
+    assert(hud.up == "E/S: SWAP WITH GARBAGE BIN",
+        "up label should be 'E/S: SWAP WITH GARBAGE BIN', got " .. tostring(hud.up))
+    assert(hud.down == nil,
+        "down label should be nil when swap is shown combined, got " .. tostring(hud.down))
+    print("PASS: swap: _hud_labels shows SWAP labels with default key")
 end
 
 -- Test: _hud_labels shows SWAP label with remapped key
@@ -75,7 +77,7 @@ do
     local scene = ctx.sm.current
 
     -- Give ctx.input a _map and key_for method
-    ctx.input._map = { pick_up_down = {"e"}, interact = {"f"} }
+    ctx.input._map = { move_up = {"e"}, move_down = {"s"}, interact = {"f"} }
     ctx.input.key_for = function(self, action)
         local keys = self._map[action]
         return keys and keys[1]
@@ -87,13 +89,15 @@ do
     ctx.gs.store.slots[1].item = nil
     ctx.gs.player.x = 300  -- slot 2: GarbageBin
 
-    -- Remap pick_up_down to "g"
-    ctx.input._map["pick_up_down"] = {"g"}
+    -- Remap move_up to "g"
+    ctx.input._map["move_up"] = {"g"}
 
     local hud = scene:_hud_labels()
-    assert(hud.e == "G: SWAP WITH WATERING CAN",
-        "e label should be 'G: SWAP WITH WATERING CAN' after remap, got " .. tostring(hud.e))
-    print("PASS: swap: _hud_labels shows SWAP label with remapped key")
+    assert(hud.up == "G/S: SWAP WITH GARBAGE BIN",
+        "up label should be 'G/S: SWAP WITH GARBAGE BIN' after remap, got " .. tostring(hud.up))
+    assert(hud.down == nil,
+        "down label should be nil when swap is shown combined, got " .. tostring(hud.down))
+    print("PASS: swap: _hud_labels shows SWAP labels with remapped key")
 end
 
 print("ALL TESTS PASSED")

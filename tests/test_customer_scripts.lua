@@ -119,7 +119,7 @@ do
     end, elapsed)
 
     ctx.gs.player.x = -200
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.gs.seen_scripts["dottie:1"] == nil,
@@ -144,7 +144,7 @@ do
     end, elapsed)
 
     ctx.gs.player.x = -200
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.sm.current._script_cooldowns["dottie:1"] == 3,
@@ -171,7 +171,7 @@ do
         return ctx.sm.current._customer:arrived()
     end, elapsed)
     ctx.gs.player.x = -200
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
     assert(ctx.sm.current._script_cooldowns["dottie:1"] == 3, "precondition: cooldown=3")
 
@@ -259,7 +259,7 @@ do
     print("PASS: scripts: after_messages play after sale before walk-out")
 end
 
--- Test: pick_up_down during talking_after does NOT dismiss the customer
+-- Test: move_up during talking_after does NOT dismiss the customer
 do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
@@ -288,15 +288,15 @@ do
 
     assert(ctx.sm.current._customer.state == "talking_after", "precondition: talking_after")
 
-    -- press pick_up_down in the cashier zone while in talking_after
-    ctx.input:press("pick_up_down")
+    -- press move_up in the cashier zone while in talking_after
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.sm.current._customer.state == "talking_after",
-        "pick_up_down during talking_after should NOT dismiss customer, got " .. tostring(ctx.sm.current._customer.state))
+        "move_up during talking_after should NOT dismiss customer, got " .. tostring(ctx.sm.current._customer.state))
     assert(ctx.sm.current._script_cooldowns["dottie:1"] == nil,
-        "no cooldown should be set when pick_up_down is a no-op during talking_after")
-    print("PASS: scripts: pick_up_down during talking_after does not dismiss customer")
+        "no cooldown should be set when move_up is a no-op during talking_after")
+    print("PASS: scripts: move_up during talking_after does not dismiss customer")
 end
 
 -- Test: talking_after state reached via show/arrive/serve
