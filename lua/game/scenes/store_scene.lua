@@ -495,8 +495,7 @@ function StoreScene:_hud_labels()
         up_label = up_key .. "/" .. down_key .. ": DISMISS"
     elseif player.x >= 0 then
         if held and slot_item and slot_item.carriable then
-            up_label   = up_key   .. ": SWAP WITH " .. slot_item.name:upper()
-            down_label = down_key .. ": SWAP WITH " .. slot_item.name:upper()
+            up_label = up_key .. "/" .. down_key .. ": SWAP WITH " .. slot_item.name:upper()
         elseif not held and slot_item and slot_item.carriable then
             up_label = up_key .. ": PICK UP"
         elseif held and slot and not slot_item then
