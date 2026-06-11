@@ -62,7 +62,7 @@ function love.load()
     love.window.setIcon(love.image.newImageData("assets/images/icon.png"))
 
     canvas = love.graphics.newCanvas(LOGICAL_W, LOGICAL_H)
-    canvas:setFilter("linear", "nearest")
+    canvas:setFilter("nearest", "nearest")
     love.graphics.setNewFont("assets/fonts/font.ttf", 16, "light")
 
     if _visual_mode then
