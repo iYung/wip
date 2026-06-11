@@ -357,28 +357,16 @@ function SettingsMenu:draw()
             love.graphics.printf("SFX Volume", BTN_X, ty, LABEL_W, "center")
             -- Value bar
             local vx  = BTN_X + LABEL_W + BAR_GAP + 5
-            local vty = y + (BTN_H - self._font_vol:getHeight()) / 2
             love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
-            local vol = self._state.sfx_volume
-            love.graphics.setFont(self._font_vol)
-            if vol > 0   then love.graphics.printf("<", vx + ARROW_PAD, vty, VAL_W,              "left")  end
-            if vol < 100 then love.graphics.printf(">", vx,             vty, VAL_W - ARROW_PAD, "right") end
-            love.graphics.printf(tostring(vol) .. "%", vx, vty, VAL_W, "center")
-            love.graphics.setFont(self._font_btn)
+            love.graphics.printf(tostring(self._state.sfx_volume) .. "%", vx, ty, VAL_W, "center")
         elseif i == 3 then
             -- Label bar
             love.graphics.draw(img, BTN_X, y, 0, LABEL_SX, 1)
             love.graphics.printf("Music Volume", BTN_X, ty, LABEL_W, "center")
             -- Value bar
             local vx  = BTN_X + LABEL_W + BAR_GAP + 5
-            local vty = y + (BTN_H - self._font_vol:getHeight()) / 2
             love.graphics.draw(img, vx, y, 0, VAL_SX, 1)
-            local vol = self._state.music_volume
-            love.graphics.setFont(self._font_vol)
-            if vol > 0   then love.graphics.printf("<", vx + ARROW_PAD, vty, VAL_W,              "left")  end
-            if vol < 100 then love.graphics.printf(">", vx,             vty, VAL_W - ARROW_PAD, "right") end
-            love.graphics.printf(tostring(vol) .. "%", vx, vty, VAL_W, "center")
-            love.graphics.setFont(self._font_btn)
+            love.graphics.printf(tostring(self._state.music_volume) .. "%", vx, ty, VAL_W, "center")
         else
             local label = (i == 5 and self._saved) and "Saved!"
                        or (i == 7 and not self._opaque) and "Main Menu"
