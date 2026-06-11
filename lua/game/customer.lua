@@ -334,14 +334,16 @@ function Customer:draw_bubble()
             local lx = box_x + PAD
             local ly = box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h
             love.graphics.print(line, lx, ly)
-            -- Re-draw each period 1 px to the right so the ~2 px glyph becomes
-            -- ~3 px wide, surviving nearest-neighbour canvas downsampling.
-            local cx = 0
+            -- Re-draw each period shifted right to widen the ~2 px glyph so it
+            -- survives nearest-neighbour canvas downsampling.  Use the full-prefix
+            -- width so kerning is accounted for, then print at +1 and +2 to get
+            -- ~4 px of ink coverage.
             for j = 1, #line do
                 if line:sub(j, j) == "." then
-                    love.graphics.print(".", lx + cx + 1, ly)
+                    local px = font:getWidth(line:sub(1, j - 1))
+                    love.graphics.print(".", lx + px + 1, ly)
+                    love.graphics.print(".", lx + px + 2, ly)
                 end
-                cx = cx + font:getWidth(line:sub(j, j))
             end
         end
         love.graphics.setColor(1, 1, 1, 1)

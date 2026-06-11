@@ -146,4 +146,26 @@ do
     print("PASS: dialogue wrap: period at end of wrapped line 2 included at full reveal")
 end
 
+-- Test: period at end of a middle (non-first, non-last) wrapped line
+do
+    -- fake font, 8px/char, limit=332 (41.5 chars)
+    -- "The very long first sentence that ends." = 39 chars = 312px ≤ 332
+    -- Adding " New" = 43 chars = 344px > 332 → wraps after "ends."
+    -- line 1: "The very long first sentence that ends."  (39 chars, ends with period)
+    -- line 2: "New text here that is also pretty long."  (39 chars, ends with period)
+    -- line 3: "Final line."                              (11 chars)
+    local TEXT = "The very long first sentence that ends. New text here that is also pretty long. Final line."
+    local c = make_customer_for_draw(TEXT, #TEXT)
+    local printed = capture_draw(c)
+    assert(#printed == 3,
+        "three-line text should produce 3 printed lines, got " .. #printed)
+    assert(printed[1] == "The very long first sentence that ends.",
+        "middle-line period test: line 1 wrong: '" .. tostring(printed[1]) .. "'")
+    assert(printed[2] == "New text here that is also pretty long.",
+        "middle-line period test: line 2 wrong: '" .. tostring(printed[2]) .. "'")
+    assert(printed[3] == "Final line.",
+        "middle-line period test: line 3 wrong: '" .. tostring(printed[3]) .. "'")
+    print("PASS: dialogue wrap: period at end of middle wrapped line included at full reveal")
+end
+
 print("ALL TESTS PASSED")
