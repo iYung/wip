@@ -80,6 +80,11 @@ local STARTING_CURRENCY = 10
 local ctx = runner.setup(function(gs, input, sm)
     return StoreScene.new(gs, input, sm)
 end)
+ctx.input._map = { pick_up_down = {"o"}, interact = {"p"} }
+ctx.input.key_for = function(self, action)
+    local keys = self._map[action]
+    return keys and keys[1]
+end
 ctx.gs.currency = STARTING_CURRENCY
 
 local elapsed    = 0
@@ -108,7 +113,6 @@ local function check_milestones()
                     local snap = {}
                     for p, c in pairs(sales_by_pt) do snap[p] = c end
                     milestones[key] = { n = sales.n, pt = last_sold, by_pt = snap, earned = earned.n }
-                    ctx.gs.seen_scripts[key] = true
                     fired[#fired + 1] = s
                 end
             end
@@ -128,7 +132,7 @@ end
 
 local function all_done()
     for _, s in ipairs(SCRIPTS) do
-        if not milestones[s.id .. ":" .. s.chapter] then return false end
+        if not ctx.gs.seen_scripts[s.id .. ":" .. s.chapter] then return false end
     end
     return true
 end
@@ -250,7 +254,8 @@ print(string.format("  All chapters by: %d sales", last_n))
 
 for _, s in ipairs(SCRIPTS) do
     local key = s.id .. ":" .. s.chapter
-    assert(milestones[key], "chapter not reached: " .. key)
+    assert(milestones[key],            "chapter not triggered: " .. key)
+    assert(ctx.gs.seen_scripts[key],   "chapter not sold: "      .. key)
 end
 
 print("PASS")

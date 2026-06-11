@@ -140,6 +140,8 @@ See open questions in `game-design.md`.
 
 ### Recently completed
 
+- **test_quest_sales scripted-customer simulation** — test previously pre-marked `seen_scripts` at threshold-crossing time, so scripted characters never actually appeared; removed the pre-mark so `StoreScene._next_customer_cfg` queues scripted characters naturally when their trigger is met; `all_done()` and the final assert now check `ctx.gs.seen_scripts` (set by the game engine on actual sale) instead of the local milestone table; `introduce_plants` still unlocks each character's desired plant type at threshold time so the plant is available when they walk in; also fixed `--visual` mode crash caused by `HeadlessInput` missing `key_for` (added stub matching `test_hud_labels.lua`)
+
 - **Settings persistence** — user settings (`sfx_volume`, `music_volume`, `fullscreen`, keybinds) now survive across sessions; `Save.write_settings`/`read_settings` write to a separate `settings.dat` (game-progress `save.dat` is untouched); `SettingsState` gains `to_save()` and `from_save(data)` — the latter applies values through the real setters so Sound and the window update immediately on load; settings are written on quit and when leaving the settings menu; 10 headless tests in `tests/test_settings_persistence.lua`
 
 - **Inter font** — replaced Love2D's default Vera font with `assets/fonts/font.ttf` (Inter Variable) across all text-rendering sites; `lua/core/fonts.lua` is a generic `from(path, hinting)` factory; `lua/game/fonts.lua` binds it to the game's font file and `"light"` hinting; `main.lua` sets it as the default font so `StoreScene` HUD and customer speech bubbles inherit it automatically; `buy_scene`, `settings_menu`, and `start_scene` use `Fonts.new(size)` for their explicit fonts
