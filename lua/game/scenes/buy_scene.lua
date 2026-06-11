@@ -37,7 +37,7 @@ CATALOGUE[#CATALOGUE + 1] = {
 }
 CATALOGUE[#CATALOGUE + 1] = {
     label       = "Grafter",
-    description = "Clones a stage-3 plant.\nPress F to load, E to place clone.",
+    description = "Clones a fully grown plant\ninto two seedlings.",
     cost        = 0,
     kind        = "tool_grafter",
     image       = A.grafter_empty,
