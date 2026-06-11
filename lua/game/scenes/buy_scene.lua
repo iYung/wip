@@ -401,7 +401,7 @@ function BuyScene:draw()
 
     local left_key  = (self.input:key_for("move_left")    or "a"):upper()
     local right_key = (self.input:key_for("move_right")   or "d"):upper()
-    local f_key     = (self.input:key_for("interact")     or "p"):upper()
+    local f_key     = (self.input:key_for("interact")     or "space"):upper()
     local e_key     = (self.input:key_for("move_down") or "o"):upper()
     local hints = {
         left_key .. "/" .. right_key .. ": CYCLE",
