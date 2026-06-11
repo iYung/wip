@@ -477,7 +477,7 @@ function StoreScene:_hud_labels()
 
     local up_key   = (self.input:key_for("move_up")   or "w"):upper()
     local down_key = (self.input:key_for("move_down") or "s"):upper()
-    local f_key = (self.input:key_for("interact")     or "p"):upper()
+    local f_key = (self.input:key_for("interact")     or "space"):upper()
 
     local slot_label
     if player.x >= 0 then
