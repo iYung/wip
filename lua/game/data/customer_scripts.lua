@@ -11,12 +11,13 @@ return {
         secondary_color = {0.15, 0.25, 0.50, 1},
         plant_type     = 3,
         messages       = {
-            "Hello, neighbor. I'm running for office.",
-            "I'd like you to keep me in mind.",
-            "I want to be elegant. But still willing to fight. A rose feels right.",
+            "Hello, neighbor. I'm Bloom but with your help, maybe you'll call me Mayor Bloom soon!",
+            "I'm running for office of Frogtown and would love your help.",
+            "My PR agent tells me I need to run with an image. Something I can campaign with.",
+            "Elegant. Charming. But still prickly in the right situations. A rose feels right.",
         },
         after_messages = {
-            "Remember the name.",
+            "Thank you! I promise this rose and I are headed for great things!",
         },
     },
     {
@@ -30,12 +31,13 @@ return {
         secondary_color = {0.15, 0.25, 0.50, 1},
         plant_type     = 4,
         messages       = {
+            "Hello again. Remember that rose I got?",
             "My campaign manager says the rose was a mistake.",
-            "Too tough. Too pointed. Wrong message.",
-            "We're going softer. Can I get a tulip?",
+            "Apparently I was too thorny. A pain in the side. Wrong message.",
+            "I need a rebrand. We're going softer. Can I get a tulip?",
         },
         after_messages = {
-            "Approachable. That's the word she used.",
+            "Thank you! I promise this tulip and I are headed for great things!",
         },
     },
     {
@@ -49,12 +51,13 @@ return {
         secondary_color = {0.15, 0.25, 0.50, 1},
         plant_type     = 5,
         messages       = {
-            "Another rebrand. Campaign manager's orders.",
-            "We need to appeal to the kids.",
-            "She says daisies poll well with the youth demographic.",
+            "Hello, good to see you again!",
+            "Have you seen the news? Tadpoles are the number one voting issue now.",
+            "We need to appeal to the kids this election so we're going for another rebrand.",
+            "My manager says daisies poll well with the tadpole demographic.",
         },
         after_messages = {
-            "I just go where the numbers point.",
+            "Thank you! I promise this daisy and I are headed for great things!",
         },
     },
 
@@ -70,13 +73,13 @@ return {
         secondary_color = {0.25, 0.20, 0.40, 1},
         plant_type     = 6,
         messages       = {
-            "I've come a long way.",
-            "They say you can grow the Golden Lotus.",
-            "I'll pay handsomely. Do we have a deal?",
+            "...",
+            "The Covenant of Flowers hears only you can grow the fabled Golden Lotus.",
+            "The future is at stake. The time is now.",
         },
         after_messages = {
-            "Pleasure doing business.",
-            "I may return.",
+            "...",
+            "The Covenant of Flowers thanks you.",
         },
     },
     {
@@ -90,12 +93,16 @@ return {
         secondary_color = {0.25, 0.20, 0.40, 1},
         plant_type     = 6,
         messages       = {
-            "The first one... I gave it away.",
-            "To someone who needed it more than I did.",
-            "I won't say who. I need another.",
+            "...",
+            "The Covenant of Flowers wishes to tell you...",
+            "That we may have lost the previous Golden Lotus in shipping.",
+            "The future is still at stake. The time is now.",
         },
         after_messages = {
-            "This one I'm keeping.",
+            "...",
+            "The Covenant of Flowers thanks you.",
+            "...",
+            "The Covenant of Flowers asks to keep this to yourself.",
         },
     },
 
@@ -111,11 +118,13 @@ return {
         secondary_color = {0.30, 0.55, 0.35, 1},
         plant_type      = 4,
         messages        = {
-            "My dad gave me money for something important.",
-            "I want a tulip.",
+            "OMFG R U 4 REAL",
+            "I SAW THIS SHOP ON FROGSTA AND I HAD TO GOOOOO",
+            "DO U HAVE TULIPS? ITS TRENDING ATM",
         },
         after_messages  = {
-            "He's going to love it.",
+            "TYSM I LUV DISSSS",
+            "TTYL!",
         },
     },
     {
@@ -129,11 +138,13 @@ return {
         secondary_color = {0.30, 0.55, 0.35, 1},
         plant_type      = 4,
         messages        = {
-            "I forgot to get one more.",
-            "It's fine. I just forgot.",
+            "HIIIIII ITS ME AGAIN",
+            "I SHOWED THAT TULIP TO MY FRIENDS AND THEY WERE LIKE",
+            "SLAYYY GET ME ONEEE",
+            "CAN I GET 1 MORE PLSSS",
         },
         after_messages  = {
-            "Okay. Now I'm set.",
+            "TYYY U DA BEST!",
         },
     },
 
@@ -149,12 +160,12 @@ return {
         secondary_color = {0.60, 0.65, 0.60, 1},
         plant_type      = 5,
         messages        = {
-            "RECENTLY UNEMPLOYED. Organization: defeated.",
-            "Someone used prickly ball. Surrounded HQ with barbed wire. Very effective.",
-            "We seek forgiveness. I am told you have something for that.",
+            "RECENTLY UNEMPLOYED. ORGANISATION: EVIL FROG INC. STATE: DEFEATED.",
+            "PRICKLY BALL WAS USED TO DEFEAT GUARDS. HQ SURROUNDED BY BARBS. MOST EFFECTIVE.",
+            "NEW PLAN: SEEK FORGIVENESS FROM FROGTOWN. REQUESTING GIFT TO AID PLAN.",
         },
         after_messages  = {
-            "FORGIVENESS ACQUIRED. This unit thanks you.",
+            "FORGIVENESS ACQUIRED. THIS UNIT THANKS YOU.",
         },
     },
 
@@ -169,12 +180,12 @@ return {
         secondary_color = {0.60, 0.65, 0.60, 1},
         plant_type      = 1,
         messages        = {
-            "UPDATE: New employment acquired.",
-            "Current occupation: gardener. It is peaceful.",
-            "I will need grass. For the garden.",
+            "UPDATE: NEW EMPLOYMENT ACQUIRED.",
+            "OCCUPATION: GARDENER. MUCH PEACEFUL.",
+            "NEED: GRASS. REASON: NEW GARDEN.",
         },
         after_messages  = {
-            "Gardening suits this unit.",
+            "THIS UNIT THANKS YOU.",
         },
     },
 
@@ -189,12 +200,12 @@ return {
         secondary_color = {0.60, 0.65, 0.60, 1},
         plant_type      = 4,
         messages        = {
-            "PROMOTION ACHIEVED. Title: Head Gardener.",
-            "This unit now oversees the whole garden. Many plants. Much responsibility.",
-            "A celebration is appropriate. I would like a tulip.",
+            "PROMOTION ACHIEVED. TITLE: HEAD GARDENER.",
+            "THIS UNIT NOW OVERSEES WHOLE GARDEN.",
+            "CELEBRATION REQUESTED.",
         },
         after_messages  = {
-            "Excellent. It will go in the center.",
+            "MUCH EXCITEMENT.",
         },
     },
 
@@ -210,12 +221,13 @@ return {
         secondary_color = {0.40, 0.70, 0.55, 1},
         plant_type     = 4,
         messages       = {
-            "I just graduated clown school, going to an interview at the local circus.",
-            "I'm hoping to clown around!",
+            "Hey, nice to meet you! I'm Dottie!",
+            "Don't mind the makeup, I just graduated clown school. I'm going to an interview at the local circus right now actually!",
+            "I'm hoping to clown around and show them I mean funny business.",
             "Can I get a flower for good luck?",
         },
         after_messages = {
-            "This is my lucky flower.",
+            "Thank you! I'm sure to ace it now!",
         },
     },
     {
@@ -229,8 +241,9 @@ return {
         secondary_color = {0.40, 0.70, 0.55, 1},
         plant_type     = 5,
         messages       = {
+            "Hey, it's me Dottie, the clown! I aced that interview that you helped me with.",
             "I just started my job at the circus but I messed up real bad.",
-            "I broke stuff and my boss went \"oopsie daisy\".",
+            "I broke the tent and my boss went \"oopsie daisy\".",
             "I think he wanted me to get him a daisy!",
         },
         after_messages = {
@@ -248,11 +261,11 @@ return {
         secondary_color = {0.40, 0.70, 0.55, 1},
         plant_type     = 5,
         messages       = {
-            "Tough day at work today. A clown horror movie came out so now all the kids are terrified.",
+            "Tough day at work today. A clown horror movie came out so now all the tadpoles are terrified.",
             "Do you think I can win them back if I give them flowers?",
         },
         after_messages = {
-            "Maybe flowers are the answer.",
+            "Thank you, I hope the tadpoles love this as much as I do!",
         },
     },
 
@@ -288,11 +301,11 @@ return {
         plant_type      = 3,
         messages        = {
             "Me again. Don't act surprised.",
-            "I needed barbed wire for a perimeter. Ran out. Classic.",
-            "A rose has thorns. Thorns are barbed wire. Do you have a rose?",
+            "I need barbed wire for a perimeter. The hardware store here has ties to foreign actors. You're the best bet.",
+            "You have anything with barbs?",
         },
         after_messages  = {
-            "Highly effective. Field-tested.",
+            "This conversation never happened.",
         },
     },
 
@@ -307,12 +320,13 @@ return {
         secondary_color = {0.40, 0.32, 0.20, 1},
         plant_type      = 4,
         messages        = {
-            "Diplomatic mission. Can't go into detail.",
-            "The Toad Nation is tough to sweet talk. Long history of grievances.",
-            "I just need one tulip. Something soft. Non-threatening.",
+            "Me again. I need your help.",
+            "Diplomatic mission. Fire Toad Nation.",
+            "Tough to sweet talk. Always worried about their attacks.",
+            "I just need one tulip. Something to soften em up.",
         },
         after_messages  = {
-            "I'll do the rest.",
+            "This conversation never happened.",
         },
     },
 
@@ -329,12 +343,15 @@ return {
         secondary_color = {0.55, 0.40, 0.25, 1},
         plant_type     = 1,
         messages       = {
-            "I've heard there's a new plant shop in town.",
-            "Word gets around fast when someone opens up. I had to see for myself.",
-            "I'll take a grass. Nothing fancy — just to see how you do.",
+            "A new shop! I had to come see for myself.",
+            "Am I your first customer? Let's start easy then. I'll take a pot of grass.",
+            "Use the laptop to buy a grass seedling, my friend.",
+            "Water it twice when it is ready.",
+            "Then bring it over here to sell. Very simple!",
         },
         after_messages = {
-            "Not bad. I'll tell a few people.",
+            "Not bad at all! I will be sure to spread the word.",
+            "I'm sure more frogs will come soon!",
         },
     },
     {
@@ -349,11 +366,11 @@ return {
         plant_type     = 2,
         messages       = {
             "Grass is a good start. But customers want variety.",
-            "That computer over there — it's how you get new stock. Check it out.",
-            "The more kinds you grow, the more they come.",
+            "Your laptop has more than grass seedlings. Want to try a cactus?",
+            "Once folks see what you have, they'll come asking for more!",
         },
         after_messages = {
-            "Don't forget — the computer. It matters.",
+            "Amazing! This is going to be a hit!",
         },
     },
     {
@@ -367,12 +384,12 @@ return {
         secondary_color = {0.55, 0.40, 0.25, 1},
         plant_type     = 2,
         messages       = {
-            "The shop's looking busier. I've noticed.",
-            "Same computer — you can add more slots. It's worth doing.",
-            "More space. More plants. I trust you see where this is going.",
+            "The shop's looking busy!",
+            "If you want to grow more plants at once, you can add more slots from your laptop.",
+            "More space. More plants. More money. Trust me, that's how I got my name!",
         },
         after_messages = {
-            "Room to grow. Use it.",
+            "Nice! You should see what else you can get from your laptop!",
         },
     },
     {
@@ -386,14 +403,14 @@ return {
         secondary_color = {0.55, 0.40, 0.25, 1},
         plant_type     = 3,
         messages       = {
-            "I see you grew your first rose.",
-            "Some plants you have to grow yourself.",
+            "I see you grew your first rose!",
+            "Some plants you have to grow yourself to make money.",
             "Check the shop for the grafter.",
             "It turns a fully grown plant into two seedlings.",
             "Try it out, give me a rose but use the grafter if you want to make a real profit.",
         },
         after_messages = {
-            "One cut. Double the output. Think about it.",
+            "Amazing! You're a natural at this!",
         },
     },
 
