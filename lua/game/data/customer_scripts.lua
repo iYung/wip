@@ -426,12 +426,12 @@ return {
         secondary_color = {0.90, 0.60, 0.60, 1},
         plant_type      = 3,
         messages        = {
-            "I'm on a first date tonight.",
-            "She sat down. I saw her legs.",
-            "I need a rose. Right now.",
+            "Mon ami! You must help me!",
+            "I was walking down the street, look across and WOW.",
+            "I saw a beautiful frog! I need a rose, right now! So I can tell them what gem they are!",
         },
         after_messages  = {
-            "I'm in love. There's no other explanation.",
+            "Merci!",
         },
     },
     {
@@ -445,12 +445,14 @@ return {
         secondary_color = {0.90, 0.60, 0.60, 1},
         plant_type      = 3,
         messages        = {
-            "Still on the date. Same date.",
-            "She ordered dessert. She stuck out her tongue to taste it.",
-            "I need another rose. Immediately.",
+            "Mon ami! You must help me again!",
+            "The last one dumped me, said I didn't really pay attention to her.",
+            "Lies! But it's not all bad news.",
+            "The next day, I was walking down the street, look across and WOW.",
+            "A beautiful frog! I need a rose, right now! So I can tell them what gem they are!",
         },
         after_messages  = {
-            "I have never felt this way about a tongue before.",
+            "Merci!",
         },
     },
     {
@@ -464,12 +466,14 @@ return {
         secondary_color = {0.90, 0.60, 0.60, 1},
         plant_type      = 3,
         messages        = {
-            "Two weeks together. Our anniversary.",
+            "Mon ami! You must help me again!",
+            "My paramour and I have been together two weeks now.",
+            "I've never made it this far before! It's all new to me.",
             "I can see it all. A pond. A home. A hundred tadpoles.",
             "I need a rose. To celebrate what we have.",
         },
         after_messages  = {
-            "She doesn't know about the hundred tadpoles yet. Soon.",
+            "Merci! Me and my future hundred tadpoles thank you!",
         },
     },
 
@@ -485,12 +489,14 @@ return {
         secondary_color = {0.75, 0.65, 0.50, 1},
         plant_type      = 2,
         messages        = {
-            "Joe Froggan did a four-hour episode on cactuses.",
-            "Ancient cultures, immune system, longevity. All of it.",
-            "I need to start. One cactus. Just to try it.",
+            "Yo man! Wassup!",
+            "Have you heard the podcaster Joe Froggan?",
+            "He did a four-hour episode on cactuses.",
+            "They're like soooo ancient man. Unprocessed, natural, a superfood.",
+            "I need to start on that diet, man. Gimme one cactus so I can start.",
         },
         after_messages  = {
-            "This is going to change everything for me.",
+            "Thanks man, I can already feel the cactus power flowing through me.",
         },
     },
     {
@@ -504,12 +510,13 @@ return {
         secondary_color = {0.75, 0.65, 0.50, 1},
         plant_type      = 4,
         messages        = {
-            "Joe Froggan's moved on. New episode: DMT.",
-            "Diet of Many Tulips. Completely different energy than the cactus.",
+            "Yo man! Wassup? You hear yesterday's Joe Froggan episode?",
+            "DMT: Diet of Many Tulips",
+            "It's a completely different energy than the cactus. More raw.",
             "I need to pivot. One tulip to start.",
         },
         after_messages  = {
-            "He had a doctor on and everything.",
+            "Oh man, I can feel healthier already!",
         },
     },
     {
@@ -523,12 +530,13 @@ return {
         secondary_color = {0.75, 0.65, 0.50, 1},
         plant_type      = 1,
         messages        = {
-            "So. My family sat me down.",
-            "I may have told a lot of people about Joe Froggan. Everyone, actually.",
-            "They said I need to touch grass. So. Here I am. One grass please.",
+            "Hey man. I need a favor",
+            "My family sat me down the other day.",
+            "They said I've been talking about Joe Froggan too much. That it's all I talk about, actually.",
+            "They said I need to touch grass. So here I am. One grass please.",
         },
         after_messages  = {
-            "This one I actually believe in.",
+            "Hmmm it's kinda nice to be honest.",
         },
     },
 
@@ -544,12 +552,13 @@ return {
         secondary_color = {0.95, 0.85, 0.65, 1},
         plant_type      = 3,
         messages        = {
-            "My sous chef says I need to modernize.",
-            "She said 'floral notes.' Apparently it's a thing.",
-            "One rose. I'm putting it in the bread.",
+            "Hello good sir! I'm Chef Brio, you might see my work on FrogTube.",
+            "We're filming this new series on bread baking but there's one thing.",
+            "I have no idea to to do this, I've never baked! My producer told me to just get flower.",
+            "So here I am, can I get some flower?",
         },
         after_messages  = {
-            "I have no idea what I'm doing.",
+            "Wish me luck!",
         },
     },
     {
@@ -563,12 +572,12 @@ return {
         secondary_color = {0.95, 0.85, 0.65, 1},
         plant_type      = 3,
         messages        = {
-            "The rose bread. I can't keep up with demand.",
-            "Three weeks on the front page. My phone is broken from notifications.",
-            "Same thing. More of it.",
+            "Hello good sir! Remember the flower you got me for my bread?",
+            "It was amazing! It went viral, everyone loves it for its 'floral notes'.",
+            "Can I get another flower? I have to bake the bread live on air tonight for Jimmy Frogen!",
         },
         after_messages  = {
-            "I haven't slept in four days. It's fine.",
+            "Thanks a bunch! I'll give you a shout out!",
         },
     },
     {
@@ -582,9 +591,9 @@ return {
         secondary_color = {0.95, 0.85, 0.65, 1},
         plant_type      = 5,
         messages        = {
-            "The rose bread trend is over.",
-            "Everyone does it now. The gas station does it.",
-            "I need a new flower. Something they haven't ruined yet.",
+            "Hello sir. Remember the rose bread we made? The trend is over.",
+            "Everyone does it now. The gas station does it, that's how you know it's gone too mainstream.",
+            "I need a new flower. Something they haven't done yet.",
         },
         after_messages  = {
             "Daisy bread. I'm going to make it happen.",
@@ -603,8 +612,10 @@ return {
         secondary_color = {0.85, 0.70, 0.55, 1},
         plant_type      = 3,
         messages        = {
-            "I installed a zip line in the kitchen.",
-            "She did not see the vision.",
+            "Hey man. I need some help.",
+            "I was watching Frog vs Wild. Some sick stuff in South Frogica.",
+            "I loved it so much, I installed a zip line in the kitchen.",
+            "Wifey did not see the vision.",
             "I need something to smooth this over.",
         },
         after_messages  = {
@@ -622,12 +633,14 @@ return {
         secondary_color = {0.85, 0.70, 0.55, 1},
         plant_type      = 5,
         messages        = {
+            "Hey man. I need some more help.",
+            "I was watching this youtube video where raccoons learned to flush a toilet.",
+            "So I did the next logical thing.",
             "I got a pet raccoon.",
-            "Temporary. It's definitely temporary.",
-            "She's not talking to me. Need another flower.",
+            "I may have not asked my wife. She's not talking to me. Need another flower to smooth things out.",
         },
         after_messages  = {
-            "The raccoon is very clean, actually.",
+            "Me and my raccoon thank you.",
         },
     },
     {
@@ -641,9 +654,11 @@ return {
         secondary_color = {0.85, 0.70, 0.55, 1},
         plant_type      = 5,
         messages        = {
-            "She found the second raccoon.",
-            "I want to be clear — I was keeping them separate.",
-            "A flower. Please. The usual.",
+            "Hey man, I need your help again.",
+            "Remember my raccoon? I was thinking if I was a raccoon, I would be lonely living alone.",
+            "It made me so sad, I knew I had to do something.",
+            "So ya, my wife, she found the second raccoon.",
+            "A flower. Please. You know what it's for.",
         },
         after_messages  = {
             "She says she's not surprised anymore. That feels like progress.",
