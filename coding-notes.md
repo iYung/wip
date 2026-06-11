@@ -12,22 +12,30 @@ luagame/
 ├── tests/               ← test files run via --headless or --visual
 │   ├── test_balance.lua
 │   ├── test_basics.lua
+│   ├── test_buy_scene_position.lua
 │   ├── test_carrying.lua
+│   ├── test_cashier_hover.lua
 │   ├── test_customer_scripts.lua
 │   ├── test_dialogue_wrap.lua
 │   ├── test_golden_lotus.lua
 │   ├── test_grafter.lua
+│   ├── test_hud_labels.lua
+│   ├── test_input.lua
 │   ├── test_intercom.lua
 │   ├── test_plant_growth.lua
+│   ├── test_quest_sales.lua
 │   ├── test_quest_timing.lua
 │   ├── test_save.lua
 │   ├── test_scene_manager.lua
 │   ├── test_selling.lua
 │   ├── test_settings_menu.lua
+│   ├── test_settings_persistence.lua
 │   ├── test_settings_state.lua
 │   ├── test_shop.lua
 │   ├── test_sound.lua
 │   ├── test_start_scene.lua
+│   ├── test_swap.lua
+│   ├── test_ui.lua
 │   └── test_water_drone.lua
 └── lua/
     ├── core/
@@ -88,6 +96,16 @@ love . --headless
 ```
 
 `--headless` stubs all Love2D graphics/audio before any game code loads. `--visual` runs with a real window; `runner.tick` yields after each frame so `love.draw` fires between updates.
+
+`HeadlessInput` does not implement `key_for` (used by `StoreScene:_hud_labels` in the draw path). Visual-mode tests that instantiate `StoreScene` must add a stub:
+
+```lua
+ctx.input._map = { pick_up_down = {"o"}, interact = {"p"} }
+ctx.input.key_for = function(self, action)
+    local keys = self._map[action]
+    return keys and keys[1]
+end
+```
 
 CI runs `love . --headless` automatically on every push to `main` and every PR — see `.github/workflows/ci.yml`.
 
