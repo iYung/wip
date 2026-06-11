@@ -315,25 +315,20 @@ function Customer:draw_bubble()
 
         -- Build rendered_lines by walking the full-text wrap points with a byte
         -- offset, so partial words never cause line-break flicker.
+        -- LÖVE's getWrap returns non-last lines with a trailing space that acts
+        -- as the word-wrap separator (no separate separator byte).  Use #line
+        -- (including trailing space) for the remaining counter so the byte math
+        -- is correct, but trim trailing whitespace before computing visible width
+        -- and before rendering.
         local rendered_lines = {}
         local remaining = idx
         for _, line in ipairs(lines) do
             if remaining <= 0 then break end
-            local visible = math.min(remaining, #line)
-            rendered_lines[#rendered_lines + 1] = string.sub(line, 1, visible)
-            remaining = remaining - #line - 1
+            local trimmed = line:match("^(.-)%s*$") or line
+            local visible = math.min(remaining, #trimmed)
+            rendered_lines[#rendered_lines + 1] = string.sub(trimmed, 1, visible)
+            remaining = remaining - #line
         end
-        -- DEBUG: print rendered_lines once when fully revealed
-        if idx == #self._full_text and not self._debug_printed then
-            self._debug_printed = true
-            io.write("DBG lines(" .. #rendered_lines .. "):")
-            for di, dl in ipairs(rendered_lines) do
-                io.write(" [" .. di .. "]='" .. dl .. "'")
-            end
-            io.write("  full='" .. self._full_text .. "'\n")
-            io.flush()
-        end
-        if idx < #self._full_text then self._debug_printed = nil end
 
         love.graphics.setColor(1, 1, 1, 1)
         UI.draw9(A.speech_bubble, box_x, box_y, box_w, box_h, BUBBLE_MARGIN)
@@ -345,17 +340,6 @@ function Customer:draw_bubble()
             local lx = box_x + PAD
             local ly = box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h
             love.graphics.print(line, lx, ly)
-            -- Re-draw each period shifted right to widen the ~2 px glyph so it
-            -- survives nearest-neighbour canvas downsampling.  Use the full-prefix
-            -- width so kerning is accounted for, then print at +1 and +2 to get
-            -- ~4 px of ink coverage.
-            for j = 1, #line do
-                if line:sub(j, j) == "." then
-                    local px = font:getWidth(line:sub(1, j - 1))
-                    love.graphics.print(".", lx + px + 1, ly)
-                    love.graphics.print(".", lx + px + 2, ly)
-                end
-            end
         end
         love.graphics.setColor(1, 1, 1, 1)
     end

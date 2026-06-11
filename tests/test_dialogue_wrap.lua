@@ -11,11 +11,13 @@ local fake_font = {}
 fake_font.getHeight = function() return 16 end
 fake_font.getWidth  = function(_, s) return #s * PX end
 fake_font.getWrap   = function(_, text, limit)
+    -- Matches real LÖVE behaviour: the separator space is kept as a trailing
+    -- character on each non-last wrapped line (no separate separator byte).
     local lines, cur = {}, ""
     for word in text:gmatch("%S+") do
         local candidate = cur == "" and word or (cur .. " " .. word)
         if #candidate * PX > limit and cur ~= "" then
-            lines[#lines + 1] = cur
+            lines[#lines + 1] = cur .. " "  -- trailing space = real LÖVE
             cur = word
         else
             cur = candidate
