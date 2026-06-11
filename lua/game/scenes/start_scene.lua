@@ -175,7 +175,7 @@ function StartScene:draw()
 
     local ki = string.upper(m.interact and m.interact[1] or "?")
     local ki_w = self._font_btn:getWidth(ki)
-    love.graphics.print(ki, 1100 - ki_w / 2, 630)
+    love.graphics.print(ki, 1150 - ki_w / 2, 630)
 
     love.graphics.setFont(prev_font)
     love.graphics.setColor(1, 1, 1, 1)
