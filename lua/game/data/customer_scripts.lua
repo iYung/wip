@@ -572,7 +572,7 @@ return {
         secondary_color = {0.95, 0.85, 0.65, 1},
         plant_type      = 3,
         messages        = {
-            "Hello good sir! Remember the flower you got me for my bread?".
+            "Hello good sir! Remember the flower you got me for my bread?",
             "It was amazing! It went viral, everyone loves it for its 'floral notes'.",
             "Can I get another flower? I have to bake the bread live on air tonight for Jimmy Frogen!",
         },
@@ -613,7 +613,7 @@ return {
         plant_type      = 3,
         messages        = {
             "Hey man. I need some help.",
-            "I was watching Frog vs Wild. Some sick stuff in South Frogica."
+            "I was watching Frog vs Wild. Some sick stuff in South Frogica.",
             "I loved it so much, I installed a zip line in the kitchen.",
             "Wifey did not see the vision.",
             "I need something to smooth this over.",
