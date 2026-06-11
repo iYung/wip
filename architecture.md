@@ -235,8 +235,7 @@ Maps Love2D key events to game actions. Game logic calls Input, never Love2D dir
 - `move_right` — default `d`
 - `move_up` — default `w`
 - `move_down` — default `s`
-- `pick_up_down` — default `e`
-- `interact` — default `f`
+- `interact` — default `p`
 - `menu_confirm` — `return` / `space` / `f` (non-remappable; used by StartScene)
 
 **Methods**
@@ -593,7 +592,7 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 
 **Properties**
 - `fullscreen` — bool; current fullscreen state (default `false`)
-- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", pick_up_down="o", interact="p"}`
+- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", interact="p"}`
 
 **Methods**
 - `new()` — constructor; sets `fullscreen = false` and populates default `keybinds`
@@ -659,7 +658,7 @@ Navigation uses `_visible_items(opaque)` to build the active index list, so Save
 
 **Keybind sub-screen**
 
-Lists all six remappable actions (`move_up`, `move_down`, `move_left`, `move_right`, `pick_up_down`, `interact`) with their current key. Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. Escape during capture cancels without change; escape outside capture returns to the main screen.
+Lists all five remappable actions (`move_up`, `move_down`, `move_left`, `move_right`, `interact`) with their current key. Note: `move_up` and `move_down` also serve as pick up and put down in the store — pressing `move_up` picks up a carriable item from a slot (or swaps if already holding something), and `move_down` puts down a held item (or swaps). Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. Escape during capture cancels without change; escape outside capture returns to the main screen.
 
 **Methods**
 - `new(settings_state, input, on_save)` — constructor; `on_save` is a callback invoked by "Save Game"

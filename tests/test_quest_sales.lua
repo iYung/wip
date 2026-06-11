@@ -42,7 +42,7 @@ local function sell_plant(ctx, plant_type, elapsed, sales_ref, earned_ref)
             return ctx.sm.current._customer:arrived()
         end, elapsed, 2000)
         if ctx.sm.current._customer.plant_type ~= plant_type then
-            ctx.input:press("pick_up_down")
+            ctx.input:press("move_up")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
         else
@@ -80,7 +80,7 @@ local STARTING_CURRENCY = 10
 local ctx = runner.setup(function(gs, input, sm)
     return StoreScene.new(gs, input, sm)
 end)
-ctx.input._map = { pick_up_down = {"o"}, interact = {"p"} }
+ctx.input._map = { move_up = {"w"}, move_down = {"s"}, interact = {"p"} }
 ctx.input.key_for = function(self, action)
     local keys = self._map[action]
     return keys and keys[1]
@@ -157,7 +157,7 @@ repeat
         ctx.gs.store.slots[4].item = Plant.new(pt)
 
         elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-        ctx.input:press("pick_up_down")
+        ctx.input:press("move_up")
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
 
@@ -181,12 +181,12 @@ repeat
         introduce_plants(check_milestones())
 
         elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-        ctx.input:press("pick_up_down")
+        ctx.input:press("move_down")
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
 
         elapsed = walk_to(ctx, PLANT_SLOT_X, elapsed)
-        ctx.input:press("pick_up_down")
+        ctx.input:press("move_up")
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
 
@@ -198,7 +198,7 @@ repeat
 
         introduce_plants(check_milestones())
     else
-        ctx.input:press("pick_up_down")
+        ctx.input:press("move_up")
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
         elapsed = runner.fast_forward_until(ctx, function()

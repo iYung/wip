@@ -71,7 +71,7 @@ do
     ctx.gs.store.slots[4].item = ic
     ctx.gs.player.x = 700   -- slot 4 center
 
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.gs.player.held_item == ic,

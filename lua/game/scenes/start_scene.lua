@@ -77,7 +77,7 @@ function StartScene:update(dt)
         self.selected = _next_selectable(self.selected, 1, self._has_save)
         Sound.play("menu_navigate")
     end
-    if self.input:pressed("interact") or self.input:pressed("pick_up_down") then
+    if self.input:pressed("interact") then
         self:_confirm()
     end
 end
@@ -172,10 +172,6 @@ function StartScene:draw()
     love.graphics.setColor(0, 0, 0, 1)
     local kb_w = self._font_btn:getWidth(kb_text)
     love.graphics.print(kb_text, 950 - kb_w / 2, 630)
-
-    local kp = string.upper(m.pick_up_down and m.pick_up_down[1] or "?")
-    local kp_w = self._font_btn:getWidth(kp)
-    love.graphics.print(kp, 1100 - kp_w / 2, 630)
 
     local ki = string.upper(m.interact and m.interact[1] or "?")
     local ki_w = self._font_btn:getWidth(ki)

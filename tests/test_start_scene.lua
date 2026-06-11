@@ -85,14 +85,6 @@ s2:update(0)
 assert(_quit_called, "interact on Exit (item 4) should call love.event.quit")
 print("PASS: interact confirms Exit calls quit")
 
--- Test 8b: pick_up_down on item 4 (Exit) also calls love.event.quit
-local s2b = make_scene("pick_up_down")
-s2b.selected = 4
-_quit_called = false
-s2b:update(0)
-assert(_quit_called, "pick_up_down on Exit (item 4) should also call love.event.quit")
-print("PASS: pick_up_down confirms Exit calls quit")
-
 -- Test 9: interact on item 3 (Settings) calls open_settings callback
 local s3 = make_scene("interact")
 s3.selected = 3
@@ -100,14 +92,6 @@ _settings_opened = false
 s3:update(0)
 assert(_settings_opened, "interact on Settings (item 3) should invoke open_settings")
 print("PASS: interact confirms Settings calls open_settings")
-
--- Test 9b: pick_up_down on item 3 (Settings) also calls open_settings callback
-local s3b = make_scene("pick_up_down")
-s3b.selected = 3
-_settings_opened = false
-s3b:update(0)
-assert(_settings_opened, "pick_up_down on Settings (item 3) should invoke open_settings")
-print("PASS: pick_up_down confirms Settings calls open_settings")
 
 -- Test 10: interact on item 1 (New Game) switches scene
 do
@@ -122,21 +106,6 @@ do
     sng:update(0)
     assert(switched, "interact on New Game (item 1) should switch scene")
     print("PASS: interact confirms New Game switches scene")
-end
-
--- Test 10b: pick_up_down on item 1 (New Game) also switches scene
-do
-    local switched = false
-    local sng = StartScene.new(
-        {},
-        make_input("pick_up_down"),
-        { switch = function() switched = true end },
-        function() end
-    )
-    sng.selected = 1
-    sng:update(0)
-    assert(switched, "pick_up_down on New Game (item 1) should switch scene")
-    print("PASS: pick_up_down confirms New Game switches scene")
 end
 
 -- Test 11: interact on item 2 (Continue) is a no-op when no save exists

@@ -141,18 +141,18 @@ assert(rt10.fullscreen == true, "round-trip: fullscreen=true should survive roun
 print("PASS: round-trip preserves fullscreen=true")
 
 -- -------------------------------------------------------------------------
--- Test 11: key_map() from a loaded SettingsState reflects saved keybinds
+-- Test 11: pick_up_down from an old save is silently ignored; other keys load
 -- -------------------------------------------------------------------------
 local ss11 = SettingsState.from_save({
     keybinds = { pick_up_down = "q", interact = "r",
                  move_up = "w", move_down = "s", move_left = "a", move_right = "d" }
 })
 local map11 = ss11:key_map()
-assert(type(map11.pick_up_down) == "table" and map11.pick_up_down[1] == "q",
-    "key_map: pick_up_down should be {'q'}, got " .. tostring(map11.pick_up_down and map11.pick_up_down[1]))
+assert(map11.pick_up_down == nil,
+    "key_map: old pick_up_down save key should be ignored, got " .. tostring(map11.pick_up_down and map11.pick_up_down[1]))
 assert(type(map11.interact) == "table" and map11.interact[1] == "r",
     "key_map: interact should be {'r'}, got " .. tostring(map11.interact and map11.interact[1]))
-print("PASS: key_map() from loaded SettingsState reflects saved keybinds")
+print("PASS: key_map() silently ignores unknown pick_up_down from old save")
 
 -- -------------------------------------------------------------------------
 -- Test 12: assigning input._map from a loaded SettingsState makes Input
@@ -161,11 +161,12 @@ print("PASS: key_map() from loaded SettingsState reflects saved keybinds")
 do
     local CoreInput = require("lua/core/input")
     local inp = CoreInput.new({
-        pick_up_down = {"e"},
-        interact     = {"f"},
+        move_up  = {"e"},
+        move_down = {"s"},
+        interact  = {"f"},
     })
     local ss12 = SettingsState.from_save({
-        keybinds = { pick_up_down = "q", interact = "r",
+        keybinds = { interact = "r",
                      move_up = "w", move_down = "s", move_left = "a", move_right = "d" }
     })
     -- Sync input map as main.lua now does on startup
@@ -178,7 +179,7 @@ do
     love.keyboard.isDown = _orig_isDown
 
     assert(inp:pressed("interact"), "input: 'interact' should fire on rebound key 'r'")
-    assert(not inp:pressed("pick_up_down"), "input: 'pick_up_down' should not fire when 'q' is not held")
+    assert(not inp:pressed("move_up"), "input: 'move_up' should not fire when 'r' is not held")
     print("PASS: input._map sync from loaded SettingsState routes rebound keys correctly")
 end
 

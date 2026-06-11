@@ -87,7 +87,7 @@ do
     local elapsed = 0
 
     -- pick up watering can from slot 1 (player starts at x=100 = slot 1 center)
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     -- walk to slot 4 (x=700)

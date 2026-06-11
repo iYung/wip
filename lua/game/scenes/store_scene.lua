@@ -329,8 +329,10 @@ function StoreScene:update(dt)
     local world_right = gs.store:width()
     self.camera.x = math.max(world_left + half_w, math.min(world_right - half_w, self.camera.x))
 
-    if input:pressed("pick_up_down") then
-        self:_handle_pick_up_down()
+    if input:pressed("move_up") then
+        self:_handle_pick_up()
+    elseif input:pressed("move_down") then
+        self:_handle_put_down()
     end
 
     if input:pressed("interact") then
@@ -338,7 +340,42 @@ function StoreScene:update(dt)
     end
 end
 
-function StoreScene:_handle_pick_up_down()
+function StoreScene:_handle_pick_up()
+    local player = self.game_state.player
+    local store  = self.game_state.store
+    local slot   = player:active_slot(store)
+
+    if player.x < 0 then
+        if self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
+            self._customer:dismiss()
+            if self._active_script_key then
+                self._script_cooldowns[self._active_script_key] = DISMISS_COOLDOWN_SALES
+                self._active_script_key = nil
+                self._active_script     = nil
+            end
+        end
+        return
+    end
+
+    if player.held_item then
+        -- swap: pick up slot item, put held item down
+        if slot and slot.item and slot.item.carriable then
+            local tmp        = player.held_item
+            player.held_item = slot.item
+            slot.item        = tmp
+            Sound.play("put_down")
+        end
+    else
+        -- pick up from slot
+        if slot and slot.item and slot.item.carriable then
+            player.held_item = slot.item
+            slot.item        = nil
+            Sound.play("pick_up")
+        end
+    end
+end
+
+function StoreScene:_handle_put_down()
     local player = self.game_state.player
     local store  = self.game_state.store
     local slot   = player:active_slot(store)
@@ -357,20 +394,16 @@ function StoreScene:_handle_pick_up_down()
 
     if player.held_item then
         if slot and not slot.item then
+            -- put down into empty slot
             slot.item        = player.held_item
             player.held_item = nil
             Sound.play("put_down")
         elseif slot and slot.item and slot.item.carriable then
+            -- swap: put held item down, pick up slot item
             local tmp        = player.held_item
             player.held_item = slot.item
             slot.item        = tmp
             Sound.play("put_down")
-        end
-    else
-        if slot and slot.item and slot.item.carriable then
-            player.held_item = slot.item
-            slot.item        = nil
-            Sound.play("pick_up")
         end
     end
 end
@@ -442,7 +475,8 @@ function StoreScene:_hud_labels()
     local held      = player.held_item
     local slot_item = slot and slot.item
 
-    local e_key = (self.input:key_for("pick_up_down") or "o"):upper()
+    local up_key   = (self.input:key_for("move_up")   or "w"):upper()
+    local down_key = (self.input:key_for("move_down") or "s"):upper()
     local f_key = (self.input:key_for("interact")     or "p"):upper()
 
     local slot_label
@@ -455,16 +489,18 @@ function StoreScene:_hud_labels()
         end
     end
 
-    local e_label
+    local up_label
+    local down_label
     if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
-        e_label = e_key .. ": DISMISS"
+        up_label = up_key .. "/" .. down_key .. ": DISMISS"
     elseif player.x >= 0 then
-        if held and slot and not slot_item then
-            e_label = e_key .. ": PUT DOWN"
+        if held and slot_item and slot_item.carriable then
+            up_label   = up_key   .. ": SWAP WITH " .. slot_item.name:upper()
+            down_label = down_key .. ": SWAP WITH " .. slot_item.name:upper()
         elseif not held and slot_item and slot_item.carriable then
-            e_label = e_key .. ": PICK UP"
-        elseif held and slot_item and slot_item.carriable then
-            e_label = e_key .. ": SWAP WITH " .. held.name:upper()
+            up_label = up_key .. ": PICK UP"
+        elseif held and slot and not slot_item then
+            down_label = down_key .. ": PUT DOWN"
         end
     end
 
@@ -497,7 +533,7 @@ function StoreScene:_hud_labels()
         f_label = f_key .. ": DISCARD"
     end
 
-    return { slot = slot_label, e = e_label, f = f_label }
+    return { slot = slot_label, up = up_label, down = down_label, f = f_label }
 end
 
 function StoreScene:draw()
@@ -539,7 +575,8 @@ function StoreScene:draw()
     local labels = {}
     if hud.slot then table.insert(labels, hud.slot) end
     if hud.f    then table.insert(labels, hud.f) end
-    if hud.e    then table.insert(labels, hud.e) end
+    if hud.up   then table.insert(labels, hud.up) end
+    if hud.down then table.insert(labels, hud.down) end
 
     UI.draw_hud_box(labels, love.graphics.getFont())
 

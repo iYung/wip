@@ -10,7 +10,7 @@ local function make_scene()
         return StoreScene.new(gs, input, sm)
     end)
     local scene = ctx.sm.current
-    ctx.input._map = { pick_up_down = {"o"}, interact = {"p"} }
+    ctx.input._map = { move_up = {"w"}, move_down = {"s"}, interact = {"p"} }
     ctx.input.key_for = function(self, action)
         local keys = self._map[action]
         return keys and keys[1]

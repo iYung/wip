@@ -35,7 +35,7 @@ local function sell_plant(ctx, plant_type, elapsed)
         end, elapsed)
 
         if ctx.sm.current._customer.plant_type ~= plant_type then
-            ctx.input:press("pick_up_down")
+            ctx.input:press("move_up")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
         else
@@ -102,7 +102,7 @@ local next_idx = 1
 while next_idx <= #targets do
     -- 1. Pick up watering can from slot 1.
     elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
     elapsed = elapsed + 1/60
 
@@ -125,13 +125,13 @@ while next_idx <= #targets do
 
     -- 4. Put the watering can back in slot 1.
     elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_down")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
     elapsed = elapsed + 1/60
 
     -- 5. Pick up the stage-3 plant from slot 4.
     elapsed = walk_to(ctx, PLANT_SLOT_X, elapsed)
-    ctx.input:press("pick_up_down")
+    ctx.input:press("move_up")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
     elapsed = elapsed + 1/60
 
@@ -174,7 +174,7 @@ for pt = 1, 6 do
 
     while elapsed2 < 60 do
         elapsed2 = walk_to(ctx2, WATERING_CAN_X, elapsed2)
-        ctx2.input:press("pick_up_down")
+        ctx2.input:press("move_up")
         runner.tick(ctx2.input, ctx2.sm, 1, 1/60)
         elapsed2 = elapsed2 + 1/60
 
@@ -194,12 +194,12 @@ for pt = 1, 6 do
         elapsed2 = elapsed2 + 1/60
 
         elapsed2 = walk_to(ctx2, WATERING_CAN_X, elapsed2)
-        ctx2.input:press("pick_up_down")
+        ctx2.input:press("move_down")
         runner.tick(ctx2.input, ctx2.sm, 1, 1/60)
         elapsed2 = elapsed2 + 1/60
 
         elapsed2 = walk_to(ctx2, PLANT_SLOT_X, elapsed2)
-        ctx2.input:press("pick_up_down")
+        ctx2.input:press("move_up")
         runner.tick(ctx2.input, ctx2.sm, 1, 1/60)
         elapsed2 = elapsed2 + 1/60
 
@@ -234,7 +234,7 @@ for pt = 1, 6 do
 
     while elapsed3 < 60 do
         elapsed3 = walk_to(ctx3, WATERING_CAN_X, elapsed3)
-        ctx3.input:press("pick_up_down")
+        ctx3.input:press("move_up")
         runner.tick(ctx3.input, ctx3.sm, 1, 1/60)
         elapsed3 = elapsed3 + 1/60
 
@@ -254,12 +254,12 @@ for pt = 1, 6 do
         elapsed3 = elapsed3 + 1/60
 
         elapsed3 = walk_to(ctx3, WATERING_CAN_X, elapsed3)
-        ctx3.input:press("pick_up_down")
+        ctx3.input:press("move_down")
         runner.tick(ctx3.input, ctx3.sm, 1, 1/60)
         elapsed3 = elapsed3 + 1/60
 
         elapsed3 = walk_to(ctx3, PLANT_SLOT_X, elapsed3)
-        ctx3.input:press("pick_up_down")
+        ctx3.input:press("move_up")
         runner.tick(ctx3.input, ctx3.sm, 1, 1/60)
         elapsed3 = elapsed3 + 1/60
 
@@ -305,7 +305,7 @@ for _, tier in ipairs(growth_tiers) do
 
     while elapsed4 < 300 do
         elapsed4 = walk_to(ctx4, WATERING_CAN_X, elapsed4)
-        ctx4.input:press("pick_up_down")
+        ctx4.input:press("move_up")
         runner.tick(ctx4.input, ctx4.sm, 1, 1/60)
         elapsed4 = elapsed4 + 1/60
 
@@ -325,12 +325,12 @@ for _, tier in ipairs(growth_tiers) do
         elapsed4 = elapsed4 + 1/60
 
         elapsed4 = walk_to(ctx4, WATERING_CAN_X, elapsed4)
-        ctx4.input:press("pick_up_down")
+        ctx4.input:press("move_down")
         runner.tick(ctx4.input, ctx4.sm, 1, 1/60)
         elapsed4 = elapsed4 + 1/60
 
         elapsed4 = walk_to(ctx4, PLANT_SLOT_X, elapsed4)
-        ctx4.input:press("pick_up_down")
+        ctx4.input:press("move_up")
         runner.tick(ctx4.input, ctx4.sm, 1, 1/60)
         elapsed4 = elapsed4 + 1/60
 
@@ -388,7 +388,7 @@ for tier_idx = 0, 6 do
 
     while elapsed5 < 3600 do
         elapsed5 = walk_to(ctx5, WATERING_CAN_X, elapsed5)
-        ctx5.input:press("pick_up_down")
+        ctx5.input:press("move_up")
         runner.tick(ctx5.input, ctx5.sm, 1, 1/60)
         elapsed5 = elapsed5 + 1/60
 
@@ -408,12 +408,12 @@ for tier_idx = 0, 6 do
         elapsed5 = elapsed5 + 1/60
 
         elapsed5 = walk_to(ctx5, WATERING_CAN_X, elapsed5)
-        ctx5.input:press("pick_up_down")
+        ctx5.input:press("move_down")
         runner.tick(ctx5.input, ctx5.sm, 1, 1/60)
         elapsed5 = elapsed5 + 1/60
 
         elapsed5 = walk_to(ctx5, PLANT_SLOT_X, elapsed5)
-        ctx5.input:press("pick_up_down")
+        ctx5.input:press("move_up")
         runner.tick(ctx5.input, ctx5.sm, 1, 1/60)
         elapsed5 = elapsed5 + 1/60
 

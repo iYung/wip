@@ -100,7 +100,7 @@ love . --headless
 `HeadlessInput` does not implement `key_for` (used by `StoreScene:_hud_labels` in the draw path). Visual-mode tests that instantiate `StoreScene` must add a stub:
 
 ```lua
-ctx.input._map = { pick_up_down = {"o"}, interact = {"p"} }
+ctx.input._map = { move_up = {"w"}, move_down = {"s"}, interact = {"p"} }
 ctx.input.key_for = function(self, action)
     local keys = self._map[action]
     return keys and keys[1]

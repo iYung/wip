@@ -5,6 +5,5 @@ return Input.new({
     move_down    = {"s"},
     move_left    = {"a"},
     move_right   = {"d"},
-    pick_up_down = {"o"},
     interact     = {"p"},
 })
