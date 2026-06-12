@@ -12,7 +12,7 @@ local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local ColorReplace   = require("lua/game/shaders/color_replace")
 local CRT            = require("lua/game/shaders/crt")
 local UI             = require("lua/game/ui")
-local Sound          = require("lua/game/sound")
+local Sound          = require("lua/core/sound")
 local Fonts          = require("lua/game/fonts")
 
 local CATALOGUE = {}
@@ -95,7 +95,7 @@ local BuyScene = setmetatable({}, { __index = Scene })
 BuyScene.__index = BuyScene
 
 function BuyScene.new(game_state, input, scene_manager, store_scene)
-    local self           = Scene.new()
+    local self           = Scene.new(config.LOGICAL_W, config.LOGICAL_H)
     setmetatable(self, BuyScene)
     self.game_state      = game_state
     self.input           = input

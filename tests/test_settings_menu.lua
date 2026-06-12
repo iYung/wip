@@ -1,5 +1,5 @@
 local _played = {}
-package.loaded["lua/game/sound"] = {
+package.loaded["lua/core/sound"] = {
     set_sfx_volume = function() end,
     set_music_volume = function() end,
     play = function(name) table.insert(_played, name) end,

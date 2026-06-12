@@ -1,5 +1,5 @@
 local Sprite = require("lua/core/sprite")
-local Sound  = require("lua/game/sound")
+local Sound  = require("lua/core/sound")
 local A      = require("lua/game/assets")
 
 local WaterDrone = {}

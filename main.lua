@@ -28,10 +28,10 @@ local SceneManager = require("lua/core/scene_manager")
 local StartScene   = require("lua/game/scenes/start_scene")
 local GameState    = require("lua/game/game_state")
 local input        = require("lua/game/input")
-local Save          = require("lua/game/save")
+local Save          = require("lua/core/save")
 local SettingsMenu  = require("lua/game/scenes/settings_menu")
 local SettingsState = require("lua/game/settings_state")
-local Sound         = require("lua/game/sound")
+local Sound         = require("lua/core/sound")
 
 local LOGICAL_W, LOGICAL_H = 1280, 720
 local canvas
@@ -86,7 +86,7 @@ function love.load()
             end
         end
     else
-        scene_manager = SceneManager.new()
+        scene_manager = SceneManager.new(LOGICAL_W, LOGICAL_H)
         ss = Save.settings_exist() and SettingsState.from_save(Save.read_settings()) or SettingsState.new()
         input._map = ss:key_map()
         local function _on_save()
@@ -109,7 +109,22 @@ function love.load()
         end
         settings_menu = SettingsMenu.new(ss, input, _on_save, _on_leave)
         scene_manager:switch(StartScene.new(nil, input, scene_manager, function() settings_menu:open(true) end))
-        Sound.load()
+        Sound.load({
+            sfx_dir   = "assets/sounds/",
+            sfx       = {
+                "pick_up", "put_down", "water_plant", "plant_ready",
+                "clone_success", "shop_navigate", "shop_buy", "fail",
+                "menu_navigate", "menu_confirm",
+            },
+            animalese = "assets/sounds/animalese.wav",
+            music = {
+                menu = { path = "assets/music/menu.mp3",         autoplay = true  },
+                bg1  = { path = "assets/music/background.mp3"                     },
+                bg2  = { path = "assets/music/background2.mp3"                    },
+                bg3  = { path = "assets/music/background3.mp3"                    },
+                bg4  = { path = "assets/music/background4.mp3"                    },
+            },
+        })
     end
 end
 

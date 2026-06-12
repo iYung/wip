@@ -1,4 +1,4 @@
-local Save      = require("lua/game/save")
+local Save      = require("lua/core/save")
 local GameState = require("lua/game/game_state")
 
 -- Stub love.filesystem with an in-memory store so tests don't touch disk.

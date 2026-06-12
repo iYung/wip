@@ -7,99 +7,35 @@ local _sfx_volume = 1.0
 local _music_volume = 1.0
 local _music_tracks = {}
 
-local _EVENT_NAMES = {
-    "pick_up",
-    "put_down",
-    "water_plant",
-    "plant_ready",
-    "clone_success",
-"shop_navigate",
-    "shop_buy",
-    "fail",
-"menu_navigate",
-    "menu_confirm",
-}
-
-function Sound.load()
+function Sound.load(manifest)
     if not love.audio then return end
-    for _, name in ipairs(_EVENT_NAMES) do
-        local path = "assets/sounds/" .. name .. ".wav"
+    for _, name in ipairs(manifest.sfx) do
+        local path = manifest.sfx_dir .. name .. ".wav"
         if love.filesystem.getInfo(path) then
             _src[name] = love.audio.newSource(path, "static")
         end
     end
-    if love.filesystem.getInfo("assets/sounds/animalese.wav") then
-        _animalese_src = love.audio.newSource("assets/sounds/animalese.wav", "static")
+    if love.filesystem.getInfo(manifest.animalese) then
+        _animalese_src = love.audio.newSource(manifest.animalese, "static")
     end
-    if love.filesystem.getInfo("assets/music/menu.mp3") then
-        local menu_src = love.audio.newSource("assets/music/menu.mp3", "stream")
-        menu_src:setLooping(true)
-        menu_src:setVolume(_music_volume)
-        _music_tracks["menu"] = {
-            src = menu_src,
-            fade_vol = 1,
-            fade_target = 1,
-            fade_rate = 0,
-            stop_on_done = false,
-            playing_intent = true,
-        }
-        menu_src:play()
-    end
-    if love.filesystem.getInfo("assets/music/background.mp3") then
-        local bg_src = love.audio.newSource("assets/music/background.mp3", "stream")
-        bg_src:setLooping(true)
-        bg_src:setVolume(0)
-        _music_tracks["bg1"] = {
-            src = bg_src,
-            fade_vol = 1,
-            fade_target = 1,
-            fade_rate = 0,
-            stop_on_done = false,
-            playing_intent = false,
-        }
-        -- bg1 track starts stopped and silent; do not call play
-    end
-    if love.filesystem.getInfo("assets/music/background2.mp3") then
-        local bg2_src = love.audio.newSource("assets/music/background2.mp3", "stream")
-        bg2_src:setLooping(true)
-        bg2_src:setVolume(0)
-        _music_tracks["bg2"] = {
-            src = bg2_src,
-            fade_vol = 1,
-            fade_target = 1,
-            fade_rate = 0,
-            stop_on_done = false,
-            playing_intent = false,
-        }
-        -- bg2 track starts stopped and silent; do not call play
-    end
-    if love.filesystem.getInfo("assets/music/background3.mp3") then
-        local bg3_src = love.audio.newSource("assets/music/background3.mp3", "stream")
-        bg3_src:setLooping(true)
-        bg3_src:setVolume(0)
-        _music_tracks["bg3"] = {
-            src = bg3_src,
-            fade_vol = 1,
-            fade_target = 1,
-            fade_rate = 0,
-            stop_on_done = false,
-            playing_intent = false,
-        }
-        -- bg3 track starts stopped and silent; do not call play
-    end
-    if love.filesystem.getInfo("assets/music/background4.mp3") then
-        local bg4_src = love.audio.newSource("assets/music/background4.mp3", "stream")
-        bg4_src:setLooping(true)
-        bg4_src:setVolume(0)
-        _music_tracks["bg4"] = {
-            src = bg4_src,
-            fade_vol = 1,
-            fade_target = 1,
-            fade_rate = 0,
-            stop_on_done = false,
-            playing_intent = false,
-        }
-        -- bg4 track starts stopped and silent; do not call play
+    for name, track in pairs(manifest.music) do
+        if love.filesystem.getInfo(track.path) then
+            local autoplay = track.autoplay or false
+            local src = love.audio.newSource(track.path, "stream")
+            src:setLooping(true)
+            src:setVolume(autoplay and _music_volume or 0)
+            _music_tracks[name] = {
+                src            = src,
+                fade_vol       = 1,
+                fade_target    = 1,
+                fade_rate      = 0,
+                stop_on_done   = false,
+                playing_intent = autoplay,
+            }
+            if autoplay then
+                src:play()
+            end
+        end
     end
 end
 

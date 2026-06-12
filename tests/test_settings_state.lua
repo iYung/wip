@@ -1,5 +1,5 @@
--- Stub Sound module before requiring settings_state (which requires lua/game/sound)
-package.loaded["lua/game/sound"] = { set_sfx_volume = function() end, set_music_volume = function() end }
+-- Stub Sound module before requiring settings_state (which requires lua/core/sound)
+package.loaded["lua/core/sound"] = { set_sfx_volume = function() end, set_music_volume = function() end }
 
 local SettingsState = require("lua/game/settings_state")
 

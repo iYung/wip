@@ -1,9 +1,9 @@
--- Stub Sound module before requiring settings_state (which requires lua/game/sound).
+-- Stub Sound module before requiring settings_state (which requires lua/core/sound).
 -- Track calls so tests can verify that volume setters actually invoke Sound.
 -- Evict cached modules so our stub is used regardless of test execution order.
 local _sfx_volume_set  = nil
 local _music_volume_set = nil
-package.loaded["lua/game/sound"] = {
+package.loaded["lua/core/sound"] = {
     set_sfx_volume   = function(v) _sfx_volume_set  = v end,
     set_music_volume = function(v) _music_volume_set = v end,
 }

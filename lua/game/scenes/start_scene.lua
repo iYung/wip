@@ -1,9 +1,10 @@
 local Scene     = require("lua/core/scene")
-local Sound     = require("lua/game/sound")
+local Sound     = require("lua/core/sound")
 local MenuBg    = require("lua/game/shaders/menu_bg")
-local Save      = require("lua/game/save")
+local Save      = require("lua/core/save")
 local GameState = require("lua/game/game_state")
 local Fonts     = require("lua/game/fonts")
+local config    = require("lua/game/config")
 
 local SCROLL_SPEED_X = 60
 local SCROLL_SPEED_Y = 30
@@ -23,7 +24,7 @@ StartScene.__index = StartScene
 
 
 function StartScene.new(game_state, input, scene_manager, open_settings)
-    local self          = Scene.new()
+    local self          = Scene.new(config.LOGICAL_W, config.LOGICAL_H)
     setmetatable(self, StartScene)
     self.input          = input
     self.scene_manager  = scene_manager

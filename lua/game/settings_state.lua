@@ -1,4 +1,4 @@
-local Sound = require("lua/game/sound")
+local Sound = require("lua/core/sound")
 
 local SettingsState = {}
 SettingsState.__index = SettingsState

@@ -1,6 +1,6 @@
 local Scene        = require("lua/core/scene")
 local Timer        = require("lua/core/timer")
-local Sound        = require("lua/game/sound")
+local Sound        = require("lua/core/sound")
 local WateringCan  = require("lua/game/items/watering_can")
 local PCStore      = require("lua/game/items/pc_store")
 local GarbageBin   = require("lua/game/items/garbage_bin")
@@ -45,7 +45,7 @@ local StoreScene = setmetatable({}, { __index = Scene })
 StoreScene.__index = StoreScene
 
 function StoreScene.new(game_state, input, scene_manager, from_save)
-    local self          = Scene.new()
+    local self          = Scene.new(config.LOGICAL_W, config.LOGICAL_H)
     setmetatable(self, StoreScene)
     self.game_state     = game_state
     self.input          = input

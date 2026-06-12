@@ -127,7 +127,7 @@ end
 -- Test 11b: interact on item 2 (Continue) switches scene when save exists
 do
     local switched = false
-    local Save = require("lua/game/save")
+    local Save = require("lua/core/save")
     local _orig_read = Save.read
     -- stub Save.read to return a minimal valid save table
     Save.read = function()

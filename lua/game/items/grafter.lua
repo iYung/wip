@@ -4,7 +4,7 @@ local Sprite     = require("lua/core/sprite")
 local PLANT_DATA = require("lua/game/data/plant_data")
 local A          = require("lua/game/assets")
 local U          = require("lua/game/config").U
-local Sound      = require("lua/game/sound")
+local Sound      = require("lua/core/sound")
 
 local Grafter = setmetatable({}, { __index = Item })
 Grafter.__index = Grafter
