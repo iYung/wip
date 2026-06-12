@@ -22,6 +22,12 @@ love . --visual tests/test_basics.lua
 
 # Build for web
 bash scripts/build_web.sh
+
+# Build all platforms (web, mac, windows)
+bash scripts/build_all.sh
+
+# Push all platforms to itch.io (requires butler)
+bash scripts/push_all.sh
 ```
 
 Tests exit with code 0 (pass) or 1 (fail). CI runs `love . --headless` on every push and PR.
