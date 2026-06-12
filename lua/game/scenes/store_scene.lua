@@ -204,11 +204,11 @@ function StoreScene:_wire_pc_store()
     end
 
     for _, slot in ipairs(store.slots) do
-        if slot.item and slot.item.name == "PC Store" then
+        if slot.item and slot.item.name == "Laptop" then
             slot.item.buy_scene_factory = factory
         end
     end
-    if gs.player.held_item and gs.player.held_item.name == "PC Store" then
+    if gs.player.held_item and gs.player.held_item.name == "Laptop" then
         gs.player.held_item.buy_scene_factory = factory
     end
 end

@@ -230,7 +230,7 @@ World coordinates and slot widths should be sized to feel natural at 1280×720.
 
 ---
 
-## PC Store Catalogue
+## Laptop Catalogue
 
 Each `CATALOGUE` entry in `buy_scene.lua` has a `description` string displayed in the shop UI. **Max 2 lines** (one `\n` allowed). Some entries (e.g. `growth_boost`) append a dynamic line at draw time — those catalogue descriptions must be 1 line so the total stays at 2.
 

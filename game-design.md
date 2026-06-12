@@ -44,7 +44,7 @@ Bottom-left overlay showing context-sensitive labels. Each line only appears whe
 | `HOVER: <name>` | Player is over a slot with an item |
 | `E: PICK UP` | Empty hands, slot has a carriable item |
 | `E: PUT DOWN` | Holding an item, slot is empty |
-| `F: OPEN SHOP` | Empty hands, over PC Store |
+| `F: OPEN SHOP` | Empty hands, over Laptop |
 | `F: WATER` | Holding watering can, over a plant |
 | `F: CLONE` | Holding grafter, over a stage-3 plant |
 | `F: DISCARD` | Holding any sellable item, over garbage bin |
@@ -56,7 +56,7 @@ Bottom-left overlay showing context-sensitive labels. Each line only appears whe
 - The player can **pick up** the item in the active slot
 - The player can **place** a held item into the active slot
 - Only one item held at a time
-- **Interact** triggers item use (e.g. watering can waters the slot) or station actions (e.g. PC store opens BuyScene)
+- **Interact** triggers item use (e.g. watering can waters the slot) or station actions (e.g. Laptop opens BuyScene)
 
 ### Store Growth
 
@@ -83,20 +83,20 @@ The player can increase the number of slots. Adding a slot expands the store wid
 
 - Can be picked up and placed
 - Player presses Interact (F) while holding any sellable item over the bin to discard it
-- PC Store cannot be discarded
+- Laptop cannot be discarded
 
 ---
 
 ### Water Drone
 
-- One-time purchase from the PC Store ($10)
+- One-time purchase from the Laptop ($10)
 - After purchase, a drone appears in the store scene at a fixed elevation above the heat lamps
 - Each frame it scans all slots for a plant with a water-ready bubble; flies to the first one found (leftmost), centers over it, waits 0.5 s, waters it, and plays the water sound
 - Idles in place after watering — no return to a home position
-- Only one drone can be purchased; the PC Store entry shows "Already installed." after purchase
+- Only one drone can be purchased; the Laptop entry shows "Already installed." after purchase
 - Sprite: 120×120, 2-frame animation (20fps)
 
-### PC Store
+### Laptop
 
 - Can be picked up and carried
 - Player interacts with it only when it is placed in a slot (not while held) to trigger a scene switch to BuyScene

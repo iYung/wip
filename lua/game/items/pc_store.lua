@@ -13,7 +13,7 @@ function PCStore.new(buy_scene_factory)
     self.sprite.image      = A.pc_store
     self.carriable         = true
     self.sellable          = false
-    self.name              = "PC Store"
+    self.name              = "Laptop"
     self.buy_scene_factory = buy_scene_factory
     return self
 end
