@@ -450,14 +450,15 @@ function StoreScene:_handle_interact()
         return
     end
 
+    if player.x < 0 then return end
+
     -- held item + garbage bin → discard
-    if player.x >= 0 and player.held_item and player.held_item.sellable ~= false and slot and slot.item and slot.item.is_garbage_bin then
+    if player.held_item and player.held_item.sellable ~= false and slot and slot.item and slot.item.is_garbage_bin then
         player.held_item = nil
         Sound.play("put_down")
         return
     end
 
-    if player.x < 0 then return end
     local item = player.held_item or (slot and slot.item)
     if item then
         local prev_stage = slot and slot.item and slot.item.stage
@@ -523,14 +524,16 @@ function StoreScene:_hud_labels()
                 f_label = f_key .. ": NEXT"
             end
         end
-    elseif not held and slot_item and slot_item.buy_scene_factory then
-        f_label = f_key .. ": OPEN SHOP"
-    elseif held and held.name == "Watering Can" and slot_item and slot_item.plant_type and slot_item.ready then
-        f_label = f_key .. ": WATER"
-    elseif held and held.name == "Grafter" and slot_item and slot_item.stage == 3 then
-        f_label = f_key .. ": CLONE"
-    elseif held and held.sellable ~= false and slot_item and slot_item.is_garbage_bin then
-        f_label = f_key .. ": DISCARD"
+    elseif player.x >= 0 then
+        if not held and slot_item and slot_item.buy_scene_factory then
+            f_label = f_key .. ": OPEN SHOP"
+        elseif held and held.name == "Watering Can" and slot_item and slot_item.plant_type and slot_item.ready then
+            f_label = f_key .. ": WATER"
+        elseif held and held.name == "Grafter" and slot_item and slot_item.stage == 3 then
+            f_label = f_key .. ": CLONE"
+        elseif held and held.sellable ~= false and slot_item and slot_item.is_garbage_bin then
+            f_label = f_key .. ": DISCARD"
+        end
     end
 
     return { slot = slot_label, up = up_label, down = down_label, f = f_label }
