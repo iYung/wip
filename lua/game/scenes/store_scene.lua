@@ -462,7 +462,7 @@ function StoreScene:_handle_interact()
     local item = player.held_item or (slot and slot.item)
     if item then
         local prev_stage = slot and slot.item and slot.item.stage
-item:interact(player, store, self.scene_manager)
+        item:interact(player, store, self.scene_manager)
         if slot and slot.item and slot.item.stage == 3 and prev_stage == 2 then
             local pt = slot.item.plant_type
             self.game_state.stage3_counts[pt] = (self.game_state.stage3_counts[pt] or 0) + 1
