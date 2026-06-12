@@ -47,7 +47,6 @@ function Sound.load()
     end
     if love.filesystem.getInfo("assets/music/background.mp3") then
         local bg_src = love.audio.newSource("assets/music/background.mp3", "stream")
-        bg_src:setLooping(true)
         bg_src:setVolume(0)
         _music_tracks["bg1"] = {
             src = bg_src,
@@ -56,12 +55,12 @@ function Sound.load()
             fade_rate = 0,
             stop_on_done = false,
             playing_intent = false,
+            is_bg = true,
         }
         -- bg1 track starts stopped and silent; do not call play
     end
     if love.filesystem.getInfo("assets/music/background2.mp3") then
         local bg2_src = love.audio.newSource("assets/music/background2.mp3", "stream")
-        bg2_src:setLooping(true)
         bg2_src:setVolume(0)
         _music_tracks["bg2"] = {
             src = bg2_src,
@@ -70,12 +69,12 @@ function Sound.load()
             fade_rate = 0,
             stop_on_done = false,
             playing_intent = false,
+            is_bg = true,
         }
         -- bg2 track starts stopped and silent; do not call play
     end
     if love.filesystem.getInfo("assets/music/background3.mp3") then
         local bg3_src = love.audio.newSource("assets/music/background3.mp3", "stream")
-        bg3_src:setLooping(true)
         bg3_src:setVolume(0)
         _music_tracks["bg3"] = {
             src = bg3_src,
@@ -84,12 +83,12 @@ function Sound.load()
             fade_rate = 0,
             stop_on_done = false,
             playing_intent = false,
+            is_bg = true,
         }
         -- bg3 track starts stopped and silent; do not call play
     end
     if love.filesystem.getInfo("assets/music/background4.mp3") then
         local bg4_src = love.audio.newSource("assets/music/background4.mp3", "stream")
-        bg4_src:setLooping(true)
         bg4_src:setVolume(0)
         _music_tracks["bg4"] = {
             src = bg4_src,
@@ -98,6 +97,7 @@ function Sound.load()
             fade_rate = 0,
             stop_on_done = false,
             playing_intent = false,
+            is_bg = true,
         }
         -- bg4 track starts stopped and silent; do not call play
     end
@@ -138,8 +138,8 @@ function Sound.set_music_volume(v)
     end
 end
 
-function Sound.update(dt)
-    for _, entry in pairs(_music_tracks) do
+function Sound.update(dt, on_bg_ended)
+    for name, entry in pairs(_music_tracks) do
         if entry.fade_rate ~= 0 then
             entry.fade_vol = entry.fade_vol + entry.fade_rate * dt
             -- clamp to [0, 1]
@@ -157,6 +157,13 @@ function Sound.update(dt)
                     entry.playing_intent = false
                     entry.stop_on_done = false
                 end
+            end
+        end
+        -- end-of-track detection for bg tracks
+        if entry.is_bg and entry.playing_intent and not entry.stop_on_done and not entry.src:isPlaying() then
+            entry.playing_intent = false
+            if on_bg_ended then
+                on_bg_ended(name)
             end
         end
     end
@@ -202,12 +209,18 @@ function Sound.stop_music(name)
     end
 end
 
-function Sound.play_random_music(names, fade_duration)
-    -- Filter to only names that exist in _music_tracks
+function Sound.play_random_music(names, fade_duration, exclude_name)
+    -- Filter to only names that exist in _music_tracks, excluding exclude_name
     local valid = {}
     for _, name in ipairs(names) do
-        if _music_tracks[name] then
+        if _music_tracks[name] and name ~= exclude_name then
             valid[#valid + 1] = name
+        end
+    end
+    -- fallback: if exclusion leaves nothing, use all installed entries in names
+    if #valid == 0 then
+        for _, name in ipairs(names) do
+            if _music_tracks[name] then valid[#valid + 1] = name end
         end
     end
     if #valid == 0 then return end
@@ -228,6 +241,15 @@ function Sound.play_random_music(names, fade_duration)
     -- Pick one at random and fade it in
     local picked = valid[math.random(#valid)]
     Sound.fade_music(picked, 1, fade_duration)
+end
+
+function Sound.get_playing_bg()
+    for name, entry in pairs(_music_tracks) do
+        if entry.is_bg and entry.playing_intent then
+            return name
+        end
+    end
+    return nil
 end
 
 function Sound.is_music_playing(name)

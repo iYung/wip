@@ -321,6 +321,10 @@ function StoreScene:update(dt)
         end
     end
 
+    Sound.update(dt, function(ended_name)
+        Sound.play_random_music({"bg1","bg2","bg3","bg4"}, 2, ended_name)
+    end)
+
     self.camera:follow(gs.player, CAMERA_LERP)
     self.camera.y = CAMERA_Y
 

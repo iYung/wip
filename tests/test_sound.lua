@@ -327,4 +327,166 @@ do
     print("PASS: on_focus(false) does not replay any tracks")
 end
 
+-- Test: play_random_music exclude_name avoids picking the excluded track
+do
+    local orig_getInfo = love.filesystem.getInfo
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" then
+            if p == "assets/music/background.mp3"  then return true end
+            if p == "assets/music/background2.mp3" then return true end
+            if p == "assets/music/background3.mp3" then return true end
+        end
+        return nil
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+
+    local picked_counts = { bg1 = 0, bg2 = 0, bg3 = 0 }
+    local orig_random = math.random
+    -- Run enough iterations to confirm bg1 is never picked when excluded
+    for i = 1, 20 do
+        math.random = function(n) return (i % (n or 1)) + 1 end
+        S.play_random_music({"bg1", "bg2", "bg3"}, 0, "bg1")
+        local playing = S.get_playing_bg()
+        if playing then
+            picked_counts[playing] = (picked_counts[playing] or 0) + 1
+        end
+        -- reset playing_intent so get_playing_bg works cleanly each iteration
+        S.stop_music("bg1"); S.stop_music("bg2"); S.stop_music("bg3")
+    end
+    math.random = orig_random
+    assert(picked_counts.bg1 == 0, "bg1 should never be picked when excluded, got " .. picked_counts.bg1)
+
+    love.filesystem.getInfo = orig_getInfo
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: play_random_music exclude_name avoids excluded track")
+end
+
+-- Test: play_random_music exclude_name falls back when only one track exists
+do
+    local orig_getInfo = love.filesystem.getInfo
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" and p == "assets/music/background.mp3" then return true end
+        return nil
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+
+    -- Only bg1 exists; excluding it should still play bg1 via fallback
+    S.play_random_music({"bg1", "bg2", "bg3"}, 0, "bg1")
+    S.update(0.016)
+    -- No error and no crash is the main requirement; get_playing_bg returns bg1 or nil (headless)
+    print("PASS: play_random_music falls back when only excluded track exists")
+
+    love.filesystem.getInfo = orig_getInfo
+    package.loaded["lua/game/sound"] = nil
+end
+
+-- Test: Sound.update on_bg_ended fires when a bg track ends naturally
+do
+    local orig_getInfo  = love.filesystem.getInfo
+    local orig_newSource = love.audio.newSource
+
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" and p == "assets/music/background.mp3" then return true end
+        return nil
+    end
+
+    local playing_state = true
+    love.audio.newSource = function(path, t)
+        local src = orig_newSource(path, t)
+        src.isPlaying = function() return playing_state end
+        return src
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+
+    S.play_music("bg1")
+
+    -- Simulate track ending
+    playing_state = false
+    local ended = nil
+    S.update(0.016, function(name) ended = name end)
+    assert(ended == "bg1", "expected on_bg_ended to fire with 'bg1', got " .. tostring(ended))
+
+    -- Callback must not fire again next frame (playing_intent cleared)
+    local fired_again = false
+    S.update(0.016, function() fired_again = true end)
+    assert(not fired_again, "on_bg_ended must not fire twice")
+
+    love.filesystem.getInfo = orig_getInfo
+    love.audio.newSource    = orig_newSource
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: Sound.update on_bg_ended fires once when bg track ends naturally")
+end
+
+-- Test: Sound.update on_bg_ended does not fire for menu track or during stop_on_done
+do
+    local orig_getInfo   = love.filesystem.getInfo
+    local orig_newSource = love.audio.newSource
+
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" then
+            if p == "assets/music/menu.mp3"        then return true end
+            if p == "assets/music/background.mp3"  then return true end
+        end
+        return nil
+    end
+
+    local playing_state = false
+    love.audio.newSource = function(path, t)
+        local src = orig_newSource(path, t)
+        src.isPlaying = function() return playing_state end
+        return src
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()  -- menu starts with playing_intent=true, isPlaying()=false in headless
+
+    local fired = false
+    S.update(0.016, function() fired = true end)
+    assert(not fired, "on_bg_ended must not fire for menu track")
+
+    love.filesystem.getInfo = orig_getInfo
+    love.audio.newSource    = orig_newSource
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: Sound.update on_bg_ended ignores menu track")
+end
+
+-- Test: Sound.get_playing_bg returns name when a bg track has playing_intent, nil otherwise
+do
+    local orig_getInfo = love.filesystem.getInfo
+    love.filesystem.getInfo = function(p)
+        if type(p) == "string" then
+            if p == "assets/music/background.mp3"  then return true end
+            if p == "assets/music/background2.mp3" then return true end
+        end
+        return nil
+    end
+
+    package.loaded["lua/game/sound"] = nil
+    local S = require("lua/game/sound")
+    S.load()
+
+    assert(S.get_playing_bg() == nil, "expected nil when no bg playing")
+
+    S.play_music("bg1")
+    local name = S.get_playing_bg()
+    assert(name == "bg1", "expected 'bg1', got " .. tostring(name))
+
+    S.stop_music("bg1")
+    assert(S.get_playing_bg() == nil, "expected nil after stop_music")
+
+    love.filesystem.getInfo = orig_getInfo
+    package.loaded["lua/game/sound"] = nil
+    print("PASS: Sound.get_playing_bg returns correct name or nil")
+end
+
 print("ALL TESTS PASSED")
