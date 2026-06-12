@@ -599,7 +599,7 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 **Methods**
 - `new()` — constructor; sets `fullscreen = false` and populates default `keybinds`
 - `toggle_fullscreen()` — flips `self.fullscreen` and calls `love.window.setFullscreen(self.fullscreen)`
-- `set_keybind(action, key)` — assigns `key` to `action`; automatically clears any other action already bound to the same key (no collisions)
+- `set_keybind(action, key)` — assigns `key` to `action` unconditionally; collision prevention is the menu layer's responsibility
 - `key_map()` — returns `{action = {key}}` for all non-nil bindings; suitable for passing directly to `Input.new()` or patching `input._map`
 
 **Notes**
@@ -647,6 +647,8 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 - `_saved` — `true` after a successful save this session; resets to `false` on `open()`; changes Save Game label to "Saved!"
 - `_prev_up`, `_prev_down`, `_prev_confirm`, `_prev_escape` — edge-detection flags (main screen)
 - `_prev_sub_up`, `_prev_sub_down`, `_prev_sub_confirm`, `_prev_sub_escape` — edge-detection flags (keybind sub-screen)
+- `_shake_row` — index into `_ACTION_LIST` of the row currently shaking due to a rejected key (nil when idle)
+- `_shake_timer` — countdown from `0.5` to `0`; drives the horizontal sine-wave offset and red tint on `_shake_row`
 
 **Main screen buttons** (ITEMS indices; Save Game hidden when `_opaque`)
 1. **Fullscreen / Window** — calls `self._state:toggle_fullscreen()`; label flips between "Fullscreen" and "Window"
@@ -660,7 +662,7 @@ Navigation uses `_visible_items(opaque)` to build the active index list, so Save
 
 **Keybind sub-screen**
 
-Lists all five remappable actions (`move_up`, `move_down`, `move_left`, `move_right`, `interact`) with their current key. Note: `move_up` and `move_down` also serve as pick up and put down in the store — pressing `move_up` picks up a carriable item from a slot (or swaps if already holding something), and `move_down` puts down a held item (or swaps). Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. Escape during capture cancels without change; escape outside capture returns to the main screen.
+Lists all five remappable actions (`move_up`, `move_down`, `move_left`, `move_right`, `interact`) with their current key. Note: `move_up` and `move_down` also serve as pick up and put down in the store — pressing `move_up` picks up a carriable item from a slot (or swaps if already holding something), and `move_down` puts down a held item (or swaps). Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. If the pressed key is already bound to a different action, the binding is rejected: the conflicting row shakes horizontally and flashes red for 0.5 s while capture mode remains active. Escape during capture cancels without change; escape outside capture returns to the main screen.
 
 **Methods**
 - `new(settings_state, input, on_save)` — constructor; `on_save` is a callback invoked by "Save Game"
@@ -747,8 +749,8 @@ Three ways to run the game:
 | `test_grafter.lua` | Grafter rejects stage-2 source, clones a stage-1 plant into an adjacent slot |
 | `test_plant_growth.lua` | Stage-1 cooldown fires `ready`; watering advances stage 1→2 |
 | `test_selling.lua` | Correct plant type accepted and currency increases; wrong type / wrong stage rejected |
-| `test_settings_menu.lua` | Settings menu open/close, navigation, fullscreen toggle, keybind sub-screen, press-to-capture flow, modifier rejection, collision clearing |
-| `test_settings_state.lua` | `SettingsState` defaults, `toggle_fullscreen`, `set_keybind` (basic + collision), `key_map` output and nil-skipping |
+| `test_settings_menu.lua` | Settings menu open/close, navigation, fullscreen toggle, keybind sub-screen, press-to-capture flow, modifier rejection, taken-key rejection (shake state) |
+| `test_settings_state.lua` | `SettingsState` defaults, `toggle_fullscreen`, `set_keybind` (basic, no collision clearing), `key_map` output and nil-skipping |
 | `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
 | `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op; `play_random_music` fades one track and skips missing tracks gracefully; `on_focus(true)` replays tracks with `playing_intent=true`; `on_focus(false)` does not replay anything |
 | `test_start_scene.lua` | StartScene navigation (up/down/wrap, Continue skipped when no save), confirm callbacks (New Game, Continue with/without save, Settings, Exit) |

@@ -236,14 +236,17 @@ assert(state.keybinds.move_up == "w", "escape should not change binding, got " .
 assert(m._capturing == nil, "escape should clear _capturing")
 print("PASS: keypressed escape cancels capture without changing binding")
 
--- Test 26: Collision clears old binding
+-- Test 26: Collision rejects key and triggers shake (no binding changes)
 state.keybinds.move_up = "w"
 state.keybinds.move_down = "s"
 m._capturing = "move_down"
 m:keypressed("w")
-assert(state.keybinds.move_down == "w", "move_down should now be bound to w, got " .. tostring(state.keybinds.move_down))
-assert(state.keybinds.move_up == nil, "collision should clear old move_up binding, got " .. tostring(state.keybinds.move_up))
-print("PASS: collision clears old binding")
+assert(state.keybinds.move_down == "s", "collision should leave move_down unchanged, got " .. tostring(state.keybinds.move_down))
+assert(state.keybinds.move_up == "w", "collision should leave move_up unchanged, got " .. tostring(state.keybinds.move_up))
+assert(m._capturing == "move_down", "collision should keep capture mode active")
+assert(m._shake_row ~= nil, "collision should set _shake_row")
+assert(m._shake_timer == 0.5, "collision should set _shake_timer to 0.5")
+print("PASS: collision rejects key and triggers shake")
 
 -- Test 27: Sub-screen down navigation moves _subscreen_selected from 1 to 2
 open_clean(m)

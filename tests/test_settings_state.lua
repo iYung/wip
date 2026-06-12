@@ -41,13 +41,13 @@ s3:set_keybind("move_up", "t")
 assert(s3.keybinds.move_up == "t", "set_keybind should update move_up to 't'")
 print("PASS: set_keybind basic rebind works")
 
--- Test 6: collision clearing — binding move_down to "w" clears move_up
+-- Test 6: no collision clearing — set_keybind sets the key unconditionally
 local s4 = SettingsState.new()
 s4:set_keybind("move_up", "w")   -- ensure move_up == "w"
-s4:set_keybind("move_down", "w") -- "w" collides with move_up
-assert(s4.keybinds.move_up   == nil, "collision should clear move_up")
+s4:set_keybind("move_down", "w") -- same key, no clearing
+assert(s4.keybinds.move_up   == "w", "set_keybind should not clear colliding bindings")
 assert(s4.keybinds.move_down == "w", "move_down should now be 'w'")
-print("PASS: set_keybind clears colliding binding")
+print("PASS: set_keybind does not clear colliding bindings")
 
 -- Test 7: key_map output — action maps to a single-element array
 local s5 = SettingsState.new()
