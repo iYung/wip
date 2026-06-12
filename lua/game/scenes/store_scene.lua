@@ -457,6 +457,7 @@ function StoreScene:_handle_interact()
         return
     end
 
+    if player.x < 0 then return end
     local item = player.held_item or (slot and slot.item)
     if item then
         local prev_stage = slot and slot.item and slot.item.stage
