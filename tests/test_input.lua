@@ -24,4 +24,25 @@ do
     print("PASS: input: key_for returns nil for unknown action")
 end
 
+-- Ghost-interact prevention: a priming update() call after settings closes prevents
+-- the held confirm key from registering as a fresh press on the next frame.
+-- This matches the fix in main.lua where input:update() is called when is_open
+-- flips to false inside settings_menu:update(dt).
+do
+    local input = Input.new({ interact = {"space"} })
+    -- Last frame before settings opened: space not held
+    love.keyboard.isDown = function() return false end
+    input:update()
+    -- Settings is now "open"; input:update() is skipped for several frames.
+    -- Player presses space to confirm "Exit Settings" — key is now held.
+    love.keyboard.isDown = function(k) return k == "space" end
+    -- Settings closes; main.lua calls input:update() once to prime _down (the fix).
+    input:update()
+    -- Next frame: normal update with space still held
+    input:update()
+    assert(not input:pressed("interact"),
+        "interact should not ghost-fire after priming update with key held at settings close")
+    print("PASS: input: priming update after settings-close prevents ghost interact")
+end
+
 print("ALL TESTS PASSED")

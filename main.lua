@@ -142,6 +142,11 @@ function love.update(dt)
         Sound.update(dt)
         if settings_menu and settings_menu.is_open then
             settings_menu:update(dt)
+            if not settings_menu.is_open then
+                -- Settings closed this frame; prime _down so the key that triggered
+                -- the close doesn't register as a fresh press in the scene next frame.
+                input:update()
+            end
         else
             input:update()
             scene_manager:update(dt)
