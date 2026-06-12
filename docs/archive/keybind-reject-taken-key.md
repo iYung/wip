@@ -1,0 +1,8 @@
+## Keybind Reject Taken Key Checklist
+
+- [x] Task A — `lua/game/settings_state.lua` — Remove the collision-clearing loop from `set_keybind`; the method should just do `self.keybinds[action] = key` with no loop
+- [x] Task B — `lua/game/scenes/settings_menu.lua` — Add `self._shake_row = nil` and `self._shake_timer = 0` to `SettingsMenu.new()`
+- [x] Task C — `lua/game/scenes/settings_menu.lua` — In `update`, tick `self._shake_timer` down by `dt` (clamped to 0) and nil out `self._shake_row` when it reaches 0; tick happens unconditionally (outside subscreen/capture guards) so the animation always drains
+- [x] Task D — `lua/game/scenes/settings_menu.lua` — In `keypressed`, before calling `set_keybind`, loop over `_ACTION_LIST` to check if `key` is already bound to a different action; if yes, set `self._shake_row` to that action's index and `self._shake_timer = 0.5`, and return `true` without changing any binding or exiting capture mode
+- [x] Task E — `lua/game/scenes/settings_menu.lua` — In `draw` (keybinds subscreen loop), when `self._shake_row == i` and `self._shake_timer > 0`, compute `local ox = math.sin(self._shake_timer * 40) * 8 * (self._shake_timer / 0.5)` and apply it as an x-offset to the label bar draw, value bar draw, and both `printf` calls for that row; set color to `(1, 0.25, 0.25, 1)` for both bars and reset to `(1, 1, 1, 1)` after
+- [x] Task F — `tests/test_settings_state.lua` — Update Test 6: change it to verify that `set_keybind` no longer clears colliding bindings (binding "w" to move_down should leave move_up as "w" and set move_down to "w" — both hold "w" simultaneously, since collision rejection is now the menu's job)

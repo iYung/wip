@@ -28,11 +28,6 @@ function SettingsState:toggle_fullscreen()
 end
 
 function SettingsState:set_keybind(action, key)
-    for other_action, bound_key in pairs(self.keybinds) do
-        if other_action ~= action and bound_key == key then
-            self.keybinds[other_action] = nil
-        end
-    end
     self.keybinds[action] = key
 end
 
