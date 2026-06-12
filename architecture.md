@@ -83,7 +83,7 @@ Controls the viewport — what portion of the world is visible.
 - `zoom` — scale factor (default: `1.0`)
 
 **Methods**
-- `new(x, y)` — constructor
+- `new(x, y, w, h)` — constructor; `w` and `h` default to `1280` and `720` respectively
 - `attach()` — push camera transform onto the Love2D transform stack (call before drawing)
 - `detach()` — pop camera transform (call after drawing)
 - `to_world(sx, sy)` — convert screen coordinates to world coordinates
@@ -196,10 +196,10 @@ Shared rendering helpers used by multiple modules.
 
 Loads and plays named sound effects. Parallel singleton to `Assets` — required directly by any module that needs to play audio.
 
-**Location:** `lua/game/sound.lua`
+**Location:** `lua/core/sound.lua`
 
 **API**
-- `Sound.load()` — called once from `main.lua:love.load()`; iterates all 17 event names, loads each `assets/sounds/<name>.wav` via `love.audio.newSource(path, "static")` if the file exists; also loads music tracks (`menu`, `bg1`, `bg2`, `bg3`, `bg4`) as looping streams; no-ops if `love.audio` is nil (headless)
+- `Sound.load(manifest)` — called once from `main.lua:love.load()` with a manifest table specifying `sfx_dir`, `sfx` names, `animalese` path, and a `music` table; iterates all named sfx events, loads each `<sfx_dir>/<name>.wav` via `love.audio.newSource(path, "static")` if the file exists; also loads music tracks from the manifest as looping streams; no-ops if `love.audio` is nil (headless)
 - `Sound.play(name)` — clones the pre-loaded source for `name` and plays it; cloning allows the same sound to overlap itself; no-ops if `love.audio` is nil or the name was not loaded
 - `Sound.play_random_music(names, fade_duration)` — stops any currently-playing tracks from `names`, picks one at random, then fades it in over `fade_duration` seconds; silently skips any name not present in `_music_tracks` so missing files never error
 - `Sound.on_focus(focused)` — called from `main.lua:love.focus()`; when `focused` is true, restarts any music track whose `playing_intent` is true but whose source is no longer playing (covers OS-level audio interrupts on focus loss); no-ops on focus-out and in headless
@@ -612,7 +612,7 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 
 Handles save file I/O. Serializes and deserializes game state to `save.dat` in Love2D's save directory (IndexedDB on web, a platform-appropriate directory on desktop).
 
-**Location:** `lua/game/save.lua`
+**Location:** `lua/core/save.lua`
 
 **Methods**
 - `Save.exists()` → bool — returns true if `save.dat` exists

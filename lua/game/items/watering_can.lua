@@ -2,7 +2,7 @@ local Item   = require("lua/game/items/item")
 local Sprite = require("lua/core/sprite")
 local A      = require("lua/game/assets")
 local U      = require("lua/game/config").U
-local Sound  = require("lua/game/sound")
+local Sound  = require("lua/core/sound")
 
 local WateringCan = setmetatable({}, { __index = Item })
 WateringCan.__index = WateringCan

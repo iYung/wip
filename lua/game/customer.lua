@@ -5,7 +5,7 @@ local PLANT_DATA   = require("lua/game/data/plant_data")
 local A            = require("lua/game/assets")
 local U            = require("lua/game/config").U
 local ColorReplace = require("lua/game/shaders/color_replace")
-local Sound        = require("lua/game/sound")
+local Sound        = require("lua/core/sound")
 local UI           = require("lua/game/ui")
 
 local CW    = 6 * U   -- 120

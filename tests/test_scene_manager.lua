@@ -84,4 +84,20 @@ do
     print("PASS: scene_manager: new scene updates immediately after switch")
 end
 
+-- Test 6: default dimensions are 1280x720
+do
+    local sm = SceneManager.new()
+    assert(sm._w == 1280, "default _w should be 1280, got " .. tostring(sm._w))
+    assert(sm._h == 720,  "default _h should be 720, got "  .. tostring(sm._h))
+    print("PASS: scene_manager: default dimensions are 1280x720")
+end
+
+-- Test 7: custom dimensions are stored
+do
+    local sm = SceneManager.new(800, 600)
+    assert(sm._w == 800, "custom _w should be 800, got " .. tostring(sm._w))
+    assert(sm._h == 600, "custom _h should be 600, got " .. tostring(sm._h))
+    print("PASS: scene_manager: custom dimensions stored correctly")
+end
+
 print("ALL TESTS PASSED")

@@ -1,4 +1,4 @@
-local Sound = require("lua/game/sound")
+local Sound = require("lua/core/sound")
 local Fonts = require("lua/game/fonts")
 
 local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Save Game", "Exit Settings", "Leave Game" }

@@ -5,7 +5,7 @@ local Timer      = require("lua/core/timer")
 local PLANT_DATA = require("lua/game/data/plant_data")
 local A          = require("lua/game/assets")
 local U          = require("lua/game/config").U
-local Sound      = require("lua/game/sound")
+local Sound      = require("lua/core/sound")
 
 local Plant = setmetatable({}, { __index = Item })
 Plant.__index = Plant

@@ -1,10 +1,28 @@
 -- Reset any stub injected by earlier test files so we get the real module.
-package.loaded["lua/game/sound"] = nil
-local Sound = require("lua/game/sound")
+package.loaded["lua/core/sound"] = nil
+local Sound = require("lua/core/sound")
+
+-- Standard manifest used by all load() calls in this test file.
+local MANIFEST = {
+    sfx_dir   = "assets/sounds/",
+    sfx       = {
+        "pick_up", "put_down", "water_plant", "plant_ready",
+        "clone_success", "shop_navigate", "shop_buy", "fail",
+        "menu_navigate", "menu_confirm",
+    },
+    animalese = "assets/sounds/animalese.wav",
+    music = {
+        menu = { path = "assets/music/menu.mp3",         autoplay = true  },
+        bg1  = { path = "assets/music/background.mp3"                     },
+        bg2  = { path = "assets/music/background2.mp3"                    },
+        bg3  = { path = "assets/music/background3.mp3"                    },
+        bg4  = { path = "assets/music/background4.mp3"                    },
+    },
+}
 
 -- Test: Sound.load() does not error in headless mode
 do
-    Sound.load()
+    Sound.load(MANIFEST)
     print("PASS: sound: Sound.load() runs without error in headless")
 end
 
@@ -88,7 +106,7 @@ end
 
 -- Test: update runs cleanly after a fade_music call (no error from fade arithmetic)
 do
-    Sound.load()
+    Sound.load(MANIFEST)
     Sound.fade_music("bg1", 1, 2)
     Sound.update(0.5)
     Sound.update(2.0)
@@ -120,9 +138,9 @@ do
         return nil
     end
 
-    package.loaded["lua/game/sound"] = nil
-    local S = require("lua/game/sound")
-    S.load()
+    package.loaded["lua/core/sound"] = nil
+    local S = require("lua/core/sound")
+    S.load(MANIFEST)
 
     local fake_time = 1.0
     love.timer = { getTime = function() return fake_time end }
@@ -144,7 +162,7 @@ do
     love.audio.play         = orig_play
     love.filesystem.getInfo = orig_getInfo
     love.timer              = orig_timer
-    package.loaded["lua/game/sound"] = nil
+    package.loaded["lua/core/sound"] = nil
     print("PASS: sound: play_animalese cooldown suppresses notes within 50ms")
 end
 
@@ -163,9 +181,9 @@ do
         return nil
     end
 
-    package.loaded["lua/game/sound"] = nil
-    local S = require("lua/game/sound")
-    S.load()
+    package.loaded["lua/core/sound"] = nil
+    local S = require("lua/core/sound")
+    S.load(MANIFEST)
 
     S.play_random_music({"bg1", "bg2", "bg3"}, 2)
     S.update(2)
@@ -173,7 +191,7 @@ do
     love.audio.play    = orig_play
     love.audio.newSource = orig_newSrc
     love.filesystem.getInfo = orig_getInfo
-    package.loaded["lua/game/sound"] = nil
+    package.loaded["lua/core/sound"] = nil
     print("PASS: play_random_music picks one track and fades it in")
 end
 
@@ -191,9 +209,9 @@ do
         return nil
     end
 
-    package.loaded["lua/game/sound"] = nil
-    local S = require("lua/game/sound")
-    S.load()
+    package.loaded["lua/core/sound"] = nil
+    local S = require("lua/core/sound")
+    S.load(MANIFEST)
 
     S.play_random_music({"bg1", "bg2", "bg3"}, 2)
     S.update(2)
@@ -201,16 +219,16 @@ do
     love.audio.play    = orig_play
     love.audio.newSource = orig_newSrc
     love.filesystem.getInfo = orig_getInfo
-    package.loaded["lua/game/sound"] = nil
+    package.loaded["lua/core/sound"] = nil
     print("PASS: play_random_music handles missing tracks gracefully")
 
     -- Empty list must also be a no-op
-    package.loaded["lua/game/sound"] = nil
-    local S2 = require("lua/game/sound")
-    S2.load()
+    package.loaded["lua/core/sound"] = nil
+    local S2 = require("lua/core/sound")
+    S2.load(MANIFEST)
     S2.play_random_music({}, 2)
     S2.update(2)
-    package.loaded["lua/game/sound"] = nil
+    package.loaded["lua/core/sound"] = nil
     print("PASS: play_random_music handles empty list gracefully")
 end
 
@@ -229,9 +247,9 @@ do
         return nil
     end
 
-    package.loaded["lua/game/sound"] = nil
-    local S = require("lua/game/sound")
-    S.load()
+    package.loaded["lua/core/sound"] = nil
+    local S = require("lua/core/sound")
+    S.load(MANIFEST)
 
     -- Simulate bg music playing (play_random_music picks one; we start bg1 directly)
     S.play_music("bg1")
@@ -247,13 +265,13 @@ do
     S.update(0.016)
 
     love.filesystem.getInfo = orig_getInfo
-    package.loaded["lua/game/sound"] = nil
+    package.loaded["lua/core/sound"] = nil
     print("PASS: fading bg1-bg4 loop (store->start transition) runs without error")
 end
 
 -- Test: Sound.on_focus() does not error in headless mode (love.audio guard)
 do
-    Sound.load()
+    Sound.load(MANIFEST)
     Sound.on_focus(true)
     Sound.on_focus(false)
     print("PASS: Sound.on_focus() runs without error in headless")
@@ -275,9 +293,9 @@ do
         return src
     end
 
-    package.loaded["lua/game/sound"] = nil
-    local S = require("lua/game/sound")
-    S.load()
+    package.loaded["lua/core/sound"] = nil
+    local S = require("lua/core/sound")
+    S.load(MANIFEST)
     -- load() plays menu immediately; reset counter so we only count on_focus calls
     play_calls = 0
 
@@ -293,7 +311,7 @@ do
 
     love.filesystem.getInfo = orig_getInfo
     love.audio.newSource    = orig_newSource
-    package.loaded["lua/game/sound"] = nil
+    package.loaded["lua/core/sound"] = nil
     print("PASS: on_focus(true) replays only tracks with playing_intent=true")
 end
 
@@ -313,9 +331,9 @@ do
         return src
     end
 
-    package.loaded["lua/game/sound"] = nil
-    local S = require("lua/game/sound")
-    S.load()
+    package.loaded["lua/core/sound"] = nil
+    local S = require("lua/core/sound")
+    S.load(MANIFEST)
     play_calls = 0
 
     S.on_focus(false)
@@ -323,7 +341,7 @@ do
 
     love.filesystem.getInfo = orig_getInfo
     love.audio.newSource    = orig_newSource
-    package.loaded["lua/game/sound"] = nil
+    package.loaded["lua/core/sound"] = nil
     print("PASS: on_focus(false) does not replay any tracks")
 end
 
