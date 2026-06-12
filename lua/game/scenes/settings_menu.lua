@@ -27,6 +27,23 @@ local function _all_bound(keybinds)
     return true
 end
 
+local function _joy_nav(input)
+    if not input or not input._joystick or not input._joystick:isConnected() then
+        return { up=false, down=false, left=false, right=false, confirm=false, back=false }
+    end
+    local joy = input._joystick
+    local ax = joy:getGamepadAxis("leftx")
+    local ay = joy:getGamepadAxis("lefty")
+    return {
+        up      = ay < -0.3 or joy:isGamepadDown("dpup"),
+        down    = ay >  0.3 or joy:isGamepadDown("dpdown"),
+        left    = ax < -0.3 or joy:isGamepadDown("dpleft"),
+        right   = ax >  0.3 or joy:isGamepadDown("dpright"),
+        confirm = joy:isGamepadDown("a"),
+        back    = joy:isGamepadDown("b"),
+    }
+end
+
 local W       = 1280
 local H       = 720
 local BTN_W   = 300
@@ -54,6 +71,8 @@ function SettingsMenu.new(settings_state, input, on_save, on_leave)
     self._prev_right   = false
     self._prev_confirm = false
     self._prev_escape  = false
+    self._prev_back         = false
+    self._prev_sub_back     = false
     self._state = settings_state
     self._input = input
     self._on_save  = on_save
@@ -99,6 +118,13 @@ function SettingsMenu:open(opaque)
     self._prev_confirm = love.keyboard.isDown(kb.interact     or "space")
                       or love.keyboard.isDown("return") or love.keyboard.isDown("space")
     self._prev_escape  = love.keyboard.isDown("escape")
+    local _jn = _joy_nav(self._input)
+    self._prev_up      = self._prev_up      or _jn.up
+    self._prev_down    = self._prev_down    or _jn.down
+    self._prev_left    = self._prev_left    or _jn.left
+    self._prev_right   = self._prev_right   or _jn.right
+    self._prev_confirm = self._prev_confirm or _jn.confirm
+    self._prev_back    = _jn.back
 end
 
 function SettingsMenu:close()
@@ -127,6 +153,19 @@ function SettingsMenu:update(dt)
         local confirm = love.keyboard.isDown(self._state.keybinds.interact     or "space")
                      or love.keyboard.isDown("return") or love.keyboard.isDown("space")
         local escape  = love.keyboard.isDown("escape")
+        local _jn = _joy_nav(self._input)
+        up      = up      or _jn.up
+        down    = down    or _jn.down
+        confirm = confirm or _jn.confirm
+        -- B button cancels capture or closes subscreen
+        if _jn.back and not self._prev_sub_back then
+            if self._capturing ~= nil then
+                self._capturing = nil
+            elseif _all_bound(self._state.keybinds) then
+                self._subscreen = nil
+            end
+        end
+        self._prev_sub_back = _jn.back
 
         local sub_count = #_ACTION_LIST + 1
         if up and not self._prev_sub_up then
@@ -157,6 +196,7 @@ function SettingsMenu:update(dt)
         self._prev_sub_down    = down
         self._prev_sub_confirm = confirm
         self._prev_sub_escape  = escape
+        self._prev_sub_back    = _jn.back
         return
     end
 
@@ -168,6 +208,16 @@ function SettingsMenu:update(dt)
     local confirm = love.keyboard.isDown(kb.interact     or "space")
                  or love.keyboard.isDown("return") or love.keyboard.isDown("space")
     local escape  = love.keyboard.isDown("escape")
+    local _jn = _joy_nav(self._input)
+    up      = up      or _jn.up
+    down    = down    or _jn.down
+    left    = left    or _jn.left
+    right   = right   or _jn.right
+    confirm = confirm or _jn.confirm
+    escape  = escape  or _jn.back
+        or (self._input._joystick ~= nil
+            and self._input._joystick:isConnected()
+            and self._input._joystick:isGamepadDown("start"))
 
     if up and not self._prev_up then
         local vis = _visible_items(self._opaque)
@@ -218,6 +268,7 @@ function SettingsMenu:update(dt)
     self._prev_right   = right
     self._prev_confirm = confirm
     self._prev_escape  = escape
+    self._prev_back    = _jn.back
 end
 
 function SettingsMenu:_confirm()
@@ -233,6 +284,9 @@ function SettingsMenu:_confirm()
         self._prev_sub_confirm = love.keyboard.isDown(self._state.keybinds.interact     or "space")
                               or love.keyboard.isDown("return") or love.keyboard.isDown("space")
         self._prev_sub_escape  = love.keyboard.isDown("escape")
+        local _jn_confirm = _joy_nav(self._input)
+        self._prev_sub_back = _jn_confirm.back
+        self._prev_back     = _jn_confirm.back
     elseif self.selected == 5 then
         if not self._opaque and self._on_save then
             self._on_save()
