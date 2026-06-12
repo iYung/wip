@@ -129,7 +129,7 @@ function GameState.from_save(data)
     if self.speed_level > 0 then
         local tier = SPEED_TIERS[self.speed_level]
         self.player.speed = tier.speed
-        self.player:set_speed_color(tier.color)
+        self.player:set_speed_color(tier.color, tier.secondary)
     end
 
     return self

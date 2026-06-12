@@ -191,4 +191,17 @@ assert(gs_base2.player.speed == 220,
     "from_save: player speed should be 220 at speed_level 0, got " .. tostring(gs_base2.player.speed))
 print("PASS: save: from_save keeps base speed when speed_level is 0")
 
+-- Test 14: from_save restores secondary speed color when speed_level > 0
+reset_fs()
+local gs_col = GameState.new()
+gs_col.speed_level = 1
+Save.write(GameState.to_save(gs_col))
+local gs_col2 = GameState.from_save(Save.read())
+local sec = gs_col2.player._speed_secondary
+assert(sec ~= nil, "from_save: _speed_secondary should not be nil at speed_level 1")
+local expected = SPEED_TIERS[1].secondary
+assert(sec[1] == expected[1] and sec[2] == expected[2] and sec[3] == expected[3],
+    "from_save: _speed_secondary should match tier secondary color")
+print("PASS: save: from_save restores secondary speed color")
+
 print("ALL TESTS PASSED")

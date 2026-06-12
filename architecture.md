@@ -188,7 +188,7 @@ Shared rendering helpers used by multiple modules.
 - `UI.draw9(img, x, y, w, h, m)` — draws `img` as a 9-slice scaled rectangle at `(x, y)` with size `(w, h)`; `m` is a margins table `{ top, right, bottom, left }` that defines the fixed border regions
 - `UI.draw_hud_box(labels, font)` — draws a 9-slice `speech_bubble` box in the bottom-left corner (10 px from each edge) sized to fit `labels`; no-ops when `#labels == 0`; padding is 14 px on all sides; line height is 20 px
 
-`draw9` was extracted from `customer.lua` so it can be shared between the customer dialogue bubble and the HUD box. Call sites that draw the HUD text must still render text on top of the box after calling `draw_hud_box`.
+`draw9` was extracted from `customer.lua` so it can be shared between the customer dialogue bubble, the Intercom bubble, and the HUD box. Call sites that draw the HUD text must still render text on top of the box after calling `draw_hud_box`.
 
 ---
 
@@ -287,7 +287,7 @@ The player character. Moves left/right into the cashier zone, holds at most one 
 
 **Methods**
 - `new(x)` — constructor
-- `set_speed_color(color, secondary)` — stores `color` as `_speed_color` and `secondary` as `_speed_secondary`; called by BuyScene after a speed purchase
+- `set_speed_color(color, secondary)` — stores `color` as `_speed_color` and `secondary` as `_speed_secondary`; called by BuyScene after a speed purchase and by `GameState.from_save` on load
 - `update(dt, input, store)` — handle movement and animation frame switching
 - `active_slot(store)` — returns the slot the player is standing over
 - `draw()` — applies `ColorReplace` with `_speed_color` as primary and `_speed_secondary` as secondary; draws sprite; clears shader; then draws held item above the player
