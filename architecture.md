@@ -768,8 +768,11 @@ Three ways to run the game:
 | (pre-drawer) | Store wall tiles and window frames (`Store:draw_bg`) — drawn on top of parallax, before drawer |
 | 0 | Store (slots, items) |
 | 1 | Customer body |
+| 1.5 | Heat lamps (drawn above slot items; only when `growth_level >= 1`) |
 | 2 | Cashier wall (`cashier_wall.png` with transparent window cutout) |
 | 2.5 | Cashier floor (tiled `slot.png` across `x = -400` to `0`) |
-| 3 | Plant ready bubbles (`Store:draw_bubbles()`) |
-| 4 | Player (+ held item) |
-| 5 | Customer speech / plant bubble |
+| 3 | Customer speech / plant-request bubble |
+| 3.2 | Plant ready bubbles (`Store:draw_bubbles()`) |
+| 3.5 | Water drone (only when purchased) |
+| 4 | Player (+ held item sprite) |
+| 6 | Held item bubble (Plant watering-ready, Grafter no-space, Intercom) — always on top |

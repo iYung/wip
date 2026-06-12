@@ -83,12 +83,13 @@ function StoreScene:on_enter()
     self.drawer:add(self._heat_lamps,      1.5)
     self.drawer:add(self._wall,            2)
     self.drawer:add(self._cashier_floor,   2.5)
-    self.drawer:add(self._plant_bubbles,   3)
+    self.drawer:add(self._customer_bubble, 3)
+    self.drawer:add(self._plant_bubbles,   3.2)
     if self._drone then
         self.drawer:add(self._drone, 3.5)
     end
     self.drawer:add(gs.player,             4)
-    self.drawer:add(self._customer_bubble, 5)
+    self.drawer:add(self._held_bubble,     6)
 
     self.camera.x = gs.player.x
     self.camera.y = CAMERA_Y
@@ -143,6 +144,14 @@ function StoreScene:_setup_store()
     local store_ref = gs.store
     self._plant_bubbles = {
         draw = function() store_ref:draw_bubbles() end
+    }
+
+    local player_ref = gs.player
+    self._held_bubble = {
+        draw = function()
+            local held = player_ref.held_item
+            if held and held.draw_bubble then held:draw_bubble() end
+        end
     }
 
     self._sway_time = 0

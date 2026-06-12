@@ -11,6 +11,7 @@ local function make_stub_image()
     getHeight     = function() return 120 end,
     getDimensions = function() return 120, 120 end,
     setFilter     = noop,
+    send          = noop,
   }
 end
 
