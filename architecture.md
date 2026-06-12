@@ -301,7 +301,7 @@ Base class for all carriable/interactable objects in the store.
 **Properties**
 - `sprite` — Sprite or SpriteSet
 - `carriable` — bool
-- `sellable` — bool (false for PC Store)
+- `sellable` — bool (false for Laptop)
 - `name` — display string
 
 **Methods**

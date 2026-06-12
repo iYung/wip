@@ -23,7 +23,7 @@ local function _item_to_data(item)
         return { type = "grafter" }
     elseif item.name == "Garbage Bin" then
         return { type = "garbage_bin" }
-    elseif item.name == "PC Store" then
+    elseif item.name == "Laptop" then
         return { type = "pc_store" }
     elseif item.name == "Intercom" then
         return { type = "intercom" }

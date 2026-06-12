@@ -40,7 +40,7 @@ This is a Love2D game written in Lua. The full architecture reference is in `arc
 
 **Frame loop:** `main.lua` → `SceneManager` → active `Scene` → `Drawer` (sorted by priority) → `Camera` transform.
 
-**Scenes:** `StartScene` (title) → `StoreScene` (main gameplay) ↔ `BuyScene` (PC store carousel). `SettingsMenu` is a pause overlay, not a Scene subclass.
+**Scenes:** `StartScene` (title) → `StoreScene` (main gameplay) ↔ `BuyScene` (Laptop carousel). `SettingsMenu` is a pause overlay, not a Scene subclass.
 
 **SceneManager is not a stack** — `switch(scene)` replaces the current scene outright, no push/pop. `BuyScene` holds a reference to the *same* `StoreScene` instance and calls `scene_manager:switch(self.store_scene)` to return, which re-fires `StoreScene:on_enter()`. Code that re-checks state in `on_enter()` (e.g. music restart, `_bg_playing` guard) therefore runs every time the player exits the buy screen. `StoreScene` uses a `self._initialized` flag to skip one-time setup on these re-entries.
 
@@ -69,4 +69,4 @@ This is a Love2D game written in Lua. The full architecture reference is in `arc
 - All classes follow the `MyClass.__index = MyClass` / `setmetatable({}, MyClass)` pattern
 - Logical resolution: 1280×720; world coordinates sized to feel natural at that resolution
 - Grass (plant_type 1) is always pre-unlocked in `GameState.new()` — `unlocked_plants[1] = true`
-- PC Store catalogue descriptions: max 2 lines; entries that append dynamic text at draw time must use a 1-line base description
+- Laptop catalogue descriptions: max 2 lines; entries that append dynamic text at draw time must use a 1-line base description

@@ -45,7 +45,7 @@ do
         "_buy_scene should be cached on StoreScene after save/load")
     -- All wired PCStore slots and held item should point to the same instance
     for _, slot in ipairs(ctx.sm.current.game_state.store.slots) do
-        if slot.item and slot.item.name == "PC Store" then
+        if slot.item and slot.item.name == "Laptop" then
             local got = slot.item.buy_scene_factory()
             assert(got == store_scene._buy_scene,
                 "wired PCStore factory should return the cached _buy_scene")
