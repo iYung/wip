@@ -76,7 +76,7 @@ CATALOGUE[#CATALOGUE + 1] = {
 CATALOGUE[#CATALOGUE + 1] = {
     label       = "Water Drone",
     description = "Auto-waters ready plants.",
-    cost        = 10,
+    cost        = 50,
     kind        = "drone",
     image       = A.water_drone,
 }
