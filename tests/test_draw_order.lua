@@ -17,20 +17,24 @@ do
     end)
     local scene = ctx.sm.current
 
-    local cust_pri  = find_priority(scene, scene._customer_bubble)
-    local plant_pri = find_priority(scene, scene._plant_bubbles)
-    local held_pri  = find_priority(scene, scene._held_bubble)
+    local cust_pri   = find_priority(scene, scene._customer_bubble)
+    local plant_pri  = find_priority(scene, scene._plant_bubbles)
+    local player_pri = find_priority(scene, ctx.gs.player)
+    local held_pri   = find_priority(scene, scene._held_bubble)
 
-    assert(cust_pri  ~= nil, "customer_bubble must be in drawer")
-    assert(plant_pri ~= nil, "plant_bubbles must be in drawer")
-    assert(held_pri  ~= nil, "held_bubble must be in drawer")
+    assert(cust_pri   ~= nil, "customer_bubble must be in drawer")
+    assert(plant_pri  ~= nil, "plant_bubbles must be in drawer")
+    assert(player_pri ~= nil, "player must be in drawer")
+    assert(held_pri   ~= nil, "held_bubble must be in drawer")
 
     assert(cust_pri < plant_pri,
         "customer_bubble (" .. cust_pri .. ") must be below plant_bubbles (" .. plant_pri .. ")")
-    assert(plant_pri < held_pri,
-        "plant_bubbles (" .. plant_pri .. ") must be below held_bubble (" .. held_pri .. ")")
+    assert(plant_pri < player_pri,
+        "plant_bubbles (" .. plant_pri .. ") must be below player (" .. player_pri .. ")")
+    assert(player_pri < held_pri,
+        "player (" .. player_pri .. ") must be below held_bubble (" .. held_pri .. ")")
 
-    print("PASS: draw_order: held_bubble > plant_bubbles > customer_bubble")
+    print("PASS: draw_order: held_bubble > player > plant_bubbles > customer_bubble")
 end
 
 -- Test: Player:draw() no longer calls draw_bubble on held item

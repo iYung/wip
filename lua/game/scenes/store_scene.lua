@@ -84,11 +84,11 @@ function StoreScene:on_enter()
     self.drawer:add(self._wall,            2)
     self.drawer:add(self._cashier_floor,   2.5)
     self.drawer:add(self._customer_bubble, 3)
+    self.drawer:add(self._plant_bubbles,   3.2)
     if self._drone then
         self.drawer:add(self._drone, 3.5)
     end
     self.drawer:add(gs.player,             4)
-    self.drawer:add(self._plant_bubbles,   5)
     self.drawer:add(self._held_bubble,     6)
 
     self.camera.x = gs.player.x
