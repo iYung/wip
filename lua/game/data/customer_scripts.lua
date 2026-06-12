@@ -124,7 +124,7 @@ return {
         },
         after_messages  = {
             "TYSM I LUV DISSSS",
-            "TTYL!",
+            "IG2G TTYL!",
         },
     },
     {
@@ -301,7 +301,8 @@ return {
         plant_type      = 3,
         messages        = {
             "Me again. Don't act surprised.",
-            "I need barbed wire for a perimeter. The hardware store here has ties to foreign actors. You're the best bet.",
+            "I need barbed wire for a perimeter.",
+            "The hardware store here has ties to foreign actors. You're the best bet.",
             "You have anything with barbs?",
         },
         after_messages  = {
@@ -431,7 +432,7 @@ return {
             "I saw a beautiful frog! I need a rose, right now! So I can tell them what gem they are!",
         },
         after_messages  = {
-            "Merci!",
+            "Merci beaucoup!",
         },
     },
     {
@@ -452,7 +453,7 @@ return {
             "A beautiful frog! I need a rose, right now! So I can tell them what gem they are!",
         },
         after_messages  = {
-            "Merci!",
+            "Merci bien!",
         },
     },
     {
