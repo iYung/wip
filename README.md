@@ -56,9 +56,10 @@ LÖVE runtimes are downloaded on first run and cached in `dist/runtimes/` — su
 ### Individual builds
 
 ```bash
-bash scripts/build_web.sh   # → web/
-bash scripts/build_mac.sh   # → dist/frobert-mac.zip
-bash scripts/build_win.sh   # → dist/frobert-win.zip
+bash scripts/build_web.sh          # → web/  (itch.io release, no mobile controls)
+bash scripts/build_web_preview.sh  # → web/  (PR/CI testing, includes mobile canvas scaling + controls)
+bash scripts/build_mac.sh          # → dist/frobert-mac.zip
+bash scripts/build_win.sh          # → dist/frobert-win.zip
 ```
 
 ### Testing the web build locally
