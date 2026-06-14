@@ -625,7 +625,9 @@ Handles save file I/O. Serializes and deserializes game state to `save.dat` in L
 
 **What is not saved:** Customer/quest state, spawn timers, settings (volume, keybinds, fullscreen).
 
-**Web compatibility:** `love.filesystem.write` maps to browser IndexedDB on web (love.js) — no code changes needed for web builds. Auto-save via `love.quit()` may not fire reliably on web; the "Save Game" button in the settings menu is the reliable save path.
+**Save triggers:** `love.quit()` always saves on clean exit. The Settings menu "Save Game" button saves on demand. `StoreScene` autosaves silently after each successful plant sale (currency collected + optional script marked seen).
+
+**Web compatibility:** `love.filesystem.write` maps to browser IndexedDB on web (love.js) — no code changes needed for web builds. Auto-save via `love.quit()` may not fire reliably on web; the in-game autosave on sale and the "Save Game" button in the settings menu are the reliable save paths.
 
 ---
 

@@ -1,6 +1,8 @@
 local Scene        = require("lua/core/scene")
 local Timer        = require("lua/core/timer")
 local Sound        = require("lua/core/sound")
+local Save         = require("lua/core/save")
+local GameState    = require("lua/game/game_state")
 local WateringCan  = require("lua/game/items/watering_can")
 local PCStore      = require("lua/game/items/pc_store")
 local GarbageBin   = require("lua/game/items/garbage_bin")
@@ -16,6 +18,10 @@ local A            = require("lua/game/assets")
 local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local WaterDrone     = require("lua/game/water_drone")
 local UI             = require("lua/game/ui")
+
+local function _autosave(gs)
+    Save.write(GameState.to_save(gs))
+end
 
 local function spawn_cooldown(gs)
     if gs.cooldown_level == 0 then return 4 end
@@ -449,6 +455,7 @@ function StoreScene:_handle_interact()
                     self._script_cooldowns[key] = remaining
                 end
             end
+            _autosave(self.game_state)
         else
             if not self._customer:line_complete() then
                 self._customer:skip_reveal()
