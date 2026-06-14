@@ -20,8 +20,10 @@ love . --headless
 # Watch a test play out in a real window
 love . --visual tests/test_basics.lua
 
-# Build for web
+# Build for web (itch.io release)
 bash scripts/build_web.sh
+# Build for web (PR/CI testing — includes mobile canvas scaling + controls)
+bash scripts/build_web_preview.sh
 
 # Build all platforms (web, mac, windows)
 bash scripts/build_all.sh
