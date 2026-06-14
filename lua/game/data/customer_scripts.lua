@@ -238,12 +238,11 @@ return {
         voice_pitch     = 0.70,
         primary_color   = {0.40, 0.55, 0.35, 1},
         secondary_color = {0.60, 0.65, 0.60, 1},
-        plant_type      = 1,
+        plant_type      = 6,
         messages        = {
             "TITLE CHANGE: MASTER GARDENER.",
             "GARDEN WON AWARD: MOST SCENIC IN FROGTOWN.",
-            "REQUIRED: ONE GRASS. FOR CEREMONY.",
-            "CEREMONIAL PURPOSE. GRASS IS WHERE THIS UNIT STARTED.",
+            "REQUIRED: ONE GOLDEN LOTUS. FOR CEREMONY.",
         },
         after_messages  = {
             "THIS UNIT THANKS YOU. OPERATION PEACEFUL: SUCCESS.",
@@ -318,12 +317,11 @@ return {
         voice_pitch    = 1.28,
         primary_color     = {0.70, 0.50, 0.85, 1},
         secondary_color = {0.40, 0.70, 0.55, 1},
-        plant_type     = 4,
+        plant_type     = 2,
         messages       = {
             "Hey, it's Dottie! I have huge news!",
-            "Mayor Bloom personally hired me to perform at the inauguration! Big stage!",
-            "There's a love scene in my act. A romantic clown thing.",
-            "My prop needs to be a tulip. Don't ask why, it's comedy, it just works.",
+            "Mayor Bloom personally hired me to perform at city hall!",
+            "I'm going to do a juggling set, do you have anything that's like a ball?",
         },
         after_messages = {
             "The crowd is going to love it, I just know it!",
@@ -402,10 +400,10 @@ return {
         secondary_color = {0.40, 0.32, 0.20, 1},
         plant_type      = 5,
         messages        = {
-            "Don't react to seeing me.",
-            "Going undercover. High-end garden society. Suspicious connections.",
-            "I need to blend in. A flower. Nothing too flashy.",
-            "Something ordinary. Unassuming.",
+            "I have another job for you.",
+            "The Walled Garden. Rumor is our wealthiest bullfrogs are controlling the masses there.",
+            "I need to blend in with the wallflowers.",
+            "Something that won't raise suspicion.",
         },
         after_messages  = {
             "This conversation never happened.",
@@ -569,13 +567,13 @@ return {
         secondary_color = {0.90, 0.60, 0.60, 1},
         plant_type      = 3,
         messages        = {
-            "Mon ami! One last time, you must help me!",
-            "The relationship, she has lasted six months!",
-            "I am going to propose! Tonight! Under the moon!",
-            "She loves roses. I need the most beautiful rose you have.",
+            "Mon ami! You must help me!",
+            "I am meeting her parents. Tonight. For the first time.",
+            "I must make a perfect impression. I am bringing flowers.",
+            "A rose. Something that says: I am serious, I am passionate, I am not a disaster.",
         },
         after_messages  = {
-            "Merci! I will come back to tell you how it goes!",
+            "Merci! I am definitely not a disaster.",
         },
     },
 
@@ -653,9 +651,10 @@ return {
         plant_type      = 2,
         messages        = {
             "Yo man. Guess what.",
-            "I started listening to Joe Froggan again. But I'm critical now. I really am.",
-            "Anyway he released a new episode: 'The Cactus Return. Why I Was Right All Along.'",
-            "I mean... he makes good points. I need to start on cactus again.",
+            "I stopped listening to Joe Froggan. I see now that it wasn't good for me.",
+            "But I found this Naggor Foej, some Nordic comedian, with some real different viewpoints!",
+            "Instead of eating cactuses, we have to be swapping our mind energy with them! Syncing up our vibes, y'know?",
+            "You still got them?",
         },
         after_messages  = {
             "I'm just open-minded, you know?",
@@ -732,13 +731,13 @@ return {
         secondary_color = {0.95, 0.85, 0.65, 1},
         plant_type      = 6,
         messages        = {
-            "Hello sir! Big news! I've been nominated for the Frog Chef Awards!",
-            "Best Floral Dish! Can you believe it? Me!",
+            "Hello! Big news! I've been nominated for the Frog Chef Awards!",
+            "Best Bread! Can you believe it?",
             "The judges want a final dish. I need the rarest ingredient.",
             "A Golden Lotus. To win, I have to go all in.",
         },
         after_messages  = {
-            "I will make you proud. Lotus bread. It's happening.",
+            "I will make you proud. Lotus bread is going to be a classic!",
         },
     },
 
@@ -818,12 +817,13 @@ return {
         plant_type      = 6,
         messages        = {
             "Hey man. It's me again.",
-            "The raccoon count is now three. My wife moved out.",
-            "She said she'll come back if I do something truly extraordinary.",
-            "I heard golden lotuses are really expensive. She likes fancy things. Please.",
+            "Remember my two raccoons? My wife didn't like them so I tried to get them to win her over.",
+            "My plan was simple: I saw on some show that rodents can sit on your head and make you cook really really good French food.",
+            "I don't know how they did it, we just burnt the house down.",
+            "Now she won't speak with me. Help. Please.",
         },
         after_messages  = {
-            "She came back. The raccoons are still here. We didn't discuss that part.",
+            "Thank you, she's gonna love this!",
         },
     },
 
