@@ -629,11 +629,11 @@ do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
     end)
-    ctx.gs.stage3_counts[6] = 2   -- mayor_bloom ch4: trigger plant_type=6, count=2
+    ctx.gs.stage3_counts[6] = 3   -- mayor_bloom ch4: trigger plant_type=6, count=3
     ctx.gs.seen_scripts["mayor_bloom:1"] = true
     ctx.gs.seen_scripts["mayor_bloom:2"] = true
     -- deliberately omit mayor_bloom:3
-    ctx.gs.seen_scripts["wallace:1"] = true   -- wallace:4 also qualifies at Lotus>=1; mark chain seen so only bloom:4 competes
+    ctx.gs.seen_scripts["wallace:1"] = true   -- wallace:4 qualifies at Lotus>=1; mark chain seen so only bloom:4 competes
     ctx.gs.seen_scripts["wallace:2"] = true
     ctx.gs.seen_scripts["wallace:3"] = true
     ctx.gs.seen_scripts["wallace:4"] = true
@@ -654,11 +654,11 @@ do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
     end)
-    ctx.gs.stage3_counts[6] = 2   -- mayor_bloom ch4: trigger plant_type=6, count=2
+    ctx.gs.stage3_counts[6] = 3   -- mayor_bloom ch4: trigger plant_type=6, count=3
     ctx.gs.seen_scripts["mayor_bloom:1"] = true
     ctx.gs.seen_scripts["mayor_bloom:2"] = true
     ctx.gs.seen_scripts["mayor_bloom:3"] = true
-    ctx.gs.seen_scripts["wallace:1"] = true   -- wallace:4 also qualifies at Lotus>=1; mark chain seen so only bloom:4 competes
+    ctx.gs.seen_scripts["wallace:1"] = true   -- wallace:4 qualifies at Lotus>=1; mark chain seen so only bloom:4 competes
     ctx.gs.seen_scripts["wallace:2"] = true
     ctx.gs.seen_scripts["wallace:3"] = true
     ctx.gs.seen_scripts["wallace:4"] = true

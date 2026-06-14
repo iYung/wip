@@ -116,7 +116,7 @@ local schedule = {
     { pt = 3, target = 30 },   -- Rose   >= 30  → sage:4 (>=2), mayor_bloom:1 (>=7), mira:1 (>=10), mayor_bloom:2 (>=12), mayor_bloom:3 (>=30)
     { pt = 4, target = 18 },   -- Tulip  >= 18  → dottie:1 (>=5), mira:2 (>=8), dottie:2 (>=11), romeo:3 (>=13), glen:2 (>=15), frogsby:3 (>=18)
     { pt = 5, target = 32 },   -- Daisy  >= 32  → mechafrog:1 (>=5), dottie:3 (>=7), glen:3 (>=14), romeo:4 (>=8), frogsby:4 (>=12), dottie:4 (>=20), glen:4 (>=24), collector:1 (>=32)
-    { pt = 6, target = 5  },   -- Lotus  >= 5   → wallace:4 (>=1), bloom:4 (>=2), chef_brio:4 (>=3), mechafrog:4 (>=5), collector:2 (>=5)
+    { pt = 6, target = 7  },   -- Lotus  >= 7   → wallace:4 (>=1), bloom:4 (>=3), collector:2 (>=5), chef_brio:4 (>=5), mechafrog:4 (>=7)
     { pt = 1, target = 60 },   -- Grass  >= 60  → mechafrog:2 (>=60)
 }
 
