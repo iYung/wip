@@ -176,4 +176,31 @@ do
     print("PASS: sell: customer enters walking_out state after sale")
 end
 
+-- Test: autosave fires after successful sale
+do
+    local _fs = {}
+    love.filesystem.write   = function(path, content) _fs[path] = content end
+    love.filesystem.read    = function(path) return _fs[path], _fs[path] and #_fs[path] or 0 end
+    love.filesystem.getInfo = function(path) return _fs[path] and { type="file" } or nil end
+
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local elapsed = 0
+    local plant = Plant.new(1); plant.stage = 3
+    ctx.gs.player.held_item = plant
+    ctx.gs.player.x = -200
+
+    elapsed = show_customer(ctx, {
+        plant_type = 1, name = "Test",
+        messages = {}, primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    }, elapsed)
+
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    assert(_fs["save.dat"] ~= nil, "save.dat should be written after a sale")
+    print("PASS: sell: autosave fires after successful sale")
+end
+
 print("ALL TESTS PASSED")
