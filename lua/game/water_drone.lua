@@ -65,7 +65,7 @@ function WaterDrone:update(dt)
         self._water_timer = self._water_timer - dt
         if self._water_timer <= 0 then
             local item = self.target_slot.item
-            local ok = item ~= nil and item:water()
+            local ok = item ~= nil and item.plant_type ~= nil and item:water()
             if ok then
                 Sound.play("water_plant")
                 if self._game_state and item.stage == 3 then
