@@ -22,7 +22,7 @@ function Sound.load(manifest)
         if love.filesystem.getInfo(track.path) then
             local autoplay = track.autoplay or false
             local src = love.audio.newSource(track.path, "stream")
-            src:setLooping(true)
+            src:setLooping(track.looping ~= false)
             src:setVolume(autoplay and _music_volume or 0)
             _music_tracks[name] = {
                 src            = src,
