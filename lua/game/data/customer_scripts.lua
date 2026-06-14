@@ -64,7 +64,7 @@ return {
         id             = "mayor_bloom",
         chapter        = 4,
         accessory      = "secretary_glasses",
-        trigger        = { plant_type = 5, count = 16 },
+        trigger        = { plant_type = 6, count = 2 },
         name           = "Mayor Bloom",
         voice_pitch    = 0.82,
         primary_color     = {0.75, 0.25, 0.40, 1},
