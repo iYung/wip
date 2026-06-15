@@ -60,6 +60,27 @@ return {
             "Thank you! I promise this daisy and I are headed for great things!",
         },
     },
+    {
+        id             = "mayor_bloom",
+        chapter        = 4,
+        accessory      = "secretary_glasses",
+        trigger        = { plant_type = 6, count = 3 },
+        name           = "Mayor Bloom",
+        voice_pitch    = 0.82,
+        primary_color     = {0.75, 0.25, 0.40, 1},
+        secondary_color = {0.15, 0.25, 0.50, 1},
+        plant_type     = 6,
+        messages       = {
+            "Hellooo! Mayor Bloom to you now!",
+            "We won! Thanks in part to our many campaigns, we pulled it off!",
+            "I wanted to decorate the mayor's office with something special.",
+            "Something that says power. Prestige. But still approachable.",
+            "Do you have a Golden Lotus? I think it says all of that.",
+        },
+        after_messages = {
+            "Thank you! I promise this lotus and I are headed for great things!",
+        },
+    },
 
     -- The Collector (golden lotus, 2 chapters)
     {
@@ -208,6 +229,25 @@ return {
             "MUCH EXCITEMENT.",
         },
     },
+    {
+        id              = "mechafrog",
+        chapter         = 4,
+        accessory       = "antenna",
+        trigger         = { plant_type = 6, count = 7 },
+        name            = "Mechafrog",
+        voice_pitch     = 0.70,
+        primary_color   = {0.40, 0.55, 0.35, 1},
+        secondary_color = {0.60, 0.65, 0.60, 1},
+        plant_type      = 6,
+        messages        = {
+            "TITLE CHANGE: MASTER GARDENER.",
+            "GARDEN WON AWARD: MOST SCENIC IN FROGTOWN.",
+            "REQUIRED: ONE GOLDEN LOTUS. FOR CEREMONY.",
+        },
+        after_messages  = {
+            "THIS UNIT THANKS YOU. OPERATION PEACEFUL: SUCCESS.",
+        },
+    },
 
     -- Dottie (circus clown job arc, 3-chapter arc)
     {
@@ -268,6 +308,25 @@ return {
             "Thank you, I hope the tadpoles love this as much as I do!",
         },
     },
+    {
+        id             = "dottie",
+        chapter        = 4,
+        accessory      = "clown",
+        trigger        = { plant_type = 5, count = 20 },
+        name           = "Dottie",
+        voice_pitch    = 1.28,
+        primary_color     = {0.70, 0.50, 0.85, 1},
+        secondary_color = {0.40, 0.70, 0.55, 1},
+        plant_type     = 2,
+        messages       = {
+            "Hey, it's Dottie! I have huge news!",
+            "Mayor Bloom personally hired me to perform at city hall!",
+            "I'm going to do a juggling set, do you have anything that's like a ball?",
+        },
+        after_messages = {
+            "The crowd is going to love it, I just know it!",
+        },
+    },
 
     -- Agent Frogsby (comedy spy, 3-chapter arc; cactus → rose → tulip)
     {
@@ -325,6 +384,26 @@ return {
             "Diplomatic mission. Fire Toad Nation.",
             "Tough to sweet talk. Always worried about their attacks.",
             "I just need one tulip. Something to soften em up.",
+        },
+        after_messages  = {
+            "This conversation never happened.",
+        },
+    },
+    {
+        id              = "agent_frogsby",
+        chapter         = 4,
+        accessory       = "coat",
+        trigger         = { plant_type = 5, count = 12 },
+        name            = "Agent Frogsby",
+        voice_pitch     = 0.75,
+        primary_color   = {0.22, 0.28, 0.22, 1},
+        secondary_color = {0.40, 0.32, 0.20, 1},
+        plant_type      = 5,
+        messages        = {
+            "I have another job for you.",
+            "The Walled Garden. Rumor is our wealthiest bullfrogs are controlling the masses there.",
+            "I need to blend in with the wallflowers.",
+            "Something that won't raise suspicion.",
         },
         after_messages  = {
             "This conversation never happened.",
@@ -477,6 +556,26 @@ return {
             "Merci! Me and my future hundred tadpoles thank you!",
         },
     },
+    {
+        id              = "romeo",
+        chapter         = 4,
+        accessory       = "mustache",
+        trigger         = { plant_type = 5, count = 8 },
+        name            = "Romeo",
+        voice_pitch     = 0.90,
+        primary_color   = {0.85, 0.20, 0.25, 1},
+        secondary_color = {0.90, 0.60, 0.60, 1},
+        plant_type      = 3,
+        messages        = {
+            "Mon ami! You must help me!",
+            "I am meeting her parents. Tonight. For the first time.",
+            "I must make a perfect impression. I am bringing flowers.",
+            "A rose. Something that says: I am serious, I am passionate, I am not a disaster.",
+        },
+        after_messages  = {
+            "Merci! I am definitely not a disaster.",
+        },
+    },
 
     -- Glen (podcast believer, 3-chapter arc)
     {
@@ -540,6 +639,27 @@ return {
             "Hmmm it's kinda nice to be honest.",
         },
     },
+    {
+        id              = "glen",
+        chapter         = 4,
+        accessory       = "headphones",
+        trigger         = { plant_type = 5, count = 24 },
+        name            = "Glen",
+        voice_pitch     = 1.05,
+        primary_color   = {0.55, 0.45, 0.35, 1},
+        secondary_color = {0.75, 0.65, 0.50, 1},
+        plant_type      = 2,
+        messages        = {
+            "Yo man. Guess what.",
+            "I stopped listening to Joe Froggan. I see now that it wasn't good for me.",
+            "But I found this Naggor Foej, some Nordic comedian, with some real different viewpoints!",
+            "Instead of eating cactuses, we have to be swapping our mind energy with them! Syncing up our vibes, y'know?",
+            "You still got them?",
+        },
+        after_messages  = {
+            "I'm just open-minded, you know?",
+        },
+    },
 
     -- Chef Brio (viral baker, 3-chapter arc; rose → rose → daisy)
     {
@@ -598,6 +718,26 @@ return {
         },
         after_messages  = {
             "Daisy bread. I'm going to make it happen.",
+        },
+    },
+    {
+        id              = "chef_brio",
+        chapter         = 4,
+        accessory       = "chef_fit",
+        trigger         = { plant_type = 6, count = 5 },
+        name            = "Chef Brio",
+        voice_pitch     = 1.1,
+        primary_color   = {0.75, 0.45, 0.20, 1},
+        secondary_color = {0.95, 0.85, 0.65, 1},
+        plant_type      = 6,
+        messages        = {
+            "Hello! Big news! I've been nominated for the Frog Chef Awards!",
+            "Best Bread! Can you believe it?",
+            "The judges want a final dish. I need the rarest ingredient.",
+            "A Golden Lotus. To win, I have to go all in.",
+        },
+        after_messages  = {
+            "I will make you proud. Lotus bread is going to be a classic!",
         },
     },
 
@@ -663,6 +803,27 @@ return {
         },
         after_messages  = {
             "She says she's not surprised anymore. That feels like progress.",
+        },
+    },
+    {
+        id              = "wallace",
+        chapter         = 4,
+        accessory       = "neckbeard",
+        trigger         = { plant_type = 6, count = 1 },
+        name            = "Wallace",
+        voice_pitch     = 0.95,
+        primary_color   = {0.65, 0.30, 0.25, 1},
+        secondary_color = {0.85, 0.70, 0.55, 1},
+        plant_type      = 6,
+        messages        = {
+            "Hey man. It's me again.",
+            "Remember my two raccoons? My wife didn't like them so I tried to get them to win her over.",
+            "My plan was simple: I saw on some show that rodents can sit on your head and make you cook really really good French food.",
+            "I don't know how they did it, we just burnt the house down.",
+            "Now she won't speak with me. Help. Please.",
+        },
+        after_messages  = {
+            "Thank you, she's gonna love this!",
         },
     },
 

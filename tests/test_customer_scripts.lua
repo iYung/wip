@@ -624,4 +624,53 @@ do
     print("PASS: garbage bin: shop area discards item when bin is in slot 1")
 end
 
+-- Test: chapter 4 not available before chapter 3 seen
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx.gs.stage3_counts[6] = 3   -- mayor_bloom ch4: trigger plant_type=6, count=3
+    ctx.gs.seen_scripts["mayor_bloom:1"] = true
+    ctx.gs.seen_scripts["mayor_bloom:2"] = true
+    -- deliberately omit mayor_bloom:3
+    ctx.gs.seen_scripts["wallace:1"] = true   -- wallace:4 qualifies at Lotus>=1; mark chain seen so only bloom:4 competes
+    ctx.gs.seen_scripts["wallace:2"] = true
+    ctx.gs.seen_scripts["wallace:3"] = true
+    ctx.gs.seen_scripts["wallace:4"] = true
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    local is_bloom_ch4 = cfg and cfg.id == "mayor_bloom" and cfg.chapter == 4
+    assert(not is_bloom_ch4,
+        "Mayor Bloom ch4 should not be available before ch3 is seen")
+    print("PASS: scripts: chapter 4 not available before chapter 3 seen")
+end
+
+-- Test: chapter 4 available after chapter 3 seen
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    ctx.gs.stage3_counts[6] = 3   -- mayor_bloom ch4: trigger plant_type=6, count=3
+    ctx.gs.seen_scripts["mayor_bloom:1"] = true
+    ctx.gs.seen_scripts["mayor_bloom:2"] = true
+    ctx.gs.seen_scripts["mayor_bloom:3"] = true
+    ctx.gs.seen_scripts["wallace:1"] = true   -- wallace:4 qualifies at Lotus>=1; mark chain seen so only bloom:4 competes
+    ctx.gs.seen_scripts["wallace:2"] = true
+    ctx.gs.seen_scripts["wallace:3"] = true
+    ctx.gs.seen_scripts["wallace:4"] = true
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    assert(cfg ~= nil and cfg.id == "mayor_bloom" and cfg.chapter == 4,
+        "Mayor Bloom ch4 should be available after ch3 seen, got " .. tostring(cfg and cfg.id))
+    print("PASS: scripts: chapter 4 available after chapter 3 seen")
+end
+
 print("ALL TESTS PASSED")
