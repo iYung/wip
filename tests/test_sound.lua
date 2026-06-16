@@ -13,10 +13,10 @@ local MANIFEST = {
     animalese = "assets/sounds/animalese.wav",
     music = {
         menu = { path = "assets/music/menu.mp3",         autoplay = true  },
-        bg1  = { path = "assets/music/background.mp3"                     },
-        bg2  = { path = "assets/music/background2.mp3"                    },
-        bg3  = { path = "assets/music/background3.mp3"                    },
-        bg4  = { path = "assets/music/background4.mp3"                    },
+        bg1  = { path = "assets/music/background.mp3",  looping = false  },
+        bg2  = { path = "assets/music/background2.mp3", looping = false  },
+        bg3  = { path = "assets/music/background3.mp3", looping = false  },
+        bg4  = { path = "assets/music/background4.mp3", looping = false  },
     },
 }
 
@@ -313,6 +313,44 @@ do
     love.audio.newSource    = orig_newSource
     package.loaded["lua/core/sound"] = nil
     print("PASS: on_focus(true) replays only tracks with playing_intent=true")
+end
+
+-- Test: Sound.load() honours looping=false — bg tracks get setLooping(false), menu gets setLooping(true)
+do
+    local orig_getInfo  = love.filesystem.getInfo
+    local orig_newSource = love.audio.newSource
+    local looping_calls = {}
+
+    love.filesystem.getInfo = function(p)
+        local music_files = {
+            ["assets/music/menu.mp3"]        = true,
+            ["assets/music/background.mp3"]  = true,
+            ["assets/music/background2.mp3"] = true,
+            ["assets/music/background3.mp3"] = true,
+            ["assets/music/background4.mp3"] = true,
+        }
+        return music_files[p] or nil
+    end
+    love.audio.newSource = function(path, t)
+        local src = orig_newSource(path, t)
+        src.setLooping = function(self, v) looping_calls[path] = v end
+        return src
+    end
+
+    package.loaded["lua/core/sound"] = nil
+    local S = require("lua/core/sound")
+    S.load(MANIFEST)
+
+    assert(looping_calls["assets/music/menu.mp3"]        == true,  "menu should loop")
+    assert(looping_calls["assets/music/background.mp3"]  == false, "bg1 should not loop")
+    assert(looping_calls["assets/music/background2.mp3"] == false, "bg2 should not loop")
+    assert(looping_calls["assets/music/background3.mp3"] == false, "bg3 should not loop")
+    assert(looping_calls["assets/music/background4.mp3"] == false, "bg4 should not loop")
+
+    love.filesystem.getInfo = orig_getInfo
+    love.audio.newSource    = orig_newSource
+    package.loaded["lua/core/sound"] = nil
+    print("PASS: Sound.load() respects looping=false — bg tracks non-looping, menu loops")
 end
 
 -- Test: on_focus(false) does not replay any tracks

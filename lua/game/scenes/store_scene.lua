@@ -59,18 +59,19 @@ function StoreScene.new(game_state, input, scene_manager, from_save)
     self._initialized   = false
     self.esc_opens_settings = true
     self._from_save     = from_save or false
+    self._bg_list  = {"bg1", "bg2", "bg3", "bg4"}
+    self._bg_index = math.random(4)
     return self
 end
 
 function StoreScene:on_enter()
     Sound.stop_music("menu")
-    local _bg = {"bg1", "bg2", "bg3", "bg4"}
     local _bg_playing = false
-    for _, name in ipairs(_bg) do
+    for _, name in ipairs(self._bg_list) do
         if Sound.is_music_playing(name) then _bg_playing = true; break end
     end
     if not _bg_playing then
-        Sound.play_random_music(_bg, 2)
+        Sound.fade_music(self._bg_list[self._bg_index], 1, 2)
     end
 
     local gs = self.game_state
@@ -352,6 +353,11 @@ function StoreScene:update(dt)
 
     if input:pressed("interact") then
         self:_handle_interact()
+    end
+
+    if not Sound.is_music_playing(self._bg_list[self._bg_index]) then
+        self._bg_index = (self._bg_index % #self._bg_list) + 1
+        Sound.fade_music(self._bg_list[self._bg_index], 1, 2)
     end
 end
 
