@@ -74,8 +74,9 @@ local ctx = runner.setup(function(gs, input, sm)
 end)
 ctx.gs.currency = STARTING_CURRENCY
 
-local elapsed    = 0
-local milestones = {}   -- "id:chapter" -> elapsed seconds
+local elapsed           = 0
+local milestones        = {}   -- "id:chapter" -> elapsed seconds
+local milestone_currency = {}   -- "id:chapter" -> ctx.gs.currency at trigger time
 
 local WATERING_CAN_X = 100
 local PLANT_SLOT_X   = 700
@@ -97,6 +98,7 @@ local function check_milestones()
                 end
                 if ok then
                     milestones[key] = elapsed
+                    milestone_currency[key] = ctx.gs.currency
                     ctx.gs.seen_scripts[key] = true
                 end
             end
@@ -249,11 +251,12 @@ local PLANT_NAMES = { "Grass", "Cactus", "Rose", "Tulip", "Daisy", "Golden Lotus
 local sorted = {}
 for _, s in ipairs(SCRIPTS) do
     sorted[#sorted + 1] = {
-        key     = s.id .. ":" .. s.chapter,
-        name    = s.name,
-        chapter = s.chapter,
-        trigger = s.trigger,
-        t       = milestones[s.id .. ":" .. s.chapter],
+        key        = s.id .. ":" .. s.chapter,
+        name       = s.name,
+        chapter    = s.chapter,
+        trigger    = s.trigger,
+        plant_type = s.plant_type,
+        t          = milestones[s.id .. ":" .. s.chapter],
     }
 end
 table.sort(sorted, function(a, b)
@@ -261,18 +264,23 @@ table.sort(sorted, function(a, b)
 end)
 
 print("[quests] quest eligibility timeline  (single slot, optimistic serve):")
-print(string.format("  %-20s  %-3s  %8s  %-12s  trigger", "name", "ch", "time", "clock"))
-print(string.rep("-", 72))
+print(string.format("  %-20s  %-3s  %8s  %-10s  %-8s  %-10s  %-6s  trigger",
+    "name", "ch", "time", "clock", "currency", "plant_cost", "afford"))
+print(string.rep("-", 92))
 local last_t = 0
 for _, q in ipairs(sorted) do
-    local t = q.t or 0
+    local t        = q.t or 0
+    local currency = milestone_currency[q.key] or 0
+    local cost     = PLANT_DATA[q.plant_type].cost
+    local afford   = (currency >= cost) and "OK" or "WARN"
     if t > last_t then last_t = t end
-    print(string.format("  %-20s  ch%d  %6.1f s  %dm %02.0f s  %s >= %d",
+    print(string.format("  %-20s  ch%d  %6.1f s  %dm %02.0f s    $%-6d  $%-6d    %-6s  %s >= %d",
         q.name, q.chapter, t,
         math.floor(t / 60), t % 60,
+        currency, cost, afford,
         PLANT_NAMES[q.trigger.plant_type], q.trigger.count))
 end
-print(string.rep("-", 72))
+print(string.rep("-", 92))
 print(string.format("  All quests by:  %6.1f s  (%.1f min)", last_t, last_t / 60))
 
 for _, s in ipairs(SCRIPTS) do

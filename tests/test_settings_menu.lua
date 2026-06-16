@@ -560,5 +560,17 @@ do
     print("PASS: open() snapshot prevents ghost confirm with custom interact keybind")
 end
 
+-- Test 55: draw() in keybinds subscreen renders label strings without error
+do
+    local st55 = SettingsState.new()
+    local m55 = SettingsMenu.new(st55, {_map={}})
+    m55:open(true)
+    m55._subscreen = "keybinds"
+    m55._subscreen_selected = 1
+    local ok, err = pcall(function() m55:draw() end)
+    assert(ok, "draw() in keybinds subscreen should not error: " .. tostring(err))
+    print("PASS: draw() in keybinds subscreen renders without error")
+end
+
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")

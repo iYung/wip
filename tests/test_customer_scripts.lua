@@ -673,4 +673,86 @@ do
     print("PASS: scripts: chapter 4 available after chapter 3 seen")
 end
 
+-- Test: The Collector ch1 triggers at daisy >= 13 (calibrated from 32)
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, s in ipairs(scripts) do
+        local key = s.id .. ":" .. s.chapter
+        if key ~= "the_collector:1" then
+            ctx.gs.seen_scripts[key] = true
+        end
+    end
+    ctx.gs.stage3_counts[5] = 13
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    assert(cfg ~= nil and cfg.id == "the_collector" and cfg.chapter == 1,
+        "The Collector ch1 should trigger at daisy >= 13, got " .. tostring(cfg and cfg.id))
+    print("PASS: scripts: The Collector ch1 triggers at daisy >= 13")
+end
+
+-- Test: The Collector ch1 does not trigger before daisy = 13
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, s in ipairs(scripts) do
+        local key = s.id .. ":" .. s.chapter
+        if key ~= "the_collector:1" then
+            ctx.gs.seen_scripts[key] = true
+        end
+    end
+    ctx.gs.stage3_counts[5] = 12
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    local is_collector = cfg and cfg.id == "the_collector" and cfg.chapter == 1
+    assert(not is_collector,
+        "The Collector ch1 should not trigger before daisy = 13")
+    print("PASS: scripts: The Collector ch1 does not trigger before daisy = 13")
+end
+
+-- Test: Wallace ch3 does not trigger at daisy = 11 (min sep = 2 from ch2 trigger = 10)
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, s in ipairs(scripts) do
+        local key = s.id .. ":" .. s.chapter
+        if key ~= "wallace:3" then
+            ctx.gs.seen_scripts[key] = true
+        end
+    end
+    ctx.gs.stage3_counts[5] = 11
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    local is_wallace_ch3 = cfg and cfg.id == "wallace" and cfg.chapter == 3
+    assert(not is_wallace_ch3,
+        "Wallace ch3 should not trigger at daisy = 11 (min gap of 2 from ch2 trigger = 10)")
+    print("PASS: scripts: Wallace ch3 does not trigger at daisy = 11 (min sep = 2 from ch2 = 10)")
+end
+
+-- Test: Wallace ch3 triggers at daisy >= 12
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, s in ipairs(scripts) do
+        local key = s.id .. ":" .. s.chapter
+        if key ~= "wallace:3" then
+            ctx.gs.seen_scripts[key] = true
+        end
+    end
+    ctx.gs.stage3_counts[5] = 12
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    assert(cfg ~= nil and cfg.id == "wallace" and cfg.chapter == 3,
+        "Wallace ch3 should trigger at daisy >= 12, got " .. tostring(cfg and cfg.id))
+    print("PASS: scripts: Wallace ch3 triggers at daisy >= 12")
+end
+
 print("ALL TESTS PASSED")
