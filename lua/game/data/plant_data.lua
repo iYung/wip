@@ -23,7 +23,7 @@ return {
     [4] = {
         name        = "Tulip",
         description = "Turns fast for good coin.\nSells for $50 at stage 3.",
-        cost        = 100,
+        cost        = 75,
         sell        = 50,
         cooldowns   = { 10, 30 },
     },
