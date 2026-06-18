@@ -6,6 +6,7 @@ function Input.new(key_map)
     self._map     = key_map
     self._down    = {}
     self._pressed = {}
+    self.control_scheme = "up_down"
     return self
 end
 

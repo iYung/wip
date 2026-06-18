@@ -594,16 +594,17 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 
 **Properties**
 - `fullscreen` — bool; current fullscreen state (default `false`)
-- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", interact="p"}`
+- `control_scheme` — `"up_down"` (default) or `"pick_put"`; controls which actions trigger pick up / put down in `StoreScene`
+- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", interact="space", pick_up="o", put_down="p"}`
 
 **Methods**
-- `new()` — constructor; sets `fullscreen = false` and populates default `keybinds`
+- `new()` — constructor; sets `fullscreen = false`, `control_scheme = "up_down"`, and populates default `keybinds`
 - `toggle_fullscreen()` — flips `self.fullscreen` and calls `love.window.setFullscreen(self.fullscreen)`
 - `set_keybind(action, key)` — assigns `key` to `action` unconditionally; collision prevention is the menu layer's responsibility
 - `key_map()` — returns `{action = {key}}` for all non-nil bindings; suitable for passing directly to `Input.new()` or patching `input._map`
 
 **Notes**
-- Memory-only; no filesystem I/O. Settings (volume, keybinds, fullscreen) are intentionally not included in the game save.
+- `control_scheme` is persisted to `settings.dat`; old saves without it default to `"up_down"`.
 - Follows the same Lua class pattern (`SettingsState.__index = SettingsState`) as `GameState`.
 
 ---
@@ -643,7 +644,7 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 - `_state` — the `SettingsState` instance passed to `new()`; all setting mutations go through it
 - `_input` — the game `Input` instance; `_map` is patched after a keybind capture
 - `_subscreen` — `nil` (main screen) or `"keybinds"` (keybind sub-screen)
-- `_subscreen_selected` — cursor row on the keybind sub-screen (1–6)
+- `_subscreen_selected` — cursor row on the keybind sub-screen (1–7: row 1 = Control Scheme toggle, rows 2–6 = bindable keys, row 7 = Return)
 - `_capturing` — `nil`, or the action name currently waiting for a key press
 - `_opaque` — `true` when opened via `open(true)` (start scene); hides Save Game and switches background style
 - `_saved` — `true` after a successful save this session; resets to `false` on `open()`; changes Save Game label to "Saved!"
@@ -664,7 +665,7 @@ Navigation uses `_visible_items(opaque)` to build the active index list, so Save
 
 **Keybind sub-screen**
 
-Lists all five remappable actions (`move_up`, `move_down`, `move_left`, `move_right`, `interact`) with their current key. Note: `move_up` and `move_down` also serve as pick up and put down in the store — pressing `move_up` picks up a carriable item from a slot (or swaps if already holding something), and `move_down` puts down a held item (or swaps). Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. If the pressed key is already bound to a different action, the binding is rejected: the conflicting row shakes horizontally and flashes red for 0.5 s while capture mode remains active. Escape during capture cancels without change; escape outside capture returns to the main screen.
+Row 1 is a "Control Scheme" toggle: confirms to cycle between `"up_down"` (W/S pick up / put down, default) and `"pick_put"` (O/P dedicated pick up / put down; W/S inert). Toggling updates `input._map` and `input.control_scheme` live. Rows 2–6 list the five remappable actions for the active scheme — `"up_down"`: Up, Down, Left, Right, Interact; `"pick_put"`: Pick Up, Put Down, Left, Right, Interact. Selecting an action row enters capture mode: the row shows "hit key" and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. If the pressed key is already bound to a different action in the active scheme, the binding is rejected: the conflicting row shakes horizontally and flashes red for 0.5 s while capture mode remains active. Escape during capture cancels without change; escape outside capture returns to the main screen. Row 7 is the Return button (disabled until all five scheme actions are bound).
 
 **Methods**
 - `new(settings_state, input, on_save)` — constructor; `on_save` is a callback invoked by "Save Game"

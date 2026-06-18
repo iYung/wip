@@ -6,4 +6,6 @@ return Input.new({
     move_left    = {"a"},
     move_right   = {"d"},
     interact     = {"space"},
+    pick_up      = {"o"},
+    put_down     = {"p"},
 })

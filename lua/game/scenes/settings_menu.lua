@@ -14,14 +14,23 @@ end
 local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","interact"}
 local _ACTION_LABELS = {"Up","Down","Left","Right","Interact"}
 
+local _SCHEME_ACTIONS = {
+    up_down  = {"move_up","move_down","move_left","move_right","interact"},
+    pick_put = {"pick_up","put_down","move_left","move_right","interact"},
+}
+local _SCHEME_LABELS = {
+    up_down  = {"Up","Down","Left","Right","Interact"},
+    pick_put = {"Pick Up","Put Down","Left","Right","Interact"},
+}
+
 local _MODIFIERS = {
     lshift=true, rshift=true, lctrl=true, rctrl=true,
     lalt=true, ralt=true, lgui=true, rgui=true,
     capslock=true, numlock=true, scrolllock=true
 }
 
-local function _all_bound(keybinds)
-    for _, action in ipairs(_ACTION_LIST) do
+local function _all_bound(keybinds, action_list)
+    for _, action in ipairs(action_list) do
         if keybinds[action] == nil then return false end
     end
     return true
@@ -79,7 +88,7 @@ function SettingsMenu.new(settings_state, input, on_save, on_leave)
     self._font_btn    = Fonts.new(22)
     self._font_vol    = Fonts.new(15)
     self._btn_y0      = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
-    self._sub_btn_y0  = H / 2 - #_ACTION_LIST * BTN_GAP / 2 - BTN_H / 2  -- centres 5 sub-screen rows
+    self._sub_btn_y0  = H / 2 - 3 * BTN_GAP - BTN_H / 2  -- centres 7 sub-screen rows
     return self
 end
 
@@ -126,7 +135,7 @@ function SettingsMenu:update(dt)
         local confirm = love.keyboard.isDown(self._state.keybinds.interact  or "space")
         local escape  = love.keyboard.isDown("escape")
 
-        local sub_count = #_ACTION_LIST + 1
+        local sub_count = 7
         if up and not self._prev_sub_up then
             self._subscreen_selected = ((self._subscreen_selected - 2) % sub_count) + 1
             Sound.play("menu_navigate")
@@ -137,16 +146,22 @@ function SettingsMenu:update(dt)
         end
         if confirm and not self._prev_sub_confirm then
             Sound.play("menu_confirm")
-            if self._subscreen_selected == sub_count then
-                if _all_bound(self._state.keybinds) then
+            if self._subscreen_selected == 1 then
+                -- Toggle control scheme
+                local scheme = self._state.control_scheme == "up_down" and "pick_put" or "up_down"
+                self._state.control_scheme = scheme
+                self._input._map = self._state:key_map()
+                self._input.control_scheme = self._state.control_scheme
+            elseif self._subscreen_selected == sub_count then
+                if _all_bound(self._state.keybinds, _SCHEME_ACTIONS[self._state.control_scheme]) then
                     self._subscreen = nil
                 end
             else
-                self._capturing = _ACTION_LIST[self._subscreen_selected]
+                self._capturing = _SCHEME_ACTIONS[self._state.control_scheme][self._subscreen_selected - 1]
             end
         end
         if escape and not self._prev_sub_escape then
-            if _all_bound(self._state.keybinds) then
+            if _all_bound(self._state.keybinds, _SCHEME_ACTIONS[self._state.control_scheme]) then
                 self._subscreen = nil
             end
         end
@@ -248,7 +263,7 @@ end
 function SettingsMenu:keypressed(key)
     if self._subscreen == "keybinds" and self._capturing == nil then
         if key == "escape" then
-            if _all_bound(self._state.keybinds) then
+            if _all_bound(self._state.keybinds, _SCHEME_ACTIONS[self._state.control_scheme]) then
                 self._subscreen = nil
                 return true
             end
@@ -262,7 +277,7 @@ function SettingsMenu:keypressed(key)
         return true
     end
     if _MODIFIERS[key] then return false end
-    for i, action in ipairs(_ACTION_LIST) do
+    for i, action in ipairs(_SCHEME_ACTIONS[self._state.control_scheme]) do
         if action ~= self._capturing and self._state.keybinds[action] == key then
             self._shake_row   = i
             self._shake_timer = 0.5
@@ -288,29 +303,54 @@ function SettingsMenu:draw()
             love.graphics.rectangle("fill", 0, 0, W, H)
         end
 
-        local sub_count = #_ACTION_LIST + 1
+        local sub_count = 7
+        local scheme = self._state.control_scheme
+        local scheme_actions = _SCHEME_ACTIONS[scheme]
+        local scheme_labels  = _SCHEME_LABELS[scheme]
         love.graphics.setFont(self._font_btn)
-        for i = 1, #_ACTION_LIST do
-            local y = self._sub_btn_y0 + (i - 1) * BTN_GAP
+
+        -- Row 1: Control Scheme toggle
+        do
+            local y   = self._sub_btn_y0
+            local img = self._subscreen_selected == 1 and self._img_btn_sel or self._img_btn
+            local ty  = y + (BTN_H - self._font_btn:getHeight()) / 2
+            -- Label bar
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(img, BTN_X, y, 0, LABEL_SX, 1)
+            love.graphics.printf("Control Scheme", BTN_X, ty, LABEL_W, "center")
+            -- Value bar
+            local scheme_value = scheme == "up_down" and "Up / Down" or "Pick Up / Put Down"
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(img, BTN_X + LABEL_W + BAR_GAP, y, 0, VAL_SX, 1)
+            love.graphics.printf(scheme_value, BTN_X + LABEL_W + BAR_GAP, ty, VAL_W, "center")
+            love.graphics.setColor(1, 1, 1, 1)
+        end
+
+        -- Rows 2–6: bindable key rows
+        for i = 2, 6 do
+            local action_idx = i - 1
+            local y   = self._sub_btn_y0 + (i - 1) * BTN_GAP
             local img = i == self._subscreen_selected and self._img_btn_sel or self._img_btn
-            local ty = y + (BTN_H - self._font_btn:getHeight()) / 2
-            local ox = 0
+            local ty  = y + (BTN_H - self._font_btn:getHeight()) / 2
+            local ox  = 0
             local row_r, row_g, row_b = 1, 1, 1
-            if self._shake_row == i and self._shake_timer > 0 then
+            if self._shake_row == action_idx and self._shake_timer > 0 then
                 ox = math.sin(self._shake_timer * 40) * 8 * (self._shake_timer / 0.5)
                 row_r, row_g, row_b = 1, 0.25, 0.25
             end
+            local action = scheme_actions[action_idx]
+            local label  = scheme_labels[action_idx]
             -- Label bar
             love.graphics.setColor(row_r, row_g, row_b, 1)
             love.graphics.draw(img, BTN_X + ox, y, 0, LABEL_SX, 1)
-            love.graphics.printf(_ACTION_LABELS[i], BTN_X + ox, ty, LABEL_W, "center")
+            love.graphics.printf(label, BTN_X + ox, ty, LABEL_W, "center")
             -- Value bar
             love.graphics.setColor(row_r, row_g, row_b, 1)
             love.graphics.draw(img, BTN_X + LABEL_W + BAR_GAP + ox, y, 0, VAL_SX, 1)
-            if self._capturing == _ACTION_LIST[i] then
+            if self._capturing == action then
                 love.graphics.printf("hit key", BTN_X + LABEL_W + BAR_GAP + ox, ty, VAL_W, "center")
-            elseif self._state.keybinds[_ACTION_LIST[i]] then
-                love.graphics.printf(self._state.keybinds[_ACTION_LIST[i]]:upper(), BTN_X + LABEL_W + BAR_GAP + ox, ty, VAL_W, "center")
+            elseif self._state.keybinds[action] then
+                love.graphics.printf(self._state.keybinds[action]:upper(), BTN_X + LABEL_W + BAR_GAP + ox, ty, VAL_W, "center")
             else
                 love.graphics.setFont(self._font_vol)
                 local vty = y + (BTN_H - self._font_vol:getHeight()) / 2
@@ -320,8 +360,9 @@ function SettingsMenu:draw()
             love.graphics.setColor(1, 1, 1, 1)
         end
 
-        local ry     = self._sub_btn_y0 + #_ACTION_LIST * BTN_GAP
-        local all_ok = _all_bound(self._state.keybinds)
+        -- Row 7: Return button
+        local ry     = self._sub_btn_y0 + 6 * BTN_GAP
+        local all_ok = _all_bound(self._state.keybinds, _SCHEME_ACTIONS[scheme])
         if not all_ok then
             love.graphics.setColor(1, 1, 1, 0.4)
             love.graphics.draw(self._img_btn, BTN_X, ry)
