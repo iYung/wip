@@ -89,7 +89,6 @@ function love.load()
         scene_manager = SceneManager.new(LOGICAL_W, LOGICAL_H)
         ss = Save.settings_exist() and SettingsState.from_save(Save.read_settings()) or SettingsState.new()
         input._map = ss:key_map()
-        input.control_scheme = ss.control_scheme
         local function _on_save()
             local current = scene_manager and scene_manager.current
             if current and current.game_state then

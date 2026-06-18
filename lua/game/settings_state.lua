@@ -9,7 +9,6 @@ function SettingsState.new()
     self.sfx_volume = 100
     self.music_volume = 100
     self.keybinds = {move_up="w", move_down="s", move_left="a", move_right="d", interact="space", pick_up="o", put_down="p"}
-    self.control_scheme = "up_down"
     return self
 end
 
@@ -48,11 +47,10 @@ function SettingsState:to_save()
         keybinds_copy[action] = key
     end
     return {
-        sfx_volume     = self.sfx_volume,
-        music_volume   = self.music_volume,
-        fullscreen     = self.fullscreen,
-        keybinds       = keybinds_copy,
-        control_scheme = self.control_scheme,
+        sfx_volume   = self.sfx_volume,
+        music_volume = self.music_volume,
+        fullscreen   = self.fullscreen,
+        keybinds     = keybinds_copy,
     }
 end
 
@@ -76,10 +74,6 @@ function SettingsState.from_save(data)
             end
         end
     end
-    if data.control_scheme == "pick_put" then
-        self.control_scheme = "pick_put"
-    end
-
     return self
 end
 

@@ -345,18 +345,10 @@ function StoreScene:update(dt)
     local world_right = gs.store:width()
     self.camera.x = math.max(world_left + half_w, math.min(world_right - half_w, self.camera.x))
 
-    if self.input.control_scheme == "pick_put" then
-        if input:pressed("pick_up") then
-            self:_handle_pick_up()
-        elseif input:pressed("put_down") then
-            self:_handle_put_down()
-        end
-    else
-        if input:pressed("move_up") then
-            self:_handle_pick_up()
-        elseif input:pressed("move_down") then
-            self:_handle_put_down()
-        end
+    if input:pressed("move_up") or input:pressed("pick_up") then
+        self:_handle_pick_up()
+    elseif input:pressed("move_down") or input:pressed("put_down") then
+        self:_handle_put_down()
     end
 
     if input:pressed("interact") then
@@ -507,7 +499,9 @@ function StoreScene:_hud_labels()
     local held      = player.held_item
     local slot_item = slot and slot.item
 
-    local f_key = (self.input:key_for("interact") or "space"):upper()
+    local up_key   = (self.input:key_for("move_up")   or "w"):upper()
+    local down_key = (self.input:key_for("move_down") or "s"):upper()
+    local f_key    = (self.input:key_for("interact")  or "space"):upper()
 
     local slot_label
     if player.x >= 0 then
@@ -521,32 +515,15 @@ function StoreScene:_hud_labels()
 
     local up_label
     local down_label
-    if self.input.control_scheme == "pick_put" then
-        local pick_key = (self.input:key_for("pick_up")  or "o"):upper()
-        local put_key  = (self.input:key_for("put_down") or "p"):upper()
-        -- cashier zone: no dismiss label in pick_put scheme
-        if player.x >= 0 then
-            if held and slot_item and slot_item.carriable then
-                up_label = pick_key .. "/" .. put_key .. ": SWAP WITH " .. slot_item.name:upper()
-            elseif not held and slot_item and slot_item.carriable then
-                up_label = pick_key .. ": PICK UP"
-            elseif held and slot and not slot_item then
-                down_label = put_key .. ": PUT DOWN"
-            end
-        end
-    else
-        local up_key   = (self.input:key_for("move_up")   or "w"):upper()
-        local down_key = (self.input:key_for("move_down") or "s"):upper()
-        if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
-            up_label = up_key .. "/" .. down_key .. ": DISMISS"
-        elseif player.x >= 0 then
-            if held and slot_item and slot_item.carriable then
-                up_label = up_key .. "/" .. down_key .. ": SWAP WITH " .. slot_item.name:upper()
-            elseif not held and slot_item and slot_item.carriable then
-                up_label = up_key .. ": PICK UP"
-            elseif held and slot and not slot_item then
-                down_label = down_key .. ": PUT DOWN"
-            end
+    if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
+        up_label = up_key .. "/" .. down_key .. ": DISMISS"
+    elseif player.x >= 0 then
+        if held and slot_item and slot_item.carriable then
+            up_label = up_key .. "/" .. down_key .. ": SWAP WITH " .. slot_item.name:upper()
+        elseif not held and slot_item and slot_item.carriable then
+            up_label = up_key .. ": PICK UP"
+        elseif held and slot and not slot_item then
+            down_label = down_key .. ": PUT DOWN"
         end
     end
 
