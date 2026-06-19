@@ -35,7 +35,7 @@ local function sell_plant(ctx, plant_type, elapsed)
         end, elapsed)
 
         if ctx.sm.current._customer.plant_type ~= plant_type then
-            ctx.input:press("pick_up_down")
+            ctx.input:press("cancel")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
         else

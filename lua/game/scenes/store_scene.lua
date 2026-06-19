@@ -345,6 +345,10 @@ function StoreScene:update(dt)
     local world_right = gs.store:width()
     self.camera.x = math.max(world_left + half_w, math.min(world_right - half_w, self.camera.x))
 
+    if input:pressed("cancel") then
+        self:_handle_cancel()
+    end
+
     if input:pressed("pick_up_down") then
         self:_handle_pick_up_down()
     end
@@ -359,11 +363,8 @@ function StoreScene:update(dt)
     end
 end
 
-function StoreScene:_handle_pick_up_down()
+function StoreScene:_handle_cancel()
     local player = self.game_state.player
-    local store  = self.game_state.store
-    local slot   = player:active_slot(store)
-
     if player.x < 0 then
         if self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
             self._customer:dismiss()
@@ -373,8 +374,13 @@ function StoreScene:_handle_pick_up_down()
                 self._active_script     = nil
             end
         end
-        return
     end
+end
+
+function StoreScene:_handle_pick_up_down()
+    local player = self.game_state.player
+    local store  = self.game_state.store
+    local slot   = player:active_slot(store)
 
     if player.held_item and slot and slot.item and slot.item.carriable then
         -- swap: held item ↔ slot item
@@ -465,8 +471,9 @@ function StoreScene:_hud_labels()
     local held      = player.held_item
     local slot_item = slot and slot.item
 
-    local carry_key = (self.input:key_for("pick_up_down") or "o"):upper()
-    local f_key = (self.input:key_for("interact")        or "space"):upper()
+    local carry_key  = (self.input:key_for("pick_up_down") or "o"):upper()
+    local cancel_key = (self.input:key_for("cancel")       or "i"):upper()
+    local f_key = (self.input:key_for("interact")          or "space"):upper()
 
     local slot_label
     if player.x >= 0 then
@@ -481,7 +488,7 @@ function StoreScene:_hud_labels()
     local up_label
     local down_label
     if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
-        up_label = carry_key .. ": DISMISS"
+        up_label = cancel_key .. ": DISMISS"
     elseif player.x >= 0 then
         if held and slot_item and slot_item.carriable then
             up_label = carry_key .. ": SWAP WITH " .. slot_item.name:upper()

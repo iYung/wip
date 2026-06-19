@@ -7,4 +7,5 @@ return Input.new({
     move_right   = {"d"},
     interact     = {"space"},
     pick_up_down = {"o"},
+    cancel       = {"i"},
 })

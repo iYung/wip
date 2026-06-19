@@ -119,7 +119,7 @@ do
     end, elapsed)
 
     ctx.gs.player.x = -200
-    ctx.input:press("pick_up_down")
+    ctx.input:press("cancel")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.gs.seen_scripts["dottie:1"] == nil,
@@ -144,7 +144,7 @@ do
     end, elapsed)
 
     ctx.gs.player.x = -200
-    ctx.input:press("pick_up_down")
+    ctx.input:press("cancel")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
 
     assert(ctx.sm.current._script_cooldowns["dottie:1"] == 3,
@@ -171,7 +171,7 @@ do
         return ctx.sm.current._customer:arrived()
     end, elapsed)
     ctx.gs.player.x = -200
-    ctx.input:press("pick_up_down")
+    ctx.input:press("cancel")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
     assert(ctx.sm.current._script_cooldowns["dottie:1"] == 3, "precondition: cooldown=3")
 

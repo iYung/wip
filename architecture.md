@@ -238,7 +238,8 @@ Maps Love2D key events and gamepad input to game actions. Game logic calls Input
 - `move_up` — default `w` / D-pad up / left stick up
 - `move_down` — default `s` / D-pad down / left stick down
 - `interact` — default `p` / gamepad A button
-- `pick_up_down` — default `o` / gamepad B button; picks up, puts down, or swaps carriable items in the store; cancels out of the buy screen
+- `pick_up_down` — default `o` / gamepad Y button; picks up, puts down, or swaps carriable items in the store
+- `cancel` — default `i` / gamepad B button; dismisses a customer in the cashier zone; exits the buy screen
 
 **Fields**
 - `_mode` — `"keyboard"` or `"gamepad"`; tracks which device the player last used
@@ -603,7 +604,7 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 
 **Properties**
 - `fullscreen` — bool; current fullscreen state (default `false`)
-- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", interact="space", pick_up_down="o"}`
+- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", interact="space", pick_up_down="o", cancel="i"}`
 
 **Methods**
 - `new()` — constructor; sets `fullscreen = false` and populates default `keybinds`
@@ -652,7 +653,7 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 - `_state` — the `SettingsState` instance passed to `new()`; all setting mutations go through it
 - `_input` — the game `Input` instance; `_map` is patched after a keybind capture
 - `_subscreen` — `nil` (main screen) or `"keybinds"` (keybind sub-screen)
-- `_subscreen_selected` — cursor row on the keybind sub-screen (1–6)
+- `_subscreen_selected` — cursor row on the keybind sub-screen (1–8)
 - `_capturing` — `nil`, or the action name currently waiting for a key press
 - `_opaque` — `true` when opened via `open(true)` (start scene); hides Save Game and switches background style
 - `_saved` — `true` after a successful save this session; resets to `false` on `open()`; changes Save Game label to "Saved!"
@@ -673,7 +674,7 @@ Navigation uses `_visible_items(opaque)` to build the active index list, so Save
 
 **Keybind sub-screen**
 
-Lists four remappable actions (`pick_up_down`, `move_left`, `move_right`, `interact`) with their current key. `pick_up_down` is the dedicated carry key: it picks up a carriable item from a slot when empty-handed, puts down a held item into an empty slot, swaps held and slot items when both are carriable, and dismisses a customer in the cashier zone. `move_up` and `move_down` are used for menu navigation only and are not shown here. Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. If the pressed key is already bound to a different action, the binding is rejected: the conflicting row shakes horizontally and flashes red for 0.5 s while capture mode remains active. Escape during capture cancels without change; escape outside capture returns to the main screen.
+Lists five remappable actions (`pick_up_down`, `cancel`, `move_left`, `move_right`, `interact`) with their current key. `pick_up_down` is the dedicated carry key: it picks up a carriable item from a slot when empty-handed, puts down a held item into an empty slot, and swaps held and slot items when both are carriable. `cancel` dismisses a customer in the cashier zone and exits the buy screen. `move_up` and `move_down` are used for menu navigation only and are not shown here. Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. If the pressed key is already bound to a different action, the binding is rejected: the conflicting row shakes horizontally and flashes red for 0.5 s while capture mode remains active. Escape during capture cancels without change; escape outside capture returns to the main screen.
 
 **Methods**
 - `new(settings_state, input, on_save)` — constructor; `on_save` is a callback invoked by "Save Game"
