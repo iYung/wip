@@ -163,18 +163,17 @@ function StartScene:draw()
     local ch = self._font_credit:getHeight()
     love.graphics.printf(credit, 0, H - ch - 8, W, "center")
 
-    local m = self.input._map
-    local ku = m.move_up    and m.move_up[1]    or "?"
-    local kl = m.move_left  and m.move_left[1]  or "?"
-    local kd = m.move_down  and m.move_down[1]  or "?"
-    local kr = m.move_right and m.move_right[1] or "?"
-    local kb_text = string.upper(ku .. "/" .. kl .. "/" .. kd .. "/" .. kr)
+    local ku = self.input:key_for("move_up")    or "?"
+    local kl = self.input:key_for("move_left")  or "?"
+    local kd = self.input:key_for("move_down")  or "?"
+    local kr = self.input:key_for("move_right") or "?"
+    local kb_text = ku .. "/" .. kl .. "/" .. kd .. "/" .. kr
     love.graphics.setFont(self._font_btn)
     love.graphics.setColor(0, 0, 0, 1)
     local kb_w = self._font_btn:getWidth(kb_text)
     love.graphics.print(kb_text, 950 - kb_w / 2, 630)
 
-    local ki = string.upper(m.interact and m.interact[1] or "?")
+    local ki = self.input:key_for("interact") or "?"
     local ki_w = self._font_btn:getWidth(ki)
     love.graphics.print(ki, 1150 - ki_w / 2, 630)
 

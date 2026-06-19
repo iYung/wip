@@ -189,6 +189,7 @@ function love.draw()
 end
 
 function love.keypressed(key)
+    input._mode = "keyboard"
     if settings_menu and settings_menu.is_open then
         if settings_menu:keypressed(key) then return end
     end
@@ -201,6 +202,40 @@ function love.keypressed(key)
             end
         elseif not (settings_menu and settings_menu.is_open) then
             love.event.quit()
+        end
+    end
+end
+
+function love.gamepadpressed(joystick, button)
+    input._joystick = joystick
+    input._mode = "gamepad"
+    if button == "start" then
+        if settings_menu and scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then
+            if settings_menu.is_open then
+                settings_menu:close()
+            else
+                settings_menu:open()
+            end
+        elseif not (settings_menu and settings_menu.is_open) then
+            love.event.quit()
+        end
+    end
+end
+
+function love.joystickadded(joystick)
+    if joystick:isGamepad() and input._joystick == nil then
+        input._joystick = joystick
+    end
+end
+
+function love.joystickremoved(joystick)
+    if joystick == input._joystick then
+        input._joystick = nil
+        for _, j in ipairs(love.joystick.getJoysticks()) do
+            if j:isGamepad() and j:isConnected() then
+                input._joystick = j
+                break
+            end
         end
     end
 end

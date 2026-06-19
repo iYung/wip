@@ -230,24 +230,32 @@ Loads and plays named sound effects. Parallel singleton to `Assets` — required
 
 ### Input
 
-Maps Love2D key events to game actions. Game logic calls Input, never Love2D directly. Key bindings are sourced from `SettingsState.keybinds` and can be remapped at runtime via the settings menu.
+Maps Love2D key events and gamepad input to game actions. Game logic calls Input, never Love2D directly. Key bindings are sourced from `SettingsState.keybinds` and can be remapped at runtime via the settings menu. Gamepad bindings are fixed and not configurable.
 
 **Actions**
-- `move_left` — default `a`
-- `move_right` — default `d`
-- `move_up` — default `w`
-- `move_down` — default `s`
-- `interact` — default `p`
-- `menu_confirm` — `return` / `space` / `f` (non-remappable; used by StartScene)
+- `move_left` — default `a` / D-pad left / left stick left
+- `move_right` — default `d` / D-pad right / left stick right
+- `move_up` — default `w` / D-pad up / left stick up
+- `move_down` — default `s` / D-pad down / left stick down
+- `interact` — default `p` / gamepad A button
+
+**Fields**
+- `_mode` — `"keyboard"` or `"gamepad"`; tracks which device the player last used
+- `_joystick` — active Love2D joystick object, or `nil` if no gamepad is connected
 
 **Methods**
-- `update()` — called each frame, samples key state
-- `is_down(action)` — true while the key is held
-- `pressed(action)` — true only on the frame the key was pressed
+- `update()` — called each frame; polls keyboard and (if `_joystick` is set) gamepad axes and buttons; ORs both into the same `_down`/`_pressed` tables. Auto-switches `_mode` to `"gamepad"` if any axis or button input is detected.
+- `is_down(action)` — true while the key/button is held
+- `pressed(action)` — true only on the frame the key/button was first pressed
+- `key_for(action)` — returns the display label for the action: keyboard key string in keyboard mode, arrow/`[A]` symbol in gamepad mode. HUD label generation calls this; it requires no changes when the mode switches.
 
-**Runtime rebinding**
+**Mode switching**
 
-`SettingsMenu:keypressed()` calls `self._state:set_keybind(action, key)` then patches `self._input._map = self._state:key_map()` so the running `Input` instance reflects the new binding immediately without reconstruction.
+`_mode` switches to `"gamepad"` when any gamepad button is pressed (`love.gamepadpressed`) or when `update()` detects stick movement above the 0.3 deadzone. Any keyboard key press in `love.keypressed` switches `_mode` back to `"keyboard"`. Scenes and HUD code need not track mode themselves — `key_for()` reflects the current mode automatically.
+
+**Runtime keybind rebinding**
+
+`SettingsMenu:keypressed()` calls `self._state:set_keybind(action, key)` then patches `self._input._map = self._state:key_map()` so the running `Input` instance reflects the new binding immediately without reconstruction. Gamepad bindings are not rebindable.
 
 ---
 

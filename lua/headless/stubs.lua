@@ -82,6 +82,9 @@ end
 love.audio.newSource  = function(path, type) return make_stub_source() end
 love.audio.play       = noop
 
+love.joystick = love.joystick or {}
+love.joystick.getJoysticks = function() return {} end
+
 -- Force assets.lua to be re-required so its top-level love.graphics.newImage
 -- calls run through the stub rather than a cached (nil-graphics) version.
 package.loaded["lua/game/assets"] = nil
