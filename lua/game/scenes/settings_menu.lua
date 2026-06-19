@@ -11,8 +11,8 @@ local function _visible_items(opaque)
     return result
 end
 
-local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","interact"}
-local _ACTION_LABELS = {"Up","Down","Left","Right","Interact"}
+local _ACTION_LIST   = {"pick_up_down","move_left","move_right","interact"}
+local _ACTION_LABELS = {"Pick Up / Put Down","Left","Right","Interact"}
 
 local _MODIFIERS = {
     lshift=true, rshift=true, lctrl=true, rctrl=true,
@@ -29,7 +29,7 @@ end
 
 local function _joy_nav(input)
     if not input or not input._joystick or not input._joystick:isConnected() then
-        return { up=false, down=false, left=false, right=false, confirm=false, back=false }
+        return { up=false, down=false, left=false, right=false, confirm=false }
     end
     local joy = input._joystick
     local ax = joy:getGamepadAxis("leftx")
@@ -40,7 +40,6 @@ local function _joy_nav(input)
         left    = ax < -0.3 or joy:isGamepadDown("dpleft"),
         right   = ax >  0.3 or joy:isGamepadDown("dpright"),
         confirm = joy:isGamepadDown("a"),
-        back    = joy:isGamepadDown("b"),
     }
 end
 
@@ -71,8 +70,6 @@ function SettingsMenu.new(settings_state, input, on_save, on_leave)
     self._prev_right   = false
     self._prev_confirm = false
     self._prev_escape  = false
-    self._prev_back         = false
-    self._prev_sub_back     = false
     self._state = settings_state
     self._input = input
     self._on_save  = on_save
@@ -98,7 +95,7 @@ function SettingsMenu.new(settings_state, input, on_save, on_leave)
     self._font_btn    = Fonts.new(22)
     self._font_vol    = Fonts.new(15)
     self._btn_y0      = H / 2 - (#ITEMS - 1) * BTN_GAP / 2 - BTN_H / 2
-    self._sub_btn_y0  = H / 2 - #_ACTION_LIST * BTN_GAP / 2 - BTN_H / 2  -- centres 5 sub-screen rows
+    self._sub_btn_y0  = H / 2 - #_ACTION_LIST * BTN_GAP / 2 - BTN_H / 2  -- centres sub-screen rows
     return self
 end
 
@@ -123,7 +120,6 @@ function SettingsMenu:open(opaque)
     self._prev_left    = self._prev_left    or _jn.left
     self._prev_right   = self._prev_right   or _jn.right
     self._prev_confirm = self._prev_confirm or _jn.confirm
-    self._prev_back    = _jn.back
 end
 
 function SettingsMenu:close()
@@ -155,15 +151,6 @@ function SettingsMenu:update(dt)
         up      = up      or _jn.up
         down    = down    or _jn.down
         confirm = confirm or _jn.confirm
-        -- B button cancels capture or closes subscreen
-        if _jn.back and not self._prev_sub_back then
-            if self._capturing ~= nil then
-                self._capturing = nil
-            elseif _all_bound(self._state.keybinds) then
-                self._subscreen = nil
-            end
-        end
-        self._prev_sub_back = _jn.back
 
         local sub_count = #_ACTION_LIST + 1
         if up and not self._prev_sub_up then
@@ -194,7 +181,6 @@ function SettingsMenu:update(dt)
         self._prev_sub_down    = down
         self._prev_sub_confirm = confirm
         self._prev_sub_escape  = escape
-        self._prev_sub_back    = _jn.back
         return
     end
 
@@ -211,7 +197,7 @@ function SettingsMenu:update(dt)
     left    = left    or _jn.left
     right   = right   or _jn.right
     confirm = confirm or _jn.confirm
-    escape  = escape  or _jn.back
+    escape  = escape
         or (self._input._joystick ~= nil
             and self._input._joystick:isConnected()
             and self._input._joystick:isGamepadDown("start"))
@@ -265,7 +251,6 @@ function SettingsMenu:update(dt)
     self._prev_right   = right
     self._prev_confirm = confirm
     self._prev_escape  = escape
-    self._prev_back    = _jn.back
 end
 
 function SettingsMenu:_confirm()
@@ -280,9 +265,6 @@ function SettingsMenu:_confirm()
         self._prev_sub_down    = love.keyboard.isDown(self._state.keybinds.move_down or "s")
         self._prev_sub_confirm = love.keyboard.isDown(self._state.keybinds.interact  or "space")
         self._prev_sub_escape  = love.keyboard.isDown("escape")
-        local _jn_confirm = _joy_nav(self._input)
-        self._prev_sub_back = _jn_confirm.back
-        self._prev_back     = _jn_confirm.back
     elseif self.selected == 5 then
         if not self._opaque and self._on_save then
             self._on_save()

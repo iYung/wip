@@ -141,18 +141,20 @@ assert(rt10.fullscreen == true, "round-trip: fullscreen=true should survive roun
 print("PASS: round-trip preserves fullscreen=true")
 
 -- -------------------------------------------------------------------------
--- Test 11: pick_up_down from an old save is silently ignored; other keys load
+-- Test 11: pick_up_down from a save is loaded; truly unknown keys are ignored
 -- -------------------------------------------------------------------------
 local ss11 = SettingsState.from_save({
-    keybinds = { pick_up_down = "q", interact = "r",
+    keybinds = { pick_up_down = "q", interact = "r", unknown_action = "z",
                  move_up = "w", move_down = "s", move_left = "a", move_right = "d" }
 })
 local map11 = ss11:key_map()
-assert(map11.pick_up_down == nil,
-    "key_map: old pick_up_down save key should be ignored, got " .. tostring(map11.pick_up_down and map11.pick_up_down[1]))
+assert(type(map11.pick_up_down) == "table" and map11.pick_up_down[1] == "q",
+    "key_map: pick_up_down should load saved value 'q', got " .. tostring(map11.pick_up_down and map11.pick_up_down[1]))
 assert(type(map11.interact) == "table" and map11.interact[1] == "r",
     "key_map: interact should be {'r'}, got " .. tostring(map11.interact and map11.interact[1]))
-print("PASS: key_map() silently ignores unknown pick_up_down from old save")
+assert(map11.unknown_action == nil,
+    "key_map: truly unknown action should be ignored")
+print("PASS: key_map() loads pick_up_down from save; ignores unknown actions")
 
 -- -------------------------------------------------------------------------
 -- Test 12: assigning input._map from a loaded SettingsState makes Input
