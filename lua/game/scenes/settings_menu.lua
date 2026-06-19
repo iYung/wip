@@ -11,8 +11,8 @@ local function _visible_items(opaque)
     return result
 end
 
-local _ACTION_LIST   = {"pick_up_down","move_up","move_down","move_left","move_right","interact"}
-local _ACTION_LABELS = {"Pick Up / Put Down","Up","Down","Left","Right","Interact"}
+local _ACTION_LIST   = {"move_up","move_down","move_left","move_right","interact","pick_up_down"}
+local _ACTION_LABELS = {"Up","Down","Left","Right","Interact","Place"}
 
 local _MODIFIERS = {
     lshift=true, rshift=true, lctrl=true, rctrl=true,
@@ -265,6 +265,10 @@ function SettingsMenu:_confirm()
         self._prev_sub_down    = love.keyboard.isDown(self._state.keybinds.move_down or "s")
         self._prev_sub_confirm = love.keyboard.isDown(self._state.keybinds.interact  or "space")
         self._prev_sub_escape  = love.keyboard.isDown("escape")
+        local _jn_entry = _joy_nav(self._input)
+        self._prev_sub_up      = self._prev_sub_up      or _jn_entry.up
+        self._prev_sub_down    = self._prev_sub_down    or _jn_entry.down
+        self._prev_sub_confirm = self._prev_sub_confirm or _jn_entry.confirm
     elseif self.selected == 5 then
         if not self._opaque and self._on_save then
             self._on_save()

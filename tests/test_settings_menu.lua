@@ -210,7 +210,7 @@ open_clean(m)
 m._subscreen = "keybinds"
 m._subscreen_selected = 1
 sim_key(m, "space")
-assert(m._capturing == "pick_up_down", "confirming first sub-screen item should set _capturing to pick_up_down, got " .. tostring(m._capturing))
+assert(m._capturing == "move_up", "confirming first sub-screen item should set _capturing to move_up, got " .. tostring(m._capturing))
 print("PASS: confirm in sub-screen enters capture mode")
 
 -- Test 23: keypressed sets binding and clears _capturing
