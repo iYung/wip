@@ -209,14 +209,14 @@ end
 function love.gamepadpressed(joystick, button)
     input._joystick = joystick
     input._mode = "gamepad"
+    if settings_menu and settings_menu.is_open then
+        settings_menu:gamepadpressed(button)
+        return
+    end
     if button == "start" then
         if settings_menu and scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then
-            if settings_menu.is_open then
-                settings_menu:close()
-            else
-                settings_menu:open()
-            end
-        elseif not (settings_menu and settings_menu.is_open) then
+            settings_menu:open()
+        else
             love.event.quit()
         end
     end

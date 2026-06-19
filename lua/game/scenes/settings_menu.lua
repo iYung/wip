@@ -146,7 +146,10 @@ function SettingsMenu:update(dt)
         local up      = love.keyboard.isDown(self._state.keybinds.move_up   or "w")
         local down    = love.keyboard.isDown(self._state.keybinds.move_down or "s")
         local confirm = love.keyboard.isDown(self._state.keybinds.interact  or "space")
-        local escape  = love.keyboard.isDown("escape")
+        local escape = love.keyboard.isDown("escape")
+            or (self._input._joystick ~= nil
+                and self._input._joystick:isConnected()
+                and self._input._joystick:isGamepadDown("start"))
         local _jn = _joy_nav(self._input)
         up      = up      or _jn.up
         down    = down    or _jn.down
@@ -312,6 +315,23 @@ function SettingsMenu:keypressed(key)
     self._state:set_keybind(self._capturing, key)
     self._input._map = self._state:key_map()
     self._capturing = nil
+    return true
+end
+
+function SettingsMenu:gamepadpressed(button)
+    if button ~= "start" then return false end
+    if self._subscreen == "keybinds" and self._capturing == nil then
+        if _all_bound(self._state.keybinds) then
+            self._subscreen = nil
+            return true
+        end
+        return false
+    end
+    if self._capturing ~= nil then
+        self._capturing = nil
+        return true
+    end
+    self:close()
     return true
 end
 

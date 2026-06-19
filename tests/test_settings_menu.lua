@@ -626,5 +626,67 @@ do
     print("PASS: spacebar does not confirm when interact is rebound")
 end
 
+-- Test 60: gamepadpressed("start") closes menu when at main level
+do
+    local s60 = SettingsState.new()
+    local m60 = SettingsMenu.new(s60, {_map={}})
+    open_clean(m60)
+    local r60 = m60:gamepadpressed("start")
+    assert(r60 == true, "gamepadpressed start at main level should return true")
+    assert(m60.is_open == false, "gamepadpressed start at main level should close menu")
+    print("PASS: gamepadpressed start closes menu at main level")
+end
+
+-- Test 61: gamepadpressed("start") in keybinds sub-screen exits sub-screen (all bound)
+do
+    local s61 = SettingsState.new()
+    local m61 = SettingsMenu.new(s61, {_map={}})
+    open_clean(m61)
+    m61._subscreen = "keybinds"
+    local r61 = m61:gamepadpressed("start")
+    assert(r61 == true, "gamepadpressed start in sub-screen (all bound) should return true")
+    assert(m61._subscreen == nil, "gamepadpressed start should exit keybinds sub-screen")
+    assert(m61.is_open == true, "menu should stay open after exiting sub-screen")
+    print("PASS: gamepadpressed start exits keybinds sub-screen")
+end
+
+-- Test 62: gamepadpressed("start") in keybinds sub-screen blocked when not all bound
+do
+    local s62 = SettingsState.new()
+    local m62 = SettingsMenu.new(s62, {_map={}})
+    open_clean(m62)
+    s62.keybinds.pick_up_down = nil
+    m62._subscreen = "keybinds"
+    local r62 = m62:gamepadpressed("start")
+    assert(r62 == false, "gamepadpressed start should return false when not all bound")
+    assert(m62._subscreen == "keybinds", "sub-screen should stay open when not all bound")
+    print("PASS: gamepadpressed start blocked in sub-screen when not all bound")
+end
+
+-- Test 63: gamepadpressed("start") cancels active key capture
+do
+    local s63 = SettingsState.new()
+    local m63 = SettingsMenu.new(s63, {_map={}})
+    open_clean(m63)
+    m63._subscreen = "keybinds"
+    m63._capturing = "cancel"
+    local r63 = m63:gamepadpressed("start")
+    assert(r63 == true, "gamepadpressed start during capture should return true")
+    assert(m63._capturing == nil, "gamepadpressed start should cancel capture")
+    assert(m63._subscreen == "keybinds", "sub-screen should remain open after cancel")
+    print("PASS: gamepadpressed start cancels key capture")
+end
+
+-- Test 64: gamepadpressed ignores non-start buttons
+do
+    local s64 = SettingsState.new()
+    local m64 = SettingsMenu.new(s64, {_map={}})
+    open_clean(m64)
+    local r64 = m64:gamepadpressed("a")
+    assert(r64 == false, "gamepadpressed non-start button should return false")
+    assert(m64.is_open == true, "non-start button should not close menu")
+    print("PASS: gamepadpressed ignores non-start buttons")
+end
+
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")

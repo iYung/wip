@@ -680,15 +680,17 @@ Lists five remappable actions (`pick_up_down`, `cancel`, `move_left`, `move_righ
 - `new(settings_state, input, on_save)` — constructor; `on_save` is a callback invoked by "Save Game"
 - `open(opaque?)` / `close()` — show/hide the overlay; `open()` resets selection, clears `_saved`, and snapshots key state
 - `update(dt)` — handles navigation and action dispatch; routes to sub-screen logic when `_subscreen == "keybinds"`
-- `keypressed(key)` — called by `main.lua`'s `love.keypressed`; handles capture mode
+- `keypressed(key)` — called by `main.lua`'s `love.keypressed`; handles capture mode and contextual back (keyboard)
+- `gamepadpressed(button)` — called by `main.lua`'s `love.gamepadpressed`; mirrors `keypressed` for gamepad; Start cancels capture → exits keybinds sub-screen → closes menu (in that priority order)
 - `draw()` — renders main screen or keybind sub-screen depending on `_subscreen`
 
 **Integration in `main.lua`**
 - `love.keypressed`: calls `settings_menu:keypressed(key)` first (capture intercept), then handles Esc toggle
+- `love.gamepadpressed`: when menu is open, delegates entirely to `settings_menu:gamepadpressed(button)` and returns; when closed, Start opens settings (scenes with `esc_opens_settings`) or quits
 - `love.update`: when `is_open`, routes to `settings_menu:update(dt)` and skips scene update (game pauses)
 - `love.draw`: `settings_menu:draw()` called inside the canvas block after `sm:draw()`
 
-Scenes set `self.esc_opens_settings = true` to opt into Esc-to-open. Currently `StoreScene` and `BuyScene`; `StartScene` uses a Settings button instead (calls `open(true)` for the opaque background).
+Scenes set `self.esc_opens_settings = true` to opt into Esc/Start-to-open. Currently `StoreScene` and `BuyScene`; `StartScene` uses a Settings button instead (calls `open(true)` for the opaque background).
 
 ---
 
