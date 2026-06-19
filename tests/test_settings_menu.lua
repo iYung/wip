@@ -257,31 +257,31 @@ sim_key(m, "s")
 assert(m._subscreen_selected == 2, "down in sub-screen should move to row 2, got " .. m._subscreen_selected)
 print("PASS: sub-screen down navigation")
 
--- Test 28: Sub-screen down wraps from row 5 (Return) to row 1
+-- Test 28: Sub-screen down wraps from row 7 (Return) to row 1
 open_clean(m)
 m._subscreen = "keybinds"
-m._subscreen_selected = 5
+m._subscreen_selected = 7
 m._prev_sub_down = false
 sim_key(m, "s")
-assert(m._subscreen_selected == 1, "down from row 5 should wrap to row 1, got " .. m._subscreen_selected)
+assert(m._subscreen_selected == 1, "down from row 7 should wrap to row 1, got " .. m._subscreen_selected)
 print("PASS: sub-screen down wrap")
 
--- Test 29: Sub-screen up from row 1 wraps to row 5 (Return button)
+-- Test 29: Sub-screen up from row 1 wraps to row 7 (Return button)
 open_clean(m)
 m._subscreen = "keybinds"
 m._subscreen_selected = 1
 m._prev_sub_up = false
 sim_key(m, "w")
-assert(m._subscreen_selected == 5, "up from row 1 should wrap to row 5, got " .. m._subscreen_selected)
+assert(m._subscreen_selected == 7, "up from row 1 should wrap to row 7, got " .. m._subscreen_selected)
 print("PASS: sub-screen up wrap to Return")
 
 -- Restore move_left cleared by the collision test (Test 26) so _all_bound passes
 state.keybinds.move_left = "a"
 
--- Test 30: Confirming Return button (row 5) exits sub-screen, menu stays open
+-- Test 30: Confirming Return button (row 7) exits sub-screen, menu stays open
 open_clean(m)
 m._subscreen = "keybinds"
-m._subscreen_selected = 5
+m._subscreen_selected = 7
 m._prev_sub_confirm = false
 sim_key(m, "space")
 assert(m._subscreen == nil, "confirming Return button should exit sub-screen")
@@ -460,7 +460,7 @@ do
     local m48 = SettingsMenu.new(s48, {_map={}})
     m48:open(true)
     m48._subscreen = "keybinds"
-    m48._subscreen_selected = 5   -- Return row = #_ACTION_LIST + 1
+    m48._subscreen_selected = 7   -- Return row = #_ACTION_LIST + 1
     m48._prev_sub_confirm = false
     sim_key(m48, "space")
     assert(m48._subscreen == nil, "all bound: confirm Return should close sub-screen, got " .. tostring(m48._subscreen))
@@ -474,7 +474,7 @@ do
     m49:open(true)
     s49.keybinds.pick_up_down = nil
     m49._subscreen = "keybinds"
-    m49._subscreen_selected = 5
+    m49._subscreen_selected = 7
     m49._prev_sub_confirm = false
     sim_key(m49, "space")
     assert(m49._subscreen == "keybinds", "missing keybind: confirm Return should NOT close sub-screen, got " .. tostring(m49._subscreen))
@@ -501,12 +501,12 @@ do
     m51:open(true)
     s51.keybinds.pick_up_down = nil
     m51._subscreen = "keybinds"
-    m51._subscreen_selected = 5
+    m51._subscreen_selected = 7
     m51._prev_sub_confirm = false
     sim_key(m51, "space")
     assert(m51._subscreen == "keybinds", "precondition: missing keybind should keep sub-screen open")
     s51.keybinds.pick_up_down = "t"
-    m51._subscreen_selected = 5
+    m51._subscreen_selected = 7
     m51._prev_sub_confirm = false
     sim_key(m51, "space")
     assert(m51._subscreen == nil, "rebind restores: confirm Return should now close sub-screen, got " .. tostring(m51._subscreen))

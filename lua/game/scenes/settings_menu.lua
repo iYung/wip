@@ -11,8 +11,8 @@ local function _visible_items(opaque)
     return result
 end
 
-local _ACTION_LIST   = {"pick_up_down","move_left","move_right","interact"}
-local _ACTION_LABELS = {"Pick Up / Put Down","Left","Right","Interact"}
+local _ACTION_LIST   = {"pick_up_down","move_up","move_down","move_left","move_right","interact"}
+local _ACTION_LABELS = {"Pick Up / Put Down","Up","Down","Left","Right","Interact"}
 
 local _MODIFIERS = {
     lshift=true, rshift=true, lctrl=true, rctrl=true,
