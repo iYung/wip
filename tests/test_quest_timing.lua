@@ -37,7 +37,7 @@ local function sell_plant(ctx, plant_type, elapsed)
             return ctx.sm.current._customer:arrived()
         end, elapsed, 2000)
         if ctx.sm.current._customer.plant_type ~= plant_type then
-            ctx.input:press("pick_up_down")
+            ctx.input:press("cancel")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
         else
@@ -306,19 +306,19 @@ do
     assert(nd_ctx.sm.current._active_script_key == "sage:1",
         "expected sage:1 active, got: " .. tostring(nd_ctx.sm.current._active_script_key))
 
-    -- Press E — must not dismiss a no_dismiss quest.
-    nd_ctx.input:press("pick_up_down")
+    -- Press cancel — must not dismiss a no_dismiss quest.
+    nd_ctx.input:press("cancel")
     runner.tick(nd_ctx.input, nd_ctx.sm, 1, 1/60)
     nd_elapsed = nd_elapsed + 1/60
 
     assert(nd_ctx.sm.current._customer:arrived(),
-        "sage:1 customer was dismissed by E — no_dismiss should have blocked it")
+        "sage:1 customer was dismissed by cancel — no_dismiss should have blocked it")
     assert(nd_ctx.sm.current._active_script_key == "sage:1",
-        "active_script_key was cleared by E — no_dismiss should have blocked it")
+        "active_script_key was cleared by cancel — no_dismiss should have blocked it")
     assert(not nd_ctx.sm.current._script_cooldowns["sage:1"],
         "dismiss cooldown was set for no_dismiss quest — should not have been")
 
-    print("[no-dismiss] sage:1 E-key block: PASS")
+    print("[no-dismiss] sage:1 cancel block: PASS")
 end
 
 print("PASS")
