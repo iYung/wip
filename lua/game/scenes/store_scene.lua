@@ -345,7 +345,7 @@ function StoreScene:update(dt)
     local world_right = gs.store:width()
     self.camera.x = math.max(world_left + half_w, math.min(world_right - half_w, self.camera.x))
 
-    if input:pressed("pick_up_down") or input:pressed("move_up") or input:pressed("move_down") then
+    if input:pressed("pick_up_down") then
         self:_handle_pick_up_down()
     end
 
