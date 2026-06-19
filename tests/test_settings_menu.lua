@@ -214,36 +214,36 @@ assert(m._capturing == "move_up", "confirming first sub-screen item should set _
 print("PASS: confirm in sub-screen enters capture mode")
 
 -- Test 23: keypressed sets binding and clears _capturing
-m._capturing = "move_up"
+m._capturing = "pick_up_down"
 m:keypressed("t")
-assert(state.keybinds.move_up == "t", "keypressed should set the binding, got " .. tostring(state.keybinds.move_up))
+assert(state.keybinds.pick_up_down == "t", "keypressed should set the binding, got " .. tostring(state.keybinds.pick_up_down))
 assert(m._capturing == nil, "keypressed should clear _capturing")
 print("PASS: keypressed sets binding and clears _capturing")
 
 -- Test 24: keypressed with modifier is ignored
-state.keybinds.move_up = "w"
-m._capturing = "move_up"
+state.keybinds.pick_up_down = "o"
+m._capturing = "pick_up_down"
 m:keypressed("lshift")
-assert(m._capturing == "move_up", "modifier key should not clear _capturing")
-assert(state.keybinds.move_up == "w", "modifier key should not change binding")
+assert(m._capturing == "pick_up_down", "modifier key should not clear _capturing")
+assert(state.keybinds.pick_up_down == "o", "modifier key should not change binding")
 print("PASS: keypressed with modifier is ignored")
 
 -- Test 25: keypressed escape cancels capture without changing binding
-state.keybinds.move_up = "w"
-m._capturing = "move_up"
+state.keybinds.pick_up_down = "o"
+m._capturing = "pick_up_down"
 m:keypressed("escape")
-assert(state.keybinds.move_up == "w", "escape should not change binding, got " .. tostring(state.keybinds.move_up))
+assert(state.keybinds.pick_up_down == "o", "escape should not change binding, got " .. tostring(state.keybinds.pick_up_down))
 assert(m._capturing == nil, "escape should clear _capturing")
 print("PASS: keypressed escape cancels capture without changing binding")
 
 -- Test 26: Collision rejects key and triggers shake (no binding changes)
-state.keybinds.move_up = "w"
-state.keybinds.move_down = "s"
-m._capturing = "move_down"
-m:keypressed("w")
-assert(state.keybinds.move_down == "s", "collision should leave move_down unchanged, got " .. tostring(state.keybinds.move_down))
-assert(state.keybinds.move_up == "w", "collision should leave move_up unchanged, got " .. tostring(state.keybinds.move_up))
-assert(m._capturing == "move_down", "collision should keep capture mode active")
+state.keybinds.pick_up_down = "o"
+state.keybinds.move_left = "a"
+m._capturing = "move_left"
+m:keypressed("o")
+assert(state.keybinds.move_left == "a", "collision should leave move_left unchanged, got " .. tostring(state.keybinds.move_left))
+assert(state.keybinds.pick_up_down == "o", "collision should leave pick_up_down unchanged, got " .. tostring(state.keybinds.pick_up_down))
+assert(m._capturing == "move_left", "collision should keep capture mode active")
 assert(m._shake_row ~= nil, "collision should set _shake_row")
 assert(m._shake_timer == 0.5, "collision should set _shake_timer to 0.5")
 print("PASS: collision rejects key and triggers shake")
@@ -257,31 +257,31 @@ sim_key(m, "s")
 assert(m._subscreen_selected == 2, "down in sub-screen should move to row 2, got " .. m._subscreen_selected)
 print("PASS: sub-screen down navigation")
 
--- Test 28: Sub-screen down wraps from row 6 (Return) to row 1
+-- Test 28: Sub-screen down wraps from row 7 (Return) to row 1
 open_clean(m)
 m._subscreen = "keybinds"
-m._subscreen_selected = 6
+m._subscreen_selected = 7
 m._prev_sub_down = false
 sim_key(m, "s")
-assert(m._subscreen_selected == 1, "down from row 6 should wrap to row 1, got " .. m._subscreen_selected)
+assert(m._subscreen_selected == 1, "down from row 7 should wrap to row 1, got " .. m._subscreen_selected)
 print("PASS: sub-screen down wrap")
 
--- Test 29: Sub-screen up from row 1 wraps to row 6 (Return button)
+-- Test 29: Sub-screen up from row 1 wraps to row 7 (Return button)
 open_clean(m)
 m._subscreen = "keybinds"
 m._subscreen_selected = 1
 m._prev_sub_up = false
 sim_key(m, "w")
-assert(m._subscreen_selected == 6, "up from row 1 should wrap to row 6, got " .. m._subscreen_selected)
+assert(m._subscreen_selected == 7, "up from row 1 should wrap to row 7, got " .. m._subscreen_selected)
 print("PASS: sub-screen up wrap to Return")
 
--- Restore move_up cleared by the collision test (Test 26) so _all_bound passes
-state.keybinds.move_up = "w"
+-- Restore move_left cleared by the collision test (Test 26) so _all_bound passes
+state.keybinds.move_left = "a"
 
--- Test 30: Confirming Return button (row 6) exits sub-screen, menu stays open
+-- Test 30: Confirming Return button (row 7) exits sub-screen, menu stays open
 open_clean(m)
 m._subscreen = "keybinds"
-m._subscreen_selected = 6
+m._subscreen_selected = 7
 m._prev_sub_confirm = false
 sim_key(m, "space")
 assert(m._subscreen == nil, "confirming Return button should exit sub-screen")
@@ -303,7 +303,7 @@ print("PASS: key-bleed prevention on sub-screen entry")
 
 -- Test 32: keypressed returns true when consuming escape during capture
 m._subscreen = "keybinds"
-m._capturing = "move_up"
+m._capturing = "pick_up_down"
 local r32 = m:keypressed("escape")
 assert(r32 == true, "keypressed should return true for escape during capture")
 assert(m._capturing == nil, "escape should clear _capturing")
@@ -319,10 +319,10 @@ print("PASS: keypressed returns true for escape in sub-screen")
 
 -- Test 34: keypressed returns false for modifier during capture
 m._subscreen = "keybinds"
-m._capturing = "move_up"
+m._capturing = "pick_up_down"
 local r34 = m:keypressed("lshift")
 assert(r34 == false, "keypressed should return false for modifier")
-assert(m._capturing == "move_up", "modifier should not clear _capturing")
+assert(m._capturing == "pick_up_down", "modifier should not clear _capturing")
 print("PASS: keypressed returns false for modifier")
 
 -- Test 35: Sub-screen selected resets to 1 when re-entering Keybinds
@@ -460,7 +460,7 @@ do
     local m48 = SettingsMenu.new(s48, {_map={}})
     m48:open(true)
     m48._subscreen = "keybinds"
-    m48._subscreen_selected = 6   -- Return row = #_ACTION_LIST + 1
+    m48._subscreen_selected = 7   -- Return row = #_ACTION_LIST + 1
     m48._prev_sub_confirm = false
     sim_key(m48, "space")
     assert(m48._subscreen == nil, "all bound: confirm Return should close sub-screen, got " .. tostring(m48._subscreen))
@@ -472,9 +472,9 @@ do
     local s49 = SettingsState.new()
     local m49 = SettingsMenu.new(s49, {_map={}})
     m49:open(true)
-    s49.keybinds.move_up = nil
+    s49.keybinds.pick_up_down = nil
     m49._subscreen = "keybinds"
-    m49._subscreen_selected = 6
+    m49._subscreen_selected = 7
     m49._prev_sub_confirm = false
     sim_key(m49, "space")
     assert(m49._subscreen == "keybinds", "missing keybind: confirm Return should NOT close sub-screen, got " .. tostring(m49._subscreen))
@@ -486,7 +486,7 @@ do
     local s50 = SettingsState.new()
     local m50 = SettingsMenu.new(s50, {_map={}})
     m50:open(true)
-    s50.keybinds.move_up = nil
+    s50.keybinds.pick_up_down = nil
     m50._subscreen = "keybinds"
     m50._capturing = nil
     m50:keypressed("escape")
@@ -499,14 +499,14 @@ do
     local s51 = SettingsState.new()
     local m51 = SettingsMenu.new(s51, {_map={}})
     m51:open(true)
-    s51.keybinds.move_up = nil
+    s51.keybinds.pick_up_down = nil
     m51._subscreen = "keybinds"
-    m51._subscreen_selected = 6
+    m51._subscreen_selected = 7
     m51._prev_sub_confirm = false
     sim_key(m51, "space")
     assert(m51._subscreen == "keybinds", "precondition: missing keybind should keep sub-screen open")
-    s51.keybinds.move_up = "t"
-    m51._subscreen_selected = 6
+    s51.keybinds.pick_up_down = "t"
+    m51._subscreen_selected = 7
     m51._prev_sub_confirm = false
     sim_key(m51, "space")
     assert(m51._subscreen == nil, "rebind restores: confirm Return should now close sub-screen, got " .. tostring(m51._subscreen))

@@ -37,7 +37,7 @@ local function sell_plant(ctx, plant_type, elapsed)
             return ctx.sm.current._customer:arrived()
         end, elapsed, 2000)
         if ctx.sm.current._customer.plant_type ~= plant_type then
-            ctx.input:press("move_up")
+            ctx.input:press("pick_up_down")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
         else
@@ -141,7 +141,7 @@ for _, step in ipairs(schedule) do
             end
 
             elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-            ctx.input:press("move_up")
+            ctx.input:press("pick_up_down")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
 
@@ -165,12 +165,12 @@ for _, step in ipairs(schedule) do
             check_milestones()
 
             elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-            ctx.input:press("move_down")
+            ctx.input:press("pick_up_down")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
 
             elapsed = walk_to(ctx, PLANT_SLOT_X, elapsed)
-            ctx.input:press("move_up")
+            ctx.input:press("pick_up_down")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
 
@@ -195,7 +195,7 @@ for _, step in ipairs(schedule) do
     while (ctx.gs.stage3_counts[pt] or 0) < target do
         -- 1. pick up watering can from slot 1
         elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-        ctx.input:press("move_up")
+        ctx.input:press("pick_up_down")
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
 
@@ -222,13 +222,13 @@ for _, step in ipairs(schedule) do
 
         -- 4. return watering can to slot 1
         elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-        ctx.input:press("move_down")
+        ctx.input:press("pick_up_down")
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
 
         -- 5. pick up stage-3 plant
         elapsed = walk_to(ctx, PLANT_SLOT_X, elapsed)
-        ctx.input:press("move_up")
+        ctx.input:press("pick_up_down")
         runner.tick(ctx.input, ctx.sm, 1, 1/60)
         elapsed = elapsed + 1/60
 
@@ -307,7 +307,7 @@ do
         "expected sage:1 active, got: " .. tostring(nd_ctx.sm.current._active_script_key))
 
     -- Press E — must not dismiss a no_dismiss quest.
-    nd_ctx.input:press("move_up")
+    nd_ctx.input:press("pick_up_down")
     runner.tick(nd_ctx.input, nd_ctx.sm, 1, 1/60)
     nd_elapsed = nd_elapsed + 1/60
 

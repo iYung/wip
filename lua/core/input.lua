@@ -3,7 +3,8 @@ local _PAD_LABELS = {
     move_down  = "↓",
     move_left  = "←",
     move_right = "→",
-    interact   = "[A]",
+    interact     = "[A]",
+    pick_up_down = "[B]",
 }
 
 local Input = {}
@@ -46,7 +47,8 @@ function Input:update()
             move_down  = ay >  0.3 or joy:isGamepadDown("dpdown"),
             move_left  = ax < -0.3 or joy:isGamepadDown("dpleft"),
             move_right = ax >  0.3 or joy:isGamepadDown("dpright"),
-            interact   = joy:isGamepadDown("a"),
+            interact     = joy:isGamepadDown("a"),
+            pick_up_down = joy:isGamepadDown("b"),
         }
         local any_gamepad = false
         for action, down in pairs(pad) do

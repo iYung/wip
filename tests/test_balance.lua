@@ -35,7 +35,7 @@ local function sell_plant(ctx, plant_type, elapsed)
         end, elapsed)
 
         if ctx.sm.current._customer.plant_type ~= plant_type then
-            ctx.input:press("move_up")
+            ctx.input:press("pick_up_down")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
         else
@@ -102,7 +102,7 @@ local next_idx = 1
 while next_idx <= #targets do
     -- 1. Pick up watering can from slot 1.
     elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-    ctx.input:press("move_up")
+    ctx.input:press("pick_up_down")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
     elapsed = elapsed + 1/60
 
@@ -125,13 +125,13 @@ while next_idx <= #targets do
 
     -- 4. Put the watering can back in slot 1.
     elapsed = walk_to(ctx, WATERING_CAN_X, elapsed)
-    ctx.input:press("move_down")
+    ctx.input:press("pick_up_down")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
     elapsed = elapsed + 1/60
 
     -- 5. Pick up the stage-3 plant from slot 4.
     elapsed = walk_to(ctx, PLANT_SLOT_X, elapsed)
-    ctx.input:press("move_up")
+    ctx.input:press("pick_up_down")
     runner.tick(ctx.input, ctx.sm, 1, 1/60)
     elapsed = elapsed + 1/60
 
