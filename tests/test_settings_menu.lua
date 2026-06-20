@@ -626,6 +626,18 @@ do
     print("PASS: spacebar does not confirm when interact is rebound")
 end
 
+-- Test 60a: open() with Start held snapshots _prev_escape to block immediate close
+do
+    local s60a = SettingsState.new()
+    local fake_joy = { isConnected = function() return true end, isGamepadDown = function(_, b) return b == "start" end, getGamepadAxis = function() return 0 end }
+    local m60a = SettingsMenu.new(s60a, { _map = {}, _joystick = fake_joy })
+    love.keyboard.isDown = function() return false end
+    m60a:open()
+    love.keyboard.isDown = function() return false end
+    assert(m60a._prev_escape == true, "open() should snapshot Start-held state into _prev_escape")
+    print("PASS: open() snapshots Start button state to prevent immediate close")
+end
+
 -- Test 60: gamepadpressed("start") closes menu when at main level
 do
     local s60 = SettingsState.new()

@@ -120,6 +120,9 @@ function SettingsMenu:open(opaque)
     self._prev_left    = self._prev_left    or _jn.left
     self._prev_right   = self._prev_right   or _jn.right
     self._prev_confirm = self._prev_confirm or _jn.confirm
+    local joy = self._input._joystick
+    self._prev_escape  = self._prev_escape
+        or (joy ~= nil and joy:isConnected() and joy:isGamepadDown("start"))
 end
 
 function SettingsMenu:close()
