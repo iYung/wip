@@ -221,6 +221,9 @@ end
 function love.gamepadpressed(joystick, button)
     input._joystick = joystick
     input._mode = "gamepad"
+    -- Mark Start as already-seen so the polling check in love.update doesn't
+    -- fire on the same frame as this event and undo what we do here.
+    if button == "start" then _prev_start = true end
     if settings_menu and settings_menu.is_open then
         settings_menu:gamepadpressed(button)
         return
