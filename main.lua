@@ -156,6 +156,9 @@ function love.update(dt)
     end
     if not _visual_mode then
         Sound.update(dt)
+        -- Track Start every frame so _prev_start is accurate whether menu is open or not.
+        local joy = input._joystick
+        local start_down = joy ~= nil and joy:isConnected() and joy:isGamepadDown("start")
         if settings_menu and settings_menu.is_open then
             settings_menu:update(dt)
             if not settings_menu.is_open then
@@ -167,16 +170,14 @@ function love.update(dt)
             input:update()
             -- Poll Start button to open settings (event-based love.gamepadpressed
             -- may not fire on all controllers for the Start/menu button).
-            local joy = input._joystick
-            local start_down = joy ~= nil and joy:isConnected() and joy:isGamepadDown("start")
             if start_down and not _prev_start then
                 if scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then
                     settings_menu:open()
                 end
             end
-            _prev_start = start_down or false
             scene_manager:update(dt)
         end
+        _prev_start = start_down
     end
 end
 
