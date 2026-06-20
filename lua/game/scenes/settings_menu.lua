@@ -3,10 +3,12 @@ local Fonts = require("lua/game/fonts")
 
 local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds", "Save Game", "Exit Settings", "Leave Game" }
 
-local function _visible_items(opaque)
+local function _visible_items(opaque, mode)
     local result = {}
     for i = 1, #ITEMS do
-        if not (opaque and i == 5) then result[#result + 1] = i end
+        if not (opaque and i == 5) and not (mode == "gamepad" and i == 4) then
+            result[#result + 1] = i
+        end
     end
     return result
 end
@@ -208,8 +210,16 @@ function SettingsMenu:update(dt)
             and self._input._joystick:isConnected()
             and self._input._joystick:isGamepadDown("start"))
 
+    -- Clamp: if mode changed while open and selected item is now hidden, reset to first visible
+    do
+        local vis_check = _visible_items(self._opaque, self._input._mode)
+        local sel_ok = false
+        for _, idx in ipairs(vis_check) do if idx == self.selected then sel_ok = true; break end end
+        if not sel_ok and #vis_check > 0 then self.selected = vis_check[1] end
+    end
+
     if up and not self._prev_up then
-        local vis = _visible_items(self._opaque)
+        local vis = _visible_items(self._opaque, self._input._mode)
         for j, idx in ipairs(vis) do
             if idx == self.selected then
                 self.selected = vis[((j - 2) % #vis) + 1]
@@ -219,7 +229,7 @@ function SettingsMenu:update(dt)
         Sound.play("menu_navigate")
     end
     if down and not self._prev_down then
-        local vis = _visible_items(self._opaque)
+        local vis = _visible_items(self._opaque, self._input._mode)
         for j, idx in ipairs(vis) do
             if idx == self.selected then
                 self.selected = vis[(j % #vis) + 1]
@@ -417,7 +427,7 @@ function SettingsMenu:draw()
     end
 
     love.graphics.setFont(self._font_btn)
-    local vis    = _visible_items(self._opaque)
+    local vis    = _visible_items(self._opaque, self._input._mode)
     local btn_y0 = H / 2 - (#vis - 1) * BTN_GAP / 2 - BTN_H / 2
     for j, i in ipairs(vis) do
         local y   = btn_y0 + (j - 1) * BTN_GAP
