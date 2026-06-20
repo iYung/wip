@@ -212,8 +212,6 @@ function love.keypressed(key)
             else
                 settings_menu:open()
             end
-        elseif not (settings_menu and settings_menu.is_open) then
-            love.event.quit()
         end
     end
 end
@@ -231,8 +229,6 @@ function love.gamepadpressed(joystick, button)
     if button == "start" then
         if settings_menu and scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then
             settings_menu:open()
-        else
-            love.event.quit()
         end
     end
 end
