@@ -114,8 +114,8 @@ do
         "gamepad: f label should be a table, got " .. tostring(hud.f))
     assert(hud.f.icon == "btn_a",
         "gamepad: f icon should be 'btn_a', got " .. tostring(hud.f and hud.f.icon))
-    assert(hud.f.text == ": WATER",
-        "gamepad: f text should be ': WATER', got " .. tostring(hud.f and hud.f.text))
+    assert(hud.f.text == "WATER",
+        "gamepad: f text should be 'WATER', got " .. tostring(hud.f and hud.f.text))
     print("PASS: hud: gamepad mode returns {icon, text} for button labels")
 end
 
