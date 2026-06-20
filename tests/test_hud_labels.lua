@@ -91,4 +91,32 @@ do
     print("PASS: hud: CLONE hint hidden for stage-1 plant")
 end
 
+-- Gamepad mode: _hud_labels returns {icon, text} table for button labels
+do
+    local ctx, scene = make_scene()
+    -- add icon_key_for stub simulating gamepad mode
+    ctx.input.icon_key_for = function(self, action)
+        local icons = { interact = "btn_a", pick_up_down = "btn_y", cancel = "btn_b" }
+        return icons[action]
+    end
+
+    local plant = Plant.new(1)
+    plant.ready = true
+    ctx.gs.store.slots[4].item = plant
+    ctx.gs.player.x = 700  -- slot 4
+
+    local wc = ctx.gs.store.slots[1].item
+    ctx.gs.player.held_item = wc
+    ctx.gs.store.slots[1].item = nil
+
+    local hud = scene:_hud_labels()
+    assert(type(hud.f) == "table",
+        "gamepad: f label should be a table, got " .. tostring(hud.f))
+    assert(hud.f.icon == "btn_a",
+        "gamepad: f icon should be 'btn_a', got " .. tostring(hud.f and hud.f.icon))
+    assert(hud.f.text == ": WATER",
+        "gamepad: f text should be ': WATER', got " .. tostring(hud.f and hud.f.text))
+    print("PASS: hud: gamepad mode returns {icon, text} for button labels")
+end
+
 print("ALL TESTS PASSED")

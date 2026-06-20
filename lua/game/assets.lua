@@ -66,7 +66,10 @@ for lvl = 1, 3 do
     A.ads[lvl] = try_img("assets/images/ads_" .. lvl .. ".png")
 end
 
-A.coin = img("assets/images/coin.png")
+A.coin  = img("assets/images/coin.png")
+A.btn_a = img("assets/images/btn_a.png")
+A.btn_b = img("assets/images/btn_b.png")
+A.btn_y = img("assets/images/btn_y.png")
 
 A.wall_pattern = try_img("assets/images/wall_pattern.png")
 if A.wall_pattern then A.wall_pattern:setWrap("repeat", "repeat") end

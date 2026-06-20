@@ -65,4 +65,9 @@ function HeadlessInput:pressed(action)
     return self._pressed[action] == true
 end
 
+-- No gamepad in headless mode — always returns nil.
+function HeadlessInput:icon_key_for(action)
+    return nil
+end
+
 return HeadlessInput
