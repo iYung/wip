@@ -38,6 +38,7 @@ local canvas
 local scene_manager
 local settings_menu
 local ss
+local _prev_start = false
 
 local _visual_coro
 local _visual_done      = false
@@ -164,6 +165,16 @@ function love.update(dt)
             end
         else
             input:update()
+            -- Poll Start button to open settings (event-based love.gamepadpressed
+            -- may not fire on all controllers for the Start/menu button).
+            local joy = input._joystick
+            local start_down = joy ~= nil and joy:isConnected() and joy:isGamepadDown("start")
+            if start_down and not _prev_start then
+                if scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then
+                    settings_menu:open()
+                end
+            end
+            _prev_start = start_down or false
             scene_manager:update(dt)
         end
     end
