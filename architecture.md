@@ -685,8 +685,8 @@ Lists five remappable actions (`pick_up_down`, `cancel`, `move_left`, `move_righ
 - `draw()` — renders main screen or keybind sub-screen depending on `_subscreen`
 
 **Integration in `main.lua`**
-- `love.keypressed`: calls `settings_menu:keypressed(key)` first (capture intercept), then handles Esc toggle
-- `love.gamepadpressed`: when menu is open, delegates entirely to `settings_menu:gamepadpressed(button)` and returns; when closed, Start opens settings (scenes with `esc_opens_settings`) or quits
+- `love.keypressed`: calls `settings_menu:keypressed(key)` first (capture intercept), then toggles settings on Esc if the current scene has `esc_opens_settings` (otherwise does nothing)
+- `love.gamepadpressed`: when menu is open, delegates entirely to `settings_menu:gamepadpressed(button)` and returns; when closed, Start opens settings if the current scene has `esc_opens_settings` (otherwise does nothing)
 - `love.update`: when `is_open`, routes to `settings_menu:update(dt)` and skips scene update (game pauses)
 - `love.draw`: `settings_menu:draw()` called inside the canvas block after `sm:draw()`
 
