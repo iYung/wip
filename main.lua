@@ -38,6 +38,7 @@ local canvas
 local scene_manager
 local settings_menu
 local ss
+local _prev_start = false
 
 local _visual_coro
 local _visual_done      = false
@@ -155,6 +156,9 @@ function love.update(dt)
     end
     if not _visual_mode then
         Sound.update(dt)
+        -- Track Start every frame so _prev_start is accurate whether menu is open or not.
+        local joy = input._joystick
+        local start_down = joy ~= nil and joy:isConnected() and joy:isGamepadDown("start")
         if settings_menu and settings_menu.is_open then
             settings_menu:update(dt)
             if not settings_menu.is_open then
@@ -164,8 +168,16 @@ function love.update(dt)
             end
         else
             input:update()
+            -- Poll Start button to open settings (event-based love.gamepadpressed
+            -- may not fire on all controllers for the Start/menu button).
+            if start_down and not _prev_start then
+                if scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then
+                    settings_menu:open()
+                end
+            end
             scene_manager:update(dt)
         end
+        _prev_start = start_down
     end
 end
 
@@ -209,14 +221,17 @@ end
 function love.gamepadpressed(joystick, button)
     input._joystick = joystick
     input._mode = "gamepad"
+    -- Mark Start as already-seen so the polling check in love.update doesn't
+    -- fire on the same frame as this event and undo what we do here.
+    if button == "start" then _prev_start = true end
+    if settings_menu and settings_menu.is_open then
+        settings_menu:gamepadpressed(button)
+        return
+    end
     if button == "start" then
         if settings_menu and scene_manager and scene_manager.current and scene_manager.current.esc_opens_settings then
-            if settings_menu.is_open then
-                settings_menu:close()
-            else
-                settings_menu:open()
-            end
-        elseif not (settings_menu and settings_menu.is_open) then
+            settings_menu:open()
+        else
             love.event.quit()
         end
     end
