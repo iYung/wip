@@ -390,7 +390,7 @@
         // Switch to gamepad mode
         window.__fakeGamepad.connected = true;
         window.__fakeGamepad.timestamp = performance.now();
-        try { window.dispatchEvent(new GamepadEvent('gamepadconnected', { gamepad: window.__fakeGamepad })); } catch (e) {}
+        var connectEv = new Event('gamepadconnected'); connectEv.gamepad = window.__fakeGamepad; window.dispatchEvent(connectEv);
         leftCluster.style.display = 'none';
         rightCluster.style.display = 'none';
         gpLeftCluster.style.display = '';
@@ -400,7 +400,7 @@
       } else {
         // Switch to keyboard mode
         window.__fakeGamepad.connected = false;
-        try { window.dispatchEvent(new GamepadEvent('gamepaddisconnected', { gamepad: window.__fakeGamepad })); } catch (e) {}
+        var disconnectEv = new Event('gamepaddisconnected'); disconnectEv.gamepad = window.__fakeGamepad; window.dispatchEvent(disconnectEv);
         gpLeftCluster.style.display = 'none';
         gpRightCluster.style.display = 'none';
         leftCluster.style.display = '';
