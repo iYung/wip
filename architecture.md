@@ -729,6 +729,22 @@ Saving and restoring `prev_canvas` is required because `main.lua` already render
 
 ---
 
+## Web Build Controls (`web-template/controls.js`)
+
+`web-template/controls.js` is injected into the love.js web build by `scripts/build_web.sh` (copied to `web/controls.js` post-build). It adds an on-screen control bar below the canvas for mobile and browser testing.
+
+**Keyboard mode (default):** Arrow buttons fire synthetic `KeyboardEvent` objects at the canvas with correct `keyCode` values. Emscripten's SDL layer reads `keyCode` (the legacy numeric field) to map to Love2D key events; synthetic events default to `keyCode=0` which SDL ignores, so the explicit `KEY_CODES` map is required.
+
+**Gamepad mode:** A `⌨`/`🎮` toggle switches to a D-pad + face-button layout. Instead of keyboard events, these buttons set state on a fake gamepad object:
+
+- `window.__fakeGamepad` — plain JS object with `buttons[16]` and `axes[4]`, created at script init and injected via a `navigator.getGamepads()` override. Emscripten polls this function each frame, so setting `connected = true` and returning `[__fakeGamepad]` is sufficient to make Love2D register a joystick without any Lua changes.
+- Button index mapping: A=0, B=1, Y=3, Start=9, dpup=12, dpdown=13, dpleft=14, dpright=15 (standard Gamepad API layout).
+- `GamepadEvent` dispatch (`gamepadconnected`/`gamepaddisconnected`) is attempted on toggle but wrapped in try-catch — browsers require a native `Gamepad` object in the event init, so the constructor throws for plain objects. The event isn't needed; Emscripten's polling picks up state changes on the next frame.
+
+Both modes co-exist in the DOM; the toggle sets `display:none` on the inactive cluster pair.
+
+---
+
 ## Testing
 
 Three ways to run the game:

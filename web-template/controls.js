@@ -1,4 +1,23 @@
 (function () {
+  // Task A — Fake gamepad scaffold (injected before DOMContentLoaded so
+  // Emscripten reads it on startup via navigator.getGamepads).
+  window.__fakeGamepad = {
+    id: 'Fake Gamepad',
+    index: 0,
+    mapping: 'standard',
+    connected: false,
+    timestamp: 0,
+    axes: [0, 0, 0, 0],
+    buttons: (function () {
+      var btns = [];
+      for (var i = 0; i < 16; i++) { btns.push({ pressed: false, value: 0 }); }
+      return btns;
+    }())
+  };
+  navigator.getGamepads = function () {
+    return window.__fakeGamepad.connected ? [window.__fakeGamepad] : [];
+  };
+
   // Ensure viewport meta tag exists for correct mobile scaling
   if (!document.querySelector('meta[name="viewport"]')) {
     var meta = document.createElement('meta');
@@ -53,6 +72,18 @@
     '  grid-template-rows: repeat(2, 60px);',
     '  gap: 6px;',
     '}',
+    '#game-controls .cluster-gamepad-left {',
+    '  display: grid;',
+    '  grid-template-columns: repeat(3, 60px);',
+    '  grid-template-rows: repeat(2, 60px);',
+    '  gap: 6px;',
+    '}',
+    '#game-controls .cluster-gamepad-right {',
+    '  display: grid;',
+    '  grid-template-columns: repeat(2, 60px);',
+    '  grid-template-rows: repeat(2, 60px);',
+    '  gap: 6px;',
+    '}',
     '#game-controls button {',
     '  min-width: 60px;',
     '  min-height: 60px;',
@@ -88,6 +119,20 @@
     '#save-controls .btn-clear-save:active {',
     '  background: rgba(220,60,60,0.75);',
     '}',
+    '#game-controls .btn-toggle {',
+    '  min-width: 40px;',
+    '  min-height: 40px;',
+    '  background: rgba(255,255,255,0.1);',
+    '  color: white;',
+    '  border: 1px solid rgba(255,255,255,0.3);',
+    '  border-radius: 8px;',
+    '  font-size: 16px;',
+    '  cursor: pointer;',
+    '  user-select: none;',
+    '  -webkit-user-select: none;',
+    '  touch-action: none;',
+    '  align-self: center;',
+    '}',
     '#game-controls .btn-up {',
     '  grid-column: 2;',
     '  grid-row: 1;',
@@ -110,6 +155,38 @@
     '}',
     '#game-controls .btn-esc {',
     '  grid-column: 1 / span 2;',
+    '  grid-row: 2;',
+    '}',
+    '#game-controls .btn-gp-up {',
+    '  grid-column: 2;',
+    '  grid-row: 1;',
+    '}',
+    '#game-controls .btn-gp-left {',
+    '  grid-column: 1;',
+    '  grid-row: 2;',
+    '}',
+    '#game-controls .btn-gp-down {',
+    '  grid-column: 2;',
+    '  grid-row: 2;',
+    '}',
+    '#game-controls .btn-gp-right {',
+    '  grid-column: 3;',
+    '  grid-row: 2;',
+    '}',
+    '#game-controls .btn-gp-a {',
+    '  grid-column: 1;',
+    '  grid-row: 1;',
+    '}',
+    '#game-controls .btn-gp-b {',
+    '  grid-column: 2;',
+    '  grid-row: 1;',
+    '}',
+    '#game-controls .btn-gp-y {',
+    '  grid-column: 1;',
+    '  grid-row: 2;',
+    '}',
+    '#game-controls .btn-gp-start {',
+    '  grid-column: 2;',
     '  grid-row: 2;',
     '}'
   ].join('\n');
@@ -161,10 +238,46 @@
       }, { passive: false });
     }
 
+    // Task B — Fake gamepad button helper.
+    // Release is deferred by two rAF ticks so the pressed=true state spans at
+    // least one full SDL poll cycle (Love2D samples once per frame; a tap that
+    // lands entirely between two polls is never seen as PRESSED otherwise).
+    function attachGamepadButton(btn, index) {
+      var releaseRaf = null;
+      function gpPress() {
+        if (releaseRaf) { cancelAnimationFrame(releaseRaf); releaseRaf = null; }
+        window.__fakeGamepad.buttons[index].pressed = true;
+        window.__fakeGamepad.buttons[index].value = 1;
+        window.__fakeGamepad.timestamp = performance.now();
+      }
+      function gpRelease() {
+        if (releaseRaf) cancelAnimationFrame(releaseRaf);
+        releaseRaf = requestAnimationFrame(function () {
+          releaseRaf = requestAnimationFrame(function () {
+            releaseRaf = null;
+            window.__fakeGamepad.buttons[index].pressed = false;
+            window.__fakeGamepad.buttons[index].value = 0;
+          });
+        });
+      }
+      btn.addEventListener('mousedown', gpPress);
+      btn.addEventListener('mouseup', gpRelease);
+      btn.addEventListener('mouseleave', gpRelease);
+      btn.addEventListener('touchstart', function (e) {
+        e.preventDefault(); gpPress();
+      }, { passive: false });
+      btn.addEventListener('touchend', function (e) {
+        e.preventDefault(); gpRelease();
+      }, { passive: false });
+      btn.addEventListener('touchcancel', function (e) {
+        e.preventDefault(); gpRelease();
+      }, { passive: false });
+    }
+
     var controls = document.createElement('div');
     controls.id = 'game-controls';
 
-    // Left cluster: d-pad
+    // Left cluster: d-pad (keyboard)
     var leftCluster = document.createElement('div');
     leftCluster.className = 'cluster-left';
 
@@ -193,7 +306,7 @@
     leftCluster.appendChild(btnDown);
     leftCluster.appendChild(btnRight);
 
-    // Right cluster: action buttons
+    // Right cluster: action buttons (keyboard)
     var rightCluster = document.createElement('div');
     rightCluster.className = 'cluster-right';
 
@@ -210,8 +323,101 @@
     rightCluster.appendChild(btnSpace);
     rightCluster.appendChild(btnEsc);
 
+    // Task C — Gamepad left cluster: D-pad (indices 12↑ 13↓ 14← 15→)
+    var gpLeftCluster = document.createElement('div');
+    gpLeftCluster.className = 'cluster-gamepad-left';
+    gpLeftCluster.style.display = 'none';
+
+    var gpBtnUp = document.createElement('button');
+    gpBtnUp.className = 'btn-gp-up';
+    gpBtnUp.textContent = '↑';
+    attachGamepadButton(gpBtnUp, 12);
+
+    var gpBtnLeft = document.createElement('button');
+    gpBtnLeft.className = 'btn-gp-left';
+    gpBtnLeft.textContent = '←';
+    attachGamepadButton(gpBtnLeft, 14);
+
+    var gpBtnDown = document.createElement('button');
+    gpBtnDown.className = 'btn-gp-down';
+    gpBtnDown.textContent = '↓';
+    attachGamepadButton(gpBtnDown, 13);
+
+    var gpBtnRight = document.createElement('button');
+    gpBtnRight.className = 'btn-gp-right';
+    gpBtnRight.textContent = '→';
+    attachGamepadButton(gpBtnRight, 15);
+
+    gpLeftCluster.appendChild(gpBtnUp);
+    gpLeftCluster.appendChild(gpBtnLeft);
+    gpLeftCluster.appendChild(gpBtnDown);
+    gpLeftCluster.appendChild(gpBtnRight);
+
+    // Task C — Gamepad right cluster: A (0), B (1), Y (3), Start (9)
+    var gpRightCluster = document.createElement('div');
+    gpRightCluster.className = 'cluster-gamepad-right';
+    gpRightCluster.style.display = 'none';
+
+    var gpBtnA = document.createElement('button');
+    gpBtnA.className = 'btn-gp-a';
+    gpBtnA.textContent = 'A';
+    attachGamepadButton(gpBtnA, 0);
+
+    var gpBtnB = document.createElement('button');
+    gpBtnB.className = 'btn-gp-b';
+    gpBtnB.textContent = 'B';
+    attachGamepadButton(gpBtnB, 1);
+
+    var gpBtnY = document.createElement('button');
+    gpBtnY.className = 'btn-gp-y';
+    gpBtnY.textContent = 'Y';
+    attachGamepadButton(gpBtnY, 3);
+
+    var gpBtnStart = document.createElement('button');
+    gpBtnStart.className = 'btn-gp-start';
+    gpBtnStart.textContent = 'Start';
+    attachGamepadButton(gpBtnStart, 9);
+
+    gpRightCluster.appendChild(gpBtnA);
+    gpRightCluster.appendChild(gpBtnB);
+    gpRightCluster.appendChild(gpBtnY);
+    gpRightCluster.appendChild(gpBtnStart);
+
+    // Task D — Mode toggle button
+    var currentMode = 'keyboard';
+    var toggleBtn = document.createElement('button');
+    toggleBtn.className = 'btn-toggle';
+    toggleBtn.textContent = '⌨';
+    toggleBtn.addEventListener('click', function () {
+      if (currentMode === 'keyboard') {
+        // Switch to gamepad mode
+        window.__fakeGamepad.connected = true;
+        window.__fakeGamepad.timestamp = performance.now();
+        var connectEv = new Event('gamepadconnected'); connectEv.gamepad = window.__fakeGamepad; window.dispatchEvent(connectEv);
+        leftCluster.style.display = 'none';
+        rightCluster.style.display = 'none';
+        gpLeftCluster.style.display = '';
+        gpRightCluster.style.display = '';
+        toggleBtn.textContent = '🎮';
+        currentMode = 'gamepad';
+      } else {
+        // Switch to keyboard mode
+        window.__fakeGamepad.connected = false;
+        var disconnectEv = new Event('gamepaddisconnected'); disconnectEv.gamepad = window.__fakeGamepad; window.dispatchEvent(disconnectEv);
+        gpLeftCluster.style.display = 'none';
+        gpRightCluster.style.display = 'none';
+        leftCluster.style.display = '';
+        rightCluster.style.display = '';
+        toggleBtn.textContent = '⌨';
+        currentMode = 'keyboard';
+      }
+    });
+
     controls.appendChild(leftCluster);
+    controls.appendChild(toggleBtn);
     controls.appendChild(rightCluster);
+    controls.appendChild(gpLeftCluster);
+    controls.appendChild(gpRightCluster);
     document.body.appendChild(controls);
 
     // Save controls bar below the main controls
