@@ -481,7 +481,7 @@ function StoreScene:_hud_labels()
 
     local function make_label(icon_key, key_text, action_text)
         if icon_key then
-            return { icon = icon_key, text = action_text }
+            return { icon = icon_key, text = ": " .. action_text }
         end
         return key_text .. ": " .. action_text
     end
