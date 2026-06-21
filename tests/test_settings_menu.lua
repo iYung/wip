@@ -700,5 +700,44 @@ do
     print("PASS: gamepadpressed ignores non-start buttons")
 end
 
+-- Test 65: gamepad mode hides Keybinds — navigation jumps from index 3 to index 5
+do
+    local st65 = SettingsState.new()
+    local m65 = SettingsMenu.new(st65, {_map={}, _mode="gamepad"})
+    open_clean(m65)
+    sim_key(m65, "s")   -- 1→2
+    sim_key(m65, "s")   -- 2→3
+    sim_key(m65, "s")   -- 3→5 (item 4 hidden in gamepad mode)
+    assert(m65.selected == 5, "gamepad mode: down from 3 should skip Keybinds and land on 5, got " .. m65.selected)
+    print("PASS: gamepad mode hides Keybinds — nav goes 3→5")
+end
+
+-- Test 66: gamepad mode — 6 visible items, wraps after 6 downs
+do
+    local st66 = SettingsState.new()
+    local m66 = SettingsMenu.new(st66, {_map={}, _mode="gamepad"})
+    open_clean(m66)
+    for _ = 1, 6 do sim_key(m66, "s") end
+    assert(m66.selected == 1, "gamepad mode: 6 downs from 1 should wrap to 1, got " .. m66.selected)
+    print("PASS: gamepad mode — 6 items, wraps at 6")
+end
+
+-- Test 67: cursor on Keybinds (item 4) when mode switches to gamepad — clamped to first item
+do
+    local st67 = SettingsState.new()
+    local inp67 = {_map={}, _mode="keyboard"}
+    local m67 = SettingsMenu.new(st67, inp67)
+    open_clean(m67)
+    sim_key(m67, "s")
+    sim_key(m67, "s")
+    sim_key(m67, "s")
+    assert(m67.selected == 4, "precondition: should be on Keybinds (item 4)")
+    inp67._mode = "gamepad"
+    m67:update(0)   -- clamp fires
+    assert(m67.selected ~= 4, "cursor should no longer be on hidden item 4 after mode switch, got " .. m67.selected)
+    assert(m67.selected == 1, "cursor should clamp to item 1, got " .. m67.selected)
+    print("PASS: cursor on item 4 clamped to 1 when mode switches to gamepad")
+end
+
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")
