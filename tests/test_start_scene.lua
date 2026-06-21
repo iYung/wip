@@ -174,5 +174,29 @@ local s6 = make_scene(nil)
 assert(s6.game_state == nil, "StartScene must not set game_state (would corrupt save on quit from menu)")
 print("PASS: StartScene does not expose game_state")
 
+-- Test 15: draw() calls key_for for pick_up_down, interact, and cancel
+do
+    local queried = {}
+    local draw_input = {
+        pressed = function() return false end,
+        key_for = function(_, action)
+            queried[action] = true
+            return "x"
+        end,
+    }
+    local sd = StartScene.new(
+        {},
+        draw_input,
+        { switch = function() end },
+        function() end
+    )
+    sd:on_enter()
+    sd:draw()
+    assert(queried["pick_up_down"], "draw() must call key_for('pick_up_down')")
+    assert(queried["interact"],     "draw() must call key_for('interact')")
+    assert(queried["cancel"],       "draw() must call key_for('cancel')")
+    print("PASS: draw() queries key_for for pick_up_down, interact, and cancel")
+end
+
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")
