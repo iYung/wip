@@ -175,7 +175,7 @@ function StartScene:draw()
 
     local ky = self.input:key_for("pick_up_down") or "?"
     local ky_w = self._font_btn:getWidth(ky)
-    love.graphics.print(ky, 1060 - ky_w / 2, 630)
+    love.graphics.print(ky, 1070 - ky_w / 2, 630)
 
     local ki = self.input:key_for("interact") or "?"
     local ki_w = self._font_btn:getWidth(ki)
@@ -183,7 +183,7 @@ function StartScene:draw()
 
     local kc = self.input:key_for("cancel") or "?"
     local kc_w = self._font_btn:getWidth(kc)
-    love.graphics.print(kc, 1240 - kc_w / 2, 630)
+    love.graphics.print(kc, 1230 - kc_w / 2, 630)
 
     love.graphics.setFont(prev_font)
     love.graphics.setColor(1, 1, 1, 1)
