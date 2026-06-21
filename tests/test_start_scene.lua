@@ -174,12 +174,13 @@ local s6 = make_scene(nil)
 assert(s6.game_state == nil, "StartScene must not set game_state (would corrupt save on quit from menu)")
 print("PASS: StartScene does not expose game_state")
 
--- Test 15: draw() calls key_for for pick_up_down, interact, and cancel
+-- Test 15: draw() calls key_for for pick_up_down, interact, and cancel (keyboard mode)
 do
     local queried = {}
     local draw_input = {
-        pressed = function() return false end,
-        key_for = function(_, action)
+        pressed     = function() return false end,
+        icon_key_for = function() return nil end,
+        key_for     = function(_, action)
             queried[action] = true
             return "x"
         end,
@@ -196,6 +197,46 @@ do
     assert(queried["interact"],     "draw() must call key_for('interact')")
     assert(queried["cancel"],       "draw() must call key_for('cancel')")
     print("PASS: draw() queries key_for for pick_up_down, interact, and cancel")
+end
+
+-- Test 16: draw() uses icon path when icon_key_for returns a key (gamepad mode)
+do
+    local icons_drawn = {}
+    local _orig_draw = love.graphics.draw
+    love.graphics.draw = function(img, ...)
+        if type(img) == "string" then icons_drawn[img] = true end
+    end
+
+    local A = require("lua/game/assets")
+    local orig_btn_y = A.btn_y
+    local orig_btn_a = A.btn_a
+    local orig_btn_b = A.btn_b
+    A.btn_y = "btn_y_img"
+    A.btn_a = "btn_a_img"
+    A.btn_b = "btn_b_img"
+
+    local draw_input = {
+        pressed      = function() return false end,
+        icon_key_for = function(_, action)
+            if action == "pick_up_down" then return "btn_y" end
+            if action == "interact"     then return "btn_a" end
+            if action == "cancel"       then return "btn_b" end
+        end,
+        key_for = function() return "x" end,
+    }
+    local sd = StartScene.new({}, draw_input, { switch = function() end }, function() end)
+    sd:on_enter()
+    sd:draw()
+
+    assert(icons_drawn["btn_y_img"], "draw() must draw btn_y icon for pick_up_down in gamepad mode")
+    assert(icons_drawn["btn_a_img"], "draw() must draw btn_a icon for interact in gamepad mode")
+    assert(icons_drawn["btn_b_img"], "draw() must draw btn_b icon for cancel in gamepad mode")
+
+    A.btn_y = orig_btn_y
+    A.btn_a = orig_btn_a
+    A.btn_b = orig_btn_b
+    love.graphics.draw = _orig_draw
+    print("PASS: draw() uses button icon PNGs in gamepad mode")
 end
 
 love.event.quit = _real_quit

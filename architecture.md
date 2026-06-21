@@ -593,6 +593,7 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 - On `on_enter()`, if a save file exists, `selected` defaults to 2 (Continue); otherwise defaults to 1 (New Game)
 - Navigation uses `_next_selectable()` which steps past index 2 when `_has_save` is false, so Continue is unreachable without a save
 - `StoreScene` is `require`d lazily inside `_confirm()`, not at module load time, to avoid a circular load order
+- The hint bar drawn at y=630 shows movement keys (text always) and pick_up_down/interact/cancel hints: in gamepad mode these render as `btn_y`/`btn_a`/`btn_b` PNG icons (16px, centered); in keyboard mode they render as text key labels
 
 ---
 
@@ -783,7 +784,7 @@ Three ways to run the game:
 | `test_settings_state.lua` | `SettingsState` defaults, `toggle_fullscreen`, `set_keybind` (basic, no collision clearing), `key_map` output and nil-skipping |
 | `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
 | `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op; `play_random_music` fades one track and skips missing tracks gracefully; `on_focus(true)` replays tracks with `playing_intent=true`; `on_focus(false)` does not replay anything |
-| `test_start_scene.lua` | StartScene navigation (up/down/wrap, Continue skipped when no save), confirm callbacks (New Game, Continue with/without save, Settings, Exit) |
+| `test_start_scene.lua` | StartScene navigation (up/down/wrap, Continue skipped when no save), confirm callbacks (New Game, Continue with/without save, Settings, Exit), draw() hint bar (keyboard text vs gamepad icon PNGs) |
 | `test_save.lua` | `Save` exists/write/read, corrupt-data nil return, scalar/item/held-item round-trips, `GameState.to_save`/`from_save` round-trip (scalars, plants, player position, slot count) |
 
 **CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.
