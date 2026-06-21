@@ -22,6 +22,14 @@ end
 
 local PAD         = 14
 local line_height = 20
+local ICON_SIZE   = 16
+
+local function entry_width(entry, font)
+    if type(entry) == "table" and entry.text then
+        return ICON_SIZE + 2 + font:getWidth(entry.text)
+    end
+    return font:getWidth(entry)
+end
 
 local function draw_hud_box(labels, font, margin)
     if #labels == 0 then return end
@@ -29,7 +37,7 @@ local function draw_hud_box(labels, font, margin)
 
     local content_w = 0
     for _, label in ipairs(labels) do
-        local lw = font:getWidth(label)
+        local lw = entry_width(label, font)
         if lw > content_w then content_w = lw end
     end
 

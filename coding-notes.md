@@ -97,7 +97,7 @@ love . --headless
 
 `--headless` stubs all Love2D graphics/audio before any game code loads. `--visual` runs with a real window; `runner.tick` yields after each frame so `love.draw` fires between updates.
 
-`HeadlessInput` does not implement `key_for` (used by `StoreScene:_hud_labels` in the draw path). Visual-mode tests that instantiate `StoreScene` must add a stub:
+`HeadlessInput` does not implement `key_for` (used by `StoreScene:_hud_labels`). Tests that instantiate `StoreScene` must add a stub. `icon_key_for` is implemented on `HeadlessInput` as a built-in no-op (always returns nil — no stub needed unless testing gamepad icon paths):
 
 ```lua
 ctx.input._map = { move_up = {"w"}, move_down = {"s"}, interact = {"p"} }
@@ -105,6 +105,10 @@ ctx.input.key_for = function(self, action)
     local keys = self._map[action]
     return keys and keys[1]
 end
+-- icon_key_for already returns nil on HeadlessInput; only stub if testing gamepad icons:
+-- ctx.input.icon_key_for = function(self, action)
+--     return ({ interact="btn_a", pick_up_down="btn_y", cancel="btn_b" })[action]
+-- end
 ```
 
 CI runs `love . --headless` automatically on every push to `main` and every PR — see `.github/workflows/ci.yml`.

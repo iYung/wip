@@ -160,4 +160,25 @@ do
     print("PASS: input: disconnected joystick is ignored")
 end
 
+-- icon_key_for returns nil in keyboard mode
+do
+    local input = Input.new({ interact = {"space"} })
+    assert(input:icon_key_for("interact") == nil,
+        "icon_key_for should return nil in keyboard mode")
+    assert(input:icon_key_for("pick_up_down") == nil,
+        "icon_key_for('pick_up_down') should return nil in keyboard mode")
+    print("PASS: input: icon_key_for returns nil in keyboard mode")
+end
+
+-- icon_key_for returns correct asset keys in gamepad mode
+do
+    local input = Input.new({ interact = {"space"} })
+    input._mode = "gamepad"
+    assert(input:icon_key_for("interact")     == "btn_a", "interact icon should be btn_a")
+    assert(input:icon_key_for("pick_up_down") == "btn_y", "pick_up_down icon should be btn_y")
+    assert(input:icon_key_for("cancel")       == "btn_b", "cancel icon should be btn_b")
+    assert(input:icon_key_for("move_up")      == nil,     "move_up has no icon key")
+    print("PASS: input: icon_key_for returns icon asset keys in gamepad mode")
+end
+
 print("ALL TESTS PASSED")

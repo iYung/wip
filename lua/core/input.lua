@@ -8,6 +8,12 @@ local _PAD_LABELS = {
     cancel       = "[B]",
 }
 
+local _PAD_ICON_KEYS = {
+    interact     = "btn_a",
+    pick_up_down = "btn_y",
+    cancel       = "btn_b",
+}
+
 local Input = {}
 Input.__index = Input
 
@@ -88,6 +94,12 @@ function Input:key_for(action)
     end
     local keys = self._map[action]
     return keys and keys[1]
+end
+
+function Input:icon_key_for(action)
+    if self._mode == "gamepad" then
+        return _PAD_ICON_KEYS[action]
+    end
 end
 
 return Input

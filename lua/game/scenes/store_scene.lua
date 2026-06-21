@@ -475,6 +475,17 @@ function StoreScene:_hud_labels()
     local cancel_key = (self.input:key_for("cancel")       or "i"):upper()
     local f_key = (self.input:key_for("interact")          or "space"):upper()
 
+    local carry_icon  = self.input:icon_key_for("pick_up_down")
+    local cancel_icon = self.input:icon_key_for("cancel")
+    local f_icon      = self.input:icon_key_for("interact")
+
+    local function make_label(icon_key, key_text, action_text)
+        if icon_key then
+            return { icon = icon_key, text = ": " .. action_text }
+        end
+        return key_text .. ": " .. action_text
+    end
+
     local slot_label
     if player.x >= 0 then
         slot_label = slot_item and slot_item.name and ("HOVERING " .. slot_item.name:upper())
@@ -488,45 +499,45 @@ function StoreScene:_hud_labels()
     local up_label
     local down_label
     if player.x < 0 and self._customer and self._customer:arrived() and not (self._active_script and self._active_script.no_dismiss) then
-        up_label = cancel_key .. ": DISMISS"
+        up_label = make_label(cancel_icon, cancel_key, "DISMISS")
     elseif player.x >= 0 then
         if held and slot_item and slot_item.carriable then
-            up_label = carry_key .. ": SWAP WITH " .. slot_item.name:upper()
+            up_label = make_label(carry_icon, carry_key, "SWAP WITH " .. slot_item.name:upper())
         elseif not held and slot_item and slot_item.carriable then
-            up_label = carry_key .. ": PICK UP"
+            up_label = make_label(carry_icon, carry_key, "PICK UP")
         elseif held and slot and not slot_item then
-            down_label = carry_key .. ": PUT DOWN"
+            down_label = make_label(carry_icon, carry_key, "PUT DOWN")
         end
     end
 
     local f_label
     if player.x < 0 and self._customer and self._customer.state == "talking_after" then
         if not self._customer:line_complete() then
-            f_label = f_key .. ": SKIP"
+            f_label = make_label(f_icon, f_key, "SKIP")
         else
-            f_label = f_key .. ": CONTINUE"
+            f_label = make_label(f_icon, f_key, "CONTINUE")
         end
     elseif player.x < 0 and self._customer and self._customer:arrived() then
         if self._customer:on_last_message() then
             if held and held.plant_type == self._customer.plant_type and held.stage == 3 then
-                f_label = f_key .. ": SELL TO CUSTOMER ($" .. plant_sell_value(held) .. ")"
+                f_label = make_label(f_icon, f_key, "SELL TO CUSTOMER ($" .. plant_sell_value(held) .. ")")
             end
         else
             if not self._customer:line_complete() then
-                f_label = f_key .. ": SKIP"
+                f_label = make_label(f_icon, f_key, "SKIP")
             else
-                f_label = f_key .. ": NEXT"
+                f_label = make_label(f_icon, f_key, "NEXT")
             end
         end
     elseif player.x >= 0 then
         if not held and slot_item and slot_item.buy_scene_factory then
-            f_label = f_key .. ": OPEN SHOP"
+            f_label = make_label(f_icon, f_key, "OPEN SHOP")
         elseif held and held.name == "Watering Can" and slot_item and slot_item.plant_type and slot_item.ready then
-            f_label = f_key .. ": WATER"
+            f_label = make_label(f_icon, f_key, "WATER")
         elseif held and held.name == "Grafter" and slot_item and slot_item.stage == 3 then
-            f_label = f_key .. ": CLONE"
+            f_label = make_label(f_icon, f_key, "CLONE")
         elseif held and held.sellable ~= false and slot_item and slot_item.is_garbage_bin then
-            f_label = f_key .. ": DISCARD"
+            f_label = make_label(f_icon, f_key, "DISCARD")
         end
     end
 
@@ -580,8 +591,16 @@ function StoreScene:draw()
     love.graphics.setColor(0, 0, 0, 1)
     local box_h = #labels * 20 + 28
     local y = 720 - 10 - box_h + 14
-    for _, label in ipairs(labels) do
-        love.graphics.print(label, 10 + 14, y)
+    for _, entry in ipairs(labels) do
+        if type(entry) == "table" and entry.icon then
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(A[entry.icon], 10 + 14, math.floor(y + (20 - 16) / 2))
+            love.graphics.setColor(0, 0, 0, 1)
+            love.graphics.print(entry.text, 10 + 14 + 16 + 2, y)
+        else
+            love.graphics.setColor(0, 0, 0, 1)
+            love.graphics.print(entry, 10 + 14, y)
+        end
         y = y + 20
     end
 
