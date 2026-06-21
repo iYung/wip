@@ -399,14 +399,24 @@ function BuyScene:draw()
     local hud_margin = 10
     UI.draw_currency_bubble(currency, hud_margin, hud_margin, font_ui)
 
-    local left_key  = (self.input:key_for("move_left")    or "a"):upper()
-    local right_key = (self.input:key_for("move_right")   or "d"):upper()
-    local f_key     = (self.input:key_for("interact")     or "space"):upper()
-    local cancel_key = (self.input:key_for("cancel") or "i"):upper()
+    local left_key   = (self.input:key_for("move_left")  or "a"):upper()
+    local right_key  = (self.input:key_for("move_right") or "d"):upper()
+    local f_key      = (self.input:key_for("interact")   or "space"):upper()
+    local cancel_key = (self.input:key_for("cancel")     or "i"):upper()
+    local f_icon     = self.input:icon_key_for("interact")
+    local cancel_icon = self.input:icon_key_for("cancel")
+
+    local function make_label(icon_key, key_text, action_text)
+        if icon_key then
+            return { icon = icon_key, text = ": " .. action_text }
+        end
+        return key_text .. ": " .. action_text
+    end
+
     local hints = {
         left_key .. "/" .. right_key .. ": CYCLE",
-        f_key .. ": BUY",
-        cancel_key .. ": CANCEL",
+        make_label(f_icon, f_key, "BUY"),
+        make_label(cancel_icon, cancel_key, "CANCEL"),
     }
 
     UI.draw_hud_box(hints, font_ui, hud_margin)
@@ -416,7 +426,15 @@ function BuyScene:draw()
     local box_h = #hints * 20 + 28
     local y = 720 - hud_margin - box_h + 14
     for _, hint in ipairs(hints) do
-        love.graphics.print(hint, hud_margin + 14, y)
+        if type(hint) == "table" and hint.icon then
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(A[hint.icon], hud_margin + 14, math.floor(y + (20 - 16) / 2))
+            love.graphics.setColor(0, 0, 0, 1)
+            love.graphics.print(hint.text, hud_margin + 14 + 16 + 2, y)
+        else
+            love.graphics.setColor(0, 0, 0, 1)
+            love.graphics.print(hint, hud_margin + 14, y)
+        end
         y = y + 20
     end
     love.graphics.setColor(1, 1, 1, 1)
