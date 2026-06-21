@@ -5,6 +5,7 @@ local Save      = require("lua/core/save")
 local GameState = require("lua/game/game_state")
 local Fonts     = require("lua/game/fonts")
 local config    = require("lua/game/config")
+local A         = require("lua/game/assets")
 
 local SCROLL_SPEED_X = 60
 local SCROLL_SPEED_Y = 30
@@ -173,17 +174,31 @@ function StartScene:draw()
     local kb_w = self._font_btn:getWidth(kb_text)
     love.graphics.print(kb_text, 950 - kb_w / 2, 630)
 
-    local ky = self.input:key_for("pick_up_down") or "?"
-    local ky_w = self._font_btn:getWidth(ky)
-    love.graphics.print(ky, 1070 - ky_w / 2, 630)
+    local function make_label(action)
+        local icon = self.input:icon_key_for(action)
+        if icon then
+            return { icon = icon }
+        end
+        return self.input:key_for(action) or "?"
+    end
 
-    local ki = self.input:key_for("interact") or "?"
-    local ki_w = self._font_btn:getWidth(ki)
-    love.graphics.print(ki, 1150 - ki_w / 2, 630)
-
-    local kc = self.input:key_for("cancel") or "?"
-    local kc_w = self._font_btn:getWidth(kc)
-    love.graphics.print(kc, 1230 - kc_w / 2, 630)
+    local ICON_SIZE = 16
+    local hints = {
+        { x = 1070, label = make_label("pick_up_down") },
+        { x = 1150, label = make_label("interact") },
+        { x = 1230, label = make_label("cancel") },
+    }
+    local th = self._font_btn:getHeight()
+    for _, h in ipairs(hints) do
+        if type(h.label) == "table" then
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(A[h.label.icon], h.x - ICON_SIZE / 2, 630 + (th - ICON_SIZE) / 2)
+        else
+            love.graphics.setColor(0, 0, 0, 1)
+            local w = self._font_btn:getWidth(h.label)
+            love.graphics.print(h.label, h.x - w / 2, 630)
+        end
+    end
 
     love.graphics.setFont(prev_font)
     love.graphics.setColor(1, 1, 1, 1)
