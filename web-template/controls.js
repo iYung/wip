@@ -238,36 +238,39 @@
       }, { passive: false });
     }
 
-    // Task B — Fake gamepad button helper
+    // Task B — Fake gamepad button helper.
+    // Release is deferred by two rAF ticks so the pressed=true state spans at
+    // least one full SDL poll cycle (Love2D samples once per frame; a tap that
+    // lands entirely between two polls is never seen as PRESSED otherwise).
     function attachGamepadButton(btn, index) {
-      btn.addEventListener('mousedown', function () {
+      var releaseRaf = null;
+      function gpPress() {
+        if (releaseRaf) { cancelAnimationFrame(releaseRaf); releaseRaf = null; }
         window.__fakeGamepad.buttons[index].pressed = true;
         window.__fakeGamepad.buttons[index].value = 1;
         window.__fakeGamepad.timestamp = performance.now();
-      });
-      btn.addEventListener('mouseup', function () {
-        window.__fakeGamepad.buttons[index].pressed = false;
-        window.__fakeGamepad.buttons[index].value = 0;
-      });
-      btn.addEventListener('mouseleave', function () {
-        window.__fakeGamepad.buttons[index].pressed = false;
-        window.__fakeGamepad.buttons[index].value = 0;
-      });
+      }
+      function gpRelease() {
+        if (releaseRaf) cancelAnimationFrame(releaseRaf);
+        releaseRaf = requestAnimationFrame(function () {
+          releaseRaf = requestAnimationFrame(function () {
+            releaseRaf = null;
+            window.__fakeGamepad.buttons[index].pressed = false;
+            window.__fakeGamepad.buttons[index].value = 0;
+          });
+        });
+      }
+      btn.addEventListener('mousedown', gpPress);
+      btn.addEventListener('mouseup', gpRelease);
+      btn.addEventListener('mouseleave', gpRelease);
       btn.addEventListener('touchstart', function (e) {
-        e.preventDefault();
-        window.__fakeGamepad.buttons[index].pressed = true;
-        window.__fakeGamepad.buttons[index].value = 1;
-        window.__fakeGamepad.timestamp = performance.now();
+        e.preventDefault(); gpPress();
       }, { passive: false });
       btn.addEventListener('touchend', function (e) {
-        e.preventDefault();
-        window.__fakeGamepad.buttons[index].pressed = false;
-        window.__fakeGamepad.buttons[index].value = 0;
+        e.preventDefault(); gpRelease();
       }, { passive: false });
       btn.addEventListener('touchcancel', function (e) {
-        e.preventDefault();
-        window.__fakeGamepad.buttons[index].pressed = false;
-        window.__fakeGamepad.buttons[index].value = 0;
+        e.preventDefault(); gpRelease();
       }, { passive: false });
     }
 
