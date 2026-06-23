@@ -806,26 +806,5 @@ return {
             "She says she's not surprised anymore. That feels like progress.",
         },
     },
-    {
-        id              = "wallace",
-        chapter         = 4,
-        accessory       = "neckbeard",
-        trigger         = { plant_type = 6, count = 1 },
-        name            = "Wallace",
-        voice_pitch     = 0.95,
-        primary_color   = {0.65, 0.30, 0.25, 1},
-        secondary_color = {0.85, 0.70, 0.55, 1},
-        plant_type      = 6,
-        messages        = {
-            "Hey man. It's me again.",
-            "Remember my two raccoons? My wife didn't like them so I tried to get them to win her over.",
-            "My plan was simple: I saw on some show that rodents can sit on your head and make you cook really really good French food.",
-            "I don't know how they did it, we just burnt the house down.",
-            "Now she won't speak with me. Help. Please.",
-        },
-        after_messages  = {
-            "Thank you, she's gonna love this!",
-        },
-    },
-
 }
+
