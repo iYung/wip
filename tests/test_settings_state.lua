@@ -32,9 +32,9 @@ assert(s2.keybinds.move_up      == "w",     "default move_up should be 'w'")
 assert(s2.keybinds.move_down    == "s",     "default move_down should be 's'")
 assert(s2.keybinds.move_left    == "a",     "default move_left should be 'a'")
 assert(s2.keybinds.move_right   == "d",     "default move_right should be 'd'")
-assert(s2.keybinds.interact     == "i",     "default interact should be 'i'")
-assert(s2.keybinds.pick_up_down == "o",     "default pick_up_down should be 'o'")
-assert(s2.keybinds.cancel       == "p",     "default cancel should be 'p'")
+assert(s2.keybinds.interact     == "j",     "default interact should be 'j'")
+assert(s2.keybinds.pick_up_down == "k",     "default pick_up_down should be 'k'")
+assert(s2.keybinds.cancel       == "l",     "default cancel should be 'l'")
 print("PASS: keybind defaults are correct")
 
 -- Test 5: set_keybind basic — rebind move_up to "t"
