@@ -8,6 +8,7 @@ local PCStore      = require("lua/game/items/pc_store")
 local GarbageBin   = require("lua/game/items/garbage_bin")
 local Intercom     = require("lua/game/items/intercom")
 local BuyScene     = require("lua/game/scenes/buy_scene")
+local WinScene     = require("lua/game/scenes/win_scene")
 local PLANT_DATA        = require("lua/game/data/plant_data")
 local CUSTOMER_SCRIPTS  = require("lua/game/data/customer_scripts")
 local Customer          = require("lua/game/customer")
@@ -81,6 +82,8 @@ function StoreScene:on_enter()
         self:_setup_store()
     end
 
+    self:_wire_golden_idol()
+
     if gs.has_drone and not self._drone then
         self._drone = WaterDrone.new(gs.store, 0, gs)
     end
@@ -111,6 +114,12 @@ function StoreScene:_setup_store()
     local buy_scene_factory = function()
         return self_ref._buy_scene
     end
+
+    self_ref._win_scene = WinScene.new(gs, self_ref.input, self_ref.scene_manager, self_ref)
+    local win_scene_factory = function()
+        return self_ref._win_scene
+    end
+    self_ref._win_scene_factory = win_scene_factory
 
     if not self._from_save then
         store.slots[1].item = WateringCan.new()
@@ -226,6 +235,19 @@ function StoreScene:_wire_pc_store()
     end
     if gs.player.held_item and gs.player.held_item.name == "Laptop" then
         gs.player.held_item.buy_scene_factory = factory
+    end
+end
+
+function StoreScene:_wire_golden_idol()
+    local gs      = self.game_state
+    local factory = self._win_scene_factory
+    for _, slot in ipairs(gs.store.slots) do
+        if slot.item and slot.item.name == "Golden Idol" then
+            slot.item.win_scene_factory = factory
+        end
+    end
+    if gs.player.held_item and gs.player.held_item.name == "Golden Idol" then
+        gs.player.held_item.win_scene_factory = factory
     end
 end
 

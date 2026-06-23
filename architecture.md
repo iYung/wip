@@ -328,6 +328,7 @@ Base class for all carriable/interactable objects in the store.
 - `PCStore` — interact switches to BuyScene; only works when placed in a slot
 - `GarbageBin` — discard station; F while holding any sellable item discards it
 - `Plant` — has stage and cooldown timer; not directly usable as a tool
+- `GoldenIdol` — interact switches to WinScene via `win_scene_factory`; factory is wired by `StoreScene:_wire_golden_idol()` on every `on_enter()`
 
 ---
 
@@ -711,6 +712,25 @@ The main gameplay scene. Owns the store, player, customer, and all drawables.
 
 ---
 
+### WinScene
+
+The win screen shown when the player interacts with the Golden Idol. Full-screen image, no camera transform.
+
+**Location:** `lua/game/scenes/win_scene.lua`
+
+**Properties**
+- `store_scene` — reference to the StoreScene; cancel returns here
+
+**Behavior**
+- `draw()` — draws `A.win_scene` stretched to fill 1280×720 directly in screen space (overrides base `draw()`, no camera transform)
+- `update(dt)` — pressing cancel switches back to `store_scene`
+- Music is unchanged — no Sound calls in `on_enter()` or `on_exit()`
+
+**Lifecycle**
+`StoreScene._setup_store` creates exactly one `WinScene` instance as `self._win_scene`. `StoreScene:_wire_golden_idol()` — called on every `on_enter()` — walks all store slots and the player's held item; any `GoldenIdol` found has its `win_scene_factory` set to a closure returning `_win_scene`.
+
+---
+
 ### BuyScene
 
 The PC store carousel. Pure screen-space UI — overrides `draw()` entirely, no camera transform. Entire output is post-processed through the CRT shader.
@@ -789,6 +809,7 @@ Three ways to run the game:
 | `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op; `play_random_music` fades one track and skips missing tracks gracefully; `on_focus(true)` replays tracks with `playing_intent=true`; `on_focus(false)` does not replay anything |
 | `test_start_scene.lua` | StartScene navigation (up/down/wrap, Continue skipped when no save), confirm callbacks (New Game, Continue with/without save, Settings, Exit), draw() hint bar (keyboard text vs gamepad icon PNGs) |
 | `test_save.lua` | `Save` exists/write/read, corrupt-data nil return, scalar/item/held-item round-trips, `GameState.to_save`/`from_save` round-trip (scalars, plants, player position, slot count, `started_at`), backwards-compat nil for old saves |
+| `test_win_scene.lua` | GoldenIdol interact switches to WinScene, no-op without factory, cancel returns to StoreScene, `_wire_golden_idol` wires idol in slot and held |
 
 **CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.
 
