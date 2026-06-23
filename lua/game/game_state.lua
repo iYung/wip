@@ -8,6 +8,7 @@ local Grafter    = require("lua/game/items/grafter")
 local GarbageBin = require("lua/game/items/garbage_bin")
 local PCStore    = require("lua/game/items/pc_store")
 local Intercom   = require("lua/game/items/intercom")
+local GoldenIdol = require("lua/game/items/golden_idol")
 local SPEED_TIERS = require("lua/game/data/speed_tiers")
 
 local SLOT_WIDTH    = 10 * U  -- 200
@@ -27,6 +28,8 @@ local function _item_to_data(item)
         return { type = "pc_store" }
     elseif item.name == "Intercom" then
         return { type = "intercom" }
+    elseif item.name == "Golden Idol" then
+        return { type = "golden_idol" }
     else
         return nil
     end
@@ -50,6 +53,8 @@ local function _item_from_data(d)
         return PCStore.new(nil)
     elseif d.type == "intercom" then
         return Intercom.new(nil)
+    elseif d.type == "golden_idol" then
+        return GoldenIdol.new()
     else
         return nil
     end

@@ -30,6 +30,7 @@ end
 
 A.watering_can  = img("assets/images/watering_can.png")
 A.grafter_empty  = img("assets/images/grafter_empty.png")
+A.golden_idol    = img("assets/images/golden_idol.png")
 A.garbage_bin    = img("assets/images/garbage_bin.png")
 A.pc_store       = img("assets/images/pc_store.png")
 A.intercom = img("assets/images/intercom.png")
