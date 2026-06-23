@@ -10,6 +10,7 @@ A.player_idle_held = img("assets/images/player_idle_held.png")
 A.player_walk_held = img("assets/images/player_walk_held.png")
 
 A.buy_bg      = img("assets/images/buy_bg.png")
+A.win_scene   = img("assets/images/win_scene.png")
 A.arrow_left  = img("assets/images/arrow_left.png")
 A.arrow_right = img("assets/images/arrow_right.png")
 A.dot_active   = img("assets/images/dot_active.png")
