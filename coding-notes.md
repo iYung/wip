@@ -100,7 +100,7 @@ love . --headless
 `HeadlessInput` does not implement `key_for` (used by `StoreScene:_hud_labels`). Tests that instantiate `StoreScene` must add a stub. `icon_key_for` is implemented on `HeadlessInput` as a built-in no-op (always returns nil — no stub needed unless testing gamepad icon paths):
 
 ```lua
-ctx.input._map = { move_up = {"w"}, move_down = {"s"}, interact = {"p"} }
+ctx.input._map = { move_up = {"w"}, move_down = {"s"}, interact = {"j"} }
 ctx.input.key_for = function(self, action)
     local keys = self._map[action]
     return keys and keys[1]

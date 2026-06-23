@@ -184,8 +184,8 @@ function StartScene:draw()
 
     local ICON_SIZE = 16
     local hints = {
-        { x = 1070, label = make_label("pick_up_down") },
-        { x = 1150, label = make_label("interact") },
+        { x = 1070, label = make_label("interact") },
+        { x = 1150, label = make_label("pick_up_down") },
         { x = 1230, label = make_label("cancel") },
     }
     local th = self._font_btn:getHeight()

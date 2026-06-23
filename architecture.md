@@ -237,9 +237,9 @@ Maps Love2D key events and gamepad input to game actions. Game logic calls Input
 - `move_right` — default `d` / D-pad right / left stick right
 - `move_up` — default `w` / D-pad up / left stick up
 - `move_down` — default `s` / D-pad down / left stick down
-- `interact` — default `p` / gamepad A button
-- `pick_up_down` — default `o` / gamepad Y button; picks up, puts down, or swaps carriable items in the store
-- `cancel` — default `i` / gamepad B button; dismisses a customer in the cashier zone; exits the buy screen
+- `interact` — default `j` / gamepad A button
+- `pick_up_down` — default `k` / gamepad Y button; picks up, puts down, or swaps carriable items in the store
+- `cancel` — default `l` / gamepad B button; dismisses a customer in the cashier zone; exits the buy screen
 
 **Fields**
 - `_mode` — `"keyboard"` or `"gamepad"`; tracks which device the player last used
@@ -605,7 +605,7 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 
 **Properties**
 - `fullscreen` — bool; current fullscreen state (default `false`)
-- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", interact="space", pick_up_down="o", cancel="i"}`
+- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", interact="j", pick_up_down="k", cancel="l"}`
 
 **Methods**
 - `new()` — constructor; sets `fullscreen = false` and populates default `keybinds`
