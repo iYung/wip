@@ -204,4 +204,27 @@ assert(sec[1] == expected[1] and sec[2] == expected[2] and sec[3] == expected[3]
     "from_save: _speed_secondary should match tier secondary color")
 print("PASS: save: from_save restores secondary speed color")
 
+-- Test: golden idol round-trips in a slot
+reset_fs()
+local GoldenIdol = require("lua/game/items/golden_idol")
+local gs_gi = GameState.new()
+gs_gi.store.slots[1].item = GoldenIdol.new()
+Save.write(GameState.to_save(gs_gi))
+local gs_gi2 = GameState.from_save(Save.read())
+local gi_item = gs_gi2.store.slots[1].item
+assert(gi_item ~= nil,                  "from_save: golden idol in slot 1 exists")
+assert(gi_item.name == "Golden Idol",   "from_save: golden idol name restored, got " .. tostring(gi_item and gi_item.name))
+print("PASS: save: golden idol round-trips in slot")
+
+-- Test: golden idol round-trips as held_item
+reset_fs()
+local gs_gi3 = GameState.new()
+gs_gi3.player.held_item = GoldenIdol.new()
+Save.write(GameState.to_save(gs_gi3))
+local gs_gi4 = GameState.from_save(Save.read())
+local held = gs_gi4.player.held_item
+assert(held ~= nil,                "from_save: golden idol held_item exists")
+assert(held.name == "Golden Idol", "from_save: golden idol held name, got " .. tostring(held and held.name))
+print("PASS: save: golden idol round-trips as held_item")
+
 print("ALL TESTS PASSED")

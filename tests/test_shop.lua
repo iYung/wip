@@ -17,6 +17,8 @@ local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 -- 11:  Sneakers (speed_boost)
 -- 12:  Heat Lamps (growth_boost)
 -- 13:  Marketing (customer_cooldown)
+-- 14:  Water Drone (drone)
+-- 15:  Golden Idol (golden_idol)
 
 local function make_buy(ctx)
     return BuyScene.new(ctx.gs, ctx.input, ctx.sm, ctx.sm.current)
@@ -289,6 +291,51 @@ do
         prev = ws
     end
     print("PASS: shop: walk_speed increases with each marketing tier")
+end
+
+-- Test: buy golden idol deducts $4000
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local buy = make_buy(ctx)
+    ctx.gs.currency = 5000
+    buy.selected = 15   -- Golden Idol, cost = 4000
+    buy:_confirm()
+    assert(ctx.gs.currency == 1000,
+        "currency should be 1000 after Golden Idol ($4000), got " .. tostring(ctx.gs.currency))
+    print("PASS: shop: buy golden idol deducts $4000")
+end
+
+-- Test: buy golden idol gives player a GoldenIdol
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local buy = make_buy(ctx)
+    ctx.gs.currency = 5000
+    buy.selected = 15
+    buy:_confirm()
+    local item = ctx.gs.player.held_item
+    assert(item ~= nil, "player should hold an item after buying Golden Idol")
+    assert(item.name == "Golden Idol",
+        "held item should be Golden Idol, got " .. tostring(item and item.name))
+    print("PASS: shop: buy golden idol gives player a GoldenIdol")
+end
+
+-- Test: cannot buy golden idol if insufficient currency
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local buy = make_buy(ctx)
+    ctx.gs.currency = 100
+    buy.selected = 15
+    buy:_confirm()
+    assert(ctx.gs.currency == 100, "currency should be unchanged when broke")
+    assert(ctx.gs.player.held_item == nil,
+        "player should not receive Golden Idol when broke")
+    print("PASS: shop: cannot buy golden idol if insufficient currency")
 end
 
 print("ALL TESTS PASSED")
