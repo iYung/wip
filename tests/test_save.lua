@@ -262,4 +262,37 @@ assert(gs_old.started_at == nil,
     "from_save: old save without started_at should yield nil, got " .. tostring(gs_old.started_at))
 print("PASS: save: old save without started_at loads with nil")
 
+-- Test: new GameState has first_idol_at == nil
+reset_fs()
+local gs_fi = GameState.new()
+assert(gs_fi.first_idol_at == nil,
+    "new(): first_idol_at should be nil, got " .. tostring(gs_fi.first_idol_at))
+print("PASS: save: new() has first_idol_at == nil")
+
+-- Test: first_idol_at round-trips through to_save / from_save
+reset_fs()
+local gs_fi2 = GameState.new()
+local fake_ts = 1700000000
+gs_fi2.first_idol_at = fake_ts
+Save.write(GameState.to_save(gs_fi2))
+local gs_fi3 = GameState.from_save(Save.read())
+assert(gs_fi3.first_idol_at == fake_ts,
+    "from_save: first_idol_at should round-trip, got " .. tostring(gs_fi3.first_idol_at))
+print("PASS: save: first_idol_at round-trips through to_save/from_save")
+
+-- Test: old save without first_idol_at loads with nil
+reset_fs()
+local old_save2 = {
+    version=1, currency=0, speed_level=0, growth_level=0,
+    cooldown_level=0, growth_mult=1.0, has_drone=false,
+    unlocked_plants={[1]=true}, stage3_counts={}, seen_scripts={},
+    player={ x=0, facing="right", held_item=nil },
+    slots={ {item=nil} },
+}
+Save.write(old_save2)
+local gs_fi4 = GameState.from_save(Save.read())
+assert(gs_fi4.first_idol_at == nil,
+    "from_save: old save without first_idol_at should yield nil, got " .. tostring(gs_fi4.first_idol_at))
+print("PASS: save: old save without first_idol_at loads with nil")
+
 print("ALL TESTS PASSED")

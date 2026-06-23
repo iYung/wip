@@ -212,6 +212,7 @@ function BuyScene:_confirm()
         gs.store:grow()
         Sound.play("shop_buy")
     elseif kind == "golden_idol" then
+        gs.first_idol_at    = gs.first_idol_at or os.time()
         gs.player.held_item = GoldenIdol.new()
         Sound.play("shop_buy")
         self.scene_manager:switch(self.store_scene)
