@@ -65,6 +65,9 @@ luagame/
         │   ├── grafter.lua
         │   ├── garbage_bin.lua
         │   ├── pc_store.lua
+        │   ├── intercom.lua
+        │   ├── water_drone.lua
+        │   ├── golden_idol.lua
         │   └── plant.lua
         ├── scenes/
         │   ├── start_scene.lua
