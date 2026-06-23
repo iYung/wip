@@ -6,7 +6,7 @@ local ITEMS = { "Fullscreen / Window", "SFX Volume", "Music Volume", "Keybinds",
 local function _visible_items(opaque, mode)
     local result = {}
     for i = 1, #ITEMS do
-        if not (opaque and i == 5) and not (mode == "gamepad" and i == 4) then
+        if not (opaque and i == 5) and not (mode == "gamepad" and i == 4) and not (opaque and i == 7) then
             result[#result + 1] = i
         end
     end

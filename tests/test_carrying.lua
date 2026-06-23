@@ -126,4 +126,24 @@ do
     print("PASS: carry: held item sprite follows player position")
 end
 
+-- Test: pick_up_down in cashier zone does NOT pick up plant from slot 1
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local plant = Plant.new(1)
+    ctx.gs.store.slots[1].item = plant
+    ctx.gs.player.x = -100   -- inside the cashier zone (x < 0)
+    ctx.gs.player.held_item = nil
+
+    ctx.input:press("pick_up_down")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    assert(ctx.gs.store.slots[1].item == plant,
+        "slot 1 should still have the plant after pick_up_down in cashier zone")
+    assert(ctx.gs.player.held_item == nil,
+        "player should not hold anything after pick_up_down in cashier zone")
+    print("PASS: carry: pick_up_down in cashier zone does not pick up plant from slot 1")
+end
+
 print("ALL TESTS PASSED")
