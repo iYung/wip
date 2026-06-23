@@ -227,4 +227,39 @@ assert(held ~= nil,                "from_save: golden idol held_item exists")
 assert(held.name == "Golden Idol", "from_save: golden idol held name, got " .. tostring(held and held.name))
 print("PASS: save: golden idol round-trips as held_item")
 
+-- Test: GameState.new() sets started_at to current time
+reset_fs()
+local t_before = os.time()
+local gs_st = GameState.new()
+local t_after = os.time()
+assert(type(gs_st.started_at) == "number", "new(): started_at should be a number")
+assert(gs_st.started_at >= t_before and gs_st.started_at <= t_after,
+    "new(): started_at should be within current timestamp range")
+print("PASS: save: new() sets started_at to os.time()")
+
+-- Test: started_at round-trips through to_save / from_save
+reset_fs()
+local gs_st2 = GameState.new()
+local expected_ts = gs_st2.started_at
+Save.write(GameState.to_save(gs_st2))
+local gs_st3 = GameState.from_save(Save.read())
+assert(gs_st3.started_at == expected_ts,
+    "from_save: started_at should round-trip, got " .. tostring(gs_st3.started_at))
+print("PASS: save: started_at round-trips through to_save/from_save")
+
+-- Test: from_save with old save (no started_at) loads with nil
+reset_fs()
+local old_save = {
+    version=1, currency=0, speed_level=0, growth_level=0,
+    cooldown_level=0, growth_mult=1.0, has_drone=false,
+    unlocked_plants={[1]=true}, stage3_counts={}, seen_scripts={},
+    player={ x=0, facing="right", held_item=nil },
+    slots={ {item=nil} },
+}
+Save.write(old_save)
+local gs_old = GameState.from_save(Save.read())
+assert(gs_old.started_at == nil,
+    "from_save: old save without started_at should yield nil, got " .. tostring(gs_old.started_at))
+print("PASS: save: old save without started_at loads with nil")
+
 print("ALL TESTS PASSED")
