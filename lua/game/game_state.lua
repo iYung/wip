@@ -76,6 +76,7 @@ function GameState.new()
     self.stage3_counts   = {}
     self.seen_scripts    = {}
     self.has_drone       = false
+    self.started_at      = os.time()
     return self
 end
 
@@ -95,6 +96,7 @@ function GameState.to_save(gs)
         stage3_counts    = gs.stage3_counts,
         seen_scripts     = gs.seen_scripts,
         has_drone        = gs.has_drone,
+        started_at       = gs.started_at,
         player = {
             x         = gs.player.x,
             facing    = gs.player.facing,
@@ -121,7 +123,8 @@ function GameState.from_save(data)
     self.seen_scripts = {}
     for k, v in pairs(data.seen_scripts) do self.seen_scripts[k] = v end
 
-    self.has_drone = data.has_drone or false
+    self.has_drone  = data.has_drone or false
+    self.started_at = data.started_at
 
     self.store = Store.new(#data.slots, SLOT_WIDTH)
     for i, slot_data in ipairs(data.slots) do
