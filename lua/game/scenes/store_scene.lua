@@ -382,6 +382,8 @@ function StoreScene:_handle_pick_up_down()
     local store  = self.game_state.store
     local slot   = player:active_slot(store)
 
+    if player.x < 0 then return end
+
     if player.held_item and slot and slot.item and slot.item.carriable then
         -- swap: held item ↔ slot item
         local tmp        = player.held_item
