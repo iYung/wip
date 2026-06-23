@@ -4,6 +4,7 @@ local StoreScene  = require("lua/game/scenes/store_scene")
 local WateringCan = require("lua/game/items/watering_can")
 local Grafter     = require("lua/game/items/grafter")
 local Plant       = require("lua/game/items/plant")
+local GoldenIdol  = require("lua/game/items/golden_idol")
 
 local function make_scene()
     local ctx = runner.setup(function(gs, input, sm)
@@ -117,6 +118,35 @@ do
     assert(hud.f.text == ": WATER",
         "gamepad: f text should be ': WATER', got " .. tostring(hud.f and hud.f.text))
     print("PASS: hud: gamepad mode returns {icon, text} for button labels")
+end
+
+-- ADMIRE: hint shown when hovering Golden Idol without holding anything
+do
+    local ctx, scene = make_scene()
+    local idol = GoldenIdol.new()
+    idol.win_scene_factory = function() end
+    ctx.gs.store.slots[4].item = idol
+    ctx.gs.player.x = 700  -- slot 4
+    ctx.gs.player.held_item = nil
+
+    local hud = scene:_hud_labels()
+    assert(hud.f == "P: ADMIRE",
+        "ADMIRE hint should show when hovering Golden Idol, got: " .. tostring(hud.f))
+    print("PASS: hud: ADMIRE hint shown when hovering Golden Idol")
+end
+
+-- ADMIRE: hint hidden when holding the Golden Idol
+do
+    local ctx, scene = make_scene()
+    local idol = GoldenIdol.new()
+    idol.win_scene_factory = function() end
+    ctx.gs.player.held_item = idol
+    ctx.gs.player.x = 700  -- slot 4, empty
+
+    local hud = scene:_hud_labels()
+    assert(hud.f == nil,
+        "ADMIRE hint should be hidden when holding Golden Idol, got: " .. tostring(hud.f))
+    print("PASS: hud: ADMIRE hint hidden when holding Golden Idol")
 end
 
 print("ALL TESTS PASSED")

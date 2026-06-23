@@ -554,6 +554,8 @@ function StoreScene:_hud_labels()
     elseif player.x >= 0 then
         if not held and slot_item and slot_item.buy_scene_factory then
             f_label = make_label(f_icon, f_key, "OPEN SHOP")
+        elseif not held and slot_item and slot_item.win_scene_factory then
+            f_label = make_label(f_icon, f_key, "ADMIRE")
         elseif held and held.name == "Watering Can" and slot_item and slot_item.plant_type and slot_item.ready then
             f_label = make_label(f_icon, f_key, "WATER")
         elseif held and held.name == "Grafter" and slot_item and slot_item.stage == 3 then
