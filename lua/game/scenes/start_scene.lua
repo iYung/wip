@@ -164,10 +164,10 @@ function StartScene:draw()
     local ch = self._font_credit:getHeight()
     love.graphics.printf(credit, 0, H - ch - 8, W, "center")
 
-    local ku = self.input:key_for("move_up")    or "?"
-    local kl = self.input:key_for("move_left")  or "?"
-    local kd = self.input:key_for("move_down")  or "?"
-    local kr = self.input:key_for("move_right") or "?"
+    local ku = (self.input:key_for("move_up")    or "?"):upper()
+    local kl = (self.input:key_for("move_left")  or "?"):upper()
+    local kd = (self.input:key_for("move_down")  or "?"):upper()
+    local kr = (self.input:key_for("move_right") or "?"):upper()
     local kb_text = ku .. "/" .. kl .. "/" .. kd .. "/" .. kr
     love.graphics.setFont(self._font_btn)
     love.graphics.setColor(0, 0, 0, 1)
@@ -179,7 +179,7 @@ function StartScene:draw()
         if icon then
             return { icon = icon }
         end
-        return self.input:key_for(action) or "?"
+        return (self.input:key_for(action) or "?"):upper()
     end
 
     local ICON_SIZE = 16

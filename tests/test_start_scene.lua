@@ -239,5 +239,70 @@ do
     print("PASS: draw() uses button icon PNGs in gamepad mode")
 end
 
+-- Test 17: draw() uppercases nav key text (kb_text)
+do
+    local printed = {}
+    local _orig_print = love.graphics.print
+    love.graphics.print = function(text, ...)
+        if type(text) == "string" then printed[#printed + 1] = text end
+    end
+
+    local draw_input = {
+        pressed      = function() return false end,
+        icon_key_for = function() return nil end,
+        key_for      = function(_, action)
+            if action == "move_up"    then return "w" end
+            if action == "move_left"  then return "a" end
+            if action == "move_down"  then return "s" end
+            if action == "move_right" then return "d" end
+            return "x"
+        end,
+    }
+    local sd = StartScene.new({}, draw_input, { switch = function() end }, function() end)
+    sd:on_enter()
+    sd:draw()
+    love.graphics.print = _orig_print
+
+    local found = false
+    for _, t in ipairs(printed) do
+        if t == "W/A/S/D" then found = true; break end
+    end
+    assert(found, "draw() nav key text should be uppercase 'W/A/S/D', got: " .. table.concat(printed, ", "))
+    print("PASS: draw() nav key text is uppercase")
+end
+
+-- Test 18: draw() uppercases action hint text (make_label fallback)
+do
+    local printed = {}
+    local _orig_print = love.graphics.print
+    love.graphics.print = function(text, ...)
+        if type(text) == "string" then printed[#printed + 1] = text end
+    end
+
+    local draw_input = {
+        pressed      = function() return false end,
+        icon_key_for = function() return nil end,
+        key_for      = function(_, action)
+            if action == "interact"     then return "j" end
+            if action == "pick_up_down" then return "k" end
+            if action == "cancel"       then return "l" end
+            return "x"
+        end,
+    }
+    local sd = StartScene.new({}, draw_input, { switch = function() end }, function() end)
+    sd:on_enter()
+    sd:draw()
+    love.graphics.print = _orig_print
+
+    local function has(t, v)
+        for _, x in ipairs(t) do if x == v then return true end end
+        return false
+    end
+    assert(has(printed, "J"), "draw() action hint for interact should be uppercase 'J'")
+    assert(has(printed, "K"), "draw() action hint for pick_up_down should be uppercase 'K'")
+    assert(has(printed, "L"), "draw() action hint for cancel should be uppercase 'L'")
+    print("PASS: draw() action hint text is uppercase")
+end
+
 love.event.quit = _real_quit
 print("ALL TESTS PASSED")
