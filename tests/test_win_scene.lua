@@ -86,4 +86,29 @@ do
     print("PASS: win_scene: _wire_golden_idol wires held idol")
 end
 
+-- Test: draw doesn't crash when first_idol_at is nil (fallback path)
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local win_scene = ctx.sm.current._win_scene
+    assert(ctx.gs.first_idol_at == nil, "first_idol_at should be nil by default")
+    ctx.sm:switch(win_scene)   -- calls on_enter
+    win_scene:draw()
+    print("PASS: win_scene: draw doesn't crash when first_idol_at is nil")
+end
+
+-- Test: draw doesn't crash with known elapsed time (minutes + seconds path)
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local win_scene = ctx.sm.current._win_scene
+    ctx.gs.started_at    = 1000
+    ctx.gs.first_idol_at = 1125   -- 2m 5s elapsed
+    ctx.sm:switch(win_scene)
+    win_scene:draw()
+    print("PASS: win_scene: draw doesn't crash with elapsed time set")
+end
+
 print("ALL TESTS PASSED")
