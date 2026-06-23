@@ -277,6 +277,7 @@ Shared state passed between scenes. Survives scene switches. Fully serializable 
 - `seen_scripts` — set `{ ["id:chapter"] = true }`; e.g. `"sage:1"`; prevents a scripted chapter from firing twice
 - `has_drone` — bool; true once the Water Drone is purchased
 - `started_at` — Unix timestamp (`os.time()`) recorded when `GameState.new()` is called (i.e. when the player presses New Game); `nil` for saves created before this field was added
+- `first_idol_at` — Unix timestamp (`os.time()`) recorded on the first Golden Idol purchase; `nil` until purchased; subsequent purchases leave it unchanged
 
 **Methods**
 - `new()` — constructor; creates fresh default state
