@@ -65,6 +65,11 @@ function HeadlessInput:pressed(action)
     return self._pressed[action] == true
 end
 
+-- No keymap in headless mode — always returns nil.
+function HeadlessInput:key_for(action)
+    return nil
+end
+
 -- No gamepad in headless mode — always returns nil.
 function HeadlessInput:icon_key_for(action)
     return nil
