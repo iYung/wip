@@ -57,6 +57,9 @@ love.graphics = graphics_stub
 love.keyboard = love.keyboard or {}
 love.keyboard.isDown = function() return false end
 
+love.mouse = love.mouse or {}
+love.mouse.setVisible = noop
+
 love.window = love.window or {}
 love.window.getFullscreen = function() return false end
 love.window.setFullscreen = function() end

@@ -60,6 +60,7 @@ local function _visual_advance()
 end
 
 function love.load()
+    love.mouse.setVisible(false)
     love.window.setIcon(love.image.newImageData("assets/images/icon.png"))
 
     canvas = love.graphics.newCanvas(LOGICAL_W, LOGICAL_H)
