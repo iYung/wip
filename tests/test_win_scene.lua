@@ -104,8 +104,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     local win_scene = ctx.sm.current._win_scene
-    ctx.gs.started_at    = 1000
-    ctx.gs.first_idol_at = 1125   -- 2m 5s elapsed
+    ctx.gs.first_idol_at = 125   -- 2m 5s elapsed
     ctx.sm:switch(win_scene)
     win_scene:draw()
     print("PASS: win_scene: draw doesn't crash with elapsed time set")

@@ -227,27 +227,24 @@ assert(held ~= nil,                "from_save: golden idol held_item exists")
 assert(held.name == "Golden Idol", "from_save: golden idol held name, got " .. tostring(held and held.name))
 print("PASS: save: golden idol round-trips as held_item")
 
--- Test: GameState.new() sets started_at to current time
+-- Test: GameState.new() sets play_time to 0
 reset_fs()
-local t_before = os.time()
-local gs_st = GameState.new()
-local t_after = os.time()
-assert(type(gs_st.started_at) == "number", "new(): started_at should be a number")
-assert(gs_st.started_at >= t_before and gs_st.started_at <= t_after,
-    "new(): started_at should be within current timestamp range")
-print("PASS: save: new() sets started_at to os.time()")
+local gs_pt = GameState.new()
+assert(gs_pt.play_time == 0,
+    "new(): play_time should be 0, got " .. tostring(gs_pt.play_time))
+print("PASS: save: new() sets play_time to 0")
 
--- Test: started_at round-trips through to_save / from_save
+-- Test: play_time round-trips through to_save / from_save
 reset_fs()
-local gs_st2 = GameState.new()
-local expected_ts = gs_st2.started_at
-Save.write(GameState.to_save(gs_st2))
-local gs_st3 = GameState.from_save(Save.read())
-assert(gs_st3.started_at == expected_ts,
-    "from_save: started_at should round-trip, got " .. tostring(gs_st3.started_at))
-print("PASS: save: started_at round-trips through to_save/from_save")
+local gs_pt2 = GameState.new()
+gs_pt2.play_time = 543.5
+Save.write(GameState.to_save(gs_pt2))
+local gs_pt3 = GameState.from_save(Save.read())
+assert(gs_pt3.play_time == 543.5,
+    "from_save: play_time should round-trip, got " .. tostring(gs_pt3.play_time))
+print("PASS: save: play_time round-trips through to_save/from_save")
 
--- Test: from_save with old save (no started_at) loads with nil
+-- Test: from_save with old save (no play_time) loads with 0
 reset_fs()
 local old_save = {
     version=1, currency=0, speed_level=0, growth_level=0,
@@ -258,9 +255,9 @@ local old_save = {
 }
 Save.write(old_save)
 local gs_old = GameState.from_save(Save.read())
-assert(gs_old.started_at == nil,
-    "from_save: old save without started_at should yield nil, got " .. tostring(gs_old.started_at))
-print("PASS: save: old save without started_at loads with nil")
+assert(gs_old.play_time == 0,
+    "from_save: old save without play_time should yield 0, got " .. tostring(gs_old.play_time))
+print("PASS: save: old save without play_time loads with 0")
 
 -- Test: new GameState has first_idol_at == nil
 reset_fs()

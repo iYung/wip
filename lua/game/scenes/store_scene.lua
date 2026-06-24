@@ -324,6 +324,8 @@ function StoreScene:update(dt)
     local gs    = self.game_state
     local input = self.input
 
+    gs.play_time = gs.play_time + dt
+
     self._sway_time = self._sway_time + dt
 
     gs.store:update(dt * gs.growth_mult)
