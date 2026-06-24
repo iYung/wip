@@ -494,6 +494,25 @@ return {
             "Amazing! You're a natural at this!",
         },
     },
+    {
+        id             = "sage",
+        chapter        = 5,
+        accessory      = "monocle",
+        trigger        = { plant_type = 3, count = 5 },
+        name           = "Sir Moneyton",
+        voice_pitch    = 0.88,
+        primary_color     = {0.35, 0.58, 0.38, 1},
+        secondary_color = {0.55, 0.40, 0.25, 1},
+        plant_type     = 2,
+        messages       = {
+            "The shop looks excellent! You've really hopping around.",
+            "You can hop faster if you get new shoes. You can buy them on your laptop!",
+            "Maybe you can get a new pair after you get me a new cactus!",
+        },
+        after_messages = {
+            "Thank you! And remember to look through your laptop. There are more upgrades than just the shoes.",
+        },
+    },
 
     -- Romeo (hopeless romantic, 3-chapter arc; cactus → cactus → tulip, always wants a rose)
     {
