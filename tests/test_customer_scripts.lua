@@ -753,4 +753,84 @@ do
     print("PASS: scripts: Wallace ch3 triggers at daisy >= 10")
 end
 
+-- Test: DJ Frogga ch1 spawns at cactus >= 15
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, s in ipairs(scripts) do
+        local key = s.id .. ":" .. s.chapter
+        if key ~= "dj_frogga:1" then
+            ctx.gs.seen_scripts[key] = true
+        end
+    end
+    ctx.gs.stage3_counts[2] = 15
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    assert(cfg ~= nil and cfg.id == "dj_frogga" and cfg.chapter == 1,
+        "DJ Frogga ch1 should spawn at cactus >= 15, got " .. tostring(cfg and cfg.id))
+    print("PASS: scripts: DJ Frogga ch1 spawns at cactus >= 15")
+end
+
+-- Test: DJ Frogga ch1 does not spawn before cactus = 15
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, s in ipairs(scripts) do
+        local key = s.id .. ":" .. s.chapter
+        if key ~= "dj_frogga:1" then
+            ctx.gs.seen_scripts[key] = true
+        end
+    end
+    ctx.gs.stage3_counts[2] = 14
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    local is_dj = cfg and cfg.id == "dj_frogga" and cfg.chapter == 1
+    assert(not is_dj, "DJ Frogga ch1 should not spawn before cactus = 15")
+    print("PASS: scripts: DJ Frogga ch1 does not spawn before cactus = 15")
+end
+
+-- Test: DJ Frogga ch2 spawns at tulip >= 17 after ch1 seen
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, s in ipairs(scripts) do
+        local key = s.id .. ":" .. s.chapter
+        if key ~= "dj_frogga:2" then
+            ctx.gs.seen_scripts[key] = true
+        end
+    end
+    ctx.gs.stage3_counts[4] = 17
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    assert(cfg ~= nil and cfg.id == "dj_frogga" and cfg.chapter == 2,
+        "DJ Frogga ch2 should spawn at tulip >= 17 after ch1 seen, got " .. tostring(cfg and cfg.id))
+    print("PASS: scripts: DJ Frogga ch2 spawns at tulip >= 17 after ch1 seen")
+end
+
+-- Test: DJ Frogga ch2 does not spawn before ch1 is seen
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, s in ipairs(scripts) do
+        local key = s.id .. ":" .. s.chapter
+        if key ~= "dj_frogga:1" and key ~= "dj_frogga:2" then
+            ctx.gs.seen_scripts[key] = true
+        end
+    end
+    ctx.gs.stage3_counts[4] = 17
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    local is_dj_ch2 = cfg and cfg.id == "dj_frogga" and cfg.chapter == 2
+    assert(not is_dj_ch2, "DJ Frogga ch2 should not spawn before ch1 is seen")
+    print("PASS: scripts: DJ Frogga ch2 does not spawn before ch1 is seen")
+end
+
 print("ALL TESTS PASSED")

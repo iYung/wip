@@ -761,6 +761,48 @@ return {
         },
     },
 
+    -- DJ Frogga (beat inspo, 2-chapter arc; cactus → tulip)
+    {
+        id              = "dj_frogga",
+        chapter         = 1,
+        accessory       = "shades",
+        trigger         = { plant_type = 2, count = 15 },
+        name            = "DJ Frogga",
+        voice_pitch     = 1.10,
+        primary_color   = {0.50, 0.15, 0.75, 1},
+        secondary_color = {0.15, 0.90, 0.60, 1},
+        plant_type      = 2,
+        messages        = {
+            "Yo, what's good!",
+            "I'm DJ Frogga, the hottest DJ in Frogtown right now.",
+            "I'm working on the sickest beat and I need some inspo.",
+            "You got something spiky with a little attitude?",
+        },
+        after_messages  = {
+            "Yooo, this is it. I can feel the beat already.",
+        },
+    },
+    {
+        id              = "dj_frogga",
+        chapter         = 2,
+        accessory       = "shades",
+        trigger         = { plant_type = 4, count = 17 },
+        name            = "DJ Frogga",
+        voice_pitch     = 1.10,
+        primary_color   = {0.50, 0.15, 0.75, 1},
+        secondary_color = {0.15, 0.90, 0.60, 1},
+        plant_type      = 4,
+        messages        = {
+            "Yo, it's me, DJ Frogga!",
+            "My last track went crazy. Frogs were jumping on the drop.",
+            "Now I'm working on something softer. Something smooth.",
+            "You got something for inspo? I need something that sends those smooth vibes over to me.",
+        },
+        after_messages  = {
+            "Oooh yes. The vibes are immaculate.",
+        },
+    },
+
     -- Wallace (well-meaning disaster, 3-chapter arc; rose → daisy → daisy)
     {
         id              = "wallace",
