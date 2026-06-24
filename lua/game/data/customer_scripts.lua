@@ -87,7 +87,7 @@ return {
     {
         id             = "the_collector",
         chapter        = 1,
-        accessory      = "shades",
+        accessory      = "anon",
         trigger        = { plant_type = 5, count = 13 },
         name           = "The Collector",
         voice_pitch    = 0.78,
@@ -107,7 +107,7 @@ return {
     {
         id             = "the_collector",
         chapter        = 2,
-        accessory      = "shades",
+        accessory      = "anon",
         trigger        = { plant_type = 6, count = 5 },
         name           = "The Collector",
         voice_pitch    = 0.78,
