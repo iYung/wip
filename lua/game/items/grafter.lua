@@ -69,6 +69,7 @@ function Grafter:interact(player, store, scene_manager)
 
         -- Spawn clone into nearest empty slot
         best_slot.item = Plant.new(plant.plant_type)
+        best_slot:update(0)  -- position sprite before this frame draws; avoids one-frame flicker at (0,0)
         Sound.play("clone_success")
     else
         -- No empty slot — show bubble

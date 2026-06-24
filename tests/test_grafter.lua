@@ -172,4 +172,37 @@ assert(ctx.gs.store.slots[6].item == nil,
     "slot 6 should remain empty (tie went to slot 4)")
 print("PASS: grafter: tie-breaking prefers lower index")
 
+-- ── Test 7: clone sprite positioned immediately (no one-frame flicker) ────────
+-- If best_slot:update(0) is NOT called, the new plant sprite stays at (0,0)
+-- for the first draw. This test verifies it is positioned to the slot coords.
+local ctx = runner.setup(function(gs, input, sm)
+    return StoreScene.new(gs, input, sm)
+end)
+local grafter = Grafter.new()
+ctx.gs.player.held_item = grafter
+
+local plant = Plant.new(1)
+plant.stage = 3
+ctx.gs.store.slots[4].item = plant
+ctx.gs.player.x = 700        -- over slot 4; clone lands in slot 5
+
+ctx.input:press("interact")
+runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+local clone = ctx.gs.store.slots[5].item
+assert(clone ~= nil, "clone should be in slot 5")
+local U = require("lua/game/config").U
+local SLOT_WIDTH  = 10 * U   -- 200
+local SLOT_Y      = 30 * U   -- 600
+local SLOT_HEIGHT = 10 * U   -- 200
+local ITEM_SIZE   = 6  * U   -- 120
+local slot5_x     = (5 - 1) * SLOT_WIDTH  -- 800
+local expected_x  = slot5_x + (SLOT_WIDTH - ITEM_SIZE) / 2  -- 840
+local expected_y  = SLOT_Y  + (SLOT_HEIGHT - ITEM_SIZE) / 2 - 80  -- 560
+assert(clone.sprite.x == expected_x,
+    "clone sprite.x should be " .. expected_x .. " immediately after spawn, got " .. tostring(clone.sprite.x))
+assert(clone.sprite.y == expected_y,
+    "clone sprite.y should be " .. expected_y .. " immediately after spawn, got " .. tostring(clone.sprite.y))
+print("PASS: grafter: clone sprite positioned immediately (no one-frame flicker)")
+
 print("ALL TESTS PASSED")
