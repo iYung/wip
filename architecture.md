@@ -276,8 +276,8 @@ Shared state passed between scenes. Survives scene switches. Fully serializable 
 - `stage3_counts` — `{ [plant_type] = n }`; incremented each time that plant type reaches stage 3; used as quest unlock triggers
 - `seen_scripts` — set `{ ["id:chapter"] = true }`; e.g. `"sage:1"`; prevents a scripted chapter from firing twice
 - `has_drone` — bool; true once the Water Drone is purchased
-- `started_at` — Unix timestamp (`os.time()`) recorded when `GameState.new()` is called (i.e. when the player presses New Game); `nil` for saves created before this field was added
-- `first_idol_at` — Unix timestamp (`os.time()`) recorded on the first Golden Idol purchase; `nil` until purchased; subsequent purchases leave it unchanged
+- `play_time` — accumulated in-game seconds; incremented by `dt` each frame in `StoreScene` and `BuyScene`; persists across save/load; defaults to `0` for saves created before this field was added
+- `first_idol_at` — in-game seconds (`play_time`) recorded on the first Golden Idol purchase; `nil` until purchased; subsequent purchases leave it unchanged
 
 **Methods**
 - `new()` — constructor; creates fresh default state
@@ -808,8 +808,8 @@ Three ways to run the game:
 | `test_shop.lua` | Buying a plant unlocks it, deducts cost, gives player the item; insufficient currency blocked |
 | `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op; `play_random_music` fades one track and skips missing tracks gracefully; `on_focus(true)` replays tracks with `playing_intent=true`; `on_focus(false)` does not replay anything |
 | `test_start_scene.lua` | StartScene navigation (up/down/wrap, Continue skipped when no save), confirm callbacks (New Game, Continue with/without save, Settings, Exit), draw() hint bar (keyboard text vs gamepad icon PNGs) |
-| `test_save.lua` | `Save` exists/write/read, corrupt-data nil return, scalar/item/held-item round-trips, `GameState.to_save`/`from_save` round-trip (scalars, plants, player position, slot count, `started_at`), backwards-compat nil for old saves |
-| `test_win_scene.lua` | GoldenIdol interact switches to WinScene, no-op without factory, cancel returns to StoreScene, `_wire_golden_idol` wires idol in slot and held |
+| `test_save.lua` | `Save` exists/write/read, corrupt-data nil return, scalar/item/held-item round-trips, `GameState.to_save`/`from_save` round-trip (scalars, plants, player position, slot count, `play_time`), backwards-compat defaults for old saves |
+| `test_win_scene.lua` | GoldenIdol interact switches to WinScene, no-op without factory, cancel returns to StoreScene, `_wire_golden_idol` wires idol in slot and held, draw with nil/set `first_idol_at` |
 
 **CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.
 

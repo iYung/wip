@@ -58,7 +58,7 @@ function WinScene:draw()
     local gap_h  = math.floor(line_h * 0.6)
 
     local gs      = self.game_state
-    local elapsed = math.floor((gs.first_idol_at or os.time()) - (gs.started_at or os.time()))
+    local elapsed = math.floor(gs.first_idol_at or 0)
     local mins    = math.floor(elapsed / 60)
     local secs    = elapsed % 60
     local time_str
