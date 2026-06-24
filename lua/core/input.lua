@@ -9,6 +9,10 @@ local _PAD_LABELS = {
 }
 
 local _PAD_ICON_KEYS = {
+    move_up      = "dpad_up",
+    move_down    = "dpad_down",
+    move_left    = "dpad_left",
+    move_right   = "dpad_right",
     interact     = "btn_a",
     pick_up_down = "btn_y",
     cancel       = "btn_b",

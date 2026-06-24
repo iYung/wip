@@ -72,6 +72,10 @@ A.coin  = img("assets/images/coin.png")
 A.btn_a = img("assets/images/btn_a.png")
 A.btn_b = img("assets/images/btn_b.png")
 A.btn_y = img("assets/images/btn_y.png")
+A.dpad_up    = img("assets/images/dpad_up.png")
+A.dpad_down  = img("assets/images/dpad_down.png")
+A.dpad_left  = img("assets/images/dpad_left.png")
+A.dpad_right = img("assets/images/dpad_right.png")
 
 A.wall_pattern = try_img("assets/images/wall_pattern.png")
 if A.wall_pattern then A.wall_pattern:setWrap("repeat", "repeat") end

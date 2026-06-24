@@ -164,15 +164,7 @@ function StartScene:draw()
     local ch = self._font_credit:getHeight()
     love.graphics.printf(credit, 0, H - ch - 8, W, "center")
 
-    local ku = (self.input:key_for("move_up")    or "?"):upper()
-    local kl = (self.input:key_for("move_left")  or "?"):upper()
-    local kd = (self.input:key_for("move_down")  or "?"):upper()
-    local kr = (self.input:key_for("move_right") or "?"):upper()
-    local kb_text = ku .. "/" .. kl .. "/" .. kd .. "/" .. kr
     love.graphics.setFont(self._font_btn)
-    love.graphics.setColor(0, 0, 0, 1)
-    local kb_w = self._font_btn:getWidth(kb_text)
-    love.graphics.print(kb_text, 950 - kb_w / 2, 630)
 
     local function make_label(action)
         local icon = self.input:icon_key_for(action)
@@ -184,6 +176,10 @@ function StartScene:draw()
 
     local ICON_SIZE = 16
     local hints = {
+        { x = 920,  label = make_label("move_up") },
+        { x = 940,  label = make_label("move_left") },
+        { x = 960,  label = make_label("move_down") },
+        { x = 980,  label = make_label("move_right") },
         { x = 1070, label = make_label("interact") },
         { x = 1150, label = make_label("pick_up_down") },
         { x = 1230, label = make_label("cancel") },

@@ -177,7 +177,10 @@ do
     assert(input:icon_key_for("interact")     == "btn_a", "interact icon should be btn_a")
     assert(input:icon_key_for("pick_up_down") == "btn_y", "pick_up_down icon should be btn_y")
     assert(input:icon_key_for("cancel")       == "btn_b", "cancel icon should be btn_b")
-    assert(input:icon_key_for("move_up")      == nil,     "move_up has no icon key")
+    assert(input:icon_key_for("move_up")      == "dpad_up",    "move_up icon should be dpad_up")
+    assert(input:icon_key_for("move_down")    == "dpad_down",  "move_down icon should be dpad_down")
+    assert(input:icon_key_for("move_left")    == "dpad_left",  "move_left icon should be dpad_left")
+    assert(input:icon_key_for("move_right")   == "dpad_right", "move_right icon should be dpad_right")
     print("PASS: input: icon_key_for returns icon asset keys in gamepad mode")
 end
 

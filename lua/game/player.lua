@@ -97,6 +97,14 @@ function Player:update(dt, input, store)
     end
 end
 
+function Player:_snap_held_item()
+    if self.held_item and self.held_item.sprite then
+        local spr = self.held_item.sprite
+        spr.x = self.x - spr.width  / 2
+        spr.y = self.y - H / 2 - spr.height
+    end
+end
+
 function Player:active_slot(store)
     return store:slot_at(self.x)
 end
