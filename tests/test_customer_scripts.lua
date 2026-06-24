@@ -712,7 +712,7 @@ do
     print("PASS: scripts: The Collector ch1 does not trigger before daisy = 13")
 end
 
--- Test: Wallace ch3 does not trigger at daisy = 11 (min sep = 2 from ch2 trigger = 10)
+-- Test: Wallace ch3 does not trigger at daisy = 9 (trigger is count = 10)
 do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
@@ -724,16 +724,16 @@ do
             ctx.gs.seen_scripts[key] = true
         end
     end
-    ctx.gs.stage3_counts[5] = 11
+    ctx.gs.stage3_counts[5] = 9
     ctx.gs.unlocked_plants = {}
     local cfg = ctx.sm.current:_next_customer_cfg()
     local is_wallace_ch3 = cfg and cfg.id == "wallace" and cfg.chapter == 3
     assert(not is_wallace_ch3,
-        "Wallace ch3 should not trigger at daisy = 11 (min gap of 2 from ch2 trigger = 10)")
-    print("PASS: scripts: Wallace ch3 does not trigger at daisy = 11 (min sep = 2 from ch2 = 10)")
+        "Wallace ch3 should not trigger at daisy = 9 (trigger count = 10)")
+    print("PASS: scripts: Wallace ch3 does not trigger at daisy = 9 (trigger count = 10)")
 end
 
--- Test: Wallace ch3 triggers at daisy >= 12
+-- Test: Wallace ch3 triggers at daisy >= 10
 do
     local ctx = runner.setup(function(gs, input, sm)
         return StoreScene.new(gs, input, sm)
@@ -745,12 +745,12 @@ do
             ctx.gs.seen_scripts[key] = true
         end
     end
-    ctx.gs.stage3_counts[5] = 12
+    ctx.gs.stage3_counts[5] = 10
     ctx.gs.unlocked_plants = {}
     local cfg = ctx.sm.current:_next_customer_cfg()
     assert(cfg ~= nil and cfg.id == "wallace" and cfg.chapter == 3,
-        "Wallace ch3 should trigger at daisy >= 12, got " .. tostring(cfg and cfg.id))
-    print("PASS: scripts: Wallace ch3 triggers at daisy >= 12")
+        "Wallace ch3 should trigger at daisy >= 10, got " .. tostring(cfg and cfg.id))
+    print("PASS: scripts: Wallace ch3 triggers at daisy >= 10")
 end
 
 print("ALL TESTS PASSED")
