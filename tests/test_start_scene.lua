@@ -239,7 +239,7 @@ do
     print("PASS: draw() uses button icon PNGs in gamepad mode")
 end
 
--- Test 17: draw() uppercases nav key text (kb_text)
+-- Test 17: draw() uppercases direction key text hints individually
 do
     local printed = {}
     local _orig_print = love.graphics.print
@@ -263,12 +263,15 @@ do
     sd:draw()
     love.graphics.print = _orig_print
 
-    local found = false
-    for _, t in ipairs(printed) do
-        if t == "W/A/S/D" then found = true; break end
+    local function has(t, v)
+        for _, x in ipairs(t) do if x == v then return true end end
+        return false
     end
-    assert(found, "draw() nav key text should be uppercase 'W/A/S/D', got: " .. table.concat(printed, ", "))
-    print("PASS: draw() nav key text is uppercase")
+    assert(has(printed, "W"), "draw() move_up hint should print 'W', got: " .. table.concat(printed, ", "))
+    assert(has(printed, "A"), "draw() move_left hint should print 'A'")
+    assert(has(printed, "S"), "draw() move_down hint should print 'S'")
+    assert(has(printed, "D"), "draw() move_right hint should print 'D'")
+    print("PASS: draw() direction key hints are uppercase")
 end
 
 -- Test 18: draw() uppercases action hint text (make_label fallback)
