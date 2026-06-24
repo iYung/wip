@@ -413,11 +413,13 @@ function StoreScene:_handle_pick_up_down()
         local tmp        = player.held_item
         player.held_item = slot.item
         slot.item        = tmp
+        player:_snap_held_item()
         Sound.play("put_down")
     elseif not player.held_item and slot and slot.item and slot.item.carriable then
         -- pick up from slot
         player.held_item = slot.item
         slot.item        = nil
+        player:_snap_held_item()
         Sound.play("pick_up")
     elseif player.held_item and slot and not slot.item then
         -- put down into empty slot

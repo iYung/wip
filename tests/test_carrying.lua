@@ -126,6 +126,59 @@ do
     print("PASS: carry: held item sprite follows player position")
 end
 
+-- Test: pickup snaps held item sprite to held position on the same frame (no one-frame flicker)
+-- Without the fix, player:update() runs *before* _handle_pick_up_down() in the same tick,
+-- so the sprite stays at slot coords until the next tick.
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local wc     = ctx.gs.store.slots[1].item
+    local U      = require("lua/game/config").U
+    local H      = 12 * U
+
+    ctx.input:press("pick_up_down")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    local player     = ctx.gs.player
+    local expected_x = player.x - wc.sprite.width  / 2
+    local expected_y = player.y - H / 2 - wc.sprite.height
+    assert(math.abs(wc.sprite.x - expected_x) < 1,
+        "held item sprite.x should snap to held position on pickup frame, expected " ..
+        expected_x .. " got " .. tostring(wc.sprite.x))
+    assert(math.abs(wc.sprite.y - expected_y) < 1,
+        "held item sprite.y should snap to held position on pickup frame, expected " ..
+        expected_y .. " got " .. tostring(wc.sprite.y))
+    print("PASS: carry: pickup snaps sprite to held position immediately (no one-frame flicker)")
+end
+
+-- Test: swap snaps newly-held item sprite to held position on the same frame
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local U      = require("lua/game/config").U
+    local H      = 12 * U
+    local wc     = WateringCan.new()
+    ctx.gs.player.held_item = wc
+    local plant  = Plant.new(1)
+    ctx.gs.store.slots[1].item = plant
+
+    ctx.input:press("pick_up_down")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    local player     = ctx.gs.player
+    local expected_x = player.x - plant.sprite.width  / 2
+    local expected_y = player.y - H / 2 - plant.sprite.height
+    assert(math.abs(plant.sprite.x - expected_x) < 1,
+        "swapped-in item sprite.x should snap to held position on swap frame, expected " ..
+        expected_x .. " got " .. tostring(plant.sprite.x))
+    assert(math.abs(plant.sprite.y - expected_y) < 1,
+        "swapped-in item sprite.y should snap to held position on swap frame, expected " ..
+        expected_y .. " got " .. tostring(plant.sprite.y))
+    print("PASS: carry: swap snaps sprite to held position immediately (no one-frame flicker)")
+end
+
 -- Test: pick_up_down in cashier zone does NOT pick up plant from slot 1
 do
     local ctx = runner.setup(function(gs, input, sm)
