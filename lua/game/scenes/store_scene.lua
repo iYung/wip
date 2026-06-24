@@ -138,6 +138,7 @@ function StoreScene:_setup_store()
     self._spawn_timer       = Timer.new(initial_cooldown)
     self._active_script_key = nil
     self._active_script     = nil
+    self._last_script_id    = nil
     self._script_cooldowns  = {}
 
     local wall_img = A.cashier_wall
@@ -295,10 +296,20 @@ function StoreScene:_next_customer_cfg()
     end
 
     if #qualified > 0 then
-        local script = qualified[math.random(#qualified)]
-        self._active_script_key = script.id .. ":" .. script.chapter
-        self._active_script     = script
-        return script
+        local pool = {}
+        for _, script in ipairs(qualified) do
+            if script.id ~= self._last_script_id then
+                pool[#pool + 1] = script
+            end
+        end
+        if #pool > 0 then
+            local script = pool[math.random(#pool)]
+            self._last_script_id    = script.id
+            self._active_script_key = script.id .. ":" .. script.chapter
+            self._active_script     = script
+            return script
+        end
+        -- Only the last-seen character qualifies; fall through to generic customer.
     end
 
     self._active_script_key = nil
@@ -453,6 +464,7 @@ function StoreScene:_handle_interact()
                 self._active_script_key = nil
                 self._active_script     = nil
             end
+            self._last_script_id = nil
             for key, count in pairs(self._script_cooldowns) do
                 local remaining = count - 1
                 if remaining <= 0 then
