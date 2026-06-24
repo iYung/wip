@@ -833,4 +833,61 @@ do
     print("PASS: scripts: DJ Frogga ch2 does not spawn before ch1 is seen")
 end
 
+-- Test: same scripted character does not appear twice in a row
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    -- Qualify only Dottie ch1
+    ctx.gs.stage3_counts[4] = 5
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.unlocked_plants = { [1] = true }
+
+    -- First call: Dottie appears
+    local cfg1 = ctx.sm.current:_next_customer_cfg()
+    assert(cfg1 and cfg1.id == "dottie", "precondition: Dottie qualified first")
+
+    -- Second call immediately after: Dottie should be skipped (generic customer)
+    local cfg2 = ctx.sm.current:_next_customer_cfg()
+    assert(cfg2 == nil or cfg2.id == nil,
+        "same scripted character should not appear twice in a row, got " .. tostring(cfg2 and cfg2.id))
+    print("PASS: scripts: same scripted character skipped on consecutive call")
+end
+
+-- Test: sale clears the no-repeat block so the same character can appear later
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local elapsed = 0
+    ctx.gs.stage3_counts[4] = 5
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.unlocked_plants = { [1] = true }
+
+    -- Select Dottie so _last_script_id is set
+    local cfg1 = ctx.sm.current:_next_customer_cfg()
+    assert(cfg1 and cfg1.id == "dottie", "precondition: Dottie qualified")
+    assert(ctx.sm.current._last_script_id == "dottie", "precondition: last_script_id set")
+
+    -- Show a generic grass customer (no active script) and complete a sale
+    ctx.sm.current._active_script_key = nil
+    ctx.sm.current._customer:show({
+        plant_type = 1, messages = {}, primary_color = {1,1,1,1}, secondary_color = {1,1,1,1},
+    })
+    elapsed = runner.fast_forward_until(ctx, function()
+        return ctx.sm.current._customer:arrived()
+    end, elapsed)
+    local p = Plant.new(1); p.stage = 3
+    ctx.gs.player.held_item = p
+    ctx.gs.player.x = -200
+    ctx.input:press("interact")
+    runner.tick(ctx.input, ctx.sm, 1, 1/60)
+
+    assert(ctx.sm.current._last_script_id == nil,
+        "sale should clear _last_script_id, got " .. tostring(ctx.sm.current._last_script_id))
+    print("PASS: scripts: sale clears no-repeat block")
+end
+
 print("ALL TESTS PASSED")
