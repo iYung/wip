@@ -68,7 +68,7 @@
     '}',
     '#game-controls .cluster-right {',
     '  display: grid;',
-    '  grid-template-columns: repeat(2, 60px);',
+    '  grid-template-columns: repeat(3, 60px);',
     '  grid-template-rows: repeat(2, 60px);',
     '  gap: 6px;',
     '}',
@@ -149,12 +149,20 @@
     '  grid-column: 3;',
     '  grid-row: 2;',
     '}',
-    '#game-controls .btn-space {',
-    '  grid-column: 1 / span 2;',
+    '#game-controls .btn-j {',
+    '  grid-column: 1;',
+    '  grid-row: 1;',
+    '}',
+    '#game-controls .btn-k {',
+    '  grid-column: 2;',
+    '  grid-row: 1;',
+    '}',
+    '#game-controls .btn-l {',
+    '  grid-column: 3;',
     '  grid-row: 1;',
     '}',
     '#game-controls .btn-esc {',
-    '  grid-column: 1 / span 2;',
+    '  grid-column: 1 / span 3;',
     '  grid-row: 2;',
     '}',
     '#game-controls .btn-gp-up {',
@@ -197,7 +205,7 @@
   // which SDL maps to nothing, so all button presses are silently ignored.
   var KEY_CODES = {
     'w': 87, 'a': 65, 's': 83, 'd': 68,
-    ' ': 32, 'Escape': 27
+    'j': 74, 'k': 75, 'l': 76, 'Escape': 27
   };
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -310,17 +318,29 @@
     var rightCluster = document.createElement('div');
     rightCluster.className = 'cluster-right';
 
-    var btnSpace = document.createElement('button');
-    btnSpace.className = 'btn-space';
-    btnSpace.textContent = 'Space';
-    attachButton(btnSpace, ' ', 'Space');
+    var btnJ = document.createElement('button');
+    btnJ.className = 'btn-j';
+    btnJ.textContent = 'J';
+    attachButton(btnJ, 'j', 'KeyJ');
+
+    var btnK = document.createElement('button');
+    btnK.className = 'btn-k';
+    btnK.textContent = 'K';
+    attachButton(btnK, 'k', 'KeyK');
+
+    var btnL = document.createElement('button');
+    btnL.className = 'btn-l';
+    btnL.textContent = 'L';
+    attachButton(btnL, 'l', 'KeyL');
 
     var btnEsc = document.createElement('button');
     btnEsc.className = 'btn-esc';
     btnEsc.textContent = 'Esc';
     attachButton(btnEsc, 'Escape', 'Escape');
 
-    rightCluster.appendChild(btnSpace);
+    rightCluster.appendChild(btnJ);
+    rightCluster.appendChild(btnK);
+    rightCluster.appendChild(btnL);
     rightCluster.appendChild(btnEsc);
 
     // Task C — Gamepad left cluster: D-pad (indices 12↑ 13↓ 14← 15→)
