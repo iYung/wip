@@ -170,4 +170,98 @@ do
     print("PASS: dialogue wrap: period at end of middle wrapped line included at full reveal")
 end
 
+-- Helper: capture draw calls and return whether arrow_right was drawn
+local function capture_arrow_draw(c)
+    local arrow_drawn = false
+    love.graphics.draw = function(img)
+        local A = require("lua/game/assets")
+        if img == A.arrow_right then arrow_drawn = true end
+    end
+    c:draw_bubble()
+    love.graphics.draw = function() end
+    return arrow_drawn
+end
+
+-- Test: arrow shown when text fully revealed and more messages remain
+do
+    local c = Customer.new(0, 0, 0)
+    c.bubble.visible  = true
+    c.done_talking    = false
+    c.bubble.x        = 0
+    c.bubble.y        = 0
+    c.messages        = { "First.", "Second." }
+    c.msg_index       = 1
+    c._full_text      = "First."
+    c.reveal_index    = #c._full_text
+    local drawn = capture_arrow_draw(c)
+    assert(drawn, "arrow should be drawn when text fully revealed and msg_index < #messages")
+    print("PASS: dialogue wrap: next-arrow drawn when line complete and more messages remain")
+end
+
+-- Test: arrow NOT shown while text is still revealing
+do
+    local c = Customer.new(0, 0, 0)
+    c.bubble.visible  = true
+    c.done_talking    = false
+    c.bubble.x        = 0
+    c.bubble.y        = 0
+    c.messages        = { "First.", "Second." }
+    c.msg_index       = 1
+    c._full_text      = "First."
+    c.reveal_index    = 3  -- mid-reveal
+    local drawn = capture_arrow_draw(c)
+    assert(not drawn, "arrow should NOT be drawn while text is still revealing")
+    print("PASS: dialogue wrap: next-arrow hidden while text still revealing")
+end
+
+-- Test: arrow NOT shown on last message (no more to advance to)
+do
+    local c = Customer.new(0, 0, 0)
+    c.bubble.visible  = true
+    c.done_talking    = false
+    c.bubble.x        = 0
+    c.bubble.y        = 0
+    c.messages        = { "Only line." }
+    c.msg_index       = 1
+    c._full_text      = "Only line."
+    c.reveal_index    = #c._full_text
+    local drawn = capture_arrow_draw(c)
+    assert(not drawn, "arrow should NOT be drawn on the last message")
+    print("PASS: dialogue wrap: next-arrow hidden on last message")
+end
+
+-- Test: arrow shown in talking_after when more after_messages remain
+do
+    local c = Customer.new(0, 0, 0)
+    c.bubble.visible    = true
+    c.done_talking      = true
+    c.state             = "talking_after"
+    c.bubble.x          = 0
+    c.bubble.y          = 0
+    c.after_messages    = { "Thanks.", "Bye." }
+    c.after_msg_index   = 1
+    c._full_text        = "Thanks."
+    c.reveal_index      = #c._full_text
+    local drawn = capture_arrow_draw(c)
+    assert(drawn, "arrow should be drawn in talking_after when after_msg_index < #after_messages")
+    print("PASS: dialogue wrap: next-arrow drawn in talking_after with more after_messages")
+end
+
+-- Test: arrow NOT shown in talking_after on last after_message
+do
+    local c = Customer.new(0, 0, 0)
+    c.bubble.visible    = true
+    c.done_talking      = true
+    c.state             = "talking_after"
+    c.bubble.x          = 0
+    c.bubble.y          = 0
+    c.after_messages    = { "Thanks.", "Bye." }
+    c.after_msg_index   = 2
+    c._full_text        = "Bye."
+    c.reveal_index      = #c._full_text
+    local drawn = capture_arrow_draw(c)
+    assert(not drawn, "arrow should NOT be drawn in talking_after on the last after_message")
+    print("PASS: dialogue wrap: next-arrow hidden on last after_message")
+end
+
 print("ALL TESTS PASSED")

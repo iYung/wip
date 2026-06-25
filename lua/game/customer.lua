@@ -341,6 +341,22 @@ function Customer:draw_bubble()
             local ly = box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h
             love.graphics.print(line, lx, ly)
         end
+
+        local has_more
+        if self.state == "talking_after" then
+            has_more = self.after_msg_index < #self.after_messages
+        else
+            has_more = self.msg_index < #self.messages
+        end
+        if self:line_complete() and has_more then
+            local arrow_size = 16
+            local scale      = arrow_size / A.arrow_right:getWidth()
+            local ax         = box_x + box_w - PAD - arrow_size
+            local ay         = box_y + box_h - PAD - arrow_size
+            love.graphics.setColor(0.08, 0.07, 0.10, 0.85)
+            love.graphics.draw(A.arrow_right, ax, ay, 0, scale, scale)
+        end
+
         love.graphics.setColor(1, 1, 1, 1)
     end
 end
