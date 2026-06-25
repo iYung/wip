@@ -4,6 +4,23 @@ Audio does not play in the web build. This is a known-unresolved issue.
 
 ---
 
+## Fixed: double background music on Firefox (focus/blur cycle)
+
+**Symptom:** Two bg tracks played simultaneously after tabbing away and back in Firefox.
+
+**Cause:** Non-looping bg tracks (`bg1`–`bg4`) never had `playing_intent` cleared when
+they finished naturally. When the tab regained focus, `Sound.on_focus` saw the old
+track's `playing_intent = true` and restarted it, even though the cycling logic had
+already started the next track. Firefox exacerbates this because its AudioContext is
+more aggressively suspended in the background, so `isPlaying()` can return `false` for
+a mid-song track — triggering a premature cycle advance before the track even finishes.
+
+**Fix:** `StoreScene:update()` now calls `Sound.stop_music` on the current track before
+advancing the index. `stop_music` sets `playing_intent = false`, so `on_focus` ignores
+the finished track on the next focus event.
+
+---
+
 ## What was tried
 
 **Silent-buffer unlock** — on the first `touchstart`, a 1-sample silent `AudioBufferSourceNode` was created and played in a new `AudioContext`. This is a standard iOS autoplay unlock technique. It did not fix the issue and was reverted.
