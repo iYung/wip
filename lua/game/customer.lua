@@ -308,8 +308,17 @@ function Customer:draw_bubble()
             local lw = font:getWidth(line)
             if lw > widest_line_width then widest_line_width = lw end
         end
+        local has_more
+        if self.state == "talking_after" then
+            has_more = self.after_msg_index < #self.after_messages
+        else
+            has_more = self.msg_index < #self.messages
+        end
+        local arrow_size  = 16
+        local show_arrow  = self:line_complete() and has_more
+        local arrow_extra = show_arrow and (arrow_size + 4) or 0
         local box_w = math.min(MAX_BOX_W, math.max(MIN_BOX_W, widest_line_width + PAD * 2))
-        local box_h = text_h * #lines + PAD * 2
+        local box_h = text_h * #lines + PAD * 2 + arrow_extra
         local box_x = self.bubble.x + BW / 2 - box_w / 2
         local box_y = self.bubble.y - box_h - TAIL_H + 4
 
@@ -342,17 +351,10 @@ function Customer:draw_bubble()
             love.graphics.print(line, lx, ly)
         end
 
-        local has_more
-        if self.state == "talking_after" then
-            has_more = self.after_msg_index < #self.after_messages
-        else
-            has_more = self.msg_index < #self.messages
-        end
-        if self:line_complete() and has_more then
-            local arrow_size = 16
-            local scale      = arrow_size / A.arrow_right:getWidth()
-            local ax         = box_x + box_w - PAD - arrow_size
-            local ay         = box_y + box_h - PAD - arrow_size
+        if show_arrow then
+            local scale = arrow_size / A.arrow_right:getWidth()
+            local ax    = box_x + box_w - PAD - arrow_size
+            local ay    = box_y + box_h - PAD - arrow_size
             love.graphics.setColor(0.08, 0.07, 0.10, 0.85)
             love.graphics.draw(A.arrow_right, ax, ay, 0, scale, scale)
         end
