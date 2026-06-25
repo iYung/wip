@@ -383,4 +383,66 @@ do
     print("PASS: on_focus(false) does not replay any tracks")
 end
 
+-- Regression: on_focus must not restart a bg track that finished naturally and was
+-- replaced by the cycling logic (stop_music clears playing_intent before advancing).
+-- Without the fix, on_focus would see playing_intent=true on the finished track and
+-- restart it, causing two bg tracks to play simultaneously (reported on Firefox).
+do
+    local orig_getInfo   = love.filesystem.getInfo
+    local orig_newSource = love.audio.newSource
+
+    local bg1_playing = false
+    local bg2_playing = false
+    local bg1_play_calls = 0
+
+    love.filesystem.getInfo = function(p)
+        local present = {
+            ["assets/music/background.mp3"]  = true,
+            ["assets/music/background2.mp3"] = true,
+        }
+        return present[p] or nil
+    end
+
+    love.audio.newSource = function(path, t)
+        local src = orig_newSource(path, t)
+        if path == "assets/music/background.mp3" then
+            src.isPlaying = function() return bg1_playing end
+            src.play      = function() bg1_playing = true; bg1_play_calls = bg1_play_calls + 1 end
+            src.stop      = function() bg1_playing = false end
+        elseif path == "assets/music/background2.mp3" then
+            src.isPlaying = function() return bg2_playing end
+            src.play      = function() bg2_playing = true end
+            src.stop      = function() bg2_playing = false end
+        end
+        return src
+    end
+
+    package.loaded["lua/core/sound"] = nil
+    local S = require("lua/core/sound")
+    S.load(MANIFEST)
+
+    -- bg1 starts playing (simulates StoreScene fading it in)
+    S.play_music("bg1")
+    assert(bg1_play_calls == 1, "expected bg1 to start")
+
+    -- bg1 finishes naturally (isPlaying returns false, playing_intent still true)
+    bg1_playing = false
+
+    -- Fixed cycling logic: stop_music clears playing_intent before advancing
+    S.stop_music("bg1")
+    S.fade_music("bg2", 1, 2)
+
+    -- User tabs away and back — on_focus must NOT restart bg1
+    local calls_before = bg1_play_calls
+    S.on_focus(true)
+    assert(bg1_play_calls == calls_before,
+        "on_focus restarted a finished bg track after stop_music; got " .. bg1_play_calls .. " total plays")
+    assert(bg2_playing == true, "bg2 should still be playing after on_focus")
+
+    love.filesystem.getInfo = orig_getInfo
+    love.audio.newSource    = orig_newSource
+    package.loaded["lua/core/sound"] = nil
+    print("PASS: on_focus does not restart a bg track after stop_music clears playing_intent")
+end
+
 print("ALL TESTS PASSED")

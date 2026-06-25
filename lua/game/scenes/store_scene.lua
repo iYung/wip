@@ -393,6 +393,7 @@ function StoreScene:update(dt)
     end
 
     if not Sound.is_music_playing(self._bg_list[self._bg_index]) then
+        Sound.stop_music(self._bg_list[self._bg_index])
         self._bg_index = (self._bg_index % #self._bg_list) + 1
         Sound.fade_music(self._bg_list[self._bg_index], 1, 2)
     end
