@@ -214,7 +214,7 @@ do
     print("PASS: dialogue wrap: next-arrow hidden while text still revealing")
 end
 
--- Test: arrow NOT shown on last message (no more to advance to)
+-- Test: arrow shown on last message (player still needs to press to advance)
 do
     local c = Customer.new(0, 0, 0)
     c.bubble.visible  = true
@@ -226,8 +226,8 @@ do
     c._full_text      = "Only line."
     c.reveal_index    = #c._full_text
     local drawn = capture_arrow_draw(c)
-    assert(not drawn, "arrow should NOT be drawn on the last message")
-    print("PASS: dialogue wrap: next-arrow hidden on last message")
+    assert(drawn, "arrow should be drawn on the last message so player knows to press")
+    print("PASS: dialogue wrap: next-arrow shown on last message")
 end
 
 -- Test: arrow shown in talking_after when more after_messages remain
@@ -247,7 +247,7 @@ do
     print("PASS: dialogue wrap: next-arrow drawn in talking_after with more after_messages")
 end
 
--- Test: arrow NOT shown in talking_after on last after_message
+-- Test: arrow shown in talking_after on last after_message (player still needs to press to dismiss)
 do
     local c = Customer.new(0, 0, 0)
     c.bubble.visible    = true
@@ -260,8 +260,8 @@ do
     c._full_text        = "Bye."
     c.reveal_index      = #c._full_text
     local drawn = capture_arrow_draw(c)
-    assert(not drawn, "arrow should NOT be drawn in talking_after on the last after_message")
-    print("PASS: dialogue wrap: next-arrow hidden on last after_message")
+    assert(drawn, "arrow should be drawn in talking_after on the last after_message so player knows to press")
+    print("PASS: dialogue wrap: next-arrow shown on last after_message")
 end
 
 print("ALL TESTS PASSED")
