@@ -308,14 +308,8 @@ function Customer:draw_bubble()
             local lw = font:getWidth(line)
             if lw > widest_line_width then widest_line_width = lw end
         end
-        local has_more
-        if self.state == "talking_after" then
-            has_more = self.after_msg_index < #self.after_messages
-        else
-            has_more = self.msg_index < #self.messages
-        end
         local arrow_size  = 16
-        local show_arrow  = self:line_complete() and has_more
+        local show_arrow  = self:line_complete()
         local box_w = math.min(MAX_BOX_W, math.max(MIN_BOX_W, widest_line_width + PAD * 2))
         local box_h = text_h * #lines + PAD * 2
         local box_x = self.bubble.x + BW / 2 - box_w / 2
