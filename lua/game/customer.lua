@@ -316,9 +316,8 @@ function Customer:draw_bubble()
         end
         local arrow_size  = 16
         local show_arrow  = self:line_complete() and has_more
-        local arrow_extra = show_arrow and (arrow_size + 4) or 0
         local box_w = math.min(MAX_BOX_W, math.max(MIN_BOX_W, widest_line_width + PAD * 2))
-        local box_h = text_h * #lines + PAD * 2 + arrow_extra
+        local box_h = text_h * #lines + PAD * 2
         local box_x = self.bubble.x + BW / 2 - box_w / 2
         local box_y = self.bubble.y - box_h - TAIL_H + 4
 
@@ -352,11 +351,16 @@ function Customer:draw_bubble()
         end
 
         if show_arrow then
+            local mini_pad = 8
+            local mini_w   = arrow_size + mini_pad * 2
+            local mini_h   = arrow_size + mini_pad * 2
+            local mini_x   = box_x - mini_w / 2 + 8
+            local mini_y   = box_y + box_h - mini_h / 2
+            love.graphics.setColor(1, 1, 1, 1)
+            UI.draw9(A.speech_bubble, mini_x, mini_y, mini_w, mini_h, BUBBLE_MARGIN)
             local scale = arrow_size / A.arrow_right:getWidth()
-            local ax    = box_x + box_w - PAD - arrow_size
-            local ay    = box_y + box_h - PAD - arrow_size
             love.graphics.setColor(0.08, 0.07, 0.10, 0.85)
-            love.graphics.draw(A.arrow_right, ax, ay, 0, scale, scale)
+            love.graphics.draw(A.arrow_right, mini_x + mini_pad, mini_y + mini_pad, 0, scale, scale)
         end
 
         love.graphics.setColor(1, 1, 1, 1)
