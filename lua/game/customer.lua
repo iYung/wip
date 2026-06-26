@@ -354,7 +354,7 @@ function Customer:draw_bubble()
             local mini_pad = 8
             local mini_w   = arrow_size + mini_pad * 2
             local mini_h   = arrow_size + mini_pad * 2
-            local mini_x   = box_x - mini_w / 2 + 8
+            local mini_x   = box_x + box_w - mini_w / 2 - 8
             local mini_y   = box_y + box_h - mini_h / 2
             love.graphics.setColor(1, 1, 1, 1)
             UI.draw9(A.speech_bubble, mini_x, mini_y, mini_w, mini_h, BUBBLE_MARGIN)
