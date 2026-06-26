@@ -264,7 +264,6 @@ function Customer:draw_bubble()
         self.heart_bubble:draw()
     end
     if not self.bubble.visible then return end
-    local _arrow_show, _arrow_x, _arrow_y, _arrow_size
     if self.done_talking and self.state ~= "talking_after" then
         local PD       = 12
         local IMG_SIZE = 80
@@ -354,24 +353,16 @@ function Customer:draw_bubble()
         if show_arrow then
             local mini_pad = 8
             local mini_w   = arrow_size + mini_pad * 2
-            _arrow_show = true
-            _arrow_size = arrow_size
-            _arrow_x    = box_x + box_w - mini_w / 2 - 8
-            _arrow_y    = box_y + box_h - mini_w / 2
+            local mini_h   = arrow_size + mini_pad * 2
+            local mini_x   = box_x + box_w - mini_w / 2 - 8
+            local mini_y   = box_y + box_h - mini_h / 2
+            love.graphics.setColor(1, 1, 1, 1)
+            UI.draw9(A.speech_bubble, mini_x, mini_y, mini_w, mini_h, BUBBLE_MARGIN)
+            local scale = arrow_size / A.arrow_right:getWidth()
+            love.graphics.setColor(0.08, 0.07, 0.10, 0.85)
+            love.graphics.draw(A.arrow_right, mini_x + mini_pad, mini_y + mini_pad, 0, scale, scale)
         end
 
-        love.graphics.setColor(1, 1, 1, 1)
-    end
-
-    if _arrow_show then
-        local mini_pad = 8
-        local mini_w   = _arrow_size + mini_pad * 2
-        local mini_h   = mini_w
-        love.graphics.setColor(1, 1, 1, 1)
-        UI.draw9(A.speech_bubble, _arrow_x, _arrow_y, mini_w, mini_h, BUBBLE_MARGIN)
-        local scale = _arrow_size / A.arrow_right:getWidth()
-        love.graphics.setColor(0.08, 0.07, 0.10, 0.85)
-        love.graphics.draw(A.arrow_right, _arrow_x + mini_pad, _arrow_y + mini_pad, 0, scale, scale)
         love.graphics.setColor(1, 1, 1, 1)
     end
 end
