@@ -55,6 +55,7 @@ do
         return StoreScene.new(gs, input, sm)
     end)
     ctx.gs.stage3_counts[4] = 11
+    ctx.gs.currency = 300   -- meets dottie:2 min_money=300
     ctx.gs.seen_scripts = { ["dottie:1"] = true }
     ctx.gs.seen_scripts["sage:1"] = true
     ctx.gs.seen_scripts["sage:2"] = true
@@ -684,6 +685,7 @@ do
         end
     end
     ctx.gs.stage3_counts[5] = 13
+    ctx.gs.currency = 700   -- meets the_collector:1 min_money=700
     ctx.gs.unlocked_plants = {}
     local cfg = ctx.sm.current:_next_customer_cfg()
     assert(cfg ~= nil and cfg.id == "the_collector" and cfg.chapter == 1,
@@ -888,6 +890,65 @@ do
     assert(ctx.sm.current._last_script_id == nil,
         "sale should clear _last_script_id, got " .. tostring(ctx.sm.current._last_script_id))
     print("PASS: scripts: sale clears no-repeat block")
+end
+
+-- Test: min_money blocks chapter when currency is below threshold
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    -- mira:1 trigger: plant_type=3, count=16, min_money=75
+    ctx.gs.stage3_counts[3] = 16
+    ctx.gs.currency = 74
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.seen_scripts["sage:3"] = true
+    ctx.gs.seen_scripts["sage:4"] = true
+    ctx.gs.seen_scripts["sage:5"] = true
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    local is_mira = cfg and cfg.id == "mira" and cfg.chapter == 1
+    assert(not is_mira, "mira:1 should not trigger when currency ($74) is below min_money ($75)")
+    print("PASS: min_money: chapter blocked when currency below threshold")
+end
+
+-- Test: min_money allows chapter when currency meets threshold
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    local scripts = require("lua/game/data/customer_scripts")
+    for _, s in ipairs(scripts) do
+        local key = s.id .. ":" .. s.chapter
+        if key ~= "mira:1" then
+            ctx.gs.seen_scripts[key] = true
+        end
+    end
+    -- mira:1 trigger: plant_type=3, count=16, min_money=75
+    ctx.gs.stage3_counts[3] = 16
+    ctx.gs.currency = 75
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    assert(cfg ~= nil and cfg.id == "mira" and cfg.chapter == 1,
+        "mira:1 should trigger when currency ($75) meets min_money ($75), got " .. tostring(cfg and cfg.id))
+    print("PASS: min_money: chapter allowed when currency meets threshold")
+end
+
+-- Test: chapter with no min_money is unaffected by currency
+do
+    local ctx = runner.setup(function(gs, input, sm)
+        return StoreScene.new(gs, input, sm)
+    end)
+    -- dottie:1 has no min_money; trigger: plant_type=4, count=5
+    ctx.gs.stage3_counts[4] = 5
+    ctx.gs.currency = 0
+    ctx.gs.seen_scripts["sage:1"] = true
+    ctx.gs.seen_scripts["sage:2"] = true
+    ctx.gs.unlocked_plants = {}
+    local cfg = ctx.sm.current:_next_customer_cfg()
+    assert(cfg ~= nil and cfg.id == "dottie" and cfg.chapter == 1,
+        "dottie:1 (no min_money) should trigger regardless of currency, got " .. tostring(cfg and cfg.id))
+    print("PASS: min_money: chapter with no min_money unaffected by currency")
 end
 
 print("ALL TESTS PASSED")
