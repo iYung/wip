@@ -74,6 +74,7 @@ function Customer.new(target_x, exit_x, y)
     self.reveal_index    = 0
     self.reveal_t        = 0
     self._full_text      = ""
+    self._arrow_t        = nil
 
     return self
 end
@@ -94,6 +95,7 @@ function Customer:show(cfg)
     self._full_text      = make_full_text(self)
     self.reveal_index    = 0
     self.reveal_t        = 0
+    self._arrow_t        = nil
     self.x               = self.exit_x
     self.state           = "walking_in"
     self.sprite.visible  = true
@@ -127,6 +129,7 @@ function Customer:advance()
         self._full_text   = make_full_text(self)
         self.reveal_index = 0
         self.reveal_t     = 0
+        self._arrow_t     = nil
     end
 end
 
@@ -148,6 +151,7 @@ end
 
 function Customer:serve()
     self.bubble.visible = false
+    self._arrow_t       = nil
     if not self.done_after then
         self.state        = "talking_after"
         self._full_text   = self.after_messages[1]
@@ -171,6 +175,7 @@ function Customer:advance_after()
         self._full_text      = self.after_messages[self.after_msg_index]
         self.reveal_index    = 0
         self.reveal_t        = 0
+        self._arrow_t        = nil
     else
         self.done_after             = true
         self.state                  = "walking_out"
@@ -234,6 +239,14 @@ function Customer:update(dt)
     else
         self._anim_frame = "idle"
         self.sprite:set("idle")
+    end
+
+    if self:line_complete() then
+        if self._arrow_t == nil then
+            self._arrow_t = 0
+        else
+            self._arrow_t = self._arrow_t + dt
+        end
     end
 
     self.sprite.scale_x = (self.state == "walking_out") and -1 or 1
@@ -345,7 +358,7 @@ function Customer:draw_bubble()
         end
 
         if show_arrow then
-            local blink = (math.sin(love.timer.getTime() * 8) + 1) / 2
+            local blink = (math.cos((self._arrow_t or 0) * 8) + 1) / 2
             local mini_pad = 8
             local mini_w   = arrow_size + mini_pad * 2
             local mini_h   = arrow_size + mini_pad * 2
