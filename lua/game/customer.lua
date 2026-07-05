@@ -74,6 +74,7 @@ function Customer.new(target_x, exit_x, y)
     self.reveal_index    = 0
     self.reveal_t        = 0
     self._full_text      = ""
+    self._arrow_t        = nil
 
     return self
 end
@@ -94,6 +95,7 @@ function Customer:show(cfg)
     self._full_text      = make_full_text(self)
     self.reveal_index    = 0
     self.reveal_t        = 0
+    self._arrow_t        = nil
     self.x               = self.exit_x
     self.state           = "walking_in"
     self.sprite.visible  = true
@@ -127,6 +129,7 @@ function Customer:advance()
         self._full_text   = make_full_text(self)
         self.reveal_index = 0
         self.reveal_t     = 0
+        self._arrow_t     = nil
     end
 end
 
@@ -148,6 +151,7 @@ end
 
 function Customer:serve()
     self.bubble.visible = false
+    self._arrow_t       = nil
     if not self.done_after then
         self.state        = "talking_after"
         self._full_text   = self.after_messages[1]
@@ -171,6 +175,7 @@ function Customer:advance_after()
         self._full_text      = self.after_messages[self.after_msg_index]
         self.reveal_index    = 0
         self.reveal_t        = 0
+        self._arrow_t        = nil
     else
         self.done_after             = true
         self.state                  = "walking_out"
@@ -234,6 +239,14 @@ function Customer:update(dt)
     else
         self._anim_frame = "idle"
         self.sprite:set("idle")
+    end
+
+    if self:line_complete() then
+        if self._arrow_t == nil then
+            self._arrow_t = 0
+        else
+            self._arrow_t = self._arrow_t + dt
+        end
     end
 
     self.sprite.scale_x = (self.state == "walking_out") and -1 or 1
@@ -308,6 +321,8 @@ function Customer:draw_bubble()
             local lw = font:getWidth(line)
             if lw > widest_line_width then widest_line_width = lw end
         end
+        local arrow_size  = 16
+        local show_arrow  = self:line_complete()
         local box_w = math.min(MAX_BOX_W, math.max(MIN_BOX_W, widest_line_width + PAD * 2))
         local box_h = text_h * #lines + PAD * 2
         local box_x = self.bubble.x + BW / 2 - box_w / 2
@@ -341,6 +356,21 @@ function Customer:draw_bubble()
             local ly = box_y + BUBBLE_MARGIN.top / 2 + PAD / 2 + (i - 1) * text_h
             love.graphics.print(line, lx, ly)
         end
+
+        if show_arrow then
+            local blink = (math.cos((self._arrow_t or 0) * 8) + 1) / 2
+            local mini_pad = 8
+            local mini_w   = arrow_size + mini_pad * 2
+            local mini_h   = arrow_size + mini_pad * 2
+            local mini_x   = box_x + box_w - mini_w / 2 - 8
+            local mini_y   = box_y + box_h - mini_h / 2
+            love.graphics.setColor(0.82, 0.82, 0.82, blink)
+            UI.draw9(A.speech_bubble, mini_x, mini_y, mini_w, mini_h, BUBBLE_MARGIN)
+            local scale = arrow_size / A.arrow_right:getWidth()
+            love.graphics.setColor(0.08, 0.07, 0.10, 0.85 * blink)
+            love.graphics.draw(A.arrow_right, mini_x + mini_pad, mini_y + mini_pad, 0, scale, scale)
+        end
+
         love.graphics.setColor(1, 1, 1, 1)
     end
 end
