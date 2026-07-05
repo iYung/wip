@@ -270,7 +270,7 @@ return {
     {
         id              = "old_pete",   -- unique character key
         chapter         = 1,            -- visit number for this character
-        trigger         = { plant_type = 1, count = 1 },  -- stage3_counts threshold
+        trigger         = { plant_type = 1, count = 1, min_money = 5 },  -- stage3_counts threshold; min_money is optional
         name            = "Old Pete",
         primary_color   = {0.25, 0.45, 0.80, 1},
         secondary_color = {0.55, 0.40, 0.25, 1},

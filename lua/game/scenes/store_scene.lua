@@ -280,7 +280,8 @@ function StoreScene:_next_customer_cfg()
         local key = script.id .. ":" .. script.chapter
         if not gs.seen_scripts[key] and not self._script_cooldowns[key] then
             local t = script.trigger
-            if (gs.stage3_counts[t.plant_type] or 0) >= t.count then
+            if (gs.stage3_counts[t.plant_type] or 0) >= t.count
+                and (not t.min_money or gs.currency >= t.min_money) then
                 local prior_ok = true
                 for ch = 1, script.chapter - 1 do
                     if not gs.seen_scripts[script.id .. ":" .. ch] then
