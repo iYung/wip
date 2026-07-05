@@ -345,15 +345,16 @@ function Customer:draw_bubble()
         end
 
         if show_arrow then
+            local blink = (math.sin(love.timer.getTime() * 8) + 1) / 2
             local mini_pad = 8
             local mini_w   = arrow_size + mini_pad * 2
             local mini_h   = arrow_size + mini_pad * 2
             local mini_x   = box_x + box_w - mini_w / 2 - 8
             local mini_y   = box_y + box_h - mini_h / 2
-            love.graphics.setColor(0.82, 0.82, 0.82, 1)
+            love.graphics.setColor(0.82, 0.82, 0.82, blink)
             UI.draw9(A.speech_bubble, mini_x, mini_y, mini_w, mini_h, BUBBLE_MARGIN)
             local scale = arrow_size / A.arrow_right:getWidth()
-            love.graphics.setColor(0.08, 0.07, 0.10, 0.85)
+            love.graphics.setColor(0.08, 0.07, 0.10, 0.85 * blink)
             love.graphics.draw(A.arrow_right, mini_x + mini_pad, mini_y + mini_pad, 0, scale, scale)
         end
 
