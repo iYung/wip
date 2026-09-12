@@ -20,6 +20,34 @@ local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local WaterDrone     = require("lua/game/water_drone")
 local UI             = require("lua/game/ui")
 
+local function _strip_label(entry)
+    if type(entry) == "table" then return entry.text:gsub("^: ", "") end
+    return entry:gsub("^%u+: ", "")
+end
+
+local function _world_to_screen(camera, wx, wy)
+    local z = camera.zoom
+    return (wx - camera.x) * z + camera._w / 2,
+           (wy - camera.y) * z + camera._h / 2
+end
+
+local function _draw_chip(x, y, key_text, action_text, font)
+    local key_str  = "[" .. key_text .. "]"
+    local key_w    = font:getWidth(key_str)
+    local act_w    = font:getWidth(" " .. action_text)
+    local total_w  = key_w + act_w + 12
+    local box_h    = font:getHeight() + 8
+    local bx       = math.floor(x - total_w / 2)
+    local by       = math.floor(y - box_h)
+    love.graphics.setColor(1, 1, 1, 0.92)
+    love.graphics.rectangle("fill", bx, by, total_w, box_h, 4, 4)
+    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.print(key_str, bx + 6, by + 4)
+    love.graphics.setColor(0.25, 0.25, 0.25, 1)
+    love.graphics.print(" " .. action_text, bx + 6 + key_w, by + 4)
+    love.graphics.setColor(1, 1, 1, 1)
+end
+
 local function _autosave(gs)
     Save.write(GameState.to_save(gs))
 end
@@ -588,6 +616,53 @@ function StoreScene:_hud_labels()
     return { slot = slot_label, up = up_label, down = down_label, f = f_label }
 end
 
+function StoreScene:_draw_floating_prompts()
+    local gs     = self.game_state
+    local player = gs.player
+    local font   = love.graphics.getFont()
+    local hud    = self:_hud_labels()
+
+    local chips = {}
+    if hud.f then
+        local k = self.input:key_for("interact") or "j"
+        chips[#chips + 1] = { key = k:upper(), label = _strip_label(hud.f) }
+    end
+    if hud.up then
+        local k
+        if player.x < 0 then
+            k = self.input:key_for("cancel")       or "l"
+        else
+            k = self.input:key_for("pick_up_down") or "k"
+        end
+        chips[#chips + 1] = { key = k:upper(), label = _strip_label(hud.up) }
+    end
+    if hud.down then
+        local k = self.input:key_for("pick_up_down") or "k"
+        chips[#chips + 1] = { key = k:upper(), label = _strip_label(hud.down) }
+    end
+
+    if #chips == 0 then return end
+
+    local ax, ay
+    if player.x >= 0 then
+        local slot = player:active_slot(gs.store)
+        if not slot then return end
+        local wx = slot.x + slot.slot_width / 2
+        local wy = slot.y - 16
+        ax, ay = _world_to_screen(self.camera, wx, wy)
+    else
+        local wx = -config.ZONE_WIDTH / 2
+        local wy = 420
+        ax, ay = _world_to_screen(self.camera, wx, wy)
+    end
+
+    local line_h = font:getHeight() + 10
+    for i, chip in ipairs(chips) do
+        local cy = ay - (i - 1) * line_h
+        _draw_chip(ax, cy, chip.key, chip.label, font)
+    end
+end
+
 function StoreScene:draw()
     local gs = self.game_state
     self.camera:attach()
@@ -647,6 +722,8 @@ function StoreScene:draw()
         end
         y = y + 20
     end
+
+    self:_draw_floating_prompts()
 
     love.graphics.setColor(1, 1, 1, 1)
 end

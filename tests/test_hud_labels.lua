@@ -149,4 +149,59 @@ do
     print("PASS: hud: ADMIRE hint hidden when holding Golden Idol")
 end
 
+-- PICK UP: empty-handed near carriable item shows PICK UP, no f-label
+do
+    local ctx, scene = make_scene()
+    -- slot 1 has WateringCan by default; player stands at x=100 (slot 1)
+    ctx.gs.player.x = 100
+    ctx.gs.player.held_item = nil
+
+    local hud = scene:_hud_labels()
+    assert(hud.up == "W: PICK UP",
+        "PICK UP hint should show when empty-handed near carriable item, got: " .. tostring(hud.up))
+    assert(hud.f == nil,
+        "f hint should be nil when empty-handed near WateringCan (no interact target), got: " .. tostring(hud.f))
+    print("PASS: hud: PICK UP shown and f-label absent when empty-handed near WateringCan")
+end
+
+-- SWAP: holding something near a different carriable item shows SWAP in up-label
+do
+    local ctx, scene = make_scene()
+    local plant = Plant.new(1)
+    plant.ready = true
+    ctx.gs.store.slots[4].item = plant
+    ctx.gs.player.x = 700  -- slot 4 (Grass)
+
+    local wc = ctx.gs.store.slots[1].item
+    ctx.gs.player.held_item = wc
+    ctx.gs.store.slots[1].item = nil
+
+    local hud = scene:_hud_labels()
+    assert(hud.up == "W: SWAP WITH GRASS",
+        "SWAP hint should show when holding item near another carriable item, got: " .. tostring(hud.up))
+    print("PASS: hud: SWAP hint shown when holding WateringCan near carriable plant")
+end
+
+-- SELL + DISMISS: cashier zone, customer arrived on last message, stage-3 matching plant held
+do
+    local ctx, scene = make_scene()
+    ctx.gs.player.x = -50   -- cashier zone (x < 0)
+
+    local plant = Plant.new(1)   -- Grass, sell = 3
+    plant.stage = 3
+    ctx.gs.player.held_item = plant
+
+    local customer = scene._customer
+    customer.state        = "waiting"   -- arrived()
+    customer.done_talking = true        -- on_last_message()
+    customer.plant_type   = 1
+
+    local hud = scene:_hud_labels()
+    assert(hud.up == "I: DISMISS",
+        "DISMISS hint should show in cashier zone when customer arrived, got: " .. tostring(hud.up))
+    assert(hud.f == "P: SELL TO CUSTOMER ($3)",
+        "SELL hint should show when holding matching stage-3 plant, got: " .. tostring(hud.f))
+    print("PASS: hud: SELL and DISMISS hints shown in cashier zone with matching plant")
+end
+
 print("ALL TESTS PASSED")
