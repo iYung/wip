@@ -629,10 +629,10 @@ function StoreScene:_draw_floating_prompts()
     if player.x >= 0 then
         local slot = player:active_slot(gs.store)
         if not slot then return end
-        bx = slot.x + slot.slot_width + 12   -- fully outside slot, no item overlap
+        bx = slot.x + slot.slot_width - 12   -- partially overlaps right edge of slot
         by = slot.y + 40
     else
-        bx = -ZONE_WIDTH / 2 + 8
+        bx = -ZONE_WIDTH / 2 + 80
         by = config.U * 30 - box_h            -- just above the cashier floor, below the window
     end
 
