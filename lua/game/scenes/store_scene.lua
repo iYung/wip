@@ -25,28 +25,6 @@ local function _strip_label(entry)
     return entry:gsub("^%u+: ", "")
 end
 
-local function _world_to_screen(camera, wx, wy)
-    local z = camera.zoom
-    return (wx - camera.x) * z + camera._w / 2,
-           (wy - camera.y) * z + camera._h / 2
-end
-
-local function _draw_chip(x, y, key_text, action_text, font)
-    local key_str  = "[" .. key_text .. "]"
-    local key_w    = font:getWidth(key_str)
-    local act_w    = font:getWidth(" " .. action_text)
-    local total_w  = key_w + act_w + 12
-    local box_h    = font:getHeight() + 8
-    local bx       = math.floor(x - total_w / 2)
-    local by       = math.floor(y - box_h)
-    love.graphics.setColor(1, 1, 1, 0.92)
-    love.graphics.rectangle("fill", bx, by, total_w, box_h, 4, 4)
-    love.graphics.setColor(0, 0, 0, 1)
-    love.graphics.print(key_str, bx + 6, by + 4)
-    love.graphics.setColor(0.25, 0.25, 0.25, 1)
-    love.graphics.print(" " .. action_text, bx + 6 + key_w, by + 4)
-    love.graphics.setColor(1, 1, 1, 1)
-end
 
 local function _autosave(gs)
     Save.write(GameState.to_save(gs))
@@ -126,6 +104,9 @@ function StoreScene:on_enter()
     if self._drone then
         self.drawer:add(self._drone, 3.5)
     end
+    local self_ref = self
+    self._prompt_drawable = { draw = function() self_ref:_draw_floating_prompts() end }
+    self.drawer:add(self._prompt_drawable, 3.7)
     self.drawer:add(gs.player,             4)
     self.drawer:add(self._held_bubble,     6)
 
@@ -616,6 +597,10 @@ function StoreScene:_hud_labels()
     return { slot = slot_label, up = up_label, down = down_label, f = f_label }
 end
 
+local _PROMPT_PAD  = 10
+local _PROMPT_LINE = 20
+local _PROMPT_MARGINS = { top = 12, right = 12, bottom = 12, left = 12 }
+
 function StoreScene:_draw_floating_prompts()
     local gs     = self.game_state
     local player = gs.player
@@ -643,13 +628,41 @@ function StoreScene:_draw_floating_prompts()
 
     if #chips == 0 then return end
 
-    local ax, ay = _world_to_screen(self.camera, player.x, player.y - 160)
-
-    local line_h = font:getHeight() + 10
-    for i, chip in ipairs(chips) do
-        local cy = ay - (i - 1) * line_h
-        _draw_chip(ax, cy, chip.key, chip.label, font)
+    local content_w = 0
+    for _, chip in ipairs(chips) do
+        local w = font:getWidth("[" .. chip.key .. "] " .. chip.label)
+        if w > content_w then content_w = w end
     end
+    local box_w = content_w + _PROMPT_PAD * 2
+    local box_h = #chips * _PROMPT_LINE + _PROMPT_PAD * 2
+
+    -- World-space anchor: right of slot center, just above the slot floor
+    local bx, by
+    local SLOT_FLOOR = config.U * 38   -- world y just above the visible ground line
+    if player.x >= 0 then
+        local slot = player:active_slot(gs.store)
+        if not slot then return end
+        bx = slot.x + slot.slot_width / 2 + 8
+        by = SLOT_FLOOR - box_h
+    else
+        bx = -ZONE_WIDTH / 2 + 8
+        by = SLOT_FLOOR - box_h
+    end
+
+    love.graphics.setColor(1, 1, 1, 1)
+    UI.draw9(A.speech_bubble, bx, by, box_w, box_h, _PROMPT_MARGINS)
+
+    local ty = by + _PROMPT_PAD
+    for _, chip in ipairs(chips) do
+        local key_str = "[" .. chip.key .. "] "
+        local kw = font:getWidth(key_str)
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.print(key_str, bx + _PROMPT_PAD, ty)
+        love.graphics.setColor(0.3, 0.3, 0.3, 1)
+        love.graphics.print(chip.label, bx + _PROMPT_PAD + kw, ty)
+        ty = ty + _PROMPT_LINE
+    end
+    love.graphics.setColor(1, 1, 1, 1)
 end
 
 function StoreScene:draw()
@@ -711,8 +724,6 @@ function StoreScene:draw()
         end
         y = y + 20
     end
-
-    self:_draw_floating_prompts()
 
     love.graphics.setColor(1, 1, 1, 1)
 end
