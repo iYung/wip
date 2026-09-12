@@ -629,11 +629,11 @@ function StoreScene:_draw_floating_prompts()
     if player.x >= 0 then
         local slot = player:active_slot(gs.store)
         if not slot then return end
-        bx = slot.x + slot.slot_width - 12   -- partially overlaps right edge of slot
+        bx = slot.x + slot.slot_width / 2
         by = slot.y + 40
     else
         bx = -ZONE_WIDTH / 2 + 80
-        by = config.U * 30 - box_h            -- just above the cashier floor, below the window
+        by = config.U * 25 - box_h
     end
 
     love.graphics.setColor(1, 1, 1, 1)
