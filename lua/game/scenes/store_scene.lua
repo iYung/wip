@@ -643,18 +643,7 @@ function StoreScene:_draw_floating_prompts()
 
     if #chips == 0 then return end
 
-    local ax, ay
-    if player.x >= 0 then
-        local slot = player:active_slot(gs.store)
-        if not slot then return end
-        local wx = slot.x + slot.slot_width / 2
-        local wy = slot.y - 16
-        ax, ay = _world_to_screen(self.camera, wx, wy)
-    else
-        local wx = -config.ZONE_WIDTH / 2
-        local wy = 420
-        ax, ay = _world_to_screen(self.camera, wx, wy)
-    end
+    local ax, ay = _world_to_screen(self.camera, player.x, player.y - 160)
 
     local line_h = font:getHeight() + 10
     for i, chip in ipairs(chips) do
