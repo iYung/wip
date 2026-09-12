@@ -629,7 +629,7 @@ function StoreScene:_draw_floating_prompts()
     if player.x >= 0 then
         local slot = player:active_slot(gs.store)
         if not slot then return end
-        bx = slot.x + slot.slot_width / 2 + 8
+        bx = slot.x + slot.slot_width - 8
         by = slot.y + 40
     else
         bx = -ZONE_WIDTH / 2 + 8
