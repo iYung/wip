@@ -20,10 +20,6 @@ local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local WaterDrone     = require("lua/game/water_drone")
 local UI             = require("lua/game/ui")
 
-local function _strip_label(entry)
-    if type(entry) == "table" then return entry.text:gsub("^: ", "") end
-    return entry:gsub("^%u+: ", "")
-end
 
 
 local function _autosave(gs)
@@ -597,9 +593,10 @@ function StoreScene:_hud_labels()
     return { slot = slot_label, up = up_label, down = down_label, f = f_label }
 end
 
-local _PROMPT_PAD  = 10
-local _PROMPT_LINE = 20
-local _PROMPT_MARGINS = { top = 12, right = 12, bottom = 12, left = 12 }
+local _PROMPT_PAD       = 14
+local _PROMPT_LINE      = 20
+local _PROMPT_ICON_SIZE = 16
+local _PROMPT_MARGINS   = { top = 12, right = 12, bottom = 12, left = 12 }
 
 function StoreScene:_draw_floating_prompts()
     local gs     = self.game_state
@@ -607,59 +604,53 @@ function StoreScene:_draw_floating_prompts()
     local font   = love.graphics.getFont()
     local hud    = self:_hud_labels()
 
-    local chips = {}
-    if hud.f then
-        local k = self.input:key_for("interact") or "j"
-        chips[#chips + 1] = { key = k:upper(), label = _strip_label(hud.f) }
-    end
-    if hud.up then
-        local k
-        if player.x < 0 then
-            k = self.input:key_for("cancel")       or "l"
-        else
-            k = self.input:key_for("pick_up_down") or "k"
-        end
-        chips[#chips + 1] = { key = k:upper(), label = _strip_label(hud.up) }
-    end
-    if hud.down then
-        local k = self.input:key_for("pick_up_down") or "k"
-        chips[#chips + 1] = { key = k:upper(), label = _strip_label(hud.down) }
-    end
+    local labels = {}
+    if hud.f    then labels[#labels + 1] = hud.f    end
+    if hud.up   then labels[#labels + 1] = hud.up   end
+    if hud.down then labels[#labels + 1] = hud.down end
+    if #labels == 0 then return end
 
-    if #chips == 0 then return end
-
+    -- Size box the same way UI.draw_hud_box does
     local content_w = 0
-    for _, chip in ipairs(chips) do
-        local w = font:getWidth("[" .. chip.key .. "] " .. chip.label)
-        if w > content_w then content_w = w end
+    for _, entry in ipairs(labels) do
+        local lw
+        if type(entry) == "table" and entry.text then
+            lw = _PROMPT_ICON_SIZE + 2 + font:getWidth(entry.text)
+        else
+            lw = font:getWidth(tostring(entry))
+        end
+        if lw > content_w then content_w = lw end
     end
     local box_w = content_w + _PROMPT_PAD * 2
-    local box_h = #chips * _PROMPT_LINE + _PROMPT_PAD * 2
+    local box_h = #labels * _PROMPT_LINE + _PROMPT_PAD * 2
 
-    -- World-space anchor: right of slot center, just above the slot floor
+    -- World-space anchor: right of slot center, raised well above the ground
     local bx, by
-    local SLOT_FLOOR = config.U * 38   -- world y just above the visible ground line
     if player.x >= 0 then
         local slot = player:active_slot(gs.store)
         if not slot then return end
         bx = slot.x + slot.slot_width / 2 + 8
-        by = SLOT_FLOOR - box_h
+        by = slot.y + 40
     else
         bx = -ZONE_WIDTH / 2 + 8
-        by = SLOT_FLOOR - box_h
+        by = 500 - box_h
     end
 
     love.graphics.setColor(1, 1, 1, 1)
     UI.draw9(A.speech_bubble, bx, by, box_w, box_h, _PROMPT_MARGINS)
 
+    -- Render labels identically to the corner HUD text loop
     local ty = by + _PROMPT_PAD
-    for _, chip in ipairs(chips) do
-        local key_str = "[" .. chip.key .. "] "
-        local kw = font:getWidth(key_str)
-        love.graphics.setColor(0, 0, 0, 1)
-        love.graphics.print(key_str, bx + _PROMPT_PAD, ty)
-        love.graphics.setColor(0.3, 0.3, 0.3, 1)
-        love.graphics.print(chip.label, bx + _PROMPT_PAD + kw, ty)
+    for _, entry in ipairs(labels) do
+        if type(entry) == "table" and entry.icon then
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(A[entry.icon], bx + _PROMPT_PAD, math.floor(ty + (_PROMPT_LINE - _PROMPT_ICON_SIZE) / 2))
+            love.graphics.setColor(0, 0, 0, 1)
+            love.graphics.print(entry.text, bx + _PROMPT_PAD + _PROMPT_ICON_SIZE + 2, ty)
+        else
+            love.graphics.setColor(0, 0, 0, 1)
+            love.graphics.print(tostring(entry), bx + _PROMPT_PAD, ty)
+        end
         ty = ty + _PROMPT_LINE
     end
     love.graphics.setColor(1, 1, 1, 1)
