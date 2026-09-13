@@ -240,8 +240,7 @@ Maps Love2D key events and gamepad input to game actions. Game logic calls Input
 - `move_up` — default `w` / D-pad up / left stick up
 - `move_down` — default `s` / D-pad down / left stick down
 - `interact` — default `j` / gamepad A button
-- `pick_up_down` — default `k` / gamepad Y button; picks up, puts down, or swaps carriable items in the store
-- `cancel` — default `l` / gamepad B button; dismisses a customer in the cashier zone; exits the buy screen
+- `pick_up_down` — default `k` / gamepad Y button; picks up, puts down, or swaps carriable items in the store zone; in the cashier zone dismisses a customer; in BuyScene exits back to the store
 
 **Fields**
 - `_mode` — `"keyboard"` or `"gamepad"`; tracks which device the player last used
@@ -599,7 +598,7 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 - On `on_enter()`, if a save file exists, `selected` defaults to 2 (Continue); otherwise defaults to 1 (New Game)
 - Navigation uses `_next_selectable()` which steps past index 2 when `_has_save` is false, so Continue is unreachable without a save
 - `StoreScene` is `require`d lazily inside `_confirm()`, not at module load time, to avoid a circular load order
-- The hint bar drawn at y=630 shows movement keys (text always) and pick_up_down/interact/cancel hints: in gamepad mode these render as `btn_y`/`btn_a`/`btn_b` PNG icons (16px, centered); in keyboard mode they render as text key labels
+- The hint bar drawn at y=630 shows movement keys (text always) and pick_up_down/interact hints: in gamepad mode these render as `btn_y`/`btn_a` PNG icons (16px, centered); in keyboard mode they render as text key labels
 
 ---
 
@@ -611,7 +610,7 @@ Holds all user-facing settings in memory. Owns the Love2D API calls that apply e
 
 **Properties**
 - `fullscreen` — bool; current fullscreen state (default `false`)
-- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", interact="j", pick_up_down="k", cancel="l"}`
+- `keybinds` — table mapping each action to its bound key string (or `nil` if unbound); defaults: `{move_up="w", move_down="s", move_left="a", move_right="d", interact="j", pick_up_down="k"}`
 
 **Methods**
 - `new()` — constructor; sets `fullscreen = false` and populates default `keybinds`
@@ -660,7 +659,7 @@ A pause overlay drawn on top of the current scene. Not a `Scene` subclass — no
 - `_state` — the `SettingsState` instance passed to `new()`; all setting mutations go through it
 - `_input` — the game `Input` instance; `_map` is patched after a keybind capture
 - `_subscreen` — `nil` (main screen) or `"keybinds"` (keybind sub-screen)
-- `_subscreen_selected` — cursor row on the keybind sub-screen (1–8)
+- `_subscreen_selected` — cursor row on the keybind sub-screen (1–7)
 - `_capturing` — `nil`, or the action name currently waiting for a key press
 - `_opaque` — `true` when opened via `open(true)` (start scene); hides Save Game and switches background style
 - `_saved` — `true` after a successful save this session; resets to `false` on `open()`; changes Save Game label to "Saved!"
@@ -681,7 +680,7 @@ Navigation uses `_visible_items(opaque)` to build the active index list, so Save
 
 **Keybind sub-screen**
 
-Lists five remappable actions (`pick_up_down`, `cancel`, `move_left`, `move_right`, `interact`) with their current key. `pick_up_down` is the dedicated carry key: it picks up a carriable item from a slot when empty-handed, puts down a held item into an empty slot, and swaps held and slot items when both are carriable. `cancel` dismisses a customer in the cashier zone and exits the buy screen. `move_up` and `move_down` are used for menu navigation only and are not shown here. Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. If the pressed key is already bound to a different action, the binding is rejected: the conflicting row shakes horizontally and flashes red for 0.5 s while capture mode remains active. Escape during capture cancels without change; escape outside capture returns to the main screen.
+Lists four remappable actions (`pick_up_down`, `move_left`, `move_right`, `interact`) with their current key. `pick_up_down` is the context-sensitive secondary action: in the store zone it picks up a carriable item from a slot when empty-handed, puts down a held item into an empty slot, and swaps held and slot items when both are carriable; in the cashier zone it dismisses a customer; in BuyScene it exits back to the store. `move_up` and `move_down` are used for menu navigation only and are not shown here. Selecting an action enters capture mode: the row shows `[press a key]` and the next non-modifier `love.keypressed` event is set as the new binding. Modifier keys (`lshift`, `rshift`, `lctrl`, etc.) are ignored. If the pressed key is already bound to a different action, the binding is rejected: the conflicting row shakes horizontally and flashes red for 0.5 s while capture mode remains active. Escape during capture cancels without change; escape outside capture returns to the main screen.
 
 **Methods**
 - `new(settings_state, input, on_save)` — constructor; `on_save` is a callback invoked by "Save Game"
@@ -725,7 +724,7 @@ The win screen shown when the player interacts with the Golden Idol. Full-screen
 
 **Behavior**
 - `draw()` — draws `A.win_scene` stretched to fill 1280×720 directly in screen space (overrides base `draw()`, no camera transform)
-- `update(dt)` — pressing cancel switches back to `store_scene`
+- `update(dt)` — pressing pick_up_down switches back to `store_scene`
 - Music is unchanged — no Sound calls in `on_enter()` or `on_exit()`
 
 **Lifecycle**
@@ -811,7 +810,7 @@ Three ways to run the game:
 | `test_sound.lua` | `Sound.load()` and `Sound.play()` do not error in headless; unknown event name is a safe no-op; `play_random_music` fades one track and skips missing tracks gracefully; `on_focus(true)` replays tracks with `playing_intent=true`; `on_focus(false)` does not replay anything |
 | `test_start_scene.lua` | StartScene navigation (up/down/wrap, Continue skipped when no save), confirm callbacks (New Game, Continue with/without save, Settings, Exit), draw() hint bar (keyboard text vs gamepad icon PNGs) |
 | `test_save.lua` | `Save` exists/write/read, corrupt-data nil return, scalar/item/held-item round-trips, `GameState.to_save`/`from_save` round-trip (scalars, plants, player position, slot count, `play_time`), backwards-compat defaults for old saves |
-| `test_win_scene.lua` | GoldenIdol interact switches to WinScene, no-op without factory, cancel returns to StoreScene, `_wire_golden_idol` wires idol in slot and held, draw with nil/set `first_idol_at` |
+| `test_win_scene.lua` | GoldenIdol interact switches to WinScene, no-op without factory, pick_up_down returns to StoreScene, `_wire_golden_idol` wires idol in slot and held, draw with nil/set `first_idol_at` |
 
 **CI** — `.github/workflows/ci.yml` runs `love . --headless` (all tests) on every push to `main` and every pull request targeting `main`. Uses LÖVE 11.5 via `ppa:bartbes/love-stable` on `ubuntu-latest`.
 

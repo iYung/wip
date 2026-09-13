@@ -197,7 +197,7 @@ do
     customer.plant_type   = 1
 
     local hud = scene:_hud_labels()
-    assert(hud.up == "I: DISMISS",
+    assert(hud.up == "W: DISMISS",
         "DISMISS hint should show in cashier zone when customer arrived, got: " .. tostring(hud.up))
     assert(hud.f == "P: SELL TO CUSTOMER ($3)",
         "SELL hint should show when holding matching stage-3 plant, got: " .. tostring(hud.f))

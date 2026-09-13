@@ -134,7 +134,7 @@ function BuyScene:update(dt)
 
     if input:pressed("interact") then
         self:_confirm()
-    elseif input:pressed("cancel") then
+    elseif input:pressed("pick_up_down") then
         self.scene_manager:switch(self.store_scene)
     end
 end
@@ -416,9 +416,9 @@ function BuyScene:draw()
     local left_key   = (self.input:key_for("move_left")  or "a"):upper()
     local right_key  = (self.input:key_for("move_right") or "d"):upper()
     local f_key      = (self.input:key_for("interact")   or "space"):upper()
-    local cancel_key = (self.input:key_for("cancel")     or "i"):upper()
+    local cancel_key = (self.input:key_for("pick_up_down") or "o"):upper()
     local f_icon     = self.input:icon_key_for("interact")
-    local cancel_icon = self.input:icon_key_for("cancel")
+    local cancel_icon = self.input:icon_key_for("pick_up_down")
 
     local function make_label(icon_key, key_text, action_text)
         if icon_key then

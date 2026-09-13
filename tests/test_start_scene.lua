@@ -195,8 +195,8 @@ do
     sd:draw()
     assert(queried["pick_up_down"], "draw() must call key_for('pick_up_down')")
     assert(queried["interact"],     "draw() must call key_for('interact')")
-    assert(queried["cancel"],       "draw() must call key_for('cancel')")
-    print("PASS: draw() queries key_for for pick_up_down, interact, and cancel")
+    assert(not queried["cancel"],   "draw() must not call key_for('cancel') (removed)")
+    print("PASS: draw() queries key_for for pick_up_down and interact only")
 end
 
 -- Test 16: draw() uses icon path when icon_key_for returns a key (gamepad mode)
@@ -230,7 +230,7 @@ do
 
     assert(icons_drawn["btn_y_img"], "draw() must draw btn_y icon for pick_up_down in gamepad mode")
     assert(icons_drawn["btn_a_img"], "draw() must draw btn_a icon for interact in gamepad mode")
-    assert(icons_drawn["btn_b_img"], "draw() must draw btn_b icon for cancel in gamepad mode")
+    assert(not icons_drawn["btn_b_img"], "draw() must not draw btn_b icon (cancel removed)")
 
     A.btn_y = orig_btn_y
     A.btn_a = orig_btn_a
@@ -303,7 +303,7 @@ do
     end
     assert(has(printed, "J"), "draw() action hint for interact should be uppercase 'J'")
     assert(has(printed, "K"), "draw() action hint for pick_up_down should be uppercase 'K'")
-    assert(has(printed, "L"), "draw() action hint for cancel should be uppercase 'L'")
+    assert(not has(printed, "L"), "draw() must not print 'L' hint (cancel removed)")
     print("PASS: draw() action hint text is uppercase")
 end
 

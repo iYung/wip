@@ -5,7 +5,6 @@ local _PAD_LABELS = {
     move_right = "→",
     interact     = "[A]",
     pick_up_down = "[Y]",
-    cancel       = "[B]",
 }
 
 local _PAD_ICON_KEYS = {
@@ -15,7 +14,6 @@ local _PAD_ICON_KEYS = {
     move_right   = "dpad_right",
     interact     = "btn_a",
     pick_up_down = "btn_y",
-    cancel       = "btn_b",
 }
 
 local Input = {}
@@ -59,8 +57,7 @@ function Input:update()
             move_left  = ax < -0.3 or joy:isGamepadDown("dpleft"),
             move_right = ax >  0.3 or joy:isGamepadDown("dpright"),
             interact     = joy:isGamepadDown("a"),
-            pick_up_down = joy:isGamepadDown("y"),
-            cancel       = joy:isGamepadDown("b"),
+            pick_up_down = joy:isGamepadDown("y") or joy:isGamepadDown("b"),
         }
         local any_gamepad = false
         for action, down in pairs(pad) do

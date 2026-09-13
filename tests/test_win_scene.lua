@@ -45,11 +45,11 @@ do
     ctx.sm:switch(win_scene)
     assert(ctx.sm.current == win_scene, "should be in WinScene before cancel")
 
-    ctx.input:press("cancel")
+    ctx.input:press("pick_up_down")
     runner.tick(ctx.input, ctx.sm)
     assert(ctx.sm.current == store_scene,
-        "sm.current should be StoreScene after cancel in WinScene, got " .. tostring(ctx.sm.current))
-    print("PASS: win_scene: cancel returns to StoreScene")
+        "sm.current should be StoreScene after pick_up_down in WinScene, got " .. tostring(ctx.sm.current))
+    print("PASS: win_scene: pick_up_down returns to StoreScene")
 end
 
 -- Test: _wire_golden_idol wires an idol sitting in a slot

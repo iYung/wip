@@ -110,7 +110,7 @@ ctx.input.key_for = function(self, action)
 end
 -- icon_key_for already returns nil on HeadlessInput; only stub if testing gamepad icons:
 -- ctx.input.icon_key_for = function(self, action)
---     return ({ interact="btn_a", pick_up_down="btn_y", cancel="btn_b" })[action]
+--     return ({ interact="btn_a", pick_up_down="btn_y" })[action]
 -- end
 ```
 
