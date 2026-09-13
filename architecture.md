@@ -190,7 +190,7 @@ Shared rendering helpers used by multiple modules.
 
 `draw9` was extracted from `customer.lua` so it can be shared between the customer dialogue bubble, the Intercom bubble, and the HUD box. Call sites that draw the HUD text must still render text on top of the box after calling `draw_hud_box`.
 
-**Floating action prompts:** `StoreScene:_draw_floating_prompts()` draws the same contextual action labels in world-space above the active slot (or above the customer in the cashier zone), so the button hint appears right where the player is looking. Three local helpers in `store_scene.lua` support this: `_world_to_screen(camera, wx, wy)` (projects world → screen coords via camera), `_draw_chip(x, y, key, label, font)` (renders a rounded pill with `[KEY]` in black and the action text in dark gray), and `_strip_label(entry)` (normalises the mixed string/table entries from `_hud_labels()` to plain text). The corner HUD box remains as a secondary reference.
+**Floating action prompts:** `StoreScene:_draw_floating_prompts()` draws the same contextual action labels in world-space above the active slot (or above the customer in the cashier zone), so the button hint appears right where the player is looking. The box is anchored `slot_width/4` to the right of slot centre by default; if that would push the box past the camera's right edge it flips to the same offset left of centre, keeping it fully on-screen.
 
 ---
 
