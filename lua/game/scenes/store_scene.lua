@@ -20,6 +20,8 @@ local COOLDOWN_TIERS = require("lua/game/data/cooldown_tiers")
 local WaterDrone     = require("lua/game/water_drone")
 local UI             = require("lua/game/ui")
 
+
+
 local function _autosave(gs)
     Save.write(GameState.to_save(gs))
 end
@@ -98,6 +100,9 @@ function StoreScene:on_enter()
     if self._drone then
         self.drawer:add(self._drone, 3.5)
     end
+    local self_ref = self
+    self._prompt_drawable = { draw = function() self_ref:_draw_floating_prompts() end }
+    self.drawer:add(self._prompt_drawable, 4.5)
     self.drawer:add(gs.player,             4)
     self.drawer:add(self._held_bubble,     6)
 
@@ -588,6 +593,70 @@ function StoreScene:_hud_labels()
     return { slot = slot_label, up = up_label, down = down_label, f = f_label }
 end
 
+local _PROMPT_PAD       = 14
+local _PROMPT_LINE      = 20
+local _PROMPT_ICON_SIZE = 16
+local _PROMPT_MARGINS   = { top = 12, right = 12, bottom = 12, left = 12 }
+
+function StoreScene:_draw_floating_prompts()
+    local gs     = self.game_state
+    local player = gs.player
+    local font   = love.graphics.getFont()
+    local hud    = self:_hud_labels()
+
+    local labels = {}
+    if hud.slot then labels[#labels + 1] = hud.slot end
+    if hud.f    then labels[#labels + 1] = hud.f    end
+    if hud.up   then labels[#labels + 1] = hud.up   end
+    if hud.down then labels[#labels + 1] = hud.down end
+    if #labels == 0 then return end
+
+    -- Size box the same way UI.draw_hud_box does
+    local content_w = 0
+    for _, entry in ipairs(labels) do
+        local lw
+        if type(entry) == "table" and entry.text then
+            lw = _PROMPT_ICON_SIZE + 2 + font:getWidth(entry.text)
+        else
+            lw = font:getWidth(tostring(entry))
+        end
+        if lw > content_w then content_w = lw end
+    end
+    local box_w = content_w + _PROMPT_PAD * 2
+    local box_h = #labels * _PROMPT_LINE + _PROMPT_PAD * 2
+
+    -- World-space anchor: right of slot center, raised well above the ground
+    local bx, by
+    if player.x >= 0 then
+        local slot = player:active_slot(gs.store)
+        if not slot then return end
+        bx = slot.x + slot.slot_width * 3 / 4
+        by = slot.y + 40
+    else
+        bx = -ZONE_WIDTH / 2 + 80
+        by = config.U * 25 - box_h
+    end
+
+    love.graphics.setColor(1, 1, 1, 1)
+    UI.draw9(A.speech_bubble, bx, by, box_w, box_h, _PROMPT_MARGINS)
+
+    -- Render labels identically to the corner HUD text loop
+    local ty = by + _PROMPT_PAD
+    for _, entry in ipairs(labels) do
+        if type(entry) == "table" and entry.icon then
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(A[entry.icon], bx + _PROMPT_PAD, math.floor(ty + (_PROMPT_LINE - _PROMPT_ICON_SIZE) / 2))
+            love.graphics.setColor(0, 0, 0, 1)
+            love.graphics.print(entry.text, bx + _PROMPT_PAD + _PROMPT_ICON_SIZE + 2, ty)
+        else
+            love.graphics.setColor(0, 0, 0, 1)
+            love.graphics.print(tostring(entry), bx + _PROMPT_PAD, ty)
+        end
+        ty = ty + _PROMPT_LINE
+    end
+    love.graphics.setColor(1, 1, 1, 1)
+end
+
 function StoreScene:draw()
     local gs = self.game_state
     self.camera:attach()
@@ -622,31 +691,6 @@ function StoreScene:draw()
 
     UI.draw_currency_bubble(gs.currency, 10, 10, love.graphics.getFont())
 
-    -- context HUD: bottom-left, stacked downward inside box
-    local hud    = self:_hud_labels()
-    local labels = {}
-    if hud.slot then table.insert(labels, hud.slot) end
-    if hud.f    then table.insert(labels, hud.f) end
-    if hud.up   then table.insert(labels, hud.up) end
-    if hud.down then table.insert(labels, hud.down) end
-
-    UI.draw_hud_box(labels, love.graphics.getFont())
-
-    love.graphics.setColor(0, 0, 0, 1)
-    local box_h = #labels * 20 + 28
-    local y = 720 - 10 - box_h + 14
-    for _, entry in ipairs(labels) do
-        if type(entry) == "table" and entry.icon then
-            love.graphics.setColor(1, 1, 1, 1)
-            love.graphics.draw(A[entry.icon], 10 + 14, math.floor(y + (20 - 16) / 2))
-            love.graphics.setColor(0, 0, 0, 1)
-            love.graphics.print(entry.text, 10 + 14 + 16 + 2, y)
-        else
-            love.graphics.setColor(0, 0, 0, 1)
-            love.graphics.print(entry, 10 + 14, y)
-        end
-        y = y + 20
-    end
 
     love.graphics.setColor(1, 1, 1, 1)
 end
