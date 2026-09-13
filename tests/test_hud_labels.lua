@@ -177,7 +177,7 @@ do
     ctx.gs.store.slots[1].item = nil
 
     local hud = scene:_hud_labels()
-    assert(hud.up == "W: SWAP WITH GRASS",
+    assert(hud.up == "W: SWAP WITH WATERING CAN",
         "SWAP hint should show when holding item near another carriable item, got: " .. tostring(hud.up))
     print("PASS: hud: SWAP hint shown when holding WateringCan near carriable plant")
 end
