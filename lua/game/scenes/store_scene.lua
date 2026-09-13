@@ -102,7 +102,7 @@ function StoreScene:on_enter()
     end
     local self_ref = self
     self._prompt_drawable = { draw = function() self_ref:_draw_floating_prompts() end }
-    self.drawer:add(self._prompt_drawable, 3.7)
+    self.drawer:add(self._prompt_drawable, 4.5)
     self.drawer:add(gs.player,             4)
     self.drawer:add(self._held_bubble,     6)
 
@@ -605,6 +605,7 @@ function StoreScene:_draw_floating_prompts()
     local hud    = self:_hud_labels()
 
     local labels = {}
+    if hud.slot then labels[#labels + 1] = hud.slot end
     if hud.f    then labels[#labels + 1] = hud.f    end
     if hud.up   then labels[#labels + 1] = hud.up   end
     if hud.down then labels[#labels + 1] = hud.down end
