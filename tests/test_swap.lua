@@ -62,8 +62,8 @@ do
     ctx.gs.player.x = 300  -- slot 2: GarbageBin
 
     local hud = scene:_hud_labels()
-    assert(hud.up == "E: SWAP WITH GARBAGE BIN",
-        "up label should be 'E: SWAP WITH GARBAGE BIN', got " .. tostring(hud.up))
+    assert(hud.up == "E: SWAP WITH WATERING CAN",
+        "up label should be 'E: SWAP WITH WATERING CAN', got " .. tostring(hud.up))
     assert(hud.down == nil,
         "down label should be nil, got " .. tostring(hud.down))
     print("PASS: swap: _hud_labels shows SWAP labels with default key")
@@ -93,8 +93,8 @@ do
     ctx.input._map["pick_up_down"] = {"g"}
 
     local hud = scene:_hud_labels()
-    assert(hud.up == "G: SWAP WITH GARBAGE BIN",
-        "up label should be 'G: SWAP WITH GARBAGE BIN' after remap, got " .. tostring(hud.up))
+    assert(hud.up == "G: SWAP WITH WATERING CAN",
+        "up label should be 'G: SWAP WITH WATERING CAN' after remap, got " .. tostring(hud.up))
     assert(hud.down == nil,
         "down label should be nil, got " .. tostring(hud.down))
     print("PASS: swap: _hud_labels shows SWAP labels with remapped key")
