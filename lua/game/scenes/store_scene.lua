@@ -630,7 +630,7 @@ function StoreScene:_draw_floating_prompts()
     if player.x >= 0 then
         local slot = player:active_slot(gs.store)
         if not slot then return end
-        bx = slot.x + slot.slot_width / 2
+        bx = slot.x + slot.slot_width * 3 / 4
         by = slot.y + 40
     else
         bx = -ZONE_WIDTH / 2 + 80
@@ -691,31 +691,6 @@ function StoreScene:draw()
 
     UI.draw_currency_bubble(gs.currency, 10, 10, love.graphics.getFont())
 
-    -- context HUD: bottom-left, stacked downward inside box
-    local hud    = self:_hud_labels()
-    local labels = {}
-    if hud.slot then table.insert(labels, hud.slot) end
-    if hud.f    then table.insert(labels, hud.f) end
-    if hud.up   then table.insert(labels, hud.up) end
-    if hud.down then table.insert(labels, hud.down) end
-
-    UI.draw_hud_box(labels, love.graphics.getFont())
-
-    love.graphics.setColor(0, 0, 0, 1)
-    local box_h = #labels * 20 + 28
-    local y = 720 - 10 - box_h + 14
-    for _, entry in ipairs(labels) do
-        if type(entry) == "table" and entry.icon then
-            love.graphics.setColor(1, 1, 1, 1)
-            love.graphics.draw(A[entry.icon], 10 + 14, math.floor(y + (20 - 16) / 2))
-            love.graphics.setColor(0, 0, 0, 1)
-            love.graphics.print(entry.text, 10 + 14 + 16 + 2, y)
-        else
-            love.graphics.setColor(0, 0, 0, 1)
-            love.graphics.print(entry, 10 + 14, y)
-        end
-        y = y + 20
-    end
 
     love.graphics.setColor(1, 1, 1, 1)
 end
