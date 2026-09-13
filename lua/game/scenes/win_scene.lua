@@ -35,7 +35,7 @@ function WinScene:on_exit() end
 
 function WinScene:update(dt)
     self._time = self._time + dt
-    if self.input:pressed("cancel") then
+    if self.input:pressed("pick_up_down") then
         self.scene_manager:switch(self.store_scene)
     end
 end
@@ -67,8 +67,8 @@ function WinScene:draw()
     else
         time_str = string.format("%ds", secs)
     end
-    local cancel_icon = self.input:icon_key_for("cancel")
-    local cancel_key  = self.input:key_for("cancel") or "Esc"
+    local cancel_icon = self.input:icon_key_for("pick_up_down")
+    local cancel_key  = self.input:key_for("pick_up_down") or "Esc"
     local ICON_SIZE   = 16
     local hint_pre    = "Press "
     local hint_post   = " to go back."

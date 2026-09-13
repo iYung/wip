@@ -681,7 +681,7 @@ do
     local m63 = SettingsMenu.new(s63, {_map={}})
     open_clean(m63)
     m63._subscreen = "keybinds"
-    m63._capturing = "cancel"
+    m63._capturing = "pick_up_down"
     local r63 = m63:gamepadpressed("start")
     assert(r63 == true, "gamepadpressed start during capture should return true")
     assert(m63._capturing == nil, "gamepadpressed start should cancel capture")

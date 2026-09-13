@@ -37,7 +37,7 @@ local function sell_plant(ctx, plant_type, elapsed)
             return ctx.sm.current._customer:arrived()
         end, elapsed, 2000)
         if ctx.sm.current._customer.plant_type ~= plant_type then
-            ctx.input:press("cancel")
+            ctx.input:press("pick_up_down")
             runner.tick(ctx.input, ctx.sm, 1, 1/60)
             elapsed = elapsed + 1/60
         else
@@ -307,7 +307,7 @@ do
         "expected sage:1 active, got: " .. tostring(nd_ctx.sm.current._active_script_key))
 
     -- Press cancel — must not dismiss a no_dismiss quest.
-    nd_ctx.input:press("cancel")
+    nd_ctx.input:press("pick_up_down")
     runner.tick(nd_ctx.input, nd_ctx.sm, 1, 1/60)
     nd_elapsed = nd_elapsed + 1/60
 

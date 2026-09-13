@@ -182,7 +182,6 @@ function StartScene:draw()
         { x = 980,  label = make_label("move_right") },
         { x = 1070, label = make_label("interact") },
         { x = 1150, label = make_label("pick_up_down") },
-        { x = 1230, label = make_label("cancel") },
     }
     local th = self._font_btn:getHeight()
     for _, h in ipairs(hints) do
