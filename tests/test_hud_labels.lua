@@ -204,4 +204,57 @@ do
     print("PASS: hud: SELL and DISMISS hints shown in cashier zone with matching plant")
 end
 
+-- HUD box flip: rightmost slot should not overflow camera right edge
+do
+    local ctx, scene = make_scene()
+
+    -- Stub font with predictable getWidth so _draw_floating_prompts can size the box
+    local FONT_W = 150  -- wide enough that default right-anchor would overflow
+    love.graphics.getFont = function()
+        return { getWidth = function(_, _) return FONT_W end }
+    end
+
+    -- Place player at the rightmost slot (slot 5, x=800)
+    local store = ctx.gs.store
+    local rightmost = store.slots[#store.slots]
+    ctx.gs.player.x = rightmost.x + rightmost.slot_width / 2
+
+    -- Put a plant there so labels are generated (otherwise function returns early)
+    local plant = Plant.new(1)
+    plant.ready = true
+    rightmost.item = plant
+    local wc = store.slots[1].item
+    ctx.gs.player.held_item = wc
+    store.slots[1].item = nil
+
+    -- Set camera to its rightmost clamped position (world_right - half_w)
+    local LOGICAL_W = 1280
+    local world_right = store:width()
+    scene.camera.x = world_right - LOGICAL_W / 2
+
+    -- Calling _draw_floating_prompts should not error (all love.graphics calls are stubs)
+    scene:_draw_floating_prompts()
+
+    -- Verify the flip: default bx = rightmost.x + slot_width*3/4; with FONT_W=150,
+    -- box_w > 50, which overflows cam_right, so flipped bx = rightmost.x + slot_width/4 - box_w < slot center
+    local slot_center = rightmost.x + rightmost.slot_width / 2
+    local default_bx  = rightmost.x + rightmost.slot_width * 3 / 4
+    local cam_right   = scene.camera.x + LOGICAL_W / 2
+    -- box_w = FONT_W + _PROMPT_PAD * 2 = 150 + 28 = 178
+    local box_w = FONT_W + 14 * 2
+    assert(default_bx + box_w > cam_right,
+        "test setup: default anchor should overflow cam_right")
+    local flipped_bx = rightmost.x + rightmost.slot_width / 4 - box_w
+    assert(flipped_bx + box_w <= cam_right,
+        "flipped bx + box_w should fit within cam_right, got " ..
+        tostring(flipped_bx + box_w) .. " vs cam_right " .. tostring(cam_right))
+    assert(flipped_bx + box_w < default_bx,
+        "flipped box right edge should be left of default left edge")
+
+    -- Restore font stub
+    love.graphics.getFont = function() return {} end
+
+    print("PASS: hud: floating prompt flips left when rightmost slot would overflow screen")
+end
+
 print("ALL TESTS PASSED")

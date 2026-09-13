@@ -625,6 +625,10 @@ function StoreScene:_draw_floating_prompts()
         local slot = player:active_slot(gs.store)
         if not slot then return end
         bx = slot.x + slot.slot_width * 3 / 4
+        local cam_right = self.camera.x + config.LOGICAL_W / 2
+        if bx + box_w > cam_right then
+            bx = slot.x + slot.slot_width / 4 - box_w
+        end
         by = slot.y + 40
     else
         bx = -ZONE_WIDTH / 2 + 80
