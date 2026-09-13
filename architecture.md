@@ -240,7 +240,7 @@ Maps Love2D key events and gamepad input to game actions. Game logic calls Input
 - `move_up` — default `w` / D-pad up / left stick up
 - `move_down` — default `s` / D-pad down / left stick down
 - `interact` — default `j` / gamepad A button
-- `pick_up_down` — default `k` / gamepad Y button; picks up, puts down, or swaps carriable items in the store zone; in the cashier zone dismisses a customer; in BuyScene exits back to the store
+- `pick_up_down` — default `k` / gamepad B button; picks up, puts down, or swaps carriable items in the store zone; in the cashier zone dismisses a customer; in BuyScene exits back to the store
 
 **Fields**
 - `_mode` — `"keyboard"` or `"gamepad"`; tracks which device the player last used
@@ -598,7 +598,7 @@ The first scene shown on launch. Pure screen-space UI — overrides `draw()` ent
 - On `on_enter()`, if a save file exists, `selected` defaults to 2 (Continue); otherwise defaults to 1 (New Game)
 - Navigation uses `_next_selectable()` which steps past index 2 when `_has_save` is false, so Continue is unreachable without a save
 - `StoreScene` is `require`d lazily inside `_confirm()`, not at module load time, to avoid a circular load order
-- The hint bar drawn at y=630 shows movement keys (text always) and pick_up_down/interact hints: in gamepad mode these render as `btn_y`/`btn_a` PNG icons (16px, centered); in keyboard mode they render as text key labels
+- The hint bar drawn at y=630 shows movement keys (text always) and pick_up_down/interact hints: in gamepad mode these render as `btn_b`/`btn_a` PNG icons (16px, centered); in keyboard mode they render as text key labels
 
 ---
 
