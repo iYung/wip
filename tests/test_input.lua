@@ -175,7 +175,7 @@ do
     local input = Input.new({ interact = {"space"} })
     input._mode = "gamepad"
     assert(input:icon_key_for("interact")     == "btn_a", "interact icon should be btn_a")
-    assert(input:icon_key_for("pick_up_down") == "btn_y", "pick_up_down icon should be btn_y")
+    assert(input:icon_key_for("pick_up_down") == "btn_b", "pick_up_down icon should be btn_b")
     assert(input:icon_key_for("cancel")       == nil,     "cancel icon should be nil (action removed)")
     assert(input:icon_key_for("move_up")      == "dpad_up",    "move_up icon should be dpad_up")
     assert(input:icon_key_for("move_down")    == "dpad_down",  "move_down icon should be dpad_down")
