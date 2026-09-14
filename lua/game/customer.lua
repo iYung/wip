@@ -116,6 +116,10 @@ function Customer:show(cfg)
     else
         self.accessory_sprite = nil
     end
+    -- Sync sprite position immediately so the first draw is at exit_x, not at
+    -- the stale position left by the previous customer's last update().
+    self.sprite.x = self.x - CW / 2
+    self.sprite.y = self.y - CH / 2 - 20
 end
 
 function Customer:advance()
